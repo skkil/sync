@@ -1,0 +1,130 @@
+import net.ltgt.gradle.errorprone.CheckSeverity
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.diffplug.spotless' version '8.1.0'
+	id 'net.ltgt.errorprone' version '4.3.0'
+}
+
+group = 'com.skkil'
+version = '0.0.1-SNAPSHOT'
+description = ''
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+bootJar {
+	enabled = true
+}
+
+jar {
+	enabled = false
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation 'org.springframework.boot:spring-boot-starter-liquibase'
+	implementation 'org.springframework.boot:spring-boot-starter-restclient'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-session-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-jooq-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-restclient-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-security-oauth2-client-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-session-jdbc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+	testImplementation 'org.testcontainers:testcontainers-postgresql'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	errorprone 'com.uber.nullaway:nullaway:0.12.12'
+	errorprone 'com.google.errorprone:error_prone_core:2.42.0'
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs += [
+		'-Xlint:deprecation',
+		'-Xlint:rawtypes',
+		'-Xlint:unchecked',
+		'-Werror',
+		'-parameters',
+	]
+
+	options.errorprone {
+		disableWarningsInGeneratedCode = true
+		check('WildcardImport', CheckSeverity.ERROR)
+		check('MissingBraces', CheckSeverity.ERROR)
+		check('TypeToString', CheckSeverity.ERROR)
+		check('SymbolToString', CheckSeverity.ERROR)
+		check('MultipleTopLevelClasses', CheckSeverity.ERROR)
+		check('ClassName', CheckSeverity.ERROR)
+		check('PackageLocation', CheckSeverity.ERROR)
+		check('UnnecessaryAnonymousClass', CheckSeverity.ERROR)
+		check('UnusedException', CheckSeverity.ERROR)
+		check('UnnecessaryFinal', CheckSeverity.ERROR)
+		check('PreferredInterfaceType', CheckSeverity.ERROR)
+		check('AnnotationPosition', CheckSeverity.ERROR)
+		check('VoidMissingNullable', CheckSeverity.ERROR)
+		check('EqualsMissingNullable', CheckSeverity.ERROR)
+
+		check('NullAway', CheckSeverity.ERROR)
+		option('NullAway:AnnotatedPackages', 'com.starter')
+	}
+
+	if (name.toLowerCase().contains('test')) {
+		options.errorprone {
+			disable('NullAway')
+		}
+	}
+}
+
+tasks.named('build') {
+	dependsOn('spotlessApply')
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+spotless {
+	java {
+		importOrder()
+		removeUnusedImports()
+		forbidWildcardImports()
+		formatAnnotations()
+		googleJavaFormat('1.32.0')
+	}
+
+	groovyGradle {
+		target '**/*.gradle'
+		greclipse()
+	}
+}
