@@ -1,0 +1,22 @@
+name: ci/server
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - "apps/server/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "25"
+      - run: ./scripts/ci/server.sh
