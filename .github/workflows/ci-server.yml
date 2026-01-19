@@ -1,11 +1,11 @@
 name: ci/server
 on:
   push:
-    branches:
-      - develop
+    branches: [develop]
   pull_request:
-    branches:
-      - develop
+    branches: [develop]
+    paths:
+      - "apps/server/**"
 jobs:
   build:
     runs-on: ubuntu-latest
