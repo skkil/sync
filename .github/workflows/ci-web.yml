@@ -6,8 +6,6 @@ on:
   pull_request:
     branches:
       - develop
-    paths:
-      - "apps/web/**"
 jobs:
   build:
     runs-on: ubuntu-latest
