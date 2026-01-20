@@ -4,7 +4,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     email VARCHAR(255) UNIQUE NOT NULL,
     hashed_password VARCHAR(255),
-    full_name VARCHAR(255) UNIQUE NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
     bio TEXT,
     role VARCHAR(50) DEFAULT 'USER',
     deleted_at TIMESTAMP DEFAULT NULL

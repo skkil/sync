@@ -9,7 +9,7 @@ import jakarta.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.Instant;
 import lombok.Getter;
-import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
@@ -22,7 +22,6 @@ public abstract class BaseEntity implements Persistable<Long>, Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Setter
   protected Long id;
 
   @CreatedDate
@@ -32,6 +31,11 @@ public abstract class BaseEntity implements Persistable<Long>, Serializable {
   @LastModifiedDate
   @Column(name = "updated_at", nullable = false)
   protected Instant updatedAt;
+
+  @Override
+  public @Nullable Long getId() {
+    return this.id;
+  }
 
   @Override
   public boolean isNew() {

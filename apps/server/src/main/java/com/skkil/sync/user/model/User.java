@@ -15,7 +15,7 @@ import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE user SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?")
 @Getter
 public class User extends BaseEntity {
 
