@@ -2,6 +2,19 @@
   "pages": {
     "home": {
       "title": "sync"
+    },
+    "profile": {
+      "header": {
+        "follow": "팔로우",
+        "unfollow": "언팔로우",
+        "message": "메시지 보내기"
+      },
+      "employment": {
+        "title": "회사 경력"
+      },
+      "education": {
+        "title": "학력"
+      }
     }
   }
 }
