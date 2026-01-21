@@ -2,12 +2,16 @@ package com.skkil.sync.user.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.user.constant.Role;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,6 +45,12 @@ public class User extends BaseEntity {
 
   @Column(name = "deleted_at", nullable = true)
   private Instant deletedAt;
+
+  @OneToMany(
+      mappedBy = "user",
+      cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+      orphanRemoval = true)
+  private List<UserOAuth2Account> oAuth2Accounts = new ArrayList<>();
 
   protected User() {}
 
