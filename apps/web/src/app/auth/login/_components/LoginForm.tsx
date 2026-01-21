@@ -28,7 +28,7 @@ export default function LoginForm() {
 
   type LoginFormValues = z.infer<typeof LoginFormSchema>;
 
-  const form = useForm<z.infer<typeof LoginFormSchema>>({
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
       email: '',
@@ -64,7 +64,7 @@ export default function LoginForm() {
                   id="login-form-email"
                   aria-invalid={fieldState.invalid}
                   placeholder={t('email.placeholder')}
-                  autoComplete="off"
+                  autoComplete="email"
                 />
               </Field>
             )}
@@ -90,7 +90,7 @@ export default function LoginForm() {
                   type="password"
                   aria-invalid={fieldState.invalid}
                   placeholder={t('password.placeholder')}
-                  autoComplete="off"
+                  autoComplete="current-password"
                 />
               </Field>
             )}

@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
-import { ZodIssueCode } from 'zod/v3';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -42,7 +41,7 @@ export default function RegisterForm() {
     .superRefine((val, ctx) => {
       if (val.password !== val.confirmPassword) {
         ctx.addIssue({
-          code: ZodIssueCode.custom,
+          code: 'custom',
           message: t('errors.passwords_must_match'),
           path: ['confirmPassword'],
         });
@@ -51,7 +50,7 @@ export default function RegisterForm() {
 
   type RegisterFormValues = z.infer<typeof RegisterFormSchema>;
 
-  const form = useForm<z.infer<typeof RegisterFormSchema>>({
+  const form = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterFormSchema),
     defaultValues: {
       email: '',
@@ -88,7 +87,7 @@ export default function RegisterForm() {
                   id="register-form-email"
                   aria-invalid={fieldState.invalid}
                   placeholder={t('email.placeholder')}
-                  autoComplete="off"
+                  autoComplete="email"
                 />
               </Field>
             )}
@@ -114,7 +113,7 @@ export default function RegisterForm() {
                   type="password"
                   aria-invalid={fieldState.invalid}
                   placeholder={t('password.placeholder')}
-                  autoComplete="off"
+                  autoComplete="new-password"
                 />
               </Field>
             )}
@@ -140,7 +139,7 @@ export default function RegisterForm() {
                   type="password"
                   aria-invalid={fieldState.invalid}
                   placeholder={t('confirm_password.placeholder')}
-                  autoComplete="off"
+                  autoComplete="new-password"
                 />
               </Field>
             )}
