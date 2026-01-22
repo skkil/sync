@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset hyoungjoojin:00000-create-table-spring-session
 CREATE TABLE SPRING_SESSION (
     PRIMARY_ID char(36) NOT NULL,
     SESSION_ID char(36) NOT NULL,

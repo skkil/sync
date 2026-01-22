@@ -3,6 +3,71 @@
     "home": {
       "title": "sync"
     },
+    "login": {
+      "title": "로그인",
+      "description": "계정에 로그인하세요",
+      "form": {
+        "email": {
+          "label": "이메일",
+          "placeholder": "이메일을 입력하세요"
+        },
+        "password": {
+          "label": "비밀번호",
+          "placeholder": "비밀번호를 입력하세요"
+        },
+        "submit": {
+          "label": "로그인"
+        },
+        "errors": {
+          "invalid_credentials": "잘못된 이메일 또는 비밀번호입니다.",
+          "required_email": "이메일은 필수 항목입니다.",
+          "required_password": "비밀번호는 필수 항목입니다."
+        },
+        "links": {
+          "register": {
+            "label": "계정이 없으신가요? 가입하기"
+          },
+          "forgot_password": {
+            "label": "비밀번호를 잊으셨나요?"
+          }
+        }
+      }
+    },
+    "register": {
+      "title": "회원가입",
+      "description": "새 계정을 만드세요",
+      "form": {
+        "email": {
+          "label": "이메일",
+          "placeholder": "이메일을 입력하세요"
+        },
+        "password": {
+          "label": "비밀번호",
+          "placeholder": "비밀번호를 입력하세요"
+        },
+        "confirm_password": {
+          "label": "비밀번호 확인",
+          "placeholder": "비밀번호를 다시 입력하세요"
+        },
+        "submit": {
+          "label": "회원가입"
+        },
+        "errors": {
+          "email_in_use": "이 이메일은 이미 사용 중입니다.",
+          "required_email": "이메일은 필수 항목입니다.",
+          "invalid_email": "유효한 이메일 주소를 입력하세요.",
+          "required_password": "비밀번호는 필수 항목입니다.",
+          "password_min_length": "비밀번호는 최소 {length}자 이상이어야 합니다.",
+          "passwords_must_match": "비밀번호가 일치하지 않습니다.",
+          "required_confirm_password": "비밀번호 확인은 필수 항목입니다."
+        },
+        "links": {
+          "login": {
+            "label": "이미 계정이 있으신가요? 로그인하기"
+          }
+        }
+      }
+    },
     "profile": {
       "header": {
         "follow": "팔로우",
