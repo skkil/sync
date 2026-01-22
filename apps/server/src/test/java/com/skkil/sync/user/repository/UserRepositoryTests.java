@@ -83,6 +83,7 @@ class UserRepositoryTests {
   }
 
   @Test
+  @DisplayName("OAuth2Account 추가 시 정상적으로 추가됨")
   void addOAuth2Account_accountAddedSuccessfully() {
     User user = User.builder().email("user@email.com").fullName("Full Name").build();
     assertThat(user.getOAuth2Accounts()).isNotNull().isEmpty();

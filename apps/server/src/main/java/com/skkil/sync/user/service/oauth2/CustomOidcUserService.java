@@ -39,6 +39,7 @@ public class CustomOidcUserService extends OidcUserService {
   @Transactional
   public User processOAuth2User(OAuth2Provider provider, OidcUser oidcUser) {
     String email = oidcUser.getEmail();
+    String fullName = oidcUser.getFullName() == null ? "" : oidcUser.getFullName();
 
     User user =
         userRepository
@@ -46,7 +47,7 @@ public class CustomOidcUserService extends OidcUserService {
             .orElseGet(
                 () -> {
                   log.debug("User not found with email: {}. Creating new user.", email);
-                  return User.builder().email(email).fullName(oidcUser.getFullName()).build();
+                  return User.builder().email(email).fullName(fullName).build();
                 });
 
     if (user.getOAuth2Accounts().stream()

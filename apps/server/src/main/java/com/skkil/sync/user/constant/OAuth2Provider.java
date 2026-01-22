@@ -18,6 +18,6 @@ public enum OAuth2Provider {
       }
     }
 
-    throw new IllegalArgumentException("Unknown OAuthProvider ID: " + id);
+    throw new IllegalArgumentException("Unknown OAuth2 provider ID: " + id);
   }
 }

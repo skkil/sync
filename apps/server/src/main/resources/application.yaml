@@ -30,8 +30,3 @@ spring:
               - openid
               - profile
               - email
-
-logging:
-  level:
-    org:
-      skkil: TRACE
