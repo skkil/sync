@@ -2,6 +2,36 @@
   "pages": {
     "home": {
       "title": "sync"
+    },
+    "messages": {
+      "conversations": {
+        "title": "메시지",
+        "search": "대화 검색"
+      },
+      "main": {
+        "input": {
+          "placeholder": "메시지 입력...",
+          "helpers": {
+            "coffee-chat": "커피챗 신청",
+            "invite-to-project": "프로젝트 초대",
+            "schedule-meeting": "일정 잡기"
+          }
+        }
+      },
+      "details": {
+        "title": "세부 정보",
+        "visit-profile": "프로필 방문",
+        "schedule": {
+          "title": "일정"
+        },
+        "memo": {
+          "title": "메모"
+        },
+        "settings": {
+          "title": "대화 설정",
+          "block": "차단"
+        }
+      }
     }
   }
 }
