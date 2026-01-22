@@ -1,0 +1,67 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00002-create-table-provider
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: providers
+      changes:
+        - createTable:
+            tableName: providers
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: is_verified
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 00002-create-table-school
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: schools
+      changes:
+        - createTable:
+            tableName: schools
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: school_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: schools
+            baseColumnNames: id
+            referencedTableName: providers
+            referencedColumnNames: id
+            constraintName: fk_schools_providers
+            onDelete: CASCADE
