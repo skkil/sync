@@ -1,7 +1,6 @@
 export interface Contact {
   id: string;
   type: 'email' | 'phone';
-  icon: React.ReactNode;
   value: string;
 }
 

@@ -1,7 +1,7 @@
 import { EnvelopeIcon, PhoneIcon } from '@phosphor-icons/react/ssr';
 import { getTranslations } from 'next-intl/server';
 
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Logo from '@/components/ui/logo';
@@ -28,13 +28,11 @@ export default async function ProfilePage({ params }: ProfileProps) {
       {
         id: '1',
         type: 'email',
-        icon: <EnvelopeIcon />,
         value: 'example@email.com',
       },
       {
         id: '2',
         type: 'phone',
-        icon: <PhoneIcon />,
         value: '+1 (555) 123-4567',
       },
     ],
@@ -81,7 +79,9 @@ export default async function ProfilePage({ params }: ProfileProps) {
       <div className="flex flex-col gap-4 mt-4">
         <Card className="mx-auto w-full max-w-3xl min-h-96 p-0">
           <CardHeader className="relative h-48 bg-muted">
-            <Avatar className="h-32 w-32 bg-card absolute left-8 -bottom-16" />
+            <Avatar className="h-32 w-32 absolute left-8 -bottom-16">
+              <AvatarFallback></AvatarFallback>
+            </Avatar>
           </CardHeader>
 
           <CardContent className="mt-10 mx-4">
@@ -103,7 +103,9 @@ export default async function ProfilePage({ params }: ProfileProps) {
                     key={contact.id}
                     className="text-sm text-muted-foreground flex items-center gap-2"
                   >
-                    <p>{contact.icon}</p>
+                    <p>
+                      <ContactIcon type={contact.type} />
+                    </p>
                     <p>{contact.value}</p>
                   </div>
                 ))}
@@ -114,7 +116,10 @@ export default async function ProfilePage({ params }: ProfileProps) {
 
         <Card className="mx-auto w-full max-w-3xl">
           <CardHeader>
-            <h1 className="text-xl font-bold">{t('employment.title')}</h1>
+            <h2 className="text-xl font-bold">{t('employment.title')}</h2>
+          </CardHeader>
+
+          <CardContent>
             {experiences
               .filter(
                 (experience) =>
@@ -122,19 +127,20 @@ export default async function ProfilePage({ params }: ProfileProps) {
               )
               .map((employment) => (
                 <div key={employment.id}>
-                  <h1 className="text-md font-semibold">
-                    {employment.provider.name}
-                  </h1>
+                  <h3 className="font-semibold">{employment.provider.name}</h3>
                   {employment.startDate.getFullYear()} -{' '}
                   {employment.endDate.getFullYear()}
                 </div>
               ))}
-          </CardHeader>
+          </CardContent>
         </Card>
 
         <Card className="mx-auto w-full max-w-3xl">
           <CardHeader>
-            <h1 className="text-xl font-bold">{t('education.title')}</h1>
+            <h2 className="text-xl font-bold">{t('education.title')}</h2>
+          </CardHeader>
+
+          <CardContent>
             {experiences
               .filter(
                 (experience) =>
@@ -142,17 +148,26 @@ export default async function ProfilePage({ params }: ProfileProps) {
               )
               .map((education) => (
                 <div key={education.id}>
-                  <h1 className="text-md font-semibold">
-                    {education.provider.name}
-                  </h1>
+                  <h3 className="font-semibold">{education.provider.name}</h3>
                   {education.major && <p>{education.major}</p>}
                   {education.startDate.getFullYear()} -{' '}
                   {education.endDate.getFullYear()}
                 </div>
               ))}
-          </CardHeader>
+          </CardContent>
         </Card>
       </div>
     </>
   );
+}
+
+function ContactIcon({ type }: { type: 'email' | 'phone' }) {
+  switch (type) {
+    case 'email':
+      return <EnvelopeIcon size={16} />;
+    case 'phone':
+      return <PhoneIcon size={16} />;
+    default:
+      return null;
+  }
 }
