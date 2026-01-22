@@ -27,5 +27,5 @@ public abstract class Provider {
   protected String description;
 
   @Column(name = "is_verified")
-  protected Boolean isVerified;
+  protected Boolean isVerified = false;
 }

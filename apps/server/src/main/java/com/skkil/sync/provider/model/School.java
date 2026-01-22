@@ -14,6 +14,6 @@ import lombok.Getter;
 public class School extends Provider {
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "school_type")
+  @Column(name = "school_type", length = 100, nullable = false)
   private SchoolType type;
 }
