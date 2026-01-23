@@ -3,21 +3,7 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-
-type Review = {
-  id: string;
-  author: string;
-  role: string;
-  rating: string;
-  content: string;
-};
-
-type ReviewListProps = {
-  reviews: Review[];
-  moreLabel: string;
-  collapseLabel: string;
-  initialCount?: number;
-};
+import type { ReviewListProps } from '@/types/review';
 
 export default function ReviewList({
   reviews,
