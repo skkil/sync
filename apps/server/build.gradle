@@ -6,6 +6,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'com.diffplug.spotless' version '8.1.0'
 	id 'net.ltgt.errorprone' version '4.3.0'
+	id 'org.asciidoctor.jvm.convert' version '4.0.5'
 }
 
 group = 'com.skkil'
@@ -27,6 +28,7 @@ jar {
 }
 
 configurations {
+
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -34,6 +36,10 @@ configurations {
 
 repositories {
 	mavenCentral()
+}
+
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
@@ -52,6 +58,8 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-restdocs'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-jooq-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
@@ -111,8 +119,16 @@ tasks.named('build') {
 }
 
 tasks.named('test') {
+	outputs.dir snippetsDir
 	useJUnitPlatform()
 }
+
+
+tasks.named('asciidoctor') {
+	inputs.dir snippetsDir
+	dependsOn test
+}
+
 
 spotless {
 	java {

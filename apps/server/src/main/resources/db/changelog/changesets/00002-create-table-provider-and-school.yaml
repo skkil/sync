@@ -25,6 +25,11 @@ databaseChangeLog:
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
               - column:
+                  name: provider_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
                   name: name
                   type: VARCHAR(255)
                   constraints:
