@@ -80,8 +80,8 @@ const providerProfile = {
   ],
 };
 
-export default async function CompanyProviderPage() {
-  const t = await getTranslations('pages.companyProvider');
+export default async function ProviderPage() {
+  const t = await getTranslations('pages.provider');
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -107,7 +107,7 @@ export default async function CompanyProviderPage() {
                     {providerProfile.name}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    {providerProfile.location} Â· {providerProfile.size}
+                    {providerProfile.location} ¡¤ {providerProfile.size}
                   </p>
                 </div>
               </div>

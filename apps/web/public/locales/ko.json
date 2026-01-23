@@ -3,7 +3,7 @@
     "home": {
       "title": "sync"
     },
-    "companyProvider": {
+    "provider": {
       "actions": {
         "follow": "팔로우",
         "review": "리뷰 작성",
