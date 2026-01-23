@@ -19,6 +19,7 @@
     ```bash
     cd apps/server
     ./gradlew bootRun
+    ./gradlew bootRun --args='--spring.profiles.active=dev' # dev profile
     ```
 
 - 웹 빌드 및 실행
