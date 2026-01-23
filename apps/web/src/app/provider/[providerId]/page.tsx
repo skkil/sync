@@ -107,7 +107,7 @@ export default async function ProviderPage() {
                     {providerProfile.name}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    {providerProfile.location} ¡¤ {providerProfile.size}
+                    {providerProfile.location} Â· {providerProfile.size}
                   </p>
                 </div>
               </div>
