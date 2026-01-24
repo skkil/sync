@@ -1,10 +1,10 @@
 import { EnvelopeIcon, PhoneIcon } from '@phosphor-icons/react/ssr';
 import { getTranslations } from 'next-intl/server';
 
+import Navigation from '@/components/layout/Navigation';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import Logo from '@/components/ui/logo';
 import { Experience, ExperienceCategory } from '@/types/experience';
 import { Profile } from '@/types/profile';
 import { Provider, ProviderCategory } from '@/types/provider';
@@ -72,9 +72,7 @@ export default async function ProfilePage({ params }: ProfileProps) {
 
   return (
     <>
-      <nav className="flex w-full items-center justify-between border-b bg-white p-3 px-8">
-        <Logo />
-      </nav>
+      <Navigation />
 
       <div className="flex flex-col gap-4 mt-4">
         <Card className="mx-auto w-full max-w-3xl min-h-96 p-0">

@@ -1,8 +1,6 @@
 {
   "pages": {
-    "home": {
-      "title": "sync"
-    },
+    "home": {},
     "login": {
       "title": "로그인",
       "description": "계정에 로그인하세요",
@@ -80,6 +78,11 @@
       "education": {
         "title": "학력"
       }
+    }
+  },
+  "components": {
+    "navigation": {
+      "login": "로그인"
     }
   }
 }

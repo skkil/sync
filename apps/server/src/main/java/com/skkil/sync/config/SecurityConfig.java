@@ -19,7 +19,12 @@ public class SecurityConfig {
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.oauth2Login(
         oauth2 ->
-            oauth2.userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)));
+            oauth2
+                .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
+                .successHandler(
+                    (req, res, auth) -> {
+                      res.sendRedirect("http://localhost:3000");
+                    }));
 
     return http.build();
   }

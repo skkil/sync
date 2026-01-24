@@ -30,3 +30,13 @@ spring:
               - openid
               - profile
               - email
+
+server:
+  servlet:
+    session:
+      cookie:
+        path: /
+        name: session
+        http-only: true
+        secure: true
+        same-site: lax
