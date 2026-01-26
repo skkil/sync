@@ -209,17 +209,17 @@ export default function Messages() {
 
         <div className="border-t p-4">
           <div className="mb-2 flex gap-2">
-            <Badge className="bg-brown-100 text-brown-800">
+            <Badge color="amber">
               <CoffeeIcon />
               {t('main.input.helpers.coffee-chat')}
             </Badge>
 
-            <Badge className="bg-green-100 text-green-800">
+            <Badge color="blue">
               <UserPlusIcon />
               {t('main.input.helpers.invite-to-project')}
             </Badge>
 
-            <Badge className="bg-blue-100 text-blue-800">
+            <Badge color="white">
               <CalendarIcon />
               {t('main.input.helpers.schedule-meeting')}
             </Badge>
@@ -235,7 +235,6 @@ export default function Messages() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder={t('main.input.placeholder')}
-              className="flex-1 px-4 py-3 border rounded-full focus:outline-none focus:ring-2"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && message.trim()) {
                   setMessage('');
