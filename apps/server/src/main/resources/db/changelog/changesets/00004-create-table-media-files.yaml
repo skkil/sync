@@ -71,3 +71,17 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_media_files_uploader_id
             onDelete: CASCADE
+
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: profile_image_id
+                  type: BIGINT
+
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: profile_image_id
+            referencedTableName: media_files
+            referencedColumnNames: id
+            constraintName: fk_users_profile_image_id
