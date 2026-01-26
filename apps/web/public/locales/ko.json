@@ -1,8 +1,6 @@
 {
   "pages": {
-    "home": {
-      "title": "sync"
-    },
+    "home": { "title": "sync" },
     "messages": {
       "conversations": {
         "title": "메시지",
@@ -127,6 +125,11 @@
       "education": {
         "title": "학력"
       }
+    }
+  },
+  "components": {
+    "navigation": {
+      "login": "로그인"
     }
   }
 }

@@ -1,5 +1,6 @@
 package com.skkil.sync.user.service.oauth2;
 
+import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.user.constant.OAuth2Provider;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserOAuth2Account;
@@ -31,9 +32,12 @@ public class CustomOidcUserService extends OidcUserService {
     OidcUser oidcUser = super.loadUser(userRequest);
     log.debug("OIDC user loaded: {}", oidcUser.getEmail());
 
-    processOAuth2User(provider, oidcUser);
-
-    return oidcUser;
+    User user = processOAuth2User(provider, oidcUser);
+    return AuthenticatedUser.builder()
+        .userId(user.getId())
+        .fullName(user.getFullName())
+        .email(user.getEmail())
+        .build();
   }
 
   @Transactional
