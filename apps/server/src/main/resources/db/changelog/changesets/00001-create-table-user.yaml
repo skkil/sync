@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00001-create-table-user
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: users
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: hashed_password
+                  type: VARCHAR(255)
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: bio
+                  type: TEXT
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+                  defaultValue: "USER"
+              - column:
+                  name: deleted_at
+                  type: TIMESTAMP
+                  defaultValue: NULL

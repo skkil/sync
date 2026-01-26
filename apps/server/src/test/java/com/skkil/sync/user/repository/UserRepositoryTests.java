@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.skkil.sync.config.JpaConfig;
 import com.skkil.sync.config.TestcontainersConfig;
+import com.skkil.sync.user.constant.OAuth2Provider;
 import com.skkil.sync.user.model.User;
+import com.skkil.sync.user.model.UserOAuth2Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,13 @@ class UserRepositoryTests {
     User foundUser = userRepository.findById(user.getId()).orElseThrow();
     assertThat(foundUser.getCreatedAt()).isNotNull();
     assertThat(foundUser.getUpdatedAt()).isNotNull();
+  }
+
+  @Test
+  @DisplayName("User 생성 시 oAuth2Accounts 필드가 null이 아님")
+  void createUser_oAuth2AccountsIsNotNull() {
+    User user = User.builder().email("user@email.com").fullName("Full Name").build();
+    assertThat(user.getOAuth2Accounts()).isNotNull();
   }
 
   @Test
@@ -71,5 +80,30 @@ class UserRepositoryTests {
 
     User foundUser = userRepository.findById(user.getId()).orElseThrow();
     assertThat(foundUser.getDeletedAt()).isNotNull();
+  }
+
+  @Test
+  @DisplayName("OAuth2Account 추가 시 정상적으로 추가됨")
+  void addOAuth2Account_accountAddedSuccessfully() {
+    User user = User.builder().email("user@email.com").fullName("Full Name").build();
+    assertThat(user.getOAuth2Accounts()).isNotNull().isEmpty();
+
+    user.getOAuth2Accounts()
+        .add(
+            UserOAuth2Account.builder()
+                .user(user)
+                .oAuth2Provider(OAuth2Provider.GOOGLE)
+                .oAuth2ProviderUserId("google-user-id")
+                .build());
+    user = userRepository.save(user);
+
+    User foundUser = userRepository.findByEmailWithOAuthAccounts(user.getEmail()).orElseThrow();
+    assertThat(foundUser.getOAuth2Accounts())
+        .hasSize(1)
+        .allSatisfy(
+            account -> {
+              assertThat(account.getOAuth2Provider()).isEqualTo(OAuth2Provider.GOOGLE);
+              assertThat(account.getOAuth2ProviderUserId()).isEqualTo("google-user-id");
+            });
   }
 }
