@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
 import { nextCookies } from 'better-auth/next-js';
 
-import { env } from '../env';
+import { server } from '../server';
 
 export const auth = betterAuth({
   plugins: [
@@ -30,16 +30,20 @@ export const auth = betterAuth({
                 return null;
               }
 
-              const res = await fetch(
-                `${env.NEXT_PUBLIC_BACKEND_URL}/users/me`,
-                {
-                  method: 'GET',
+              const response = await server
+                .get<GetAuthenticatedUserResponse>('users/me', {
                   headers: {
                     Cookie: `session=${sessionCookie}`,
                   },
-                },
-              );
-              const { userId, fullName, email } = await res.json();
+                })
+                .then((res) => res.json())
+                .catch(() => null);
+
+              if (response === null) {
+                return null;
+              }
+
+              const { userId, fullName, email } = response;
 
               const user = await ctx.context.internalAdapter.createUser({
                 id: userId,

@@ -31,6 +31,10 @@ spring:
               - profile
               - email
 
+app:
+  oauth2:
+    frontend-redirect-uri: http://localhost:3000
+
 server:
   servlet:
     session:
