@@ -31,7 +31,19 @@ spring:
               - profile
               - email
 
+  cloud:
+    aws:
+      endpoint: http://localhost:4566
+      region.static: us-east-1
+      credentials:
+        access-key: skkil
+        secret-key: sync
+      s3:
+        config.enabled: true
+        path-style-access-enabled: true
+
 app:
+  cors.allowed-origins: http://localhost:3000
   oauth2:
     frontend-redirect-uri: http://localhost:3000
 

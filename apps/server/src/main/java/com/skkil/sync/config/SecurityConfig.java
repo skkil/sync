@@ -23,7 +23,11 @@ public class SecurityConfig {
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.authorizeHttpRequests(
             requests ->
-                requests.requestMatchers("/users/me").authenticated().anyRequest().permitAll())
+                requests
+                    .requestMatchers("/users/me", "/media/**")
+                    .authenticated()
+                    .anyRequest()
+                    .permitAll())
         .oauth2Login(
             oauth2 ->
                 oauth2
