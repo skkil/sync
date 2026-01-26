@@ -32,6 +32,26 @@
           "block": "차단"
         }
       }
+    },
+    "provider": {
+      "actions": {
+        "follow": "팔로우",
+        "review": "리뷰 작성",
+        "view": "프로필 보기",
+        "moreReviews": "리뷰 더 보기",
+        "collapseReviews": "접기"
+      },
+      "stats": {
+        "followers": "팔로워",
+        "projects": "프로젝트",
+        "rating": "평점"
+      },
+      "sections": {
+        "about": "회사 소개",
+        "people": "관련 인물",
+        "reviews": "리뷰"
+      }
+    },
     "login": {
       "title": "로그인",
       "description": "계정에 로그인하세요",
@@ -53,9 +73,7 @@
           "required_password": "비밀번호는 필수 항목입니다."
         },
         "links": {
-          "register": {
-            "label": "계정이 없으신가요? 가입하기"
-          },
+          "register": { "label": "계정이 없으신가요? 가입하기" },
           "forgot_password": {
             "label": "비밀번호를 잊으셨나요?"
           }
