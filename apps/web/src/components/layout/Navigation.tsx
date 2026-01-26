@@ -1,3 +1,4 @@
+import { ChatIcon } from '@phosphor-icons/react/dist/ssr';
 import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -14,13 +15,22 @@ export default async function Navigation() {
     headers: await headers(),
   });
 
+  console.log(session);
   return (
     <nav className="flex w-full items-center justify-between border-b bg-white p-3 px-8">
       <Link href="/">
         <Logo />
       </Link>
 
-      <div>
+      <div className="flex items-center gap-2">
+        {session && (
+          <Link href="/messages">
+            <Button variant="ghost" size="icon">
+              <ChatIcon />
+            </Button>
+          </Link>
+        )}
+
         {session && session.user ? (
           <Link href={`/profile/${session.user.id}`}>
             <Avatar>

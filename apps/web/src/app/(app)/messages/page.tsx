@@ -15,6 +15,7 @@ import {
 import { useWindowSize } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -23,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useSession } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 
 const conversations = [
@@ -59,6 +61,8 @@ const messages = [
 
 export default function Messages() {
   const t = useTranslations('pages.messages');
+
+  const { data: session, isPending } = useSession();
 
   const { width } = useWindowSize();
 
@@ -344,12 +348,16 @@ export default function Messages() {
     );
   }
 
+  if (isPending) {
+    return null;
+  }
+
+  if (!session) {
+    redirect('/auth/login');
+  }
+
   return (
     <div className="flex flex-col items-center gap-4 min-h-screen bg-background p-4">
-      <nav className="flex w-full items-center justify-between border-b p-3 px-8">
-        sync
-      </nav>
-
       <Card className="grow w-full h-full flex p-0">
         <CardContent className="flex-1 flex overflow-hidden p-0 relative">
           {leftSidebarOpen && (
