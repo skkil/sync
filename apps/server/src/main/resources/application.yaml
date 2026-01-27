@@ -32,6 +32,7 @@ spring:
               - email
 
 app:
+  cors.allowed-origins: http://localhost:3000
   oauth2:
     frontend-redirect-uri: http://localhost:3000
 

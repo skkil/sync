@@ -3,3 +3,7 @@ interface GetAuthenticatedUserResponse {
   fullName: string;
   email: string;
 }
+
+interface UpdateProfileRequest {
+  name?: string;
+}
