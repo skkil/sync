@@ -1,9 +1,9 @@
-interface GetAuthenticatedUserResponse {
+export interface GetAuthenticatedUserResponse {
   userId: string;
   fullName: string;
   email: string;
 }
 
-interface UpdateProfileRequest {
+export interface UpdateProfileRequest {
   name?: string;
 }

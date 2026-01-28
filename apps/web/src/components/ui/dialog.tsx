@@ -28,7 +28,13 @@ function DialogPortal({
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+  return (
+    <DialogPrimitive.Close data-slot="dialog-close" {...props} asChild>
+      <Button variant="ghost" size="icon">
+        <XIcon />
+      </Button>
+    </DialogPrimitive.Close>
+  );
 }
 
 function DialogOverlay({
@@ -50,7 +56,6 @@ function DialogOverlay({
 function DialogContent({
   className,
   children,
-  showCloseButton = true,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
@@ -67,18 +72,6 @@ function DialogContent({
         {...props}
       >
         {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close data-slot="dialog-close" asChild>
-            <Button
-              variant="ghost"
-              className="absolute top-4 right-4"
-              size="icon-sm"
-            >
-              <XIcon />
-              <span className="sr-only">Close</span>
-            </Button>
-          </DialogPrimitive.Close>
-        )}
       </DialogPrimitive.Content>
     </DialogPortal>
   );
@@ -106,7 +99,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        'gap-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',
+        'gap-2 flex flex-col-reverse sm:flex-row sm:justify-end',
         className,
       )}
       {...props}

@@ -20,7 +20,7 @@ export const server = ky.extend({
   hooks: {
     beforeRequest: [
       (request) => {
-        if (request.method !== 'GET') {
+        if (request.method !== 'GET' && request.method !== 'HEAD') {
           const csrfToken = getCookie('XSRF-TOKEN');
           if (csrfToken) {
             request.headers.set('X-XSRF-TOKEN', csrfToken);

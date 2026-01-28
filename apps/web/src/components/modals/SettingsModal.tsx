@@ -6,10 +6,12 @@ import { useEffect, useState } from 'react';
 import { useModal } from '@/hooks/store';
 import { useSession } from '@/lib/auth/client';
 import { server } from '@/lib/server/client';
+import { UpdateProfileRequest } from '@/types/api/users';
 
 import { Button } from '../ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -22,23 +24,36 @@ import { Label } from '../ui/label';
 export default function SettingsModal() {
   const t = useTranslations('modals.settings');
 
-  const { closeModal } = useModal();
+  const { isOpen, closeModal } = useModal();
 
   const [name, setName] = useState('');
-  const { isPending, data: session } = useSession();
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (session?.user?.name) {
       setName(session.user.name);
     }
-  }, [isPending]);
+  }, [session?.user?.name]);
 
   return (
-    <Dialog open={true}>
-      <DialogContent className="min-w-7xl h-5/6 flex flex-col">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          closeModal();
+        }
+      }}
+    >
+      <DialogContent className="w-11/12 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t('title')}</DialogTitle>
-          <DialogDescription>{t('description')}</DialogDescription>
+          <div className="flex justify-between">
+            <div className="flex flex-col gap-2">
+              <DialogTitle>{t('title')}</DialogTitle>
+              <DialogDescription>{t('description')}</DialogDescription>
+            </div>
+
+            <DialogClose />
+          </div>
         </DialogHeader>
 
         <div className="grow flex flex-col gap-2">
@@ -53,7 +68,7 @@ export default function SettingsModal() {
         <DialogFooter>
           <div className="flex gap-2">
             <Button
-              variant="outline"
+              variant="destructive"
               onClick={() => {
                 server
                   .patch('profile/me', {
@@ -61,13 +76,16 @@ export default function SettingsModal() {
                       name,
                     } satisfies UpdateProfileRequest,
                   })
-                  .then(() => {});
+                  .catch(() => {
+                    // TODO: Proper error handling
+                    console.error('Failed to update profile');
+                  });
               }}
             >
               {t('actions.save')}
             </Button>
             <Button
-              variant="destructive"
+              variant="outline"
               onClick={() => {
                 closeModal();
               }}

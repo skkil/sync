@@ -24,7 +24,5 @@ public class ProfileService {
     if (request.name() != null) {
       user.setFullName(request.name());
     }
-
-    userRepository.save(user);
   }
 }

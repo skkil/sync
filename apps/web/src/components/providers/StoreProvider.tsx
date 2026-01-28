@@ -12,7 +12,7 @@ export interface AppStoreProviderProps {
 }
 
 export const StoreProvider = ({ children }: AppStoreProviderProps) => {
-  const storeRef = useRef<AppStoreType>(null);
+  const storeRef = useRef<AppStoreType | null>(null);
   if (!storeRef.current) {
     storeRef.current = createAppStore();
   }
