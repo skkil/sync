@@ -4,7 +4,6 @@ import com.skkil.sync.provider.dto.request.CreateProviderRequest;
 import com.skkil.sync.provider.dto.request.UpdateProviderRequest;
 import com.skkil.sync.provider.dto.response.CreateProviderResponse;
 import com.skkil.sync.provider.dto.response.GetProviderResponse;
-import com.skkil.sync.provider.exception.ProviderNotFoundException;
 import com.skkil.sync.provider.service.ProviderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -42,8 +41,7 @@ public class ProviderController {
   @PatchMapping("/providers/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updateProvider(
-      @PathVariable Long id, @RequestBody @Validated UpdateProviderRequest request)
-      throws ProviderNotFoundException {
+      @PathVariable Long id, @RequestBody @Validated UpdateProviderRequest request) {
     providerService.updateProvider(id, request);
   }
 

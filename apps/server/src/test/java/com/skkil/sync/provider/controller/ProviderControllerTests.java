@@ -38,7 +38,7 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @WebMvcTest(ProviderController.class)
 @AutoConfigureRestDocs
@@ -50,7 +50,7 @@ public class ProviderControllerTests {
 
   @MockitoBean private ProviderService providerService;
 
-  @Autowired private ObjectMapper objectMapper;
+  @Autowired private JsonMapper jsonMapper;
 
   @Test
   void createSchool() throws Exception {
@@ -70,7 +70,7 @@ public class ProviderControllerTests {
         .perform(
             post("/providers")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .content(jsonMapper.writeValueAsString(request))
                 .with(csrf()))
         .andExpect(status().isCreated())
         .andDo(
@@ -110,6 +110,7 @@ public class ProviderControllerTests {
         .andDo(
             document(
                 "providers-get",
+                pathParameters(parameterWithName("id").description("Provider ID")),
                 responseFields(
                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("Provider id"),
                     fieldWithPath("type").type(JsonFieldType.STRING).description("Provider type"),
@@ -142,7 +143,7 @@ public class ProviderControllerTests {
         .perform(
             patch("/providers/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .content(jsonMapper.writeValueAsString(request))
                 .with(csrf()))
         .andExpect(status().isNoContent())
         .andDo(
@@ -156,7 +157,6 @@ public class ProviderControllerTests {
                         .optional()
                         .description("Provider name"),
                     fieldWithPath("description")
-                        .optional()
                         .type(JsonFieldType.STRING)
                         .optional()
                         .description("Provider description"),

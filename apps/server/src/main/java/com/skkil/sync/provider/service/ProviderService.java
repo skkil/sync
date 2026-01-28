@@ -29,6 +29,7 @@ public class ProviderService {
             .collect(Collectors.toMap(ProviderStrategy::getProviderType, Function.identity()));
   }
 
+  @Transactional
   public CreateProviderResponse createProvider(CreateProviderRequest request) {
     ProviderStrategy providerStrategy = getProviderStrategy(request.type());
     Provider provider = providerStrategy.createProvider(request);
@@ -53,6 +54,7 @@ public class ProviderService {
     providerStrategy.updateProvider(provider, request);
   }
 
+  @Transactional
   public void deleteProvider(Long id) {
     providerRepository.deleteById(id);
   }

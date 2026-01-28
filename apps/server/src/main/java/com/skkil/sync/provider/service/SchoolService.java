@@ -75,7 +75,5 @@ class SchoolService implements ProviderStrategy {
     if (schoolRequest.schoolType() != null) {
       school.setSchoolType(schoolRequest.schoolType());
     }
-
-    schoolRepository.save(school);
   }
 }

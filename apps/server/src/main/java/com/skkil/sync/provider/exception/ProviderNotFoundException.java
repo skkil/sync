@@ -13,7 +13,7 @@ public class ProviderNotFoundException extends SyncException {
 
   @Override
   public HttpStatusCode getStatusCode() {
-    return HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value());
+    return HttpStatus.NOT_FOUND;
   }
 
   @Override
