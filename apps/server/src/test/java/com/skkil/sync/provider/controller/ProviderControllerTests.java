@@ -8,14 +8,12 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.constant.SchoolType;
 import com.skkil.sync.provider.dto.request.CreateSchoolRequest;
@@ -31,8 +29,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restdocs.test.autoconfigure.AutoConfigureRestDocs;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -41,9 +39,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.json.JsonMapper;
 
 @WebMvcTest(ProviderController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureRestDocs
 @ExtendWith(RestDocumentationExtension.class)
-@Import(SecurityConfig.class)
 public class ProviderControllerTests {
 
   @Autowired private MockMvc mockMvc;
@@ -70,8 +68,7 @@ public class ProviderControllerTests {
         .perform(
             post("/providers")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsString(request))
-                .with(csrf()))
+                .content(jsonMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
         .andDo(
             document(
@@ -143,8 +140,7 @@ public class ProviderControllerTests {
         .perform(
             patch("/providers/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsString(request))
-                .with(csrf()))
+                .content(jsonMapper.writeValueAsString(request)))
         .andExpect(status().isNoContent())
         .andDo(
             document(
@@ -171,7 +167,7 @@ public class ProviderControllerTests {
     Mockito.doNothing().when(providerService).deleteProvider(eq(1L));
 
     mockMvc
-        .perform(delete("/providers/{id}", 1L).with(csrf()))
+        .perform(delete("/providers/{id}", 1L))
         .andExpect(status().isNoContent())
         .andDo(
             document(
