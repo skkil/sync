@@ -2,6 +2,9 @@ spring:
   application:
     name: sync
 
+  config:
+    import: optional:file:.env[.properties]
+
   jpa:
     open-in-view: false
     hibernate:
@@ -15,3 +18,29 @@ spring:
     store-type: jdbc
     jdbc:
       initialize-schema: always
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+
+app:
+  oauth2:
+    frontend-redirect-uri: http://localhost:3000
+
+server:
+  servlet:
+    session:
+      cookie:
+        path: /
+        name: session
+        http-only: true
+        secure: true
+        same-site: lax
