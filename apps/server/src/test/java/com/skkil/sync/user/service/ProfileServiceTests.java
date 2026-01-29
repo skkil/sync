@@ -1,0 +1,54 @@
+package com.skkil.sync.user.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
+
+import com.skkil.sync.user.dto.response.GetProfileResponse;
+import com.skkil.sync.user.exception.UserNotFoundException;
+import com.skkil.sync.user.model.User;
+import com.skkil.sync.user.repository.UserRepository;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class ProfileServiceTests {
+
+  @Mock private UserRepository userRepository;
+
+  private ProfileService profileService;
+
+  @BeforeEach
+  void setUp() {
+    profileService = new ProfileService(userRepository);
+  }
+
+  @Test
+  void getProfile_userExists_returnProfile() {
+    Long userId = 1L;
+    User user = User.builder().email("user@email.com").fullName("Test User").bio("").build();
+    user.setId(userId);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+    GetProfileResponse response = profileService.getProfile(userId);
+
+    assertThat(response)
+        .isNotNull()
+        .extracting("userId", "name", "email", "bio")
+        .containsExactly("1", "Test User", "user@email.com", "");
+  }
+
+  @Test
+  void getProfile_userNotFound_throwException() {
+    Long userId = 1L;
+    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> profileService.getProfile(userId))
+        .isInstanceOf(UserNotFoundException.class);
+  }
+}

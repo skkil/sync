@@ -20,16 +20,10 @@ public class ProfileService {
   public GetProfileResponse getProfile(Long userId) {
     log.debug("Fetching profile for userId: {}", userId);
     User user =
-        userRepository
-            .findById(userId)
-            .orElseThrow(
-                () -> {
-                  log.debug("User with id {} not found", userId);
-                  return new UserNotFoundException("");
-                });
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
     return GetProfileResponse.builder()
-        .userId(user.getId())
+        .userId(user.getId().toString())
         .name(user.getFullName())
         .email(user.getEmail())
         .bio(user.getBio())
