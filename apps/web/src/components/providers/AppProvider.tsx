@@ -1,5 +1,7 @@
 import I18nProvider from './I18nProvider';
+import ModalProvider from './ModalProvider';
 import QueryProvider from './QueryProvider';
+import { StoreProvider } from './StoreProvider';
 
 interface AppProviderProps {
   children?: React.ReactNode;
@@ -7,8 +9,13 @@ interface AppProviderProps {
 
 export default function AppProvider({ children }: AppProviderProps) {
   return (
-    <I18nProvider>
-      <QueryProvider>{children}</QueryProvider>
-    </I18nProvider>
+    <StoreProvider>
+      <I18nProvider>
+        <QueryProvider>
+          {children}
+          <ModalProvider />
+        </QueryProvider>
+      </I18nProvider>
+    </StoreProvider>
   );
 }

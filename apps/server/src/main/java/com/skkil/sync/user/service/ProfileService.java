@@ -1,11 +1,13 @@
 package com.skkil.sync.user.service;
 
+import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.exception.UserNotFoundException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -17,6 +19,7 @@ public class ProfileService {
     this.userRepository = userRepository;
   }
 
+  @Transactional(readOnly = true)
   public GetProfileResponse getProfile(Long userId) {
     log.debug("Fetching profile for userId: {}", userId);
     User user =
@@ -28,5 +31,17 @@ public class ProfileService {
         .email(user.getEmail())
         .bio(user.getBio())
         .build();
+  }
+
+  @Transactional
+  public void updateProfile(Long userId, UpdateProfileRequest request) {
+    var user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+    if (request.name() != null) {
+      user.setFullName(request.name());
+    }
   }
 }
