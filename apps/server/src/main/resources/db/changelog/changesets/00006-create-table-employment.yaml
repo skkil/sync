@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00006-create-table-employment
+      author: hyoungjoojin
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: experiences
+            - not:
+                tableExists:
+                  tableName: employment_experiences
+      changes:
+        - createTable:
+            tableName: employment_experiences
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+        - addForeignKeyConstraint:
+            baseTableName: employment_experiences
+            baseColumnNames: id
+            referencedTableName: experiences
+            referencedColumnNames: id
+            constraintName: fk_employment_experiences_experience_id
+            onDelete: CASCADE
