@@ -1,7 +1,6 @@
 package com.skkil.sync.config;
 
 import com.skkil.sync.user.service.oauth2.CustomOidcUserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,13 +13,16 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
   @Value("${app.oauth2.frontend-redirect-uri}")
   private String frontendRedirectUri;
 
   private final CustomOidcUserService customOidcUserService;
+
+  public SecurityConfig(CustomOidcUserService customOidcUserService) {
+    this.customOidcUserService = customOidcUserService;
+  }
 
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
