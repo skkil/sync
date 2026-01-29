@@ -15,7 +15,6 @@ export default async function Navigation() {
     headers: await headers(),
   });
 
-  console.log(session);
   return (
     <nav className="flex w-full items-center justify-between border-b bg-white p-3 px-8">
       <Link href="/">

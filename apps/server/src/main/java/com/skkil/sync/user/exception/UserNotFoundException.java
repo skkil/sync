@@ -1,13 +1,13 @@
-package com.skkil.sync.provider.exception;
+package com.skkil.sync.user.exception;
 
 import com.skkil.sync.common.exception.SyncException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-public class ProviderNotFoundException extends SyncException {
+public class UserNotFoundException extends SyncException {
 
-  public ProviderNotFoundException(Long providerId) {
-    super(String.format("Provider with id %d not found.", providerId));
+  public UserNotFoundException(Long userId) {
+    super(String.format("User with id %d not found.", userId));
   }
 
   @Override

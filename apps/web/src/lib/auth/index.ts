@@ -14,17 +14,6 @@ export const auth = betterAuth({
           {
             matcher: () => true,
             handler: createAuthMiddleware(async (ctx) => {
-              const existingSession = await ctx.getSignedCookie(
-                ctx.context.authCookies.sessionToken.name,
-                ctx.context.secret,
-              );
-
-              if (existingSession) {
-                return {
-                  context: ctx,
-                };
-              }
-
               const sessionCookie = ctx.getCookie('session');
               if (!sessionCookie) {
                 return null;
