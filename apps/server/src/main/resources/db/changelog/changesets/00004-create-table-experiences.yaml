@@ -47,15 +47,15 @@ databaseChangeLog:
               - column:
                   name: end_date
                   type: TIMESTAMP
-  - addForeignKeyConstraint:
-    baseTableName: experiences
-    baseColumnNames: user_id
-    referencedTableName: users
-    referencedColumnNames: id
-    constraintName: fk_experiences_users
-  - addForeignKeyConstraint:
-    baseTableName: experiences
-    baseColumnNames: provider_id
-    referencedTableName: providers
-    referencedColumnNames: id
-    constraintName: fk_experiences_providers
+        - addForeignKeyConstraint:
+            baseTableName: experiences
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_experiences_users
+        - addForeignKeyConstraint:
+            baseTableName: experiences
+            baseColumnNames: provider_id
+            referencedTableName: providers
+            referencedColumnNames: id
+            constraintName: fk_experiences_providers
