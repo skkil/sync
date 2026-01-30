@@ -28,15 +28,11 @@ export default function ReviewList({
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm font-semibold">{review.author}</div>
-              <div className="text-xs text-muted-foreground">
-                {review.role}
-              </div>
+              <div className="text-xs text-muted-foreground">{review.role}</div>
             </div>
             <div className="text-sm font-semibold">{review.rating}</div>
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">
-            {review.content}
-          </p>
+          <p className="mt-3 text-sm text-muted-foreground">{review.content}</p>
         </div>
       ))}
 
