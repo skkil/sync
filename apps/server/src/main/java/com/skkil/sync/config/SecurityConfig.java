@@ -34,7 +34,11 @@ public class SecurityConfig {
             session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         .authorizeHttpRequests(
             requests ->
-                requests.requestMatchers("/users/me").authenticated().anyRequest().permitAll())
+                requests
+                    .requestMatchers("/users/me", "/media/**", "/profiles/me")
+                    .authenticated()
+                    .anyRequest()
+                    .permitAll())
         .oauth2Login(
             oauth2 ->
                 oauth2

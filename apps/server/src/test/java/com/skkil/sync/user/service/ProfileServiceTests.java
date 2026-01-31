@@ -9,9 +9,9 @@ import com.skkil.sync.user.exception.UserNotFoundException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,12 +20,7 @@ class ProfileServiceTests {
 
   @Mock private UserRepository userRepository;
 
-  private ProfileService profileService;
-
-  @BeforeEach
-  void setUp() {
-    profileService = new ProfileService(userRepository);
-  }
+  @InjectMocks private ProfileService profileService;
 
   @Test
   void getProfile_userExists_returnProfile() {

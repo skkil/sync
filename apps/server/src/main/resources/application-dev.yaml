@@ -1,3 +1,14 @@
+spring:
+  cloud:
+    aws:
+      endpoint: http://localhost:4566
+      region.static: us-east-1
+      credentials:
+        access-key: skkil
+        secret-key: sync
+      s3:
+        path-style-access-enabled: true
+
 logging:
   level:
     com.skkil: TRACE
