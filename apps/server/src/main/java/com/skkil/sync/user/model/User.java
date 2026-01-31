@@ -35,7 +35,7 @@ public class User extends BaseEntity {
   private String hashedPassword;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "profile_image_id", nullable = true)
+  @JoinColumn(name = "profile_image_id")
   @Setter
   private Media profileImage;
 

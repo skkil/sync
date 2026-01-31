@@ -68,6 +68,10 @@ public class ProfileService {
     }
 
     if (request.profileImageId() != null) {
+      if (user.getProfileImage() != null) {
+        user.getProfileImage().setStatus(MediaStatus.DELETED);
+      }
+
       Media profileImage = mediaService.getMedia(request.profileImageId());
 
       if (!profileImage.getStatus().equals(MediaStatus.PENDING)) {

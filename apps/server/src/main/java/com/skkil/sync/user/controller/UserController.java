@@ -12,8 +12,8 @@ public class UserController {
 
   private final ProfileService profileService;
 
-  public UserController(ProfileService userService) {
-    this.profileService = userService;
+  public UserController(ProfileService profileService) {
+    this.profileService = profileService;
   }
 
   @GetMapping("/users/me")

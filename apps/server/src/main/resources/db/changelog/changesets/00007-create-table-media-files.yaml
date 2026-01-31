@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 00004-create-table-media-files
+      id: 00007-create-table-media-files
       author: hyoungjoojin
       preConditions:
         - not:
@@ -85,3 +85,4 @@ databaseChangeLog:
             referencedTableName: media_files
             referencedColumnNames: id
             constraintName: fk_users_profile_image_id
+            onDelete: SET NULL

@@ -2,6 +2,7 @@ package com.skkil.sync.media.service;
 
 import com.skkil.sync.media.dto.request.UploadMediaRequest;
 import com.skkil.sync.media.dto.response.UploadMediaResponse;
+import com.skkil.sync.media.exception.MediaNotFoundException;
 import com.skkil.sync.media.model.Media;
 import com.skkil.sync.media.repository.MediaRepository;
 import com.skkil.sync.user.model.User;
@@ -59,7 +60,7 @@ public class MediaService {
 
   @Transactional(readOnly = true)
   public Media getMedia(Long mediaId) {
-    return mediaRepository.findById(mediaId).orElseThrow();
+    return mediaRepository.findById(mediaId).orElseThrow(() -> new MediaNotFoundException(mediaId));
   }
 
   public URL getMediaUrl(Long mediaId) {
