@@ -127,9 +127,29 @@
       }
     }
   },
+  "modals": {
+    "settings": {
+      "title": "설정",
+      "description": "계정 설정 관리",
+      "profile": {
+        "name": {
+          "label": "이름"
+        }
+      },
+      "actions": {
+        "save": "저장",
+        "cancel": "취소"
+      }
+    }
+  },
   "components": {
     "navigation": {
-      "login": "로그인"
+      "login": "로그인",
+      "user": {
+        "profile": "내 프로필",
+        "settings": "설정",
+        "sign-out": "로그아웃"
+      }
     }
   }
 }

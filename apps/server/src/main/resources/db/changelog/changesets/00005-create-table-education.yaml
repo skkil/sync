@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00005-create-table-education
+      author: hyoungjoojin
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: experiences
+            - not:
+                tableExists:
+                  tableName: education_experiences
+      changes:
+        - createTable:
+            tableName: education_experiences
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: major
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gpa
+                  type: DECIMAL(3,2)
+        - addForeignKeyConstraint:
+            baseTableName: education_experiences
+            baseColumnNames: id
+            referencedTableName: experiences
+            referencedColumnNames: id
+            constraintName: fk_education_experiences_experience_id
+            onDelete: CASCADE

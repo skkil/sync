@@ -1,0 +1,35 @@
+import { ChatCircleDotsIcon } from '@phosphor-icons/react/ssr';
+import { headers } from 'next/headers';
+import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
+import Logo from '@/components/ui/logo';
+import { auth } from '@/lib/auth';
+
+import UserAvatar from './_components/UserAvatar';
+
+export default async function NavigationBar() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  return (
+    <nav className="flex w-full items-center justify-between bg-background p-3 px-8">
+      <Link href="/">
+        <Logo />
+      </Link>
+
+      <div className="flex items-center gap-2">
+        {session && (
+          <Link href="/messages">
+            <Button variant="ghost" size="icon-lg">
+              <ChatCircleDotsIcon />
+            </Button>
+          </Link>
+        )}
+
+        <UserAvatar />
+      </div>
+    </nav>
+  );
+}

@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server';
 
-import Navigation from '@/components/layout/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -80,9 +79,7 @@ export default async function ProviderPage() {
   const t = await getTranslations('pages.provider');
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <Navigation />
-
+    <div className="bg-muted/30">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-10">
         <section className="relative overflow-hidden rounded-3xl border bg-card shadow-sm">
           <div className="relative h-44 w-full bg-muted/60">
@@ -201,4 +198,3 @@ export default async function ProviderPage() {
     </div>
   );
 }
-

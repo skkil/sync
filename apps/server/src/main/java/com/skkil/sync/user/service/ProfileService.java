@@ -5,12 +5,16 @@ import com.skkil.sync.media.model.Media;
 import com.skkil.sync.media.service.MediaService;
 import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetAuthenticatedUserResponse;
+import com.skkil.sync.user.dto.response.GetProfileResponse;
+import com.skkil.sync.user.exception.UserNotFoundException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class ProfileService {
 
   private final UserRepository userRepository;
@@ -19,6 +23,20 @@ public class ProfileService {
   public ProfileService(UserRepository userRepository, MediaService mediaService) {
     this.userRepository = userRepository;
     this.mediaService = mediaService;
+  }
+
+  @Transactional(readOnly = true)
+  public GetProfileResponse getProfile(Long userId) {
+    log.debug("Fetching profile for userId: {}", userId);
+    User user =
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+    return GetProfileResponse.builder()
+        .userId(user.getId().toString())
+        .name(user.getFullName())
+        .email(user.getEmail())
+        .bio(user.getBio())
+        .build();
   }
 
   @Transactional(readOnly = true)
@@ -40,7 +58,10 @@ public class ProfileService {
 
   @Transactional
   public void updateProfile(Long userId, UpdateProfileRequest request) {
-    User user = userRepository.findById(userId).orElseThrow();
+    var user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
     if (request.name() != null) {
       user.setFullName(request.name());

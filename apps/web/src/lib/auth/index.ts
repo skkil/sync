@@ -1,8 +1,11 @@
 import { betterAuth } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
 import { nextCookies } from 'better-auth/next-js';
+import ky from 'ky';
 
-import { server } from '../server';
+import { GetAuthenticatedUserResponse } from '@/types/api/users';
+
+import { env } from '../env';
 
 export const auth = betterAuth({
   plugins: [
@@ -14,28 +17,20 @@ export const auth = betterAuth({
           {
             matcher: () => true,
             handler: createAuthMiddleware(async (ctx) => {
-              const existingSession = await ctx.getSignedCookie(
-                ctx.context.authCookies.sessionToken.name,
-                ctx.context.secret,
-              );
-
-              if (existingSession) {
-                return {
-                  context: ctx,
-                };
-              }
-
               const sessionCookie = ctx.getCookie('session');
               if (!sessionCookie) {
                 return null;
               }
 
-              const response = await server
-                .get<GetAuthenticatedUserResponse>('users/me', {
-                  headers: {
-                    Cookie: `session=${sessionCookie}`,
+              const response = await ky
+                .get<GetAuthenticatedUserResponse>(
+                  `${env.NEXT_PUBLIC_BACKEND_URL}/users/me`,
+                  {
+                    headers: {
+                      Cookie: `session=${sessionCookie}`,
+                    },
                   },
-                })
+                )
                 .then((res) => res.json())
                 .catch(() => null);
 
