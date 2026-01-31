@@ -53,6 +53,7 @@ public class ProfileService {
         .fullName(user.getFullName())
         .email(user.getEmail())
         .profileImageUrl(profileImageUrl)
+        .isOnboarded(user.getIsOnboarded())
         .build();
   }
 
@@ -88,6 +89,8 @@ public class ProfileService {
       user.setProfileImage(profileImage);
     }
 
-    userRepository.save(user);
+    if (request.isOnboarded() != null) {
+      user.onboard();
+    }
   }
 }

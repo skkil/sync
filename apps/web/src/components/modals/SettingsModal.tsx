@@ -3,10 +3,9 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
+import { useUpdateProfileMutation } from '@/features/profile/api/update-profile';
 import { useModal } from '@/hooks/store';
 import { useSession } from '@/lib/auth/client';
-import { server } from '@/lib/server/client';
-import { UpdateProfileRequest } from '@/types/api/users';
 
 import { Button } from '../ui/button';
 import {
@@ -23,6 +22,8 @@ import { Label } from '../ui/label';
 
 export default function SettingsModal() {
   const t = useTranslations('modals.settings');
+
+  const { mutate: updateProfile } = useUpdateProfileMutation();
 
   const { isOpen, closeModal } = useModal();
 
@@ -70,16 +71,9 @@ export default function SettingsModal() {
             <Button
               variant="destructive"
               onClick={() => {
-                server
-                  .patch('profile/me', {
-                    json: {
-                      name,
-                    } satisfies UpdateProfileRequest,
-                  })
-                  .catch(() => {
-                    // TODO: Proper error handling
-                    console.error('Failed to update profile');
-                  });
+                updateProfile({
+                  name: name,
+                });
               }}
             >
               {t('actions.save')}

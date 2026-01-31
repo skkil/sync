@@ -52,6 +52,9 @@ public class User extends BaseEntity {
   @Setter
   private Role role = Role.USER;
 
+  @Column(name = "is_onboarded", nullable = false)
+  private Boolean isOnboarded = false;
+
   @Column(name = "deleted_at", nullable = true)
   private Instant deletedAt;
 
@@ -69,5 +72,9 @@ public class User extends BaseEntity {
     this.hashedPassword = hashedPassword;
     this.fullName = fullName;
     this.bio = bio;
+  }
+
+  public void onboard() {
+    this.isOnboarded = true;
   }
 }
