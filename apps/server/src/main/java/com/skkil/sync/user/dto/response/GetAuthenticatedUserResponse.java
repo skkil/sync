@@ -4,4 +4,4 @@ import lombok.Builder;
 
 @Builder
 public record GetAuthenticatedUserResponse(
-    Long userId, String fullName, String email, String profileImageUrl) {}
+    Long userId, String fullName, String email, String profileImageUrl, boolean isOnboarded) {}

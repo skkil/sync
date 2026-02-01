@@ -156,6 +156,23 @@
         }
       }
     },
+    "onboarding": {
+      "steps": {
+        "welcome": {
+          "title": "sync에 오신 것을 환영합니다!",
+          "description": "시작하려면 몇 가지 질문에 답해주세요."
+        },
+        "finished": {
+          "title": "이제 sync를 사용할 준비가 끝났습니다!",
+          "description": "프로필을 탐색하고 네트워크를 확장하세요."
+        }
+      },
+      "actions": {
+        "previous": "뒤로",
+        "next": "다음",
+        "finish": "완료"
+      }
+    },
     "profile": {
       "header": {
         "follow": "팔로우",
