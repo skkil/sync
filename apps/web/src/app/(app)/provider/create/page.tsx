@@ -13,14 +13,14 @@ import {
 } from '@/components/ui/card';
 import { ProviderType } from '@/types/provider';
 
-interface Provider {
+interface ProviderComponentOptions {
   id: string;
   type: ProviderType;
   icon: React.ReactNode;
   link: string;
 }
 
-const providers: Provider[] = [
+const providers: ProviderComponentOptions[] = [
   {
     id: 'company',
     type: ProviderType.COMPANY,

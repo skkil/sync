@@ -13,10 +13,10 @@ export type Provider = {
   name: string;
 } & (
   | {
-      category: ProviderType.COMPANY;
+      type: ProviderType.COMPANY;
       industry: string;
     }
   | {
-      category: ProviderType.SCHOOL;
+      type: ProviderType.SCHOOL;
     }
 );

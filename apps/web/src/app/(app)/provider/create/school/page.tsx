@@ -15,7 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -27,7 +32,7 @@ import {
 import { useCreateProviderMutation } from '@/features/provider/api/create-provider';
 import { ProviderType, SchoolType } from '@/types/provider';
 
-export default function CreateProvider() {
+export default function CreateSchool() {
   const t = useTranslations('pages.create-school');
 
   const router = useRouter();
@@ -74,7 +79,12 @@ export default function CreateProvider() {
     <form onSubmit={form.handleSubmit(formSubmitHandler)}>
       <Card className="max-w-3xl mx-auto">
         <CardHeader>
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => router.back()}
+          >
             <CaretLeftIcon />
           </Button>
 
@@ -89,7 +99,10 @@ export default function CreateProvider() {
               render={({ field, fieldState }) => {
                 return (
                   <Field>
-                    <FieldLabel>{t('form.name.label')}</FieldLabel>
+                    <div className="flex items-center justify-between">
+                      <FieldLabel>{t('form.name.label')}</FieldLabel>
+                      <FieldError errors={[fieldState.error]} />
+                    </div>
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
@@ -106,7 +119,10 @@ export default function CreateProvider() {
               render={({ field, fieldState }) => {
                 return (
                   <Field>
-                    <FieldLabel>{t('form.description.label')}</FieldLabel>
+                    <div className="flex items-center justify-between">
+                      <FieldLabel>{t('form.description.label')}</FieldLabel>
+                      <FieldError errors={[fieldState.error]} />
+                    </div>
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}

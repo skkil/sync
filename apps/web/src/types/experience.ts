@@ -1,8 +1,8 @@
 import { Provider } from './provider';
 
-export enum ExperienceCategory {
-  EMPLOYMENT = 'employment',
-  EDUCATION = 'education',
+export enum ExperienceType {
+  EMPLOYMENT = 'EMPLOYMENT',
+  EDUCATION = 'EDUCATION',
 }
 
 export type Experience = {
@@ -12,10 +12,10 @@ export type Experience = {
   endDate: Date;
 } & (
   | {
-      category: ExperienceCategory.EMPLOYMENT;
+      type: ExperienceType.EMPLOYMENT;
     }
   | {
-      category: ExperienceCategory.EDUCATION;
+      type: ExperienceType.EDUCATION;
       major?: string;
     }
 );
