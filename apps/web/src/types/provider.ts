@@ -1,6 +1,11 @@
-export enum ProviderCategory {
-  COMPANY = 'company',
-  SCHOOL = 'school',
+export enum ProviderType {
+  COMPANY = 'COMPANY',
+  SCHOOL = 'SCHOOL',
+}
+
+export enum SchoolType {
+  UNIVERSITY = 'UNIVERSITY',
+  HIGH_SCHOOL = 'HIGH_SCHOOL',
 }
 
 export type Provider = {
@@ -8,10 +13,10 @@ export type Provider = {
   name: string;
 } & (
   | {
-      category: ProviderCategory.COMPANY;
+      type: ProviderType.COMPANY;
       industry: string;
     }
   | {
-      category: ProviderCategory.SCHOOL;
+      type: ProviderType.SCHOOL;
     }
 );

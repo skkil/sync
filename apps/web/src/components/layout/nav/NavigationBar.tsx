@@ -1,4 +1,4 @@
-import { ChatCircleDotsIcon } from '@phosphor-icons/react/ssr';
+import { ChatCircleDotsIcon, PlusIcon } from '@phosphor-icons/react/ssr';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 
@@ -20,6 +20,12 @@ export default async function NavigationBar() {
       </Link>
 
       <div className="flex items-center gap-2">
+        <Link href="/provider/create">
+          <Button variant="ghost" size="icon">
+            <PlusIcon />
+          </Button>
+        </Link>
+
         {session && (
           <Link href="/messages">
             <Button variant="ghost" size="icon-lg">

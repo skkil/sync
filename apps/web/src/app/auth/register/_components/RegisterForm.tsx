@@ -24,19 +24,25 @@ export default function RegisterForm() {
   const RegisterFormSchema = z
     .object({
       email: z
-        .email({ message: t('errors.invalid_email') })
-        .nonoptional({ message: t('errors.required_email') }),
+        .email({
+          error: t('errors.invalid_email'),
+        })
+        .nonoptional({
+          error: t('errors.required_email'),
+        }),
       password: z
         .string()
-        .nonempty({ message: t('errors.required_password') })
+        .nonempty({
+          error: t('errors.required_password'),
+        })
         .min(MIN_PASSWORD_LENGTH, {
-          message: t('errors.password_min_length', {
+          error: t('errors.password_min_length', {
             length: MIN_PASSWORD_LENGTH,
           }),
         }),
-      confirmPassword: z
-        .string()
-        .nonempty({ message: t('errors.required_confirm_password') }),
+      confirmPassword: z.string().nonempty({
+        error: t('errors.required_confirm_password'),
+      }),
     })
     .superRefine((val, ctx) => {
       if (val.password !== val.confirmPassword) {

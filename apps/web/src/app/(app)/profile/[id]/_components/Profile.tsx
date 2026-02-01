@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useGetProfile } from '@/features/profile/api/get-profile';
-import { Experience, ExperienceCategory } from '@/types/experience';
+import { Experience, ExperienceType } from '@/types/experience';
 
 interface ProfileProps {
   userId: string;
@@ -68,8 +68,7 @@ export default function Profile({ userId }: ProfileProps) {
         <CardContent>
           {experiences
             .filter(
-              (experience) =>
-                experience.category === ExperienceCategory.EMPLOYMENT,
+              (experience) => experience.type === ExperienceType.EMPLOYMENT,
             )
             .map((employment) => (
               <div key={employment.id}>
@@ -89,8 +88,7 @@ export default function Profile({ userId }: ProfileProps) {
         <CardContent>
           {experiences
             .filter(
-              (experience) =>
-                experience.category === ExperienceCategory.EDUCATION,
+              (experience) => experience.type === ExperienceType.EDUCATION,
             )
             .map((education) => (
               <div key={education.id}>

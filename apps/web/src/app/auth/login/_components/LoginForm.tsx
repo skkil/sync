@@ -21,9 +21,15 @@ export default function LoginForm() {
 
   const LoginFormSchema = z.object({
     email: z
-      .email({ message: t('errors.invalid_credentials') })
-      .nonoptional({ message: t('errors.required_email') }),
-    password: z.string().nonempty({ message: t('errors.required_password') }),
+      .email({
+        error: t('errors.invalid_credentials'),
+      })
+      .nonoptional({
+        error: t('errors.required_email'),
+      }),
+    password: z.string().nonempty({
+      error: t('errors.required_password'),
+    }),
   });
 
   type LoginFormValues = z.infer<typeof LoginFormSchema>;
