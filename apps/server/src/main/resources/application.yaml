@@ -31,6 +31,11 @@ spring:
               - profile
               - email
 
+  cloud:
+    aws:
+      s3:
+        config.enabled: true
+
 app:
   cors.allowed-origins: http://localhost:3000
   oauth2:

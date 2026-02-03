@@ -1,6 +1,6 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
-import { useGetProfileOptions } from '@/features/profile/api/get-profile';
+import { getProfileQueryOptions } from '@/features/profile/api/get-profile';
 import { getQueryClient } from '@/lib/query';
 
 import Profile from './_components/Profile';
@@ -15,7 +15,7 @@ export default async function ProfilePage({ params }: ProfileProps) {
   const { id } = await params;
 
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(useGetProfileOptions(id));
+  await queryClient.prefetchQuery(getProfileQueryOptions(id));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

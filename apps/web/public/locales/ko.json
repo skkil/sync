@@ -31,6 +31,49 @@
         }
       }
     },
+    "create-provider": {
+      "title": "찾는 기관이 없으신가요?",
+      "description": "직접 페이지를 만들어 보세요.",
+      "links": {
+        "company": {
+          "title": "기업",
+          "description": "소규모, 중견 기업 및 대기업"
+        },
+        "school": {
+          "title": "교육 기관",
+          "description": "학교 및 대학교"
+        }
+      }
+    },
+    "create-school": {
+      "title": "만들고자 하는 학교에 대해 알려주세요",
+      "form": {
+        "name": {
+          "label": "이름",
+          "placeholder": "학교 이름을 입력하세요"
+        },
+        "description": {
+          "label": "설명",
+          "placeholder": "학교에 대한 간단한 설명을 입력하세요"
+        },
+        "school-type": {
+          "label": "학교 유형",
+          "placeholder": "학교 유형을 선택하세요",
+          "types": {
+            "UNIVERSITY": "대학교",
+            "HIGH_SCHOOL": "고등학교"
+          }
+        },
+        "submit": {
+          "label": "학교 만들기"
+        }
+      },
+      "errors": {
+        "required_name": "이름은 필수 항목입니다.",
+        "required_description": "설명은 필수 항목입니다.",
+        "required_school_type": "학교 유형은 필수 항목입니다."
+      }
+    },
     "provider": {
       "actions": {
         "follow": "팔로우",
@@ -45,7 +88,7 @@
         "rating": "평점"
       },
       "sections": {
-        "about": "회사 소개",
+        "about": "소개",
         "people": "관련 인물",
         "reviews": "리뷰"
       }
@@ -113,6 +156,23 @@
         }
       }
     },
+    "onboarding": {
+      "steps": {
+        "welcome": {
+          "title": "sync에 오신 것을 환영합니다!",
+          "description": "시작하려면 몇 가지 질문에 답해주세요."
+        },
+        "finished": {
+          "title": "이제 sync를 사용할 준비가 끝났습니다!",
+          "description": "프로필을 탐색하고 네트워크를 확장하세요."
+        }
+      },
+      "actions": {
+        "previous": "뒤로",
+        "next": "다음",
+        "finish": "완료"
+      }
+    },
     "profile": {
       "header": {
         "follow": "팔로우",
@@ -124,6 +184,47 @@
       },
       "education": {
         "title": "학력"
+      }
+    },
+    "add-experience": {
+      "title": {
+        "EMPLOYMENT": "경력 추가",
+        "EDUCATION": "학력 추가"
+      },
+      "description": {
+        "EMPLOYMENT": "이전 및 현재 직장 정보를 추가하세요",
+        "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
+      },
+      "form": {
+        "provider": {
+          "label": {
+            "EMPLOYMENT": "회사를 선택하세요",
+            "EDUCATION": "학교를 선택하세요"
+          },
+          "placeholder": {
+            "EMPLOYMENT": "회사 이름을 입력하세요",
+            "EDUCATION": "학교 이름을 입력하세요"
+          },
+          "not-found": "기관을 찾을 수 없으십니까?",
+          "create-link": "여기를 클릭하여 새 기관을 만드세요"
+        },
+        "major": {
+          "label": "전공",
+          "placeholder": "전공을 입력하세요"
+        },
+        "actions": {
+          "submit": {
+            "label": "저장"
+          },
+          "cancel": {
+            "label": "취소"
+          }
+        },
+
+        "errors": {
+          "required-provider": "기관은 필수 항목입니다.",
+          "required-major": "전공은 필수 항목입니다."
+        }
       }
     }
   },

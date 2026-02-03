@@ -46,6 +46,10 @@ databaseChangeLog:
                   type: VARCHAR(50)
                   defaultValue: "USER"
               - column:
+                  name: is_onboarded
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
                   name: deleted_at
                   type: TIMESTAMP
                   defaultValue: NULL

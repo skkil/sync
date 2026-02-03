@@ -29,7 +29,7 @@ public class ProfileController {
     return profileService.getProfile(userId);
   }
 
-  @PatchMapping("/profile/me")
+  @PatchMapping("/profiles/me")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updateProfile(
       @AuthenticationPrincipal AuthenticatedUser user,

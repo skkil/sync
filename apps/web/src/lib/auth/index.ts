@@ -8,6 +8,14 @@ import { GetAuthenticatedUserResponse } from '@/types/api/users';
 import { env } from '../env';
 
 export const auth = betterAuth({
+  user: {
+    additionalFields: {
+      isOnboarded: {
+        type: 'boolean',
+        input: false,
+      },
+    },
+  },
   plugins: [
     nextCookies(),
     {
@@ -38,12 +46,13 @@ export const auth = betterAuth({
                 return null;
               }
 
-              const { userId, fullName, email } = response;
+              const { userId, fullName, email, isOnboarded } = response;
 
               const user = await ctx.context.internalAdapter.createUser({
                 id: userId,
                 name: fullName,
                 email,
+                isOnboarded,
               });
 
               const session = await ctx.context.internalAdapter.createSession(

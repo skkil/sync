@@ -22,13 +22,13 @@ export async function getProfile(userId: string) {
     }));
 }
 
-export const useGetProfileOptions = (
+export const getProfileQueryOptions = (
   userId: string,
 ): UseQueryOptions<Profile> => ({
   queryKey: ['profile', userId],
   queryFn: () => getProfile(userId),
 });
 
-export function useGetProfile(userId: string) {
-  return useQuery<Profile>(useGetProfileOptions(userId));
+export function useGetProfileQuery(userId: string) {
+  return useQuery<Profile>(getProfileQueryOptions(userId));
 }

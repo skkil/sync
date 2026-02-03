@@ -1,0 +1,18 @@
+services:
+  localstack:
+    image: localstack/localstack
+    environment:
+      - "DEBUG=1"
+      - "SERVICES=s3"
+      - "AWS_ACCESS_KEY_ID=skkil"
+      - "AWS_SECRET_ACCESS_KEY=sync"
+      - "AWS_DEFAULT_REGION=us-east-1"
+      - "DISABLE_CUSTOM_CORS_S3=1"
+      - "DISABLE_CUSTOM_CORS_API_GATEWAY=1"
+      - "DISABLE_CORS_CHECKS=1"
+      - "S3_SKIP_SIGNATURE_VALIDATION=0"
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    volumes:
+      - "./scripts/init.sh:/etc/localstack/init/ready.d/init.sh"
