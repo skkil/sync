@@ -2,6 +2,7 @@ package com.skkil.sync.experience.dto.request;
 
 import com.skkil.sync.experience.constant.ExperienceType;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CreateEducationRequest(
@@ -10,5 +11,5 @@ public record CreateEducationRequest(
     @NotNull LocalDateTime startDate,
     LocalDateTime endDate,
     String major,
-    Long gpa)
+    BigDecimal gpa)
     implements CreateExperienceRequest {}

@@ -5,7 +5,6 @@ import com.skkil.sync.experience.dto.request.CreateEducationRequest;
 import com.skkil.sync.experience.dto.request.CreateExperienceRequest;
 import com.skkil.sync.experience.model.Education;
 import com.skkil.sync.experience.model.Experience;
-import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,10 +19,7 @@ final class EducationService implements ExperienceStrategy {
   public Experience createExperience(CreateExperienceRequest request) {
     CreateEducationRequest educationRequest = (CreateEducationRequest) request;
     Education education =
-        Education.builder()
-            .major(educationRequest.major())
-            .gpa(BigDecimal.valueOf(educationRequest.gpa()))
-            .build();
+        Education.builder().major(educationRequest.major()).gpa(educationRequest.gpa()).build();
 
     return education;
   }

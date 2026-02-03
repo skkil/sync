@@ -13,6 +13,7 @@ import { useSession } from '@/lib/auth/client';
 import { Experience, ExperienceType } from '@/types/experience';
 
 import AddExperienceButton from './AddExperienceButton';
+import EducationExperience from './EducationExperience';
 import EmploymentExperience from './EmploymentExperience';
 
 interface ProfileProps {
@@ -34,7 +35,7 @@ const categories: {
   {
     id: 'education',
     type: ExperienceType.EDUCATION,
-    render: EmploymentExperience,
+    render: EducationExperience,
   },
 ];
 

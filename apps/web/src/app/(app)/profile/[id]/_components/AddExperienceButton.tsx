@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PencilIcon } from '@phosphor-icons/react';
+import { MutateOptions } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -52,7 +53,7 @@ const AddExperienceFormSchema = (t: ReturnType<typeof useTranslations>) =>
     z.object({
       type: z.enum(ExperienceType).extract(['EDUCATION']),
       provider: z.object({
-        id: z.string(),
+        id: z.string().min(1, t('errors.required-provider')),
         name: z.string(),
       }),
       major: z.string().min(1, t('errors.required-major')),
@@ -88,23 +89,18 @@ function AddExperienceForm({
   const { mutate: createExperience } = useCreateExperienceMutation();
 
   const formSubmitHandler = (values: AddExperienceFormValues) => {
-    switch (values.type) {
-      case ExperienceType.EMPLOYMENT:
-        createExperience({
-          ...values,
-          providerId: values.provider.id,
-          startDate: new Date(),
-        });
-        break;
-
-      case ExperienceType.EDUCATION:
-        createExperience({
-          ...values,
-          providerId: values.provider.id,
-          startDate: new Date(),
-        });
-        break;
-    }
+    createExperience(
+      {
+        ...values,
+        providerId: values.provider.id,
+        startDate: new Date(),
+      },
+      {
+        onSuccess: () => {
+          onClose();
+        },
+      },
+    );
   };
 
   return (

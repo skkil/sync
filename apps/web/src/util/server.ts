@@ -22,5 +22,5 @@ export function url(
     ),
   ).toString();
 
-  return `${base}?${queryString}`;
+  return `${base}${queryString.length === 0 ? '' : '?'}${queryString}`;
 }

@@ -1,12 +1,12 @@
 import { Experience, ExperienceType } from '@/types/experience';
 
-interface EmploymentExperienceProps {
+interface EducationExperienceProps {
   experience: Experience;
 }
 
-export default function EmploymentExperience({
+export default function EducationExperience({
   experience: education,
-}: EmploymentExperienceProps) {
+}: EducationExperienceProps) {
   if (education.type !== ExperienceType.EDUCATION) {
     return null;
   }
