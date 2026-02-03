@@ -1,3 +1,7 @@
+export function isServer() {
+  return typeof window === 'undefined';
+}
+
 export function url(
   base: string,
   params?: Record<string, string | number | boolean | undefined | null>,

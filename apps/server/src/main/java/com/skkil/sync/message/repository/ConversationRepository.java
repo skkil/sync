@@ -10,16 +10,16 @@ import org.springframework.data.jpa.repository.Query;
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
 
   @Override
-  @EntityGraph(attributePaths = {"participants"})
+  @EntityGraph(attributePaths = {"participants, participants.user"})
   Optional<Conversation> findById(Long conversationId);
 
   @Query(
       """
-      SELECT c.id FROM Conversation c
-      LEFT JOIN c.participants p
+      SELECT c FROM Conversation c
+      LEFT JOIN FETCH c.participants p
       WHERE p.user.id = :userId
       """)
-  List<Long> findByUserId(Long userId);
+  List<Conversation> findByUserId(Long userId);
 
   @Query(
       """

@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useGetProfile } from '@/features/profile/api/get-profile';
+import { useGetProfileQuery } from '@/features/profile/api/get-profile';
 
 interface ProfileProps {
   to: string;
@@ -11,7 +11,7 @@ interface ProfileProps {
 
 export default function SelectedProfile({ to }: ProfileProps) {
   const router = useRouter();
-  const { data: profile, isError } = useGetProfile(to);
+  const { data: profile, isError } = useGetProfileQuery(to);
 
   useEffect(() => {
     if (isError) {

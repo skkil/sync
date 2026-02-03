@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { url } from '@/lib/server';
 import { server } from '@/lib/server/client';
 import { Message } from '@/types/message';
+import { url } from '@/util/server';
 
 interface GetMessagesResponse {
   messages: {

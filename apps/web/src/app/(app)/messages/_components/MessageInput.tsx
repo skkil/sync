@@ -1,11 +1,10 @@
 import { PaperPlaneTiltIcon } from '@phosphor-icons/react';
-import { Client } from '@stomp/stompjs';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
+import { useWebSocket } from '@/components/providers/WebSocketProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { getStompClient } from '@/lib/ws';
 
 interface MessageInputProps {
   to: string;
@@ -15,34 +14,20 @@ export default function MessageInput({ to }: MessageInputProps) {
   const t = useTranslations('pages.messages');
   const [message, setMessage] = useState('');
 
-  const client = useRef<Client | null>(null);
-
-  useEffect(() => {
-    if (!client.current) {
-      client.current = getStompClient();
-    }
-
-    client.current.activate();
-
-    return () => {
-      if (client.current) {
-        client.current.deactivate();
-      }
-    };
-  }, [client]);
+  const { publish } = useWebSocket();
 
   const handleSendMessage = (content: string) => {
     if (!content.trim()) {
       return;
     }
 
-    client.current?.publish({
-      destination: '/app/conversations/send',
-      body: JSON.stringify({
+    publish(
+      '/app/conversations/send',
+      JSON.stringify({
         to,
         content,
       }),
-    });
+    );
   };
 
   return (

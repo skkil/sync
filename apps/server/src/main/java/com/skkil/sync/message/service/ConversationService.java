@@ -3,6 +3,7 @@ package com.skkil.sync.message.service;
 import com.skkil.sync.message.dto.request.SendMessageRequest;
 import com.skkil.sync.message.dto.response.GetConversationsResponse;
 import com.skkil.sync.message.dto.response.GetMessagesResponse;
+import com.skkil.sync.message.exception.MessageToSelfException;
 import com.skkil.sync.message.model.Conversation;
 import com.skkil.sync.message.model.Message;
 import com.skkil.sync.message.model.Participant;
@@ -11,8 +12,6 @@ import com.skkil.sync.message.repository.MessageRepository;
 import com.skkil.sync.user.service.UserService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,15 +69,8 @@ public class ConversationService {
 
   @Transactional(readOnly = true)
   public GetConversationsResponse getConversations(Long userId) {
-    List<Conversation> conversations =
+    var conversations =
         conversationRepository.findByUserId(userId).stream()
-            .peek(id -> log.debug("Found conversation with id {}", id))
-            .map(conversationRepository::findById)
-            .map(Optional::get)
-            .toList();
-
-    return new GetConversationsResponse(
-        conversations.stream()
             .map(
                 conversation -> {
                   var participants =
@@ -112,7 +104,9 @@ public class ConversationService {
                       .lastMessage(lastMessage)
                       .build();
                 })
-            .toList());
+            .toList();
+
+    return new GetConversationsResponse(conversations);
   }
 
   @Transactional(readOnly = true)
@@ -141,6 +135,10 @@ public class ConversationService {
 
   @Transactional
   public void sendMessage(Long senderId, SendMessageRequest request) {
+    if (senderId.equals(request.to())) {
+      throw new MessageToSelfException();
+    }
+
     Conversation conversation = getOrCreateConversation(senderId, request.to());
 
     Participant sender =

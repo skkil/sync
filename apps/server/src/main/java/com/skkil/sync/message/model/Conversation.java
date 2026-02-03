@@ -14,6 +14,9 @@ import lombok.Getter;
 @Getter
 public class Conversation extends BaseEntity {
 
-  @OneToMany(mappedBy = "conversation", cascade = CascadeType.PERSIST)
+  @OneToMany(
+      mappedBy = "conversation",
+      cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+      orphanRemoval = true)
   private List<Participant> participants = new ArrayList<>();
 }

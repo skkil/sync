@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useGetConversations } from '@/features/message/api/get-conversations';
@@ -10,6 +10,8 @@ interface ConversationListProps {
 }
 
 export default function ConversationList({ selected }: ConversationListProps) {
+  const router = useRouter();
+
   const { data: session } = useSession();
   const { data: conversations } = useGetConversations();
 
@@ -36,7 +38,7 @@ export default function ConversationList({ selected }: ConversationListProps) {
               selected === other.id ? 'bg-muted' : '',
             )}
             onClick={() => {
-              redirect(`/messages?to=${other.id}`);
+              router.push(`/messages?to=${other.id}`);
             }}
           >
             <div className="flex items-center justify-between gap-2">

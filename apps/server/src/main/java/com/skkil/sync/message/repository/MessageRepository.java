@@ -13,6 +13,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
   @Query(
       """
       SELECT m FROM Message m
+      JOIN FETCH m.sender
       WHERE m.conversation = :conversation
       AND (:after IS NULL OR m.id > :after)
       ORDER BY m.createdAt DESC
@@ -22,6 +23,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
   @Query(
       """
       SELECT m FROM Message m
+      JOIN FETCH m.sender
       WHERE m.conversation.id = :conversationId
       ORDER BY m.createdAt DESC
       LIMIT 1

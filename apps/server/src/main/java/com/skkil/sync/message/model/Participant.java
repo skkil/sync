@@ -2,7 +2,6 @@ package com.skkil.sync.message.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.user.model.User;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -23,7 +22,7 @@ public class Participant extends BaseEntity {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "conversation_id", nullable = false)
   private Conversation conversation;
 

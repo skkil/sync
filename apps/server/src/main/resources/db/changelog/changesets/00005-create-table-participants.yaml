@@ -49,3 +49,7 @@ databaseChangeLog:
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_participants_users
+        - addUniqueConstraint:
+            tableName: participants
+            columnNames: user_id, conversation_id
+            constraintName: uq_participants_conversation_user

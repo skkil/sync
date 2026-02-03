@@ -1,12 +1,11 @@
-import { Client } from '@stomp/stompjs';
 import { format } from 'date-fns';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
+import { useWebSocket } from '@/components/providers/WebSocketProvider';
 import { useGetMessages } from '@/features/message/api/get-messages';
 import { useSession } from '@/lib/auth/client';
 import { getQueryClient } from '@/lib/query';
 import { cn } from '@/lib/utils';
-import { getStompClient } from '@/lib/ws';
 import { Message } from '@/types/message';
 
 interface MessagesListProps {
@@ -15,7 +14,7 @@ interface MessagesListProps {
 
 export default function MessagesList({ to }: MessagesListProps) {
   const { data: session } = useSession();
-  const client = useRef<Client | null>(null);
+  const { subscribe } = useWebSocket();
 
   const queryClient = getQueryClient();
 
@@ -25,46 +24,34 @@ export default function MessagesList({ to }: MessagesListProps) {
       return;
     }
 
-    if (!client.current) {
-      client.current = getStompClient();
-    }
+    const subscription = subscribe(
+      `/topic/users/${session.user.id}/messages`,
+      (message) => {
+        queryClient.setQueryData(['messages', to], (oldMessages: Message[]) => {
+          const newMessage: {
+            messageId: string;
+            content: string;
+            senderId: string;
+            sentAt: string;
+          } = JSON.parse(message.body);
 
-    if (!client.current.active) {
-      client.current.activate();
-    }
-
-    client.current.onConnect = () => {
-      client.current?.subscribe(
-        `/topic/users/${session.user.id}/messages`,
-        (message) => {
-          queryClient.setQueryData(['messages', to], (oldMessages: any) => {
-            const newMessage: {
-              messageId: string;
-              content: string;
-              senderId: string;
-              sentAt: string;
-            } = JSON.parse(message.body);
-
-            return [
-              ...(oldMessages || []),
-              {
-                id: newMessage.messageId,
-                content: newMessage.content,
-                senderId: newMessage.senderId,
-                sentAt: new Date(newMessage.sentAt),
-              } satisfies Message,
-            ];
-          });
-        },
-      );
-    };
+          return [
+            ...(oldMessages || []),
+            {
+              id: newMessage.messageId,
+              content: newMessage.content,
+              senderId: newMessage.senderId,
+              sentAt: new Date(newMessage.sentAt),
+            } satisfies Message,
+          ];
+        });
+      },
+    );
 
     return () => {
-      if (client.current) {
-        client.current.deactivate();
-      }
+      subscription?.unsubscribe();
     };
-  }, [client, session]);
+  }, [session, queryClient, to, subscribe]);
 
   if (!messages || !session?.user) {
     return null;
@@ -91,7 +78,7 @@ export default function MessagesList({ to }: MessagesListProps) {
                 <p>{message.content}</p>
               </div>
               <p className="text-xs mt-1">
-                {format(message.sentAt, 'MM-dd H:m')}
+                {format(message.sentAt, 'MM-dd HH:mm')}
               </p>
             </div>
           </div>

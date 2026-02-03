@@ -1,8 +1,9 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
+import { isServer } from '@/util/server';
+
 import { env } from './env';
-import { isServer } from './server';
 
 let client: Client | null = null;
 
