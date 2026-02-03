@@ -40,4 +40,26 @@ public abstract class Experience extends BaseEntity {
 
   @Column(name = "end_date")
   private LocalDateTime endDate;
+
+  protected Experience() {}
+
+  protected Experience(ExperienceType type) {
+    this.type = type;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public void setProvider(Provider provider) {
+    this.provider = provider;
+  }
+
+  public void setStartDate(LocalDateTime startDate) {
+    this.startDate = startDate;
+  }
+
+  public void setEndDate(LocalDateTime endDate) {
+    this.endDate = endDate;
+  }
 }

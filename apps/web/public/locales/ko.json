@@ -185,6 +185,47 @@
       "education": {
         "title": "학력"
       }
+    },
+    "add-experience": {
+      "title": {
+        "EMPLOYMENT": "경력 추가",
+        "EDUCATION": "학력 추가"
+      },
+      "description": {
+        "EMPLOYMENT": "이전 및 현재 직장 정보를 추가하세요",
+        "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
+      },
+      "form": {
+        "provider": {
+          "label": {
+            "EMPLOYMENT": "회사를 선택하세요",
+            "EDUCATION": "학교를 선택하세요"
+          },
+          "placeholder": {
+            "EMPLOYMENT": "회사 이름을 입력하세요",
+            "EDUCATION": "학교 이름을 입력하세요"
+          },
+          "not-found": "기관을 찾을 수 없으십니까?",
+          "create-link": "여기를 클릭하여 새 기관을 만드세요"
+        },
+        "major": {
+          "label": "전공",
+          "placeholder": "전공을 입력하세요"
+        },
+        "actions": {
+          "submit": {
+            "label": "저장"
+          },
+          "cancel": {
+            "label": "취소"
+          }
+        },
+
+        "errors": {
+          "required-provider": "기관은 필수 항목입니다.",
+          "required-major": "전공은 필수 항목입니다."
+        }
+      }
     }
   },
   "modals": {

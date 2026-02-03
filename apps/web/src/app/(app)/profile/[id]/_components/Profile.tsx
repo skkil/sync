@@ -3,21 +3,47 @@
 import { EnvelopeIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { notFound } from 'next/navigation';
+import { ComponentType } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { useGetProfile } from '@/features/profile/api/get-profile';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useGetProfileQuery } from '@/features/profile/api/get-profile';
+import { useSession } from '@/lib/auth/client';
 import { Experience, ExperienceType } from '@/types/experience';
+
+import AddExperienceButton from './AddExperienceButton';
+import EducationExperience from './EducationExperience';
+import EmploymentExperience from './EmploymentExperience';
 
 interface ProfileProps {
   userId: string;
 }
 
+const categories: {
+  id: string;
+  type: ExperienceType;
+  render: ComponentType<{
+    experience: Experience;
+  }>;
+}[] = [
+  {
+    id: 'employment',
+    type: ExperienceType.EMPLOYMENT,
+    render: EmploymentExperience,
+  },
+  {
+    id: 'education',
+    type: ExperienceType.EDUCATION,
+    render: EducationExperience,
+  },
+];
+
 export default function Profile({ userId }: ProfileProps) {
   const t = useTranslations('pages.profile');
 
-  const { data: profile, isError } = useGetProfile(userId);
+  const { data: session } = useSession();
+  const { data: profile, isError } = useGetProfileQuery(userId);
 
   const experiences: Experience[] = [];
 
@@ -60,46 +86,28 @@ export default function Profile({ userId }: ProfileProps) {
         )}
       </Card>
 
-      <Card className="mx-auto w-full max-w-3xl">
-        <CardHeader>
-          <h2 className="text-xl font-bold">{t('employment.title')}</h2>
-        </CardHeader>
+      {categories.map(({ id, type, render: Component }) => {
+        return (
+          <Card key={id} className="mx-auto w-full max-w-3xl">
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                <h2 className="text-xl font-bold">{t(`${id}.title`)}</h2>
+                {session?.user.id === userId && (
+                  <AddExperienceButton type={type} />
+                )}
+              </CardTitle>
+            </CardHeader>
 
-        <CardContent>
-          {experiences
-            .filter(
-              (experience) => experience.type === ExperienceType.EMPLOYMENT,
-            )
-            .map((employment) => (
-              <div key={employment.id}>
-                <h3 className="font-semibold">{employment.provider.name}</h3>
-                {employment.startDate.getFullYear()} -{' '}
-                {employment.endDate.getFullYear()}
-              </div>
-            ))}
-        </CardContent>
-      </Card>
-
-      <Card className="mx-auto w-full max-w-3xl">
-        <CardHeader>
-          <h2 className="text-xl font-bold">{t('education.title')}</h2>
-        </CardHeader>
-
-        <CardContent>
-          {experiences
-            .filter(
-              (experience) => experience.type === ExperienceType.EDUCATION,
-            )
-            .map((education) => (
-              <div key={education.id}>
-                <h3 className="font-semibold">{education.provider.name}</h3>
-                {education.major && <p>{education.major}</p>}
-                {education.startDate.getFullYear()} -{' '}
-                {education.endDate.getFullYear()}
-              </div>
-            ))}
-        </CardContent>
-      </Card>
+            <CardContent>
+              {experiences
+                .filter((experience) => experience.type === type)
+                .map((experience) => (
+                  <Component key={experience.id} experience={experience} />
+                ))}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
