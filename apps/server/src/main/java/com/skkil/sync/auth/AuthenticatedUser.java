@@ -1,21 +1,33 @@
 package com.skkil.sync.auth;
 
-import java.io.Serializable;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import lombok.Builder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 @Builder
-public record AuthenticatedUser(Long userId, String fullName, String email)
-    implements OidcUser, Serializable {
+public record AuthenticatedUser(Long userId, String fullName, String email, String password)
+    implements UserDetails, OidcUser {
+
+  @Override
+  public String getUsername() {
+    return email;
+  }
+
+  @Override
+  public @Nullable String getPassword() {
+    return password;
+  }
 
   @Override
   public String getName() {
-    return userId.toString();
+    return fullName;
   }
 
   @Override
@@ -39,7 +51,7 @@ public record AuthenticatedUser(Long userId, String fullName, String email)
   }
 
   @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return null;
+  public List<? extends GrantedAuthority> getAuthorities() {
+    return Collections.emptyList();
   }
 }

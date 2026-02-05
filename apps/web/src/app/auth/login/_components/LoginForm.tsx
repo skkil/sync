@@ -3,8 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -15,9 +15,13 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { useLoginMutation } from '@/features/auth/api/login';
 
 export default function LoginForm() {
   const t = useTranslations('pages.login.form');
+
+  const router = useRouter();
+  const { mutate: login } = useLoginMutation();
 
   const LoginFormSchema = z.object({
     email: z
@@ -43,7 +47,17 @@ export default function LoginForm() {
   });
 
   const onFormSubmit = async (values: LoginFormValues) => {
-    toast.info('Form submitted' + JSON.stringify(values));
+    login(
+      {
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: () => {
+          router.push('/');
+        },
+      },
+    );
   };
 
   return (

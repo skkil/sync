@@ -3,8 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -15,11 +15,15 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { useRegisterMutation } from '@/features/auth/api/register';
 
 const MIN_PASSWORD_LENGTH = 8;
 
 export default function RegisterForm() {
   const t = useTranslations('pages.register.form');
+
+  const { mutate: register } = useRegisterMutation();
+  const router = useRouter();
 
   const RegisterFormSchema = z
     .object({
@@ -66,7 +70,17 @@ export default function RegisterForm() {
   });
 
   const onFormSubmit = async (values: RegisterFormValues) => {
-    toast.info('Form submitted' + JSON.stringify(values));
+    register(
+      {
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: () => {
+          router.push('/auth/login');
+        },
+      },
+    );
   };
 
   return (
