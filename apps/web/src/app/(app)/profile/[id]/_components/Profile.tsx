@@ -2,6 +2,7 @@
 
 import { EnvelopeIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ComponentType } from 'react';
 
@@ -65,10 +66,14 @@ export default function Profile({ userId }: ProfileProps) {
             <div className="flex justify-between items-center">
               <h2 className="text-3xl font-bold mt-3">{profile.name}</h2>
 
-              <div className="flex gap-2">
-                <Button>{t('header.follow')}</Button>
-                <Button variant="outline">{t('header.message')}</Button>
-              </div>
+              {session?.user.id !== profile.id && (
+                <div className="flex gap-2">
+                  <Button>{t('header.follow')}</Button>
+                  <Link href={`/messages?to=${profile.id}`}>
+                    <Button variant="outline">{t('header.message')}</Button>
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col-reverse md:flex-row md:justify-between mt-2 gap-4">

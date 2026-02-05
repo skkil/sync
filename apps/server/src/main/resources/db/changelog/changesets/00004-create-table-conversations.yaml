@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00004-create-table-conversations
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: conversations
+      changes:
+        - createTable:
+            tableName: conversations
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
