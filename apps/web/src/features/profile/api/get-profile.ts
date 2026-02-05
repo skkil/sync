@@ -1,6 +1,6 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
-import { server } from '@/lib/server/client';
+import { server } from '@/lib/server';
 import { Profile } from '@/types/profile';
 
 export interface GetProfileResponse {

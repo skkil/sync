@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { server } from '@/lib/server/client';
+import { server } from '@/lib/server';
 import { ProviderType, SchoolType } from '@/types/provider';
 
 type CreateProviderRequest = {

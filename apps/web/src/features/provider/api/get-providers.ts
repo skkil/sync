@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { server } from '@/lib/server/client';
+import { server } from '@/lib/server';
 import { ProviderType } from '@/types/provider';
 import { url } from '@/util/server';
 
