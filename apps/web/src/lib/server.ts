@@ -28,8 +28,8 @@ export const server = ky.extend({
   prefixUrl: env.NEXT_PUBLIC_BACKEND_URL,
   credentials: 'include',
   retry: {
-    limit: 3,
-    methods: ['get', 'post', 'put', 'patch', 'delete'],
+    limit: 1,
+    methods: ['post', 'put', 'patch', 'delete'],
     statusCodes: [403],
   },
   hooks: {
