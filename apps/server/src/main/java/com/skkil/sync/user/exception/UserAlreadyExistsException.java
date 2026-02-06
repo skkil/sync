@@ -1,23 +1,23 @@
-package com.skkil.sync.provider.exception;
+package com.skkil.sync.user.exception;
 
 import com.skkil.sync.common.exception.ErrorCode;
 import com.skkil.sync.common.exception.SyncException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-public class ProviderNotFoundException extends SyncException {
+public class UserAlreadyExistsException extends SyncException {
 
-  public ProviderNotFoundException(Long providerId) {
-    super(String.format("Provider with id %d not found.", providerId));
+  public UserAlreadyExistsException(String email) {
+    super(String.format("User with email %s already exists.", email));
   }
 
   @Override
   public HttpStatusCode getStatusCode() {
-    return HttpStatus.NOT_FOUND;
+    return HttpStatus.CONFLICT;
   }
 
   @Override
   public ErrorCode getErrorCode() {
-    return ErrorCode.PROVIDER_NOT_FOUND;
+    return ErrorCode.USER_ALREADY_EXISTS;
   }
 }
