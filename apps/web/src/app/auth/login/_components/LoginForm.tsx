@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -55,6 +56,9 @@ export default function LoginForm() {
       {
         onSuccess: () => {
           router.push('/');
+        },
+        onError: () => {
+          toast.error(t('errors.invalid-credentials'));
         },
       },
     );

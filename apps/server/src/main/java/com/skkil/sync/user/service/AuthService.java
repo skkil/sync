@@ -8,6 +8,7 @@ import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,8 +39,8 @@ public class AuthService {
   public Authentication authenticate(LoginRequest request) {
     AuthenticatedUser principal = userService.loadUserByUsername(request.email());
     if (principal.password() == null) {
-      throw new IllegalArgumentException(
-          "User has no password set, user can only login via OAuth.");
+      log.debug("Authentication failed, user has no password set");
+      throw new BadCredentialsException("");
     }
 
     Authentication authentication =

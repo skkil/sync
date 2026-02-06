@@ -40,6 +40,7 @@ class AuthController {
   }
 
   @PostMapping("/auth/register")
+  @ResponseStatus(HttpStatus.CREATED)
   public void register(HttpServletRequest http, @RequestBody @Validated RegisterRequest request) {
     authService.registerUser(request);
   }

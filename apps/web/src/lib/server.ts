@@ -3,8 +3,17 @@ import ky from 'ky';
 import { isServer } from '@/util/server';
 
 import { env } from './env';
+import SyncError, { ErrorCode } from './error';
 
 const CSRF_COOKIE_NAME = 'XSRF-TOKEN';
+
+interface ErrorResponse {
+  detail: string;
+  instance: string;
+  status: number;
+  title: string;
+  code: ErrorCode;
+}
 
 async function getCsrfToken(): Promise<string | undefined> {
   if (isServer()) {
@@ -41,6 +50,18 @@ export const server = ky.extend({
             request.headers.set('X-XSRF-TOKEN', csrfToken);
           }
         }
+      },
+    ],
+    beforeError: [
+      async (error) => {
+        const { response } = error;
+
+        if (response.status === 401 || response.status === 403) {
+          return error;
+        }
+
+        const body = await response.json<ErrorResponse>();
+        throw new SyncError(body.detail, body.code);
       },
     ],
   },

@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useRegisterMutation } from '@/features/auth/api/register';
+import SyncError, { ErrorCode } from '@/lib/error';
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -78,6 +80,15 @@ export default function RegisterForm() {
       {
         onSuccess: () => {
           router.push('/auth/login');
+        },
+        onError: (error) => {
+          if (error instanceof SyncError) {
+            const { code } = error;
+
+            if (code === ErrorCode.USER_ALREADY_EXISTS) {
+              toast.error(t('errors.user-already-exists'));
+            }
+          }
         },
       },
     );

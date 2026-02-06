@@ -27,7 +27,7 @@ public record AuthenticatedUser(Long userId, String fullName, String email, Stri
 
   @Override
   public String getName() {
-    return fullName;
+    return email;
   }
 
   @Override

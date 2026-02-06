@@ -37,6 +37,7 @@ public class CustomOidcUserService extends OidcUserService {
         .userId(user.getId())
         .fullName(user.getFullName())
         .email(user.getEmail())
+        .password(null)
         .build();
   }
 
