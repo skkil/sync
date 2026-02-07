@@ -52,6 +52,7 @@ class SchoolService implements ProviderStrategy {
         .type(provider.getType())
         .name(provider.getName())
         .description(provider.getDescription())
+        .contactInfo(provider.getContactInfo())
         .schoolType(((School) provider).getSchoolType())
         .createdAt(LocalDateTime.ofInstant(provider.getCreatedAt(), ZoneId.systemDefault()))
         .updatedAt(LocalDateTime.ofInstant(provider.getUpdatedAt(), ZoneId.systemDefault()))

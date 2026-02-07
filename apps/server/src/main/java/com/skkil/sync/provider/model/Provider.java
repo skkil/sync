@@ -30,6 +30,10 @@ public abstract class Provider extends BaseEntity {
   @Setter
   protected String description;
 
+  @Column(name = "contact_info", length = 255)
+  @Setter
+  protected String contactInfo;
+
   @Column(name = "is_verified")
   protected Boolean isVerified = false;
 

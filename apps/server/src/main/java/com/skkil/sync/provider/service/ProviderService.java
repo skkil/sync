@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +59,12 @@ public class ProviderService {
   @Transactional
   public void deleteProvider(Long id) {
     providerRepository.deleteById(id);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<Provider> searchProviders(String keyword, Pageable pageable) {
+    return providerRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+        keyword, keyword, pageable);
   }
 
   private ProviderStrategy getProviderStrategy(ProviderType providerType) {
