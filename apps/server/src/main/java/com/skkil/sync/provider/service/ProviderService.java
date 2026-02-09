@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +24,8 @@ public class ProviderService {
   public ProviderService(
       ProviderRepository providerRepository, List<ProviderStrategy> providerStrategies) {
     this.providerRepository = providerRepository;
-    this.providerStrategyMap =
-        providerStrategies.stream()
-            .collect(Collectors.toMap(ProviderStrategy::getProviderType, Function.identity()));
+    this.providerStrategyMap = providerStrategies.stream()
+        .collect(Collectors.toMap(ProviderStrategy::getProviderType, Function.identity()));
   }
 
   @Transactional
@@ -40,8 +37,7 @@ public class ProviderService {
 
   @Transactional(readOnly = true)
   public GetProviderResponse getProvider(Long id) {
-    Provider provider =
-        providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
+    Provider provider = providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
 
     ProviderStrategy providerStrategy = getProviderStrategy(provider.getType());
     return providerStrategy.toGetProviderResponse(provider);
@@ -49,8 +45,7 @@ public class ProviderService {
 
   @Transactional
   public void updateProvider(Long id, UpdateProviderRequest request) {
-    Provider provider =
-        providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
+    Provider provider = providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
 
     ProviderStrategy providerStrategy = getProviderStrategy(provider.getType());
     providerStrategy.updateProvider(provider, request);
@@ -59,12 +54,6 @@ public class ProviderService {
   @Transactional
   public void deleteProvider(Long id) {
     providerRepository.deleteById(id);
-  }
-
-  @Transactional(readOnly = true)
-  public Page<Provider> searchProviders(String keyword, Pageable pageable) {
-    return providerRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-        keyword, keyword, pageable);
   }
 
   private ProviderStrategy getProviderStrategy(ProviderType providerType) {

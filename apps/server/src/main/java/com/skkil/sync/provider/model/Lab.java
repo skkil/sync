@@ -15,9 +15,9 @@ import lombok.Setter;
 @Getter
 public class Lab extends Provider {
 
-  @Column(name = "professor_id")
+  @Column(name = "professor_name", length = 255)
   @Setter
-  private String professorId;
+  private String professorName;
 
   @ManyToOne
   @JoinColumn(name = "school_id", nullable = false)
@@ -32,28 +32,24 @@ public class Lab extends Provider {
   @Setter
   private String detailedResearchField;
 
-  @Column(name = "one_line_review", length = 500)
-  @Setter
-  private String oneLineReview;
-
-  protected Lab() {}
+  protected Lab() {
+  }
 
   @Builder
   public Lab(
       String name,
+      String professorName,
       String description,
       String contactInfo,
-      String professorId,
       School school,
       String researchArea,
       String detailedResearchField,
       String oneLineReview) {
-    super(ProviderType.LAB, name, description);
-    this.contactInfo = contactInfo;
-    this.professorId = professorId;
+    super(ProviderType.LAB, name, description, contactInfo, oneLineReview);
+    this.name = name;
+    this.professorName = professorName;
     this.school = school;
     this.researchArea = researchArea;
     this.detailedResearchField = detailedResearchField;
-    this.oneLineReview = oneLineReview;
   }
 }

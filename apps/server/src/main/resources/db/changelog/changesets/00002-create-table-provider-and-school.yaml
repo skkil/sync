@@ -38,6 +38,12 @@ databaseChangeLog:
                   name: description
                   type: TEXT
               - column:
+                  name: contact_info
+                  type: VARCHAR(255)
+              - column:
+                  name: one_line_review
+                  type: VARCHAR(500)
+              - column:
                   name: is_verified
                   type: BOOLEAN
                   defaultValueBoolean: false

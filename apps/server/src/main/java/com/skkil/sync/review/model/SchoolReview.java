@@ -1,7 +1,7 @@
 package com.skkil.sync.review.model;
 
+import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.model.School;
-import com.skkil.sync.review.constant.ReviewType;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +25,7 @@ public class SchoolReview extends Review {
   @Builder
   public SchoolReview(
       User reviewer, School provider, String textReview, SchoolReviewDetails reviewDetails) {
-    super(ReviewType.SCHOOL, reviewer, provider, textReview);
+    super(ProviderType.SCHOOL, reviewer, provider, textReview);
     this.reviewDetails = reviewDetails;
   }
 

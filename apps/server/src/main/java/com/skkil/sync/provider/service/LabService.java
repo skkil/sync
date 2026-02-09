@@ -15,8 +15,6 @@ import com.skkil.sync.provider.repository.LabRepository;
 import com.skkil.sync.provider.repository.SchoolRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,23 +39,20 @@ public class LabService implements ProviderStrategy {
   public Provider createProvider(CreateProviderRequest request) {
     CreateLabRequest labRequest = (CreateLabRequest) request;
 
-    School school =
-        (School)
-            schoolRepository
-                .findById(labRequest.schoolId())
-                .orElseThrow(() -> new ProviderNotFoundException(labRequest.schoolId()));
+    School school = (School) schoolRepository
+        .findById(labRequest.schoolId())
+        .orElseThrow(() -> new ProviderNotFoundException(labRequest.schoolId()));
 
-    Lab lab =
-        Lab.builder()
-            .name(request.name())
-            .description(request.description())
-            .professorId(labRequest.professorId())
-            .school(school)
-            .researchArea(labRequest.researchArea())
-            .detailedResearchField(labRequest.detailedResearchField())
-            .contactInfo(labRequest.contactInfo())
-            .oneLineReview(labRequest.oneLineReview())
-            .build();
+    Lab lab = Lab.builder()
+        .name(request.name())
+        .description(request.description())
+        .professorName(labRequest.professorName())
+        .school(school)
+        .researchArea(labRequest.researchArea())
+        .detailedResearchField(labRequest.detailedResearchField())
+        .contactInfo(labRequest.contactInfo())
+        .oneLineReview(labRequest.oneLineReview())
+        .build();
 
     return labRepository.save(lab);
   }
@@ -73,7 +68,7 @@ public class LabService implements ProviderStrategy {
         .description(lab.getDescription())
         .contactInfo(lab.getContactInfo())
         .oneLineReview(lab.getOneLineReview())
-        .professor(new GetLabResponse.ProfessorInfo(lab.getProfessorId(), null, null))
+        .professor(new GetLabResponse.ProfessorInfo(lab.getProfessorName(), null, null))
         .school(new GetLabResponse.SchoolInfo(lab.getSchool().getId(), lab.getSchool().getName()))
         .researchArea(lab.getResearchArea())
         .detailedResearchField(lab.getDetailedResearchField())
@@ -104,15 +99,5 @@ public class LabService implements ProviderStrategy {
     if (labRequest.detailedResearchField() != null) {
       lab.setDetailedResearchField(labRequest.detailedResearchField());
     }
-  }
-
-  @Transactional(readOnly = true)
-  public Page<Lab> searchLabs(String keyword, Pageable pageable) {
-    return labRepository.findByResearchAreaContainingIgnoreCase(keyword, pageable);
-  }
-
-  @Transactional(readOnly = true)
-  public Page<Lab> getLabsByProfessor(String professorId, Pageable pageable) {
-    return labRepository.findByProfessorId(professorId, pageable);
   }
 }

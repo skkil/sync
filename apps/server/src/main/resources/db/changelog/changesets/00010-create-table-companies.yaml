@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00010-create-table-companies
+      author: jieunseo
+      preConditions:
+        - not:
+            tableExists:
+              tableName: companies
+      changes:
+        - createTable:
+            tableName: companies
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_companies_providers
+                    references: providers(id)
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+              - column:
+                  name: company_size
+                  type: INTEGER
+        - addForeignKeyConstraint:
+            baseTableName: companies
+            baseColumnNames: id
+            referencedTableName: providers
+            referencedColumnNames: id
+            constraintName: fk_companies_providers
+            onDelete: CASCADE

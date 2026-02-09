@@ -1,7 +1,7 @@
 package com.skkil.sync.review.model;
 
+import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.model.Lab;
-import com.skkil.sync.review.constant.ReviewType;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +24,7 @@ public class LabReview extends Review {
 
   @Builder
   public LabReview(User reviewer, Lab provider, String textReview, LabReviewDetails reviewDetails) {
-    super(ReviewType.LAB, reviewer, provider, textReview);
+    super(ProviderType.LAB, reviewer, provider, textReview);
     this.reviewDetails = reviewDetails;
   }
 

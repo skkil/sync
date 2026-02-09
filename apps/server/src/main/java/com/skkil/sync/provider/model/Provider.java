@@ -34,14 +34,20 @@ public abstract class Provider extends BaseEntity {
   @Setter
   protected String contactInfo;
 
-  @Column(name = "is_verified")
+  @Column(name = "one_line_review", length = 500)
+  @Setter
+  private String oneLineReview;
+
   protected Boolean isVerified = false;
 
   protected Provider() {}
 
-  protected Provider(ProviderType type, String name, String description) {
+  protected Provider(
+      ProviderType type, String name, String description, String contactInfo, String oneLineReview) {
     this.type = type;
     this.name = name;
     this.description = description;
+    this.contactInfo = contactInfo;
+    this.oneLineReview = oneLineReview;
   }
 }

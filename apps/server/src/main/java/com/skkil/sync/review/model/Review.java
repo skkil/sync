@@ -1,8 +1,8 @@
 package com.skkil.sync.review.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
+import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.model.Provider;
-import com.skkil.sync.review.constant.ReviewType;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +25,7 @@ public abstract class Review extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "review_type", length = 50, nullable = false)
-  private ReviewType type; // LAB, SCHOOL, COMPANY 중 하나
+  private ProviderType type; // LAB, SCHOOL, COMPANY 중 하나
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "reviewer_id", nullable = false)
@@ -43,7 +43,7 @@ public abstract class Review extends BaseEntity {
 
   protected Review() {}
 
-  protected Review(ReviewType type, User reviewer, Provider provider, String textReview) {
+  protected Review(ProviderType type, User reviewer, Provider provider, String textReview) {
     this.type = type;
     this.reviewer = reviewer;
     this.provider = provider;
