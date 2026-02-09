@@ -9,6 +9,7 @@ import { ComponentType } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useGetExperiencesQuery } from '@/features/experience/api/get-experiences';
 import { useGetProfileQuery } from '@/features/profile/api/get-profile';
 import { useSession } from '@/lib/auth/client';
 import { Experience, ExperienceType } from '@/types/experience';
@@ -25,6 +26,7 @@ const categories: {
   id: string;
   type: ExperienceType;
   render: ComponentType<{
+    userId: string;
     experience: Experience;
   }>;
 }[] = [
@@ -46,7 +48,7 @@ export default function Profile({ userId }: ProfileProps) {
   const { data: session } = useSession();
   const { data: profile, isError } = useGetProfileQuery(userId);
 
-  const experiences: Experience[] = [];
+  const { data: experiences } = useGetExperiencesQuery(userId);
 
   if (isError) {
     notFound();
@@ -104,11 +106,16 @@ export default function Profile({ userId }: ProfileProps) {
             </CardHeader>
 
             <CardContent>
-              {experiences
-                .filter((experience) => experience.type === type)
-                .map((experience) => (
-                  <Component key={experience.id} experience={experience} />
-                ))}
+              {experiences &&
+                experiences
+                  .filter((experience) => experience.type === type)
+                  .map((experience) => (
+                    <Component
+                      key={experience.id}
+                      userId={userId}
+                      experience={experience}
+                    />
+                  ))}
             </CardContent>
           </Card>
         );

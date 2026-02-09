@@ -1,8 +1,12 @@
 package com.skkil.sync.experience.service;
 
 import com.skkil.sync.experience.constant.ExperienceType;
+import com.skkil.sync.experience.constant.ExperienceVisibility;
 import com.skkil.sync.experience.dto.request.CreateExperienceRequest;
+import com.skkil.sync.experience.dto.request.UpdateExperienceRequest;
 import com.skkil.sync.experience.dto.response.CreateExperienceResponse;
+import com.skkil.sync.experience.dto.response.GetExperiencesResponse;
+import com.skkil.sync.experience.exception.ExperienceNotFoundException;
 import com.skkil.sync.experience.model.Experience;
 import com.skkil.sync.experience.repository.ExperienceRepository;
 import com.skkil.sync.provider.model.Provider;
@@ -58,6 +62,51 @@ public class ExperienceService {
     experience = experienceRepository.save(experience);
 
     return new CreateExperienceResponse(experience.getId());
+  }
+
+  @Transactional(readOnly = true)
+  public GetExperiencesResponse getExperiences(Long userId, ExperienceType type, boolean isOwner) {
+    List<Experience> experiences =
+        type == null
+            ? experienceRepository.findByUserWithProvider(userId)
+            : experienceRepository.findByUserIdAndType(userId, type.name());
+
+    var filteredExperiences =
+        isOwner
+            ? experiences.stream()
+            : experiences.stream()
+                .filter(
+                    experience -> experience.getVisibility().equals(ExperienceVisibility.PUBLIC));
+
+    var experienceResponse =
+        filteredExperiences.map(
+            experience -> {
+              var provider =
+                  new GetExperiencesResponse.Provider(
+                      experience.getProvider().getId(), experience.getProvider().getName());
+
+              return new GetExperiencesResponse.Experience(
+                  experience.getType(),
+                  experience.getVisibility(),
+                  provider,
+                  experience.getId(),
+                  experience.getStartDate(),
+                  experience.getEndDate());
+            });
+
+    return new GetExperiencesResponse(experienceResponse.toList());
+  }
+
+  @Transactional
+  public void updateExperience(Long experienceId, UpdateExperienceRequest request) {
+    Experience experience =
+        experienceRepository
+            .findById(experienceId)
+            .orElseThrow(() -> new ExperienceNotFoundException(experienceId));
+
+    if (request.visibility() != null) {
+      experience.setVisibility(request.visibility());
+    }
   }
 
   @Transactional

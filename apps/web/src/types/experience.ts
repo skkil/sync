@@ -5,8 +5,11 @@ export enum ExperienceType {
   EDUCATION = 'EDUCATION',
 }
 
+export type ExperienceVisibility = 'PUBLIC' | 'PRIVATE';
+
 export type Experience = {
   id: string;
+  visibility: ExperienceVisibility;
   provider: Provider;
   startDate: Date;
   endDate: Date;
