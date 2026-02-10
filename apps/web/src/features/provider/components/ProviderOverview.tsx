@@ -1,9 +1,15 @@
 'use client';
 
+import { WarningIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import useGetProviderQuery from '@/features/provider/api/get-provider';
 import { ProviderType } from '@/types/provider';
 
@@ -36,8 +42,19 @@ export default function ProviderOverview({ id, type }: ProviderOverviewProps) {
               <AvatarFallback />
             </Avatar>
 
-            <div>
+            <div className="flex items-center gap-2">
               <h1 className="text-2xl font-semibold">{provider.name}</h1>
+
+              {provider.verifiedBy === null && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <WarningIcon />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {t('overview.unverified.tooltip')}
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
           </div>
         </div>

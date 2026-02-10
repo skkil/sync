@@ -1,18 +1,20 @@
 package com.skkil.sync.auth;
 
-import java.util.Collections;
+import com.skkil.sync.user.constant.Role;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 @Builder
-public record AuthenticatedUser(Long userId, String fullName, String email, String password)
+public record AuthenticatedUser(
+    Long userId, String fullName, String email, String password, Role role)
     implements UserDetails, OidcUser {
 
   @Override
@@ -52,6 +54,11 @@ public record AuthenticatedUser(Long userId, String fullName, String email, Stri
 
   @Override
   public List<? extends GrantedAuthority> getAuthorities() {
-    return Collections.emptyList();
+    SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName());
+    return List.of(authority);
+  }
+
+  public boolean isAdmin() {
+    return role == Role.ADMIN;
   }
 }

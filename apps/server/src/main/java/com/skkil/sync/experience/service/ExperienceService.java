@@ -44,6 +44,10 @@ public class ExperienceService {
       throw new IllegalArgumentException("Provider type does not match experience type");
     }
 
+    if (!provider.isVerified()) {
+      throw new IllegalStateException("Provider is not verified");
+    }
+
     ExperienceStrategy experienceStrategy = getExperienceStrategy(request.type());
 
     Experience experience = experienceStrategy.createExperience(request);

@@ -1,5 +1,6 @@
 package com.skkil.sync.provider.controller;
 
+import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.dto.request.CreateProviderRequest;
 import com.skkil.sync.provider.dto.request.UpdateProviderRequest;
@@ -8,6 +9,7 @@ import com.skkil.sync.provider.dto.response.GetProviderResponse;
 import com.skkil.sync.provider.dto.response.GetProvidersResponse;
 import com.skkil.sync.provider.service.ProviderService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +33,9 @@ public class ProviderController {
   @PostMapping("/providers")
   @ResponseStatus(HttpStatus.CREATED)
   public CreateProviderResponse createProvider(
+      @AuthenticationPrincipal AuthenticatedUser user,
       @RequestBody @Validated CreateProviderRequest request) {
-    return providerService.createProvider(request);
+    return providerService.createProvider(user.userId(), request);
   }
 
   @GetMapping("/providers")
@@ -42,7 +45,8 @@ public class ProviderController {
 
   @GetMapping("/providers/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public GetProviderResponse getProvider(@PathVariable Long id) {
+  public GetProviderResponse getProvider(
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long id) {
     return providerService.getProvider(id);
   }
 

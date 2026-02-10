@@ -1,0 +1,55 @@
+package com.skkil.sync.common.security;
+
+import com.skkil.sync.auth.AuthenticatedUser;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
+public class GlobalPermissionEvaluator implements PermissionEvaluator {
+
+  private Map<String, CustomPermissionEvaluator> evaluators;
+
+  public GlobalPermissionEvaluator(List<CustomPermissionEvaluator> evaluators) {
+    this.evaluators =
+        evaluators.stream()
+            .collect(Collectors.toMap(CustomPermissionEvaluator::type, Function.identity()));
+    log.debug("Registered permission evaluators: {}", this.evaluators.keySet());
+  }
+
+  @Override
+  public boolean hasPermission(
+      Authentication authentication, Object targetDomainObject, Object permission) {
+    return false;
+  }
+
+  @Override
+  public boolean hasPermission(
+      Authentication authentication, Serializable targetId, String targetType, Object permission) {
+    if (targetId == null) {
+      log.debug("Target ID is null");
+      return false;
+    }
+
+    var evaluator = evaluators.get(targetType);
+    if (evaluator == null) {
+      log.debug("No permission evaluator found for target type: {}", targetType);
+      return false;
+    }
+
+    AuthenticatedUser user = null;
+    if (authentication != null && authentication.getPrincipal() instanceof AuthenticatedUser) {
+      user = (AuthenticatedUser) authentication.getPrincipal();
+    }
+
+    return evaluator.hasPermission(
+        user, (Long) targetId, PermissionOperation.valueOf(permission.toString()));
+  }
+}

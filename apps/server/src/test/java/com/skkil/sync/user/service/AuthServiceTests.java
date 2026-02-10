@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.user.constant.Role;
 import com.skkil.sync.user.dto.request.LoginRequest;
 import com.skkil.sync.user.dto.request.RegisterRequest;
 import com.skkil.sync.user.exception.UserAlreadyExistsException;
@@ -45,7 +46,7 @@ public class AuthServiceTests {
   void authenticate_validUser_success() {
     LoginRequest request = new LoginRequest("user@example.com", "password123");
     AuthenticatedUser authenticatedUser =
-        new AuthenticatedUser(1L, "Test User", "user@example.com", "hashedPassword");
+        new AuthenticatedUser(1L, "Test User", "user@example.com", "hashedPassword", Role.USER);
 
     when(userService.loadUserByUsername("user@example.com")).thenReturn(authenticatedUser);
     Authentication mockAuth = mock(Authentication.class);
@@ -78,7 +79,7 @@ public class AuthServiceTests {
   void authenticate_oAuthUserWithNoPassword_throwIllegalArgumentException() {
     LoginRequest request = new LoginRequest("oauth@example.com", "password123");
     AuthenticatedUser authenticatedUser =
-        new AuthenticatedUser(1L, "OAuth User", "oauth@example.com", null);
+        new AuthenticatedUser(1L, "OAuth User", "oauth@example.com", null, Role.USER);
 
     when(userService.loadUserByUsername("oauth@example.com")).thenReturn(authenticatedUser);
 
