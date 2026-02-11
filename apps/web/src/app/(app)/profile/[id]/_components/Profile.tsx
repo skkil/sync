@@ -2,24 +2,53 @@
 
 import { EnvelopeIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ComponentType } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { useGetProfile } from '@/features/profile/api/get-profile';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useGetExperiencesQuery } from '@/features/experience/api/get-experiences';
+import { useGetProfileQuery } from '@/features/profile/api/get-profile';
+import { useSession } from '@/lib/auth/client';
 import { Experience, ExperienceType } from '@/types/experience';
+
+import AddExperienceButton from './AddExperienceButton';
+import EducationExperience from './EducationExperience';
+import EmploymentExperience from './EmploymentExperience';
 
 interface ProfileProps {
   userId: string;
 }
 
+const categories: {
+  id: string;
+  type: ExperienceType;
+  render: ComponentType<{
+    userId: string;
+    experience: Experience;
+  }>;
+}[] = [
+  {
+    id: 'employment',
+    type: ExperienceType.EMPLOYMENT,
+    render: EmploymentExperience,
+  },
+  {
+    id: 'education',
+    type: ExperienceType.EDUCATION,
+    render: EducationExperience,
+  },
+];
+
 export default function Profile({ userId }: ProfileProps) {
   const t = useTranslations('pages.profile');
 
-  const { data: profile, isError } = useGetProfile(userId);
+  const { data: session } = useSession();
+  const { data: profile, isError } = useGetProfileQuery(userId);
 
-  const experiences: Experience[] = [];
+  const { data: experiences } = useGetExperiencesQuery(userId);
 
   if (isError) {
     notFound();
@@ -39,10 +68,14 @@ export default function Profile({ userId }: ProfileProps) {
             <div className="flex justify-between items-center">
               <h2 className="text-3xl font-bold mt-3">{profile.name}</h2>
 
-              <div className="flex gap-2">
-                <Button>{t('header.follow')}</Button>
-                <Button variant="outline">{t('header.message')}</Button>
-              </div>
+              {session?.user.id !== profile.id && (
+                <div className="flex gap-2">
+                  <Button>{t('header.follow')}</Button>
+                  <Link href={`/messages?to=${profile.id}`}>
+                    <Button variant="outline">{t('header.message')}</Button>
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col-reverse md:flex-row md:justify-between mt-2 gap-4">
@@ -60,46 +93,33 @@ export default function Profile({ userId }: ProfileProps) {
         )}
       </Card>
 
-      <Card className="mx-auto w-full max-w-3xl">
-        <CardHeader>
-          <h2 className="text-xl font-bold">{t('employment.title')}</h2>
-        </CardHeader>
+      {categories.map(({ id, type, render: Component }) => {
+        return (
+          <Card key={id} className="mx-auto w-full max-w-3xl">
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                <h2 className="text-xl font-bold">{t(`${id}.title`)}</h2>
+                {session?.user.id === userId && (
+                  <AddExperienceButton type={type} />
+                )}
+              </CardTitle>
+            </CardHeader>
 
-        <CardContent>
-          {experiences
-            .filter(
-              (experience) => experience.type === ExperienceType.EMPLOYMENT,
-            )
-            .map((employment) => (
-              <div key={employment.id}>
-                <h3 className="font-semibold">{employment.provider.name}</h3>
-                {employment.startDate.getFullYear()} -{' '}
-                {employment.endDate.getFullYear()}
-              </div>
-            ))}
-        </CardContent>
-      </Card>
-
-      <Card className="mx-auto w-full max-w-3xl">
-        <CardHeader>
-          <h2 className="text-xl font-bold">{t('education.title')}</h2>
-        </CardHeader>
-
-        <CardContent>
-          {experiences
-            .filter(
-              (experience) => experience.type === ExperienceType.EDUCATION,
-            )
-            .map((education) => (
-              <div key={education.id}>
-                <h3 className="font-semibold">{education.provider.name}</h3>
-                {education.major && <p>{education.major}</p>}
-                {education.startDate.getFullYear()} -{' '}
-                {education.endDate.getFullYear()}
-              </div>
-            ))}
-        </CardContent>
-      </Card>
+            <CardContent>
+              {experiences &&
+                experiences
+                  .filter((experience) => experience.type === type)
+                  .map((experience) => (
+                    <Component
+                      key={experience.id}
+                      userId={userId}
+                      experience={experience}
+                    />
+                  ))}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

@@ -1,13 +1,17 @@
-import { Provider } from './provider';
-
 export enum ExperienceType {
   EMPLOYMENT = 'EMPLOYMENT',
   EDUCATION = 'EDUCATION',
 }
 
+export type ExperienceVisibility = 'PUBLIC' | 'PRIVATE';
+
 export type Experience = {
   id: string;
-  provider: Provider;
+  visibility: ExperienceVisibility;
+  provider: {
+    id: string;
+    name: string;
+  };
   startDate: Date;
   endDate: Date;
 } & (

@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00005-create-table-participants
+      author: hyoungjoojin
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: conversations
+            - not:
+                tableExists:
+                  tableName: participants
+      changes:
+        - createTable:
+            tableName: participants
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: conversation_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: participants
+            baseColumnNames: conversation_id
+            referencedTableName: conversations
+            referencedColumnNames: id
+            constraintName: fk_participants_conversations
+        - addForeignKeyConstraint:
+            baseTableName: participants
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_participants_users
+        - addUniqueConstraint:
+            tableName: participants
+            columnNames: user_id, conversation_id
+            constraintName: uq_participants_conversation_user

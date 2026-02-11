@@ -9,8 +9,12 @@ public abstract class SyncException extends RuntimeException implements ErrorRes
     super(message);
   }
 
+  public abstract ErrorCode getErrorCode();
+
   @Override
   public ProblemDetail getBody() {
-    return ProblemDetail.forStatusAndDetail(getStatusCode(), getMessage());
+    ProblemDetail detail = ProblemDetail.forStatusAndDetail(getStatusCode(), getMessage());
+    detail.setProperty("code", getErrorCode());
+    return detail;
   }
 }

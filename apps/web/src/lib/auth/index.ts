@@ -3,9 +3,14 @@ import { createAuthMiddleware } from 'better-auth/api';
 import { nextCookies } from 'better-auth/next-js';
 import ky from 'ky';
 
-import { GetAuthenticatedUserResponse } from '@/types/api/users';
-
 import { env } from '../env';
+
+export interface GetAuthenticatedUserResponse {
+  userId: string;
+  fullName: string;
+  email: string;
+  isOnboarded: boolean;
+}
 
 export const auth = betterAuth({
   user: {

@@ -5,6 +5,7 @@ import com.skkil.sync.provider.dto.request.CreateProviderRequest;
 import com.skkil.sync.provider.dto.request.UpdateProviderRequest;
 import com.skkil.sync.provider.dto.response.CreateProviderResponse;
 import com.skkil.sync.provider.dto.response.GetProviderResponse;
+import com.skkil.sync.provider.dto.response.GetProvidersResponse;
 import com.skkil.sync.provider.exception.ProviderNotFoundException;
 import com.skkil.sync.provider.model.Provider;
 import com.skkil.sync.provider.repository.ProviderRepository;
@@ -33,6 +34,24 @@ public class ProviderService {
     ProviderStrategy providerStrategy = getProviderStrategy(request.type());
     Provider provider = providerStrategy.createProvider(request);
     return new CreateProviderResponse(provider.getId());
+  }
+
+  @Transactional(readOnly = true)
+  public GetProvidersResponse getProviders(ProviderType type) {
+    List<Provider> providers = providerRepository.findByType(type);
+
+    return new GetProvidersResponse(
+        providers.stream()
+            .map(
+                provider ->
+                    new GetProvidersResponse.Provider(
+                        provider.getId().toString(), provider.getName()))
+            .toList());
+  }
+
+  @Transactional(readOnly = true)
+  public Provider getProviderEntity(Long id) {
+    return providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
   }
 
   @Transactional(readOnly = true)

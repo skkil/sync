@@ -2,6 +2,7 @@ package com.skkil.sync.experience.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.experience.constant.ExperienceType;
+import com.skkil.sync.experience.constant.ExperienceVisibility;
 import com.skkil.sync.provider.model.Provider;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
@@ -27,6 +28,10 @@ public abstract class Experience extends BaseEntity {
   @Column(name = "experience_type", length = 100, nullable = false)
   private ExperienceType type;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "visibility", length = 50, nullable = false)
+  private ExperienceVisibility visibility = ExperienceVisibility.PUBLIC;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   protected User user;
@@ -40,4 +45,30 @@ public abstract class Experience extends BaseEntity {
 
   @Column(name = "end_date")
   private LocalDateTime endDate;
+
+  protected Experience() {}
+
+  protected Experience(ExperienceType type) {
+    this.type = type;
+  }
+
+  public void setVisibility(ExperienceVisibility visibility) {
+    this.visibility = visibility;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public void setProvider(Provider provider) {
+    this.provider = provider;
+  }
+
+  public void setStartDate(LocalDateTime startDate) {
+    this.startDate = startDate;
+  }
+
+  public void setEndDate(LocalDateTime endDate) {
+    this.endDate = endDate;
+  }
 }
