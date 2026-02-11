@@ -13,27 +13,20 @@ import lombok.Setter;
 @Getter
 public class Company extends Provider {
 
-    @Column(name = "name", length = 100)
-    @Setter
-    private String name;
+  @Column(name = "company_size")
+  @Setter
+  private Integer companySize;
 
-    @Column(name = "company_size")
-    @Setter
-    private Integer companySize;
+  protected Company() {}
 
-    protected Company() {
-    }
-
-    @Builder
-    public Company(
-            String name,
-            String description,
-            String contactInfo,
-            String oneLineReview,
-            String industry,
-            Integer companySize) {
-        super(ProviderType.COMPANY, name, description, contactInfo, oneLineReview);
-        this.name = name;
-        this.companySize = companySize;
-    }
+  @Builder
+  public Company(
+      String name,
+      String description,
+      String contactInfo,
+      String oneLineReview,
+      Integer companySize) {
+    super(ProviderType.COMPANY, name, description, contactInfo, oneLineReview);
+    this.companySize = companySize;
+  }
 }

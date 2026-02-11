@@ -43,7 +43,11 @@ public abstract class Provider extends BaseEntity {
   protected Provider() {}
 
   protected Provider(
-      ProviderType type, String name, String description, String contactInfo, String oneLineReview) {
+      ProviderType type,
+      String name,
+      String description,
+      String contactInfo,
+      String oneLineReview) {
     this.type = type;
     this.name = name;
     this.description = description;

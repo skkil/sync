@@ -32,8 +32,7 @@ public class Lab extends Provider {
   @Setter
   private String detailedResearchField;
 
-  protected Lab() {
-  }
+  protected Lab() {}
 
   @Builder
   public Lab(

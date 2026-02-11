@@ -23,17 +23,17 @@ public class CompanyReview extends Review {
   protected CompanyReview() {}
 
   @Builder
-  public CompanyReview(User reviewer, Company provider, String textReview,
-      CompanyReviewDetails reviewDetails) {
+  public CompanyReview(
+      User reviewer, Company provider, String textReview, CompanyReviewDetails reviewDetails) {
     super(ProviderType.COMPANY, reviewer, provider, textReview);
     this.reviewDetails = reviewDetails;
   }
 
   public static class CompanyReviewDetails {
-    public Integer totalScore;           // 총점
-    public Integer workCulture;          // 회사 문화
-    public Integer salary;               // 연봉
-    public Integer growthOpportunity;    // 성장 기회
-    public Integer workLifeBalance;      // 워라밸
+    public Integer totalScore; // 총점
+    public Integer workCulture; // 회사 문화
+    public Integer salary; // 연봉
+    public Integer growthOpportunity; // 성장 기회
+    public Integer workLifeBalance; // 워라밸
   }
 }

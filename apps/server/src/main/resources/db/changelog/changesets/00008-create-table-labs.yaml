@@ -15,8 +15,6 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     primaryKey: true
-                    foreignKeyName: fk_labs_providers
-                    references: providers(id)
               - column:
                   name: professor_name
                   type: VARCHAR(255)
@@ -33,8 +31,8 @@ databaseChangeLog:
                   type: TEXT
         - addForeignKeyConstraint:
             baseTableName: labs
-            baseColumnNames: school_id
-            referencedTableName: schools
+            baseColumnNames: id
+            referencedTableName: providers
             referencedColumnNames: id
-            constraintName: fk_labs_school_id
+            constraintName: fk_labs_providers
             onDelete: CASCADE

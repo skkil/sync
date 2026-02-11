@@ -21,12 +21,15 @@ public class School extends Provider {
   @Setter
   private SchoolType schoolType;
 
-  protected School() {
-  }
+  protected School() {}
 
   @Builder
   public School(
-      String name, String description, String contactInfo, String oneLineReview, SchoolType schoolType) {
+      String name,
+      String description,
+      String contactInfo,
+      String oneLineReview,
+      SchoolType schoolType) {
     super(ProviderType.SCHOOL, name, description, contactInfo, oneLineReview);
     this.schoolType = schoolType;
   }

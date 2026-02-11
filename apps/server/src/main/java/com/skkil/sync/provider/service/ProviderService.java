@@ -25,8 +25,9 @@ public class ProviderService {
   public ProviderService(
       ProviderRepository providerRepository, List<ProviderStrategy> providerStrategies) {
     this.providerRepository = providerRepository;
-    this.providerStrategyMap = providerStrategies.stream()
-        .collect(Collectors.toMap(ProviderStrategy::getProviderType, Function.identity()));
+    this.providerStrategyMap =
+        providerStrategies.stream()
+            .collect(Collectors.toMap(ProviderStrategy::getProviderType, Function.identity()));
   }
 
   @Transactional
@@ -56,7 +57,8 @@ public class ProviderService {
 
   @Transactional(readOnly = true)
   public GetProviderResponse getProvider(Long id) {
-    Provider provider = providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
+    Provider provider =
+        providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
 
     ProviderStrategy providerStrategy = getProviderStrategy(provider.getType());
     return providerStrategy.toGetProviderResponse(provider);
@@ -64,7 +66,8 @@ public class ProviderService {
 
   @Transactional
   public void updateProvider(Long id, UpdateProviderRequest request) {
-    Provider provider = providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
+    Provider provider =
+        providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
 
     ProviderStrategy providerStrategy = getProviderStrategy(provider.getType());
     providerStrategy.updateProvider(provider, request);

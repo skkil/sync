@@ -58,5 +58,4 @@ public class ProviderController {
   public void deleteProvider(@PathVariable Long id) {
     providerService.deleteProvider(id);
   }
-
 }

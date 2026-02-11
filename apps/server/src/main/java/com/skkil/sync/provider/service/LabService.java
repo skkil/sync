@@ -39,20 +39,23 @@ public class LabService implements ProviderStrategy {
   public Provider createProvider(CreateProviderRequest request) {
     CreateLabRequest labRequest = (CreateLabRequest) request;
 
-    School school = (School) schoolRepository
-        .findById(labRequest.schoolId())
-        .orElseThrow(() -> new ProviderNotFoundException(labRequest.schoolId()));
+    School school =
+        (School)
+            schoolRepository
+                .findById(labRequest.schoolId())
+                .orElseThrow(() -> new ProviderNotFoundException(labRequest.schoolId()));
 
-    Lab lab = Lab.builder()
-        .name(request.name())
-        .description(request.description())
-        .professorName(labRequest.professorName())
-        .school(school)
-        .researchArea(labRequest.researchArea())
-        .detailedResearchField(labRequest.detailedResearchField())
-        .contactInfo(labRequest.contactInfo())
-        .oneLineReview(labRequest.oneLineReview())
-        .build();
+    Lab lab =
+        Lab.builder()
+            .name(request.name())
+            .description(request.description())
+            .professorName(labRequest.professorName())
+            .school(school)
+            .researchArea(labRequest.researchArea())
+            .detailedResearchField(labRequest.detailedResearchField())
+            .contactInfo(labRequest.contactInfo())
+            .oneLineReview(labRequest.oneLineReview())
+            .build();
 
     return labRepository.save(lab);
   }
