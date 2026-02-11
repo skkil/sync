@@ -66,6 +66,10 @@ public class User extends BaseEntity {
 
   protected User() {}
 
+  public User(Long id) {
+    this.setId(id);
+  }
+
   @Builder
   public User(String email, String hashedPassword, String fullName, String bio) {
     this.email = email;

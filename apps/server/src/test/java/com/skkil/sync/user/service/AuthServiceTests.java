@@ -23,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +38,7 @@ public class AuthServiceTests {
   @Mock private UserRepository userRepository;
   @Mock private AuthenticationManager authenticationManager;
   @Mock private PasswordEncoder passwordEncoder;
+  @Mock private ApplicationEventPublisher eventPublisher;
 
   @InjectMocks private AuthService authService;
 
@@ -100,6 +102,7 @@ public class AuthServiceTests {
         .thenAnswer(
             invocation -> {
               User user = invocation.getArgument(0);
+              user.setId(1L);
               return user;
             });
 
@@ -115,6 +118,8 @@ public class AuthServiceTests {
         .hasFieldOrPropertyWithValue("fullName", "");
 
     verify(passwordEncoder).encode("password123");
+
+    verify(eventPublisher).publishEvent(any());
   }
 
   @Test
@@ -145,7 +150,13 @@ public class AuthServiceTests {
 
     when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.empty());
     when(passwordEncoder.encode("plainPassword")).thenReturn(encodedPassword);
-    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(userRepository.save(any(User.class)))
+        .thenAnswer(
+            invocation -> {
+              User user = invocation.getArgument(0);
+              user.setId(1L);
+              return user;
+            });
 
     authService.registerUser(request);
 
