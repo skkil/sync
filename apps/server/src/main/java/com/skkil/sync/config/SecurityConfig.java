@@ -44,10 +44,17 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             requests ->
                 requests
-                    .requestMatchers("/users/me", "/media/**", "/profiles/me")
+                    .requestMatchers("/profiles/me")
                     .authenticated()
+                    .requestMatchers(
+                        "/profiles/**",
+                        "/auth/login",
+                        "/auth/register",
+                        "/providers/**",
+                        "/media/**")
+                    .permitAll()
                     .anyRequest()
-                    .permitAll())
+                    .authenticated())
         .oauth2Login(
             oauth2 ->
                 oauth2

@@ -30,6 +30,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: visibility
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
                   name: user_id
                   type: BIGINT
                   constraints:
