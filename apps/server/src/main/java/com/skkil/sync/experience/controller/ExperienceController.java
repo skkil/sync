@@ -1,7 +1,6 @@
 package com.skkil.sync.experience.controller;
 
 import com.skkil.sync.auth.AuthenticatedUser;
-import com.skkil.sync.experience.constant.ExperienceType;
 import com.skkil.sync.experience.dto.request.CreateExperienceRequest;
 import com.skkil.sync.experience.dto.request.UpdateExperienceRequest;
 import com.skkil.sync.experience.dto.response.CreateExperienceResponse;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,17 +37,17 @@ public class ExperienceController {
   @GetMapping("/profiles/{userId}/experiences")
   @ResponseStatus(HttpStatus.OK)
   public GetExperiencesResponse getExperiences(
-      @AuthenticationPrincipal AuthenticatedUser user,
-      @PathVariable Long userId,
-      @RequestParam(required = false) ExperienceType type) {
-    return experienceService.getExperiences(
-        userId, type, user != null && userId.equals(user.userId()));
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long userId) {
+    Long requesterId = user == null ? null : user.userId();
+    return experienceService.getExperiences(userId, requesterId);
   }
 
   @PatchMapping("/experiences/{experienceId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updateExperience(
-      @PathVariable Long experienceId, @RequestBody @Validated UpdateExperienceRequest request) {
-    experienceService.updateExperience(experienceId, request);
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable Long experienceId,
+      @RequestBody @Validated UpdateExperienceRequest request) {
+    experienceService.updateExperience(user.userId(), experienceId, request);
   }
 }

@@ -6,7 +6,6 @@ import {
   ExperienceType,
   ExperienceVisibility,
 } from '@/types/experience';
-import { ProviderType } from '@/types/provider';
 import { url } from '@/util/server';
 
 type GetExperiencesResponse = {
@@ -23,16 +22,9 @@ type GetExperiencesResponse = {
   }[];
 };
 
-async function getExperiences(
-  userId: string,
-  type?: ExperienceType,
-): Promise<Experience[]> {
+async function getExperiences(userId: string): Promise<Experience[]> {
   return server
-    .get<GetExperiencesResponse>(
-      url(`profiles/${userId}/experiences`, {
-        type,
-      }),
-    )
+    .get<GetExperiencesResponse>(url(`profiles/${userId}/experiences`))
     .json()
     .then((data) =>
       data.experiences.map((experience) => ({
@@ -41,7 +33,6 @@ async function getExperiences(
         provider: {
           id: experience.provider.id,
           name: experience.provider.name,
-          type: ProviderType.SCHOOL,
         },
         startDate: new Date(experience.startDate),
         endDate: new Date(experience.endDate),
@@ -50,9 +41,9 @@ async function getExperiences(
     );
 }
 
-export function useGetExperiencesQuery(userId: string, type?: ExperienceType) {
+export function useGetExperiencesQuery(userId: string) {
   return useQuery({
-    queryKey: ['users', userId, 'experiences', type],
-    queryFn: () => getExperiences(userId, type),
+    queryKey: ['users', userId, 'experiences'],
+    queryFn: () => getExperiences(userId),
   });
 }

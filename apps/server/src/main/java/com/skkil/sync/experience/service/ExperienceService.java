@@ -1,7 +1,6 @@
 package com.skkil.sync.experience.service;
 
 import com.skkil.sync.experience.constant.ExperienceType;
-import com.skkil.sync.experience.constant.ExperienceVisibility;
 import com.skkil.sync.experience.dto.request.CreateExperienceRequest;
 import com.skkil.sync.experience.dto.request.UpdateExperienceRequest;
 import com.skkil.sync.experience.dto.response.CreateExperienceResponse;
@@ -65,44 +64,44 @@ public class ExperienceService {
   }
 
   @Transactional(readOnly = true)
-  public GetExperiencesResponse getExperiences(Long userId, ExperienceType type, boolean isOwner) {
-    List<Experience> experiences =
-        type == null
-            ? experienceRepository.findByUserWithProvider(userId)
-            : experienceRepository.findByUserIdAndType(userId, type.name());
+  public GetExperiencesResponse getExperiences(Long userId, Long requesterId) {
+    boolean isOwner = requesterId != null && requesterId.equals(userId);
 
-    var filteredExperiences =
+    List<Experience> experiences =
         isOwner
-            ? experiences.stream()
-            : experiences.stream()
-                .filter(
-                    experience -> experience.getVisibility().equals(ExperienceVisibility.PUBLIC));
+            ? experienceRepository.findByUserWithProvider(userId)
+            : experienceRepository.findByUserAndPublicWithProvider(userId);
 
     var experienceResponse =
-        filteredExperiences.map(
-            experience -> {
-              var provider =
-                  new GetExperiencesResponse.Provider(
-                      experience.getProvider().getId(), experience.getProvider().getName());
+        experiences.stream()
+            .map(
+                experience -> {
+                  var provider =
+                      new GetExperiencesResponse.Provider(
+                          experience.getProvider().getId(), experience.getProvider().getName());
 
-              return new GetExperiencesResponse.Experience(
-                  experience.getType(),
-                  experience.getVisibility(),
-                  provider,
-                  experience.getId(),
-                  experience.getStartDate(),
-                  experience.getEndDate());
-            });
+                  return new GetExperiencesResponse.Experience(
+                      experience.getType(),
+                      experience.getVisibility(),
+                      provider,
+                      experience.getId(),
+                      experience.getStartDate(),
+                      experience.getEndDate());
+                });
 
     return new GetExperiencesResponse(experienceResponse.toList());
   }
 
   @Transactional
-  public void updateExperience(Long experienceId, UpdateExperienceRequest request) {
+  public void updateExperience(Long userId, Long experienceId, UpdateExperienceRequest request) {
     Experience experience =
         experienceRepository
             .findById(experienceId)
             .orElseThrow(() -> new ExperienceNotFoundException(experienceId));
+
+    if (!userId.equals(experience.getUser().getId())) {
+      throw new ExperienceNotFoundException(experienceId);
+    }
 
     if (request.visibility() != null) {
       experience.setVisibility(request.visibility());

@@ -19,7 +19,7 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
       """
       SELECT e FROM Experience e
       JOIN FETCH e.provider
-      WHERE e.user.id = :userId AND e.type = :type
+      WHERE e.user.id = :userId AND e.visibility = 'PUBLIC'
       """)
-  public List<Experience> findByUserIdAndType(Long userId, String type);
+  public List<Experience> findByUserAndPublicWithProvider(Long userId);
 }

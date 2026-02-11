@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useUpdateExperienceMutation } from '@/features/experience/api/update-experience';
 import { useSession } from '@/lib/auth/client';
-import { Experience } from '@/types/experience';
+import { Experience, ExperienceVisibility } from '@/types/experience';
 
 interface ExperienceWrapperProps {
   userId: string;
@@ -39,7 +39,9 @@ export default function ExperienceWrapper({
 
   const { data: session } = useSession();
 
-  const { mutate: updateExperience } = useUpdateExperienceMutation();
+  const { mutate: updateExperience } = useUpdateExperienceMutation(
+    session?.user.id || '',
+  );
 
   const isOwner = session?.user.id === userId;
 
@@ -70,7 +72,7 @@ export default function ExperienceWrapper({
                         updateExperience({
                           experienceId: experience.id,
                           data: {
-                            visibility: visibility as 'PUBLIC' | 'PRIVATE',
+                            visibility: visibility as ExperienceVisibility,
                           },
                         });
                       }}
