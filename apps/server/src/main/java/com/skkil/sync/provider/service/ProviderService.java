@@ -39,7 +39,7 @@ public class ProviderService {
 
   @Transactional(readOnly = true)
   public GetProvidersResponse getProviders(ProviderType type) {
-    List<Provider> providers = providerRepository.findByType(type);
+    List<Provider> providers = providerRepository.findByTypeAndVerified(type);
 
     return new GetProvidersResponse(
         providers.stream()
