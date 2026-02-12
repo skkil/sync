@@ -8,12 +8,14 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.constant.SchoolType;
 import com.skkil.sync.provider.dto.request.CreateSchoolRequest;
@@ -29,7 +31,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restdocs.test.autoconfigure.AutoConfigureRestDocs;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -39,7 +40,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.json.JsonMapper;
 
 @WebMvcTest(ProviderController.class)
-@AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureRestDocs
 @ExtendWith(RestDocumentationExtension.class)
 public class ProviderControllerTests {
@@ -51,9 +51,10 @@ public class ProviderControllerTests {
   @Autowired private JsonMapper jsonMapper;
 
   @Test
+  @WithAuthenticatedUser
   void createSchool() throws Exception {
     CreateProviderResponse response = new CreateProviderResponse(1L);
-    Mockito.when(providerService.createProvider(any(CreateSchoolRequest.class)))
+    Mockito.when(providerService.createProvider(any(Long.class), any(CreateSchoolRequest.class)))
         .thenReturn(response);
 
     CreateSchoolRequest request =
@@ -68,7 +69,8 @@ public class ProviderControllerTests {
         .perform(
             post("/providers")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsString(request)))
+                .content(jsonMapper.writeValueAsString(request))
+                .with(csrf()))
         .andExpect(status().isCreated())
         .andDo(
             document(
@@ -87,6 +89,7 @@ public class ProviderControllerTests {
   }
 
   @Test
+  @WithAuthenticatedUser
   void getSchool() throws Exception {
     GetSchoolResponse response =
         GetSchoolResponse.builder()
@@ -119,10 +122,15 @@ public class ProviderControllerTests {
                     fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("Updated at"),
                     fieldWithPath("schoolType")
                         .type(JsonFieldType.STRING)
-                        .description("School type"))));
+                        .description("School type"),
+                    fieldWithPath("verifiedBy")
+                        .type(JsonFieldType.NUMBER)
+                        .description("Verified by")
+                        .optional())));
   }
 
   @Test
+  @WithAuthenticatedUser
   void updateSchool() throws Exception {
     Mockito.doNothing()
         .when(providerService)
@@ -140,7 +148,8 @@ public class ProviderControllerTests {
         .perform(
             patch("/providers/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsString(request)))
+                .content(jsonMapper.writeValueAsString(request))
+                .with(csrf()))
         .andExpect(status().isNoContent())
         .andDo(
             document(
@@ -163,11 +172,12 @@ public class ProviderControllerTests {
   }
 
   @Test
+  @WithAuthenticatedUser
   void deleteProvider() throws Exception {
     Mockito.doNothing().when(providerService).deleteProvider(eq(1L));
 
     mockMvc
-        .perform(delete("/providers/{id}", 1L))
+        .perform(delete("/providers/{id}", 1L).with(csrf()))
         .andExpect(status().isNoContent())
         .andDo(
             document(

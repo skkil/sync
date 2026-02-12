@@ -82,6 +82,11 @@
         "moreReviews": "리뷰 더 보기",
         "collapseReviews": "접기"
       },
+      "overview": {
+        "unverified": {
+          "tooltip": "이 기관은 아직 검증되지 않았습니다."
+        }
+      },
       "stats": {
         "followers": "팔로워",
         "projects": "프로젝트",
@@ -238,6 +243,15 @@
         "errors": {
           "required-provider": "기관은 필수 항목입니다.",
           "required-major": "전공은 필수 항목입니다."
+        }
+      }
+    },
+    "admin": {
+      "unverified-providers": {
+        "title": "검증되지 않은 기관",
+        "description": "기관을 검토하고 검증하세요",
+        "actions": {
+          "verify": "검증"
         }
       }
     }

@@ -27,7 +27,11 @@ public class UserService implements UserDetailsService {
                 () -> new UsernameNotFoundException("User not found with username: " + username));
 
     return new AuthenticatedUser(
-        user.getId(), user.getFullName(), user.getEmail(), user.getHashedPassword());
+        user.getId(),
+        user.getFullName(),
+        user.getEmail(),
+        user.getHashedPassword(),
+        user.getRole());
   }
 
   public User getUserReference(Long userId) {

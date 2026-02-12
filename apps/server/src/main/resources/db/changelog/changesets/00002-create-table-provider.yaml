@@ -38,35 +38,22 @@ databaseChangeLog:
                   name: description
                   type: TEXT
               - column:
-                  name: is_verified
-                  type: BOOLEAN
-                  defaultValueBoolean: false
-
-  - changeSet:
-      id: 00002-create-table-school
-      author: hyoungjoojin
-      preConditions:
-        - not:
-            tableExists:
-              tableName: schools
-      changes:
-        - createTable:
-            tableName: schools
-            columns:
-              - column:
-                  name: id
+                  name: created_by
                   type: BIGINT
                   constraints:
-                    primaryKey: true
-              - column:
-                  name: school_type
-                  type: VARCHAR(100)
-                  constraints:
                     nullable: false
+              - column:
+                  name: verified_by
+                  type: BIGINT
         - addForeignKeyConstraint:
-            baseTableName: schools
-            baseColumnNames: id
-            referencedTableName: providers
+            baseTableName: providers
+            baseColumnNames: created_by
+            referencedTableName: users
             referencedColumnNames: id
-            constraintName: fk_schools_providers
-            onDelete: CASCADE
+            constraintName: fk_providers_created_by
+        - addForeignKeyConstraint:
+            baseTableName: providers
+            baseColumnNames: verified_by
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_providers_verified_by
