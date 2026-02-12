@@ -17,7 +17,8 @@ public record GetLabResponse(
     String detailedResearchField,
     String contactInfo,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt)
+    LocalDateTime updatedAt,
+    Long verifiedBy)
     implements GetProviderResponse {
 
   public record ProfessorInfo(String id, String fullName, String email) {}

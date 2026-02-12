@@ -9,7 +9,6 @@ import com.skkil.sync.provider.dto.response.GetProviderResponse;
 import com.skkil.sync.provider.dto.response.GetSchoolResponse;
 import com.skkil.sync.provider.model.Provider;
 import com.skkil.sync.provider.model.School;
-import com.skkil.sync.provider.repository.SchoolRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import org.springframework.stereotype.Service;
@@ -17,12 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class SchoolService implements ProviderStrategy {
-
-  private final SchoolRepository schoolRepository;
-
-  public SchoolService(SchoolRepository schoolRepository) {
-    this.schoolRepository = schoolRepository;
-  }
 
   @Override
   public ProviderType getProviderType() {
@@ -41,7 +34,6 @@ class SchoolService implements ProviderStrategy {
             .schoolType(schoolRequest.schoolType())
             .build();
 
-    school = schoolRepository.save(school);
     return school;
   }
 
@@ -56,6 +48,7 @@ class SchoolService implements ProviderStrategy {
         .schoolType(((School) provider).getSchoolType())
         .createdAt(LocalDateTime.ofInstant(provider.getCreatedAt(), ZoneId.systemDefault()))
         .updatedAt(LocalDateTime.ofInstant(provider.getUpdatedAt(), ZoneId.systemDefault()))
+        .verifiedBy(provider.getVerifiedBy() != null ? provider.getVerifiedBy().getId() : null)
         .build();
   }
 

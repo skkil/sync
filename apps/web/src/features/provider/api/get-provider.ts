@@ -9,6 +9,7 @@ type GetProviderResponse = {
   description: string;
   createdAt: string;
   updatedAt: string;
+  verifiedBy: string | null;
 } & {
   type: ProviderType;
   schoolType: SchoolType;

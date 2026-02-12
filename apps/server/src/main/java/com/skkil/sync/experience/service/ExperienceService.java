@@ -6,6 +6,7 @@ import com.skkil.sync.experience.dto.request.UpdateExperienceRequest;
 import com.skkil.sync.experience.dto.response.CreateExperienceResponse;
 import com.skkil.sync.experience.dto.response.GetExperiencesResponse;
 import com.skkil.sync.experience.exception.ExperienceNotFoundException;
+import com.skkil.sync.experience.exception.ProviderNotVerifiedException;
 import com.skkil.sync.experience.model.Experience;
 import com.skkil.sync.experience.repository.ExperienceRepository;
 import com.skkil.sync.provider.model.Provider;
@@ -45,6 +46,10 @@ public class ExperienceService {
     Provider provider = providerService.getProviderEntity(request.providerId());
     if (!request.type().getProviderType().equals(provider.getType())) {
       throw new IllegalArgumentException("Provider type does not match experience type");
+    }
+
+    if (!provider.isVerified()) {
+      throw new ProviderNotVerifiedException(provider.getId());
     }
 
     ExperienceStrategy experienceStrategy = getExperienceStrategy(request.type());

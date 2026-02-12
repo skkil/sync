@@ -10,6 +10,7 @@ export interface GetAuthenticatedUserResponse {
   fullName: string;
   email: string;
   isOnboarded: boolean;
+  role: 'USER' | 'ADMIN';
 }
 
 export const auth = betterAuth({
@@ -18,6 +19,11 @@ export const auth = betterAuth({
       isOnboarded: {
         type: 'boolean',
         input: false,
+      },
+      role: {
+        type: 'string',
+        input: false,
+        defaultValue: 'USER',
       },
     },
   },
@@ -51,13 +57,14 @@ export const auth = betterAuth({
                 return null;
               }
 
-              const { userId, fullName, email, isOnboarded } = response;
+              const { userId, fullName, email, isOnboarded, role } = response;
 
               const user = await ctx.context.internalAdapter.createUser({
                 id: userId,
                 name: fullName,
                 email,
                 isOnboarded,
+                role,
               });
 
               const session = await ctx.context.internalAdapter.createSession(

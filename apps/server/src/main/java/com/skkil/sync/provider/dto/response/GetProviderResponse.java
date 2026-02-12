@@ -29,4 +29,6 @@ public sealed interface GetProviderResponse permits GetSchoolResponse, GetLabRes
   LocalDateTime createdAt();
 
   LocalDateTime updatedAt();
+
+  Long verifiedBy();
 }
