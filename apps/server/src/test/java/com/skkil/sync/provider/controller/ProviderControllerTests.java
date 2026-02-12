@@ -97,6 +97,7 @@ public class ProviderControllerTests {
             .type(ProviderType.SCHOOL)
             .name("name")
             .description("description")
+            .contactInfo("contact")
             .schoolType(SchoolType.HIGH_SCHOOL)
             .createdAt(LocalDateTime.now(ZoneId.systemDefault()))
             .updatedAt(LocalDateTime.now(ZoneId.systemDefault()))
@@ -118,6 +119,9 @@ public class ProviderControllerTests {
                     fieldWithPath("description")
                         .type(JsonFieldType.STRING)
                         .description("Provider description"),
+                    fieldWithPath("contactInfo")
+                        .type(JsonFieldType.STRING)
+                        .description("Provider contact info"),
                     fieldWithPath("createdAt").type(JsonFieldType.STRING).description("Created at"),
                     fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("Updated at"),
                     fieldWithPath("schoolType")

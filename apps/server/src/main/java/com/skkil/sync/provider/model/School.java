@@ -24,8 +24,13 @@ public class School extends Provider {
   protected School() {}
 
   @Builder
-  public School(String name, String description, SchoolType schoolType) {
-    super(ProviderType.SCHOOL, name, description);
+  public School(
+      String name,
+      String description,
+      String contactInfo,
+      String oneLineReview,
+      SchoolType schoolType) {
+    super(ProviderType.SCHOOL, name, description, contactInfo, oneLineReview);
     this.schoolType = schoolType;
   }
 }

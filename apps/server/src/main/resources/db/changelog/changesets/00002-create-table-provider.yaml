@@ -45,6 +45,12 @@ databaseChangeLog:
               - column:
                   name: verified_by
                   type: BIGINT
+              - column:
+                  name: contact_info
+                  type: VARCHAR(255)
+              - column:
+                  name: one_line_review
+                  type: VARCHAR(500)
         - addForeignKeyConstraint:
             baseTableName: providers
             baseColumnNames: created_by

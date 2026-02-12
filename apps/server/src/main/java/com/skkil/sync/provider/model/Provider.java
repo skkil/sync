@@ -34,6 +34,14 @@ public abstract class Provider extends BaseEntity {
   @Setter
   protected String description;
 
+  @Column(name = "contact_info", length = 255)
+  @Setter
+  protected String contactInfo;
+
+  @Column(name = "one_line_review", length = 500)
+  @Setter
+  private String oneLineReview;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "created_by", nullable = false)
   @Setter
@@ -46,10 +54,17 @@ public abstract class Provider extends BaseEntity {
 
   protected Provider() {}
 
-  protected Provider(ProviderType type, String name, String description) {
+  protected Provider(
+      ProviderType type,
+      String name,
+      String description,
+      String contactInfo,
+      String oneLineReview) {
     this.type = type;
     this.name = name;
     this.description = description;
+    this.contactInfo = contactInfo;
+    this.oneLineReview = oneLineReview;
   }
 
   public boolean isVerified() {

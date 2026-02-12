@@ -10,9 +10,10 @@ import com.skkil.sync.provider.constant.ProviderType;
     property = "type",
     visible = true)
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = CreateSchoolRequest.class, name = ProviderType.Constants.SCHOOL)
+  @JsonSubTypes.Type(value = CreateSchoolRequest.class, name = ProviderType.Constants.SCHOOL),
+  @JsonSubTypes.Type(value = CreateLabRequest.class, name = ProviderType.Constants.LAB)
 })
-public sealed interface CreateProviderRequest permits CreateSchoolRequest {
+public sealed interface CreateProviderRequest permits CreateSchoolRequest, CreateLabRequest {
 
   ProviderType type();
 

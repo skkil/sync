@@ -11,9 +11,10 @@ import java.time.LocalDateTime;
     property = "type",
     visible = true)
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = GetSchoolResponse.class, name = ProviderType.Constants.SCHOOL)
+  @JsonSubTypes.Type(value = GetSchoolResponse.class, name = ProviderType.Constants.SCHOOL),
+  @JsonSubTypes.Type(value = GetLabResponse.class, name = ProviderType.Constants.LAB)
 })
-public sealed interface GetProviderResponse permits GetSchoolResponse {
+public sealed interface GetProviderResponse permits GetSchoolResponse, GetLabResponse {
 
   Long id();
 
@@ -22,6 +23,8 @@ public sealed interface GetProviderResponse permits GetSchoolResponse {
   String name();
 
   String description();
+
+  String contactInfo();
 
   LocalDateTime createdAt();
 
