@@ -5,6 +5,7 @@ import com.skkil.sync.user.service.oauth2.CustomOidcUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -49,17 +50,17 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             requests ->
                 requests
-                    .requestMatchers(
-                        r ->
-                            r.getMethod().equals("POST")
-                                && r.getRequestURI().startsWith("/providers"))
-                    .authenticated()
                     .requestMatchers("/admin/**")
                     .hasRole("ADMIN")
-                    .requestMatchers("/users/me", "/media/**", "/profiles/me")
+                    .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
+                    .requestMatchers("/users/me", "/proiles/me", "/media/**")
+                    .authenticated()
+                    .requestMatchers(
+                        "/profiles/**", "/auth/login", "/auth/register", "/providers/**")
+                    .permitAll()
                     .anyRequest()
-                    .permitAll())
+                    .authenticated())
         .oauth2Login(
             oauth2 ->
                 oauth2

@@ -186,6 +186,18 @@
         "unfollow": "언팔로우",
         "message": "메시지 보내기"
       },
+      "experience": {
+        "menu": {
+          "visibility": {
+            "title": "경력 공개 설정",
+            "options": {
+              "PUBLIC": "공개",
+              "PRIVATE": "비공개"
+            }
+          },
+          "delete": "경력 삭제"
+        }
+      },
       "employment": {
         "title": "회사 경력"
       },
