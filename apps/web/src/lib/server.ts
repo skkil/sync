@@ -15,6 +15,24 @@ interface ErrorResponse {
   code: ErrorCode;
 }
 
+async function getCookies() {
+  if (isServer()) {
+    try {
+      const { cookies } = await import('next/headers');
+      const cookieStore = await cookies();
+      const allCookies = cookieStore.getAll();
+
+      return allCookies
+        .map((cookie) => `${cookie.name}=${cookie.value}`)
+        .join('; ');
+    } catch {
+      return undefined;
+    }
+  }
+
+  return undefined;
+}
+
 async function getCsrfToken(): Promise<string | undefined> {
   if (isServer()) {
     try {
@@ -43,6 +61,14 @@ export const server = ky.extend({
   },
   hooks: {
     beforeRequest: [
+      async (request) => {
+        if (isServer()) {
+          const cookies = await getCookies();
+          if (cookies) {
+            request.headers.set('Cookie', cookies);
+          }
+        }
+      },
       async (request) => {
         if (request.method !== 'GET' && request.method !== 'HEAD') {
           const csrfToken = await getCsrfToken();
