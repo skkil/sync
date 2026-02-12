@@ -17,7 +17,8 @@ public class WithAuthenticatedUserSecurityContextFactory
         new AuthenticatedUser(1L, "User Name", "email@email.com", "password", Role.USER);
 
     Authentication authentication =
-        UsernamePasswordAuthenticationToken.authenticated(authenticatedUser, null, null);
+        UsernamePasswordAuthenticationToken.authenticated(
+            authenticatedUser, authenticatedUser.getPassword(), authenticatedUser.getAuthorities());
 
     SecurityContext context = SecurityContextHolder.createEmptyContext();
     context.setAuthentication(authentication);

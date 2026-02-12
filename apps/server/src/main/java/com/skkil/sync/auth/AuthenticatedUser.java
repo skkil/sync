@@ -54,6 +54,10 @@ public record AuthenticatedUser(
 
   @Override
   public List<? extends GrantedAuthority> getAuthorities() {
+    if (role == null) {
+      return List.of();
+    }
+
     SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName());
     return List.of(authority);
   }

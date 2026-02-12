@@ -49,6 +49,11 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             requests ->
                 requests
+                    .requestMatchers(
+                        r ->
+                            r.getMethod().equals("POST")
+                                && r.getRequestURI().startsWith("/providers"))
+                    .authenticated()
                     .requestMatchers("/admin/**")
                     .hasRole("ADMIN")
                     .requestMatchers("/users/me", "/media/**", "/profiles/me")

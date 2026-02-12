@@ -1,6 +1,6 @@
 'use client';
 
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import LoadingPage from '@/components/layout/loading/LoadingPage';
 import { useSession } from '@/lib/auth/client';
@@ -8,6 +8,8 @@ import { useSession } from '@/lib/auth/client';
 import UnverifiedProviders from './_components/UnverifiedProviders';
 
 export default function Admin() {
+  const router = useRouter();
+
   const { data: session, isPending } = useSession();
 
   if (isPending) {
@@ -15,7 +17,7 @@ export default function Admin() {
   }
 
   if (!session || session.user.role !== 'ADMIN') {
-    redirect('/');
+    router.push('/');
   }
 
   return (

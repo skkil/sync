@@ -3,6 +3,7 @@ package com.skkil.sync.experience.service;
 import com.skkil.sync.experience.constant.ExperienceType;
 import com.skkil.sync.experience.dto.request.CreateExperienceRequest;
 import com.skkil.sync.experience.dto.response.CreateExperienceResponse;
+import com.skkil.sync.experience.exception.ProviderNotVerifiedException;
 import com.skkil.sync.experience.model.Experience;
 import com.skkil.sync.experience.repository.ExperienceRepository;
 import com.skkil.sync.provider.model.Provider;
@@ -45,7 +46,7 @@ public class ExperienceService {
     }
 
     if (!provider.isVerified()) {
-      throw new IllegalStateException("Provider is not verified");
+      throw new ProviderNotVerifiedException(provider.getId());
     }
 
     ExperienceStrategy experienceStrategy = getExperienceStrategy(request.type());

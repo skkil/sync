@@ -27,6 +27,7 @@ public class GlobalPermissionEvaluator implements PermissionEvaluator {
   @Override
   public boolean hasPermission(
       Authentication authentication, Object targetDomainObject, Object permission) {
+    log.debug("hasPermission with targetDomainObject is not supported");
     return false;
   }
 

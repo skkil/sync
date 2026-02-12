@@ -35,7 +35,7 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
     }
 
     return switch (permission) {
-      case PermissionOperation.READ -> canRead(user, provider);
+      case READ -> canRead(user, provider);
 
       default -> {
         log.debug("Unsupported permission operation: {}", permission);
