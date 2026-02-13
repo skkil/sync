@@ -30,7 +30,7 @@ class ProfileServiceTests {
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-    GetProfileResponse response = profileService.getProfile(userId);
+    GetProfileResponse response = profileService.getProfile(null, userId);
 
     assertThat(response)
         .isNotNull()
@@ -43,7 +43,7 @@ class ProfileServiceTests {
     Long userId = 1L;
     when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> profileService.getProfile(userId))
+    assertThatThrownBy(() -> profileService.getProfile(null, userId))
         .isInstanceOf(UserNotFoundException.class);
   }
 }
