@@ -60,6 +60,7 @@ public class ProfileService {
     }
 
     return GetAuthenticatedUserResponse.builder()
+        .role(user.getRole())
         .userId(user.getId())
         .fullName(user.getFullName())
         .email(user.getEmail())
