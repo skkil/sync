@@ -1,5 +1,6 @@
 package com.skkil.sync.user.service;
 
+import com.skkil.sync.user.exception.UserCannotFollowSelfException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserFollowRelationship;
 import com.skkil.sync.user.repository.UserFollowRelationshipRepository;
@@ -25,6 +26,16 @@ public class UserRelationshipService {
   @Transactional
   public void followUser(Long followerId, Long followeeId) {
     log.debug("User {} is attempting to follow user {}", followerId, followeeId);
+
+    if (isFollowing(followerId, followeeId)) {
+      log.debug("User {} is already following user {}", followerId, followeeId);
+      return;
+    }
+
+    if (followerId.equals(followeeId)) {
+      log.debug("Follower ID and followee ID are the same: {}", followerId);
+      throw new UserCannotFollowSelfException();
+    }
 
     User follower = userRepository.getReferenceById(followerId),
         followee = userRepository.getReferenceById(followeeId);

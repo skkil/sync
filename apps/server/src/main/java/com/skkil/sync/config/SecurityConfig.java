@@ -54,7 +54,7 @@ public class SecurityConfig {
                     .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
-                    .requestMatchers("/users/me", "/proiles/me", "/media/**")
+                    .requestMatchers("/users/**", "/profiles/me", "/media/**")
                     .authenticated()
                     .requestMatchers(
                         "/profiles/**", "/auth/login", "/auth/register", "/providers/**")
