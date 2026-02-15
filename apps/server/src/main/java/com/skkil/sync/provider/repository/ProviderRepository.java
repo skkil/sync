@@ -15,4 +15,13 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
 
   @Query("SELECT p FROM Provider p WHERE p.verifiedBy IS NULL")
   public Page<Provider> findUnverifiedProviders(Pageable pageable);
+
+  @Query(
+      """
+      SELECT
+      p FROM Provider p
+      WHERE
+      p.name LIKE %:query% AND p.verifiedBy IS NOT NULL AND p.type = :type
+      """)
+  public Page<Provider> searchProviders(ProviderType type, String query, Pageable pageable);
 }

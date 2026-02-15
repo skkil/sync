@@ -98,6 +98,19 @@
         "reviews": "리뷰"
       }
     },
+    "search": {
+      "results": {
+        "title": "{query}에 대한 검색 결과",
+        "no-results": "{query}에 대한 검색 결과가 없습니다."
+      },
+      "filters": {
+        "title": "필터",
+        "people": "사람",
+        "schools": "학교",
+        "companies": "회사",
+        "contests": "대회"
+      }
+    },
     "login": {
       "title": "로그인",
       "description": "계정에 로그인하세요",
@@ -273,6 +286,9 @@
   },
   "components": {
     "navigation": {
+      "search": {
+        "placeholder": "사람, 기관 또는 프로젝트 검색..."
+      },
       "login": "로그인",
       "user": {
         "profile": "내 프로필",

@@ -57,7 +57,11 @@ public class SecurityConfig {
                     .requestMatchers("/users/me", "/proiles/me", "/media/**")
                     .authenticated()
                     .requestMatchers(
-                        "/profiles/**", "/auth/login", "/auth/register", "/providers/**")
+                        "/profiles/**",
+                        "/auth/login",
+                        "/auth/register",
+                        "/providers/**",
+                        "/search/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
