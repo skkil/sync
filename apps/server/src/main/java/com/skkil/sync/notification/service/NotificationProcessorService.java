@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
+@Slf4j
 public class NotificationProcessorService {
 
   private final NotificationPreferencesService notificationPreferencesService;
@@ -33,16 +35,22 @@ public class NotificationProcessorService {
   }
 
   @Async
-  @TransactionalEventListener
+  @EventListener
   public void handleNotificationEvent(NotificationEvent event) {
+    log.debug("Processing notification event: {}", event);
+
     NotificationPreferences preferences =
         notificationPreferencesService.getNotificationPreferences();
     if (!preferences.isNotificationsEnabled()) {
+      log.debug("Notifications are disabled for user: {}", event.getRecipientId());
       return;
     }
 
     Notification notification =
-        Notification.builder().user(new User(event.getRecipientId())).build();
+        Notification.builder()
+            .user(new User(event.getRecipientId()))
+            .type(event.getNotificationType())
+            .build();
     notification = notificationRepository.save(notification);
 
     for (ChannelType channelType : preferences.getEnabledChannelTypes()) {
@@ -51,6 +59,7 @@ public class NotificationProcessorService {
         throw new IllegalStateException("No channel found for type: " + channelType);
       }
 
+      log.debug("Sending notification {} via channel {}", notification.getId(), channelType);
       channel.send(event.getRecipientId(), "Notification " + notification.getId());
     }
   }

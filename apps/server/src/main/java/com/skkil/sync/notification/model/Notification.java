@@ -34,7 +34,8 @@ public class Notification extends BaseEntity {
   protected Notification() {}
 
   @Builder
-  public Notification(User user) {
+  public Notification(User user, NotificationType type) {
     this.user = user;
+    this.type = type;
   }
 }

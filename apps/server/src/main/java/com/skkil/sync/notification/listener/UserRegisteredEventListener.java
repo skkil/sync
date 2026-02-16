@@ -4,9 +4,9 @@ import com.skkil.sync.notification.constant.NotificationType;
 import com.skkil.sync.notification.event.NotificationEvent;
 import com.skkil.sync.user.event.UserRegisteredEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class UserRegisteredEventListener {
@@ -18,7 +18,7 @@ public class UserRegisteredEventListener {
   }
 
   @Async
-  @TransactionalEventListener
+  @EventListener
   public void handleUserRegisteredEvent(UserRegisteredEvent event) {
     eventPublisher.publishEvent(new NotificationEvent(event.getUserId(), NotificationType.WELCOME));
   }

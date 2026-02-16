@@ -21,7 +21,7 @@ public class NotificationController {
   public GetNotificationsResponse getNotifications(
       @AuthenticationPrincipal AuthenticatedUser user,
       @RequestParam(defaultValue = "10") int size,
-      @RequestParam Long cursor) {
+      @RequestParam(required = false) Long cursor) {
     return notificationService.getNotifications(user.userId(), size, cursor);
   }
 }
