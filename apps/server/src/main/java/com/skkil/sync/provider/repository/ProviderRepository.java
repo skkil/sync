@@ -13,7 +13,7 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
   @Query(
       """
       SELECT p FROM Provider p
-      WHERE p.name LIKE :query%
+      WHERE (:query IS NOT NULL AND p.name LIKE :query%)
         AND p.type IN :types
         AND (p.id > :cursor OR :cursor IS NULL)
         AND p.verifiedBy IS NOT NULL

@@ -137,7 +137,6 @@ export default function CreateContest() {
                       <FieldError errors={[fieldState.error]} />
                     </div>
                     <SelectProviders
-                      value={field.value}
                       placeholder={t('form.host.placeholder')}
                       onChange={({ id }) => {
                         field.onChange(id);

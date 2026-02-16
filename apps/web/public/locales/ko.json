@@ -102,8 +102,7 @@
       },
       "errors": {
         "required_name": "이름은 필수 항목입니다.",
-        "required_description": "설명은 필수 항목입니다.",
-        "required_school_type": "학교 유형은 필수 항목입니다."
+        "required_description": "설명은 필수 항목입니다."
       }
     },
     "provider": {

@@ -16,6 +16,7 @@ import com.skkil.sync.provider.repository.ContestRepository;
 import com.skkil.sync.provider.repository.ProviderRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,10 +60,12 @@ public class ContestService implements ProviderStrategy {
     Contest contest = (Contest) provider;
 
     var hostProvider =
-        new GetContestResponse.Provider(
-            contest.getHostProvider().getId(),
-            contest.getHostProvider().getType(),
-            contest.getHostProvider().getName());
+        contest.getHostProvider() == null
+            ? null
+            : new GetContestResponse.Provider(
+                contest.getHostProvider().getId(),
+                contest.getHostProvider().getType(),
+                contest.getHostProvider().getName());
 
     return GetContestResponse.builder()
         .id(provider.getId())
@@ -92,6 +95,7 @@ public class ContestService implements ProviderStrategy {
   }
 
   @Transactional
+  @PreAuthorize("hasPermission(#contestId, 'PROVIDER', 'EDIT')")
   public void createContestOccurrence(Long contestId, CreateContestOccurrenceRequest request) {
     Contest contest = contestRepository.getReferenceById(contestId);
 

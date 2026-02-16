@@ -24,7 +24,6 @@ import { useGetProvidersQuery } from '../api/get-providers';
 
 interface SelectProvidersProps {
   placeholder?: string;
-  value: string;
   onChange: (value: { type: ProviderType; id: string; name: string }) => void;
   types: ProviderType[];
 }

@@ -19,7 +19,7 @@ import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useCreateExperienceMutation } from '@/features/experience/api/create-experience';
 import SelectProviders from '@/features/provider/components/SelectProviders';
-import { getProviderForExperience as getProviderTypeForExperience } from '@/features/provider/util';
+import { getProviderTypeForExperienceType } from '@/features/provider/util';
 import { ExperienceType } from '@/types/experience';
 import { ProviderType } from '@/types/provider';
 
@@ -133,7 +133,6 @@ function AddExperienceForm({
 }
 
 function ProviderField({
-  value,
   type,
   invalid,
   onChange,
@@ -149,8 +148,7 @@ function ProviderField({
   return (
     <Field data-invalid={invalid}>
       <SelectProviders
-        types={[getProviderTypeForExperience(type) as ProviderType]}
-        value={value.id}
+        types={[getProviderTypeForExperienceType(type) as ProviderType]}
         onChange={(values) => {
           onChange(values);
         }}
