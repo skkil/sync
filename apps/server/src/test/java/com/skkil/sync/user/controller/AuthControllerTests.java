@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.user.constant.Role;
 import com.skkil.sync.user.dto.request.LoginRequest;
 import com.skkil.sync.user.dto.request.RegisterRequest;
 import com.skkil.sync.user.service.AuthService;
@@ -45,7 +46,7 @@ class AuthControllerTests {
     LoginRequest request = new LoginRequest("user@example.com", "password123");
 
     AuthenticatedUser user =
-        new AuthenticatedUser(1L, "user", "user@example.com", "hashedPassword");
+        new AuthenticatedUser(1L, "user", "user@example.com", "hashedPassword", Role.USER);
     Authentication authentication =
         new UsernamePasswordAuthenticationToken(user, request.password(), user.getAuthorities());
 

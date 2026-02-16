@@ -11,7 +11,9 @@ public record GetSchoolResponse(
     ProviderType type,
     String name,
     String description,
+    String contactInfo,
     SchoolType schoolType,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt)
+    LocalDateTime updatedAt,
+    Long verifiedBy)
     implements GetProviderResponse {}

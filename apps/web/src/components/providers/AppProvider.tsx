@@ -1,3 +1,5 @@
+import { TooltipProvider } from '@/components/ui/tooltip';
+
 import I18nProvider from './I18nProvider';
 import ModalProvider from './ModalProvider';
 import QueryProvider from './QueryProvider';
@@ -14,7 +16,7 @@ export default function AppProvider({ children }: AppProviderProps) {
       <WebSocketProvider>
         <StoreProvider>
           <QueryProvider>
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
             <ModalProvider />
           </QueryProvider>
         </StoreProvider>

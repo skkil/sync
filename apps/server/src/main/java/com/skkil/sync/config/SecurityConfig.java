@@ -1,13 +1,18 @@
 package com.skkil.sync.config;
 
+import com.skkil.sync.common.security.GlobalPermissionEvaluator;
 import com.skkil.sync.user.service.oauth2.CustomOidcUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,6 +26,7 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
   @Value("${app.oauth2.frontend-redirect-uri}")
@@ -44,10 +50,17 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             requests ->
                 requests
-                    .requestMatchers("/users/me", "/media/**", "/profiles/me")
+                    .requestMatchers("/admin/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
+                    .requestMatchers("/users/me", "/proiles/me", "/media/**")
+                    .authenticated()
+                    .requestMatchers(
+                        "/profiles/**", "/auth/login", "/auth/register", "/providers/**")
+                    .permitAll()
                     .anyRequest()
-                    .permitAll())
+                    .authenticated())
         .oauth2Login(
             oauth2 ->
                 oauth2
@@ -77,5 +90,15 @@ public class SecurityConfig {
   @Bean
   PasswordEncoder passwordEncoder() {
     return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+  }
+
+  @Bean
+  MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+      GlobalPermissionEvaluator globalPermissionEvaluator) {
+    DefaultMethodSecurityExpressionHandler expressionHandler =
+        new DefaultMethodSecurityExpressionHandler();
+    expressionHandler.setPermissionEvaluator(globalPermissionEvaluator);
+
+    return expressionHandler;
   }
 }

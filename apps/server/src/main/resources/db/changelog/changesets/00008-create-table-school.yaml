@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00008-create-table-school
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: schools
+      changes:
+        - createTable:
+            tableName: schools
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: school_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: schools
+            baseColumnNames: id
+            referencedTableName: providers
+            referencedColumnNames: id
+            constraintName: fk_schools_providers
+            onDelete: CASCADE

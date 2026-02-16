@@ -20,18 +20,20 @@ export default async function NavigationBar() {
       </Link>
 
       <div className="flex items-center gap-2">
-        <Link href="/provider/create">
-          <Button variant="ghost" size="icon">
-            <PlusIcon />
-          </Button>
-        </Link>
-
         {session && (
-          <Link href="/messages">
-            <Button variant="ghost" size="icon-lg">
-              <ChatCircleDotsIcon />
-            </Button>
-          </Link>
+          <>
+            <Link href="/provider/create">
+              <Button variant="ghost" size="icon">
+                <PlusIcon />
+              </Button>
+            </Link>
+
+            <Link href="/messages">
+              <Button variant="ghost" size="icon-lg">
+                <ChatCircleDotsIcon />
+              </Button>
+            </Link>
+          </>
         )}
 
         <UserAvatar />

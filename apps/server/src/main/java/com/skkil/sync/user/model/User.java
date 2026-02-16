@@ -67,7 +67,7 @@ public class User extends BaseEntity {
   protected User() {}
 
   public User(Long id) {
-    this.setId(id);
+    this.id = id;
   }
 
   @Builder
