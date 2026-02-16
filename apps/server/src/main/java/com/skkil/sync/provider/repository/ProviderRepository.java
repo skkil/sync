@@ -10,8 +10,17 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProviderRepository extends JpaRepository<Provider, Long> {
 
-  @Query("SELECT p FROM Provider p WHERE p.type = :type AND p.verifiedBy IS NOT NULL")
-  public List<Provider> findByTypeAndVerified(ProviderType type);
+  @Query(
+      """
+      SELECT p FROM Provider p
+      WHERE p.name LIKE :query%
+        AND p.type IN :types
+        AND (p.id > :cursor OR :cursor IS NULL)
+        AND p.verifiedBy IS NOT NULL
+      ORDER BY p.id
+      """)
+  public Page<Provider> searchByTypeAndVerified(
+      String query, List<ProviderType> types, Long cursor, Pageable pageable);
 
   @Query("SELECT p FROM Provider p WHERE p.verifiedBy IS NULL")
   public Page<Provider> findUnverifiedProviders(Pageable pageable);

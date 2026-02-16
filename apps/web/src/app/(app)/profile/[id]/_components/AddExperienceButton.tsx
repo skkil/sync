@@ -1,20 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PencilIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import z from 'zod';
 
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
 import {
   Dialog,
   DialogContent,
@@ -26,15 +17,11 @@ import {
 } from '@/components/ui/dialog';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { useCreateExperienceMutation } from '@/features/experience/api/create-experience';
-import { useGetProvidersQuery } from '@/features/provider/api/get-providers';
-import { getProviderForExperience } from '@/features/provider/util';
+import SelectProviders from '@/features/provider/components/SelectProviders';
+import { getProviderForExperience as getProviderTypeForExperience } from '@/features/provider/util';
 import { ExperienceType } from '@/types/experience';
+import { ProviderType } from '@/types/provider';
 
 interface AddExperienceButtonProps {
   type: ExperienceType;
@@ -159,63 +146,15 @@ function ProviderField({
   invalid?: boolean;
   onChange: (value: { id: string; name: string }) => void;
 }) {
-  const t = useTranslations('pages.add-experience.form');
-  const router = useRouter();
-
-  const { data: providers } = useGetProvidersQuery({
-    type: getProviderForExperience(type),
-  });
-
   return (
     <Field data-invalid={invalid}>
-      <Popover>
-        <PopoverTrigger asChild>
-          {value.name ? (
-            <Button variant="outline">{value.name}</Button>
-          ) : (
-            <Button variant="outline">{t(`provider.label.${type}`)}</Button>
-          )}
-        </PopoverTrigger>
-
-        <PopoverContent
-          aria-modal={true}
-          className="z-50 pointer-events-auto p-0 w-[var(--radix-popover-trigger-width)]"
-        >
-          <Command>
-            <CommandInput placeholder={t(`provider.placeholder.${type}`)} />
-            <CommandList>
-              <CommandEmpty>
-                <div>{t('provider.not-found')}</div>
-
-                <div
-                  className="text-xs hover:underline cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/provider/create');
-                  }}
-                >
-                  {t('provider.create-link')}
-                </div>
-              </CommandEmpty>
-              <CommandGroup>
-                {providers?.map((provider) => (
-                  <CommandItem
-                    key={provider.id}
-                    onSelect={() => {
-                      onChange({
-                        id: provider.id,
-                        name: provider.name,
-                      });
-                    }}
-                  >
-                    {provider.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
+      <SelectProviders
+        types={[getProviderTypeForExperience(type) as ProviderType]}
+        value={value.id}
+        onChange={(values) => {
+          onChange(values);
+        }}
+      />
     </Field>
   );
 }
