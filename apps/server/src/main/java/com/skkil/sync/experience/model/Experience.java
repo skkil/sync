@@ -71,4 +71,8 @@ public abstract class Experience extends BaseEntity {
   public void setEndDate(LocalDateTime endDate) {
     this.endDate = endDate;
   }
+
+  public boolean isPublic() {
+    return visibility == ExperienceVisibility.PUBLIC;
+  }
 }
