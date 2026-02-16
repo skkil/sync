@@ -4,10 +4,12 @@ import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.user.constant.Role;
 import com.skkil.sync.user.dto.request.LoginRequest;
 import com.skkil.sync.user.dto.request.RegisterRequest;
+import com.skkil.sync.user.event.UserRegisteredEvent;
 import com.skkil.sync.user.exception.UserAlreadyExistsException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,16 +26,19 @@ public class AuthService {
   private final UserRepository userRepository;
   private final AuthenticationManager authenticationManager;
   private final PasswordEncoder passwordEncoder;
+  private final ApplicationEventPublisher eventPublisher;
 
   public AuthService(
       UserService userService,
       UserRepository userRepository,
       AuthenticationManager authenticationManager,
-      PasswordEncoder passwordEncoder) {
+      PasswordEncoder passwordEncoder,
+      ApplicationEventPublisher eventPublisher) {
     this.userService = userService;
     this.userRepository = userRepository;
     this.authenticationManager = authenticationManager;
     this.passwordEncoder = passwordEncoder;
+    this.eventPublisher = eventPublisher;
   }
 
   @Transactional(readOnly = true)
@@ -72,5 +77,7 @@ public class AuthService {
 
     user = userRepository.save(user);
     log.info("Registered new user with id {}", user.getId());
+
+    eventPublisher.publishEvent(new UserRegisteredEvent(user.getId()));
   }
 }
