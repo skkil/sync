@@ -29,11 +29,20 @@ public class CompanyReview extends Review {
     this.reviewDetails = reviewDetails;
   }
 
-  public static class CompanyReviewDetails {
+  public static class CompanyReviewDetails implements ReviewDetails {
     public Integer totalScore; // 총점
     public Integer workCulture; // 회사 문화
     public Integer salary; // 연봉
     public Integer growthOpportunity; // 성장 기회
     public Integer workLifeBalance; // 워라밸
+  }
+
+  @Override
+  public void setReviewDetails(ReviewDetails reviewDetails) {
+    if (reviewDetails instanceof CompanyReviewDetails details) {
+      this.reviewDetails = details;
+    } else {
+      throw new IllegalArgumentException("Invalid review details type for CompanyReview");
+    }
   }
 }

@@ -23,17 +23,23 @@ public class SchoolReview extends Review {
   protected SchoolReview() {}
 
   @Builder
-  public SchoolReview(
-      User reviewer, School provider, String textReview, SchoolReviewDetails reviewDetails) {
+  public SchoolReview(User reviewer, School provider, String textReview) {
     super(ProviderType.SCHOOL, reviewer, provider, textReview);
-    this.reviewDetails = reviewDetails;
   }
 
-  public static class SchoolReviewDetails {
-    public Integer totalScore; // 총점
+  public static class SchoolReviewDetails implements ReviewDetails {
     public Integer academicQuality; // 학문 수준
     public Integer campusFacilities; // 캠퍼스 시설
     public Integer studentLife; // 학생 생활
     public Integer valueForMoney; // 가성비
+  }
+
+  @Override
+  public void setReviewDetails(ReviewDetails reviewDetails) {
+    if (reviewDetails instanceof SchoolReviewDetails details) {
+      this.reviewDetails = details;
+    } else {
+      throw new IllegalArgumentException("Invalid review details type for SchoolReview");
+    }
   }
 }

@@ -28,11 +28,20 @@ public class LabReview extends Review {
     this.reviewDetails = reviewDetails;
   }
 
-  public static class LabReviewDetails {
+  public static class LabReviewDetails implements ReviewDetails {
     public Integer totalScore; // 총점
     public Integer professorPersonality; // 교수 인성
     public Integer labAtmosphere; // 랩 분위기
     public Integer workLifeBalance; // 워라밸
     public Integer compensation; // 인건비
+  }
+
+  @Override
+  public void setReviewDetails(ReviewDetails reviewDetails) {
+    if (reviewDetails instanceof LabReviewDetails details) {
+      this.reviewDetails = details;
+    } else {
+      throw new IllegalArgumentException("Invalid review details type for LabReview");
+    }
   }
 }

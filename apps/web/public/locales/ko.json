@@ -75,9 +75,25 @@
       }
     },
     "provider": {
+      "review": {
+        "button": "리뷰 작성",
+        "form": {
+          "title": "리뷰 작성",
+          "description": "이 기관에 대한 리뷰를 작성하세요",
+          "anonymous": "익명으로 작성",
+          "fields": {
+            "academicQuality": "학업 수준",
+            "campusFacilities": "캠퍼스 시설",
+            "studentLife": "학생 생활",
+            "valueForMoney": "가성비"
+          },
+          "submit": {
+            "label": "리뷰 제출"
+          }
+        }
+      },
       "actions": {
         "follow": "팔로우",
-        "review": "리뷰 작성",
         "view": "프로필 보기",
         "moreReviews": "리뷰 더 보기",
         "collapseReviews": "접기"

@@ -49,4 +49,6 @@ public abstract class Review extends BaseEntity {
     this.provider = provider;
     this.textReview = textReview;
   }
+
+  public abstract void setReviewDetails(ReviewDetails reviewDetails);
 }
