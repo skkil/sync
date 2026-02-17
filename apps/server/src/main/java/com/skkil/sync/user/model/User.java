@@ -43,6 +43,9 @@ public class User extends BaseEntity {
   @Setter
   private String fullName;
 
+  @Column(name = "profession", length = 255)
+  private String profession;
+
   @Column(name = "bio", columnDefinition = "TEXT")
   @Setter
   private String bio;
@@ -80,5 +83,17 @@ public class User extends BaseEntity {
 
   public void onboard() {
     this.isOnboarded = true;
+  }
+
+  public void updateFields(String fullName, String profession, String bio) {
+    if (fullName != null) {
+      this.fullName = fullName;
+    }
+    if (profession != null) {
+      this.profession = profession;
+    }
+    if (bio != null) {
+      this.bio = bio;
+    }
   }
 }

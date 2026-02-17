@@ -7,6 +7,7 @@ export interface GetProfileResponse {
   userId: string;
   name: string;
   email: string;
+  profession: string;
   bio: string;
   isFollowing: boolean;
 }
@@ -15,7 +16,9 @@ export type GetProfileQueryResponse = Profile & {
   isFollowing: boolean;
 };
 
-export async function getProfile(userId: string) {
+export async function getProfile(
+  userId: string,
+): Promise<Profile & { isFollowing: boolean }> {
   return server
     .get<GetProfileResponse>(`profiles/${userId}`)
     .json()
@@ -23,6 +26,7 @@ export async function getProfile(userId: string) {
       id: data.userId,
       name: data.name,
       email: data.email,
+      profession: data.profession,
       bio: data.bio,
       isFollowing: data.isFollowing,
     }));
@@ -33,6 +37,7 @@ export const getProfileQueryOptions = (
 ): UseQueryOptions<GetProfileQueryResponse> => ({
   queryKey: ['profile', userId],
   queryFn: () => getProfile(userId),
+  enabled: !!userId,
 });
 
 export function useGetProfileQuery(userId: string) {

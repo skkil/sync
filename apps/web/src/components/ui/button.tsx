@@ -61,7 +61,14 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        isPending && 'pointer-events-none opacity-80',
+        buttonVariants({
+          variant,
+          size,
+          className,
+        }),
+      )}
       {...props}
     >
       {isPending && <Spinner />}
