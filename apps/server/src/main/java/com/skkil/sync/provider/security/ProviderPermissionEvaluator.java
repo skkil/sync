@@ -36,6 +36,7 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
 
     return switch (permission) {
       case READ -> canRead(user, provider);
+      case UPDATE -> canUpdate(user, provider);
 
       default -> {
         log.debug("Unsupported permission operation: {}", permission);
@@ -66,6 +67,31 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
     if (user.userId().equals(provider.getCreatedBy().getId())) {
       log.debug(
           "User {} is the creator, granting read access to unverified provider {}",
+          user.userId(),
+          provider.getId());
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean canUpdate(AuthenticatedUser user, Provider provider) {
+    if (user == null) {
+      log.debug("Unauthenticated user trying to update provider {}", provider.getId());
+      return false;
+    }
+
+    if (user.isAdmin()) {
+      log.debug(
+          "User {} is admin, granting update access to provider {}",
+          user.userId(),
+          provider.getId());
+      return true;
+    }
+
+    if (user.userId().equals(provider.getCreatedBy().getId())) {
+      log.debug(
+          "User {} is the creator, granting update access to provider {}",
           user.userId(),
           provider.getId());
       return true;

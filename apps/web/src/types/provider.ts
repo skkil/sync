@@ -1,6 +1,7 @@
 export enum ProviderType {
   COMPANY = 'COMPANY',
   SCHOOL = 'SCHOOL',
+  CONTEST = 'CONTEST',
 }
 
 export enum SchoolType {
@@ -18,5 +19,8 @@ export type Provider = {
     }
   | {
       type: ProviderType.SCHOOL;
+    }
+  | {
+      type: ProviderType.CONTEST;
     }
 );

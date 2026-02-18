@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00011-create-table-contests
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: contests
+      changes:
+        - createTable:
+            tableName: contests
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: host_provider_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            baseTableName: contests
+            baseColumnNames: host_provider_id
+            referencedTableName: providers
+            referencedColumnNames: id
+            constraintName: fk_contests_providers
+            onDelete: CASCADE

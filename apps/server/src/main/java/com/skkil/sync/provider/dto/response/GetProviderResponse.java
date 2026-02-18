@@ -12,9 +12,11 @@ import java.time.LocalDateTime;
     visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = GetSchoolResponse.class, name = ProviderType.Constants.SCHOOL),
-  @JsonSubTypes.Type(value = GetLabResponse.class, name = ProviderType.Constants.LAB)
+  @JsonSubTypes.Type(value = GetLabResponse.class, name = ProviderType.Constants.LAB),
+  @JsonSubTypes.Type(value = GetContestResponse.class, name = ProviderType.Constants.CONTEST)
 })
-public sealed interface GetProviderResponse permits GetSchoolResponse, GetLabResponse {
+public sealed interface GetProviderResponse
+    permits GetSchoolResponse, GetLabResponse, GetContestResponse {
 
   Long id();
 
