@@ -1,10 +1,9 @@
 package com.skkil.sync.config;
 
 import com.skkil.sync.common.security.GlobalPermissionEvaluator;
-import com.skkil.sync.user.service.oauth2.CustomOidcUserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -29,18 +28,11 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
-  @Value("${app.oauth2.frontend-redirect-uri}")
-  private String frontendRedirectUri;
-
-  private final CustomOidcUserService customOidcUserService;
-
-  public SecurityConfig(CustomOidcUserService customOidcUserService) {
-    this.customOidcUserService = customOidcUserService;
-  }
-
   @Bean
+  @Order(2)
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(
+    http.securityMatcher("/**")
+        .csrf(
             csrf ->
                 csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
@@ -61,14 +53,6 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .authenticated())
-        .oauth2Login(
-            oauth2 ->
-                oauth2
-                    .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
-                    .successHandler(
-                        (req, res, auth) -> {
-                          res.sendRedirect(frontendRedirectUri);
-                        }))
         .exceptionHandling(
             exception ->
                 exception.authenticationEntryPoint(

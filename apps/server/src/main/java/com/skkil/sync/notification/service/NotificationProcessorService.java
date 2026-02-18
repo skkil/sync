@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -46,12 +47,7 @@ public class NotificationProcessorService {
       return;
     }
 
-    Notification notification =
-        Notification.builder()
-            .user(new User(event.getRecipientId()))
-            .type(event.getNotificationType())
-            .build();
-    notification = notificationRepository.save(notification);
+    Notification notification = createNotification(event);
 
     for (ChannelType channelType : preferences.getEnabledChannelTypes()) {
       NotificationChannel channel = channels.get(channelType);
@@ -62,5 +58,15 @@ public class NotificationProcessorService {
       log.debug("Sending notification {} via channel {}", notification.getId(), channelType);
       channel.send(event.getRecipientId(), "Notification " + notification.getId());
     }
+  }
+
+  @Transactional
+  Notification createNotification(NotificationEvent event) {
+    Notification notification =
+        Notification.builder()
+            .user(new User(event.getRecipientId()))
+            .type(event.getNotificationType())
+            .build();
+    return notificationRepository.save(notification);
   }
 }

@@ -58,7 +58,7 @@ public class AuthService {
   }
 
   @Transactional
-  public void registerUser(RegisterRequest request) {
+  public User registerUser(RegisterRequest request) {
     if (userRepository.findByEmail(request.email()).isPresent()) {
       throw new UserAlreadyExistsException(request.email());
     }
@@ -79,5 +79,7 @@ public class AuthService {
     log.info("Registered new user with id {}", user.getId());
 
     eventPublisher.publishEvent(new UserRegisteredEvent(user.getId()));
+
+    return user;
   }
 }

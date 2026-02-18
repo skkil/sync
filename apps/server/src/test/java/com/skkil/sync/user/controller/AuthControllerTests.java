@@ -1,7 +1,6 @@
 package com.skkil.sync.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -69,8 +68,6 @@ class AuthControllerTests {
   @Test
   void register() throws Exception {
     RegisterRequest request = new RegisterRequest("newuser@example.com", "password123");
-
-    doNothing().when(authService).registerUser(any(RegisterRequest.class));
 
     mockMvc
         .perform(

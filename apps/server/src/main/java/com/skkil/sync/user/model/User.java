@@ -60,7 +60,7 @@ public class User extends BaseEntity {
 
   @OneToMany(
       mappedBy = "user",
-      cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
       orphanRemoval = true)
   private List<UserOAuth2Account> oAuth2Accounts = new ArrayList<>();
 
