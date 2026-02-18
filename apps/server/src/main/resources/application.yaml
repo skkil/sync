@@ -5,6 +5,9 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  threads:
+    virtual.enabled: true
+
   jpa:
     open-in-view: false
     hibernate:

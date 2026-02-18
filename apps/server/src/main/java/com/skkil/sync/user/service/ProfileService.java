@@ -17,25 +17,36 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class ProfileService {
 
+  private final UserRelationshipService userRelationshipService;
   private final UserRepository userRepository;
   private final MediaService mediaService;
 
-  public ProfileService(UserRepository userRepository, MediaService mediaService) {
+  public ProfileService(
+      UserRelationshipService userRelationshipService,
+      UserRepository userRepository,
+      MediaService mediaService) {
+    this.userRelationshipService = userRelationshipService;
     this.userRepository = userRepository;
     this.mediaService = mediaService;
   }
 
   @Transactional(readOnly = true)
-  public GetProfileResponse getProfile(Long userId) {
-    log.debug("Fetching profile for userId: {}", userId);
+  public GetProfileResponse getProfile(Long requesterId, Long userId) {
+    log.debug("User {} is requesting profile for user {}", requesterId, userId);
     User user =
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+    boolean isFollowing =
+        (requesterId == null || requesterId.equals(userId))
+            ? false
+            : userRelationshipService.isFollowing(requesterId, userId);
 
     return GetProfileResponse.builder()
         .userId(user.getId().toString())
         .name(user.getFullName())
         .email(user.getEmail())
         .bio(user.getBio())
+        .isFollowing(isFollowing)
         .build();
   }
 

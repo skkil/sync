@@ -8,7 +8,12 @@ export interface GetProfileResponse {
   name: string;
   email: string;
   bio: string;
+  isFollowing: boolean;
 }
+
+export type GetProfileQueryResponse = Profile & {
+  isFollowing: boolean;
+};
 
 export async function getProfile(userId: string) {
   return server
@@ -19,16 +24,17 @@ export async function getProfile(userId: string) {
       name: data.name,
       email: data.email,
       bio: data.bio,
+      isFollowing: data.isFollowing,
     }));
 }
 
 export const getProfileQueryOptions = (
   userId: string,
-): UseQueryOptions<Profile> => ({
+): UseQueryOptions<GetProfileQueryResponse> => ({
   queryKey: ['profile', userId],
   queryFn: () => getProfile(userId),
 });
 
 export function useGetProfileQuery(userId: string) {
-  return useQuery<Profile>(getProfileQueryOptions(userId));
+  return useQuery(getProfileQueryOptions(userId));
 }

@@ -3,4 +3,5 @@ package com.skkil.sync.user.dto.response;
 import lombok.Builder;
 
 @Builder
-public record GetProfileResponse(String userId, String name, String email, String bio) {}
+public record GetProfileResponse(
+    String userId, String name, String email, String bio, boolean isFollowing) {}
