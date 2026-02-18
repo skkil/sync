@@ -1,6 +1,7 @@
 import {
   BuildingOfficeIcon,
   StudentIcon,
+  TrophyIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
@@ -35,6 +36,15 @@ const providers: ProviderComponentOptions[] = [
   },
 ];
 
+const otherProviders: ProviderComponentOptions[] = [
+  {
+    id: 'contest',
+    type: ProviderType.CONTEST,
+    icon: <TrophyIcon />,
+    link: '/provider/create/contest',
+  },
+];
+
 export default async function CreateProviderPage() {
   const t = await getTranslations('pages.create-provider');
 
@@ -63,6 +73,30 @@ export default async function CreateProviderPage() {
             </Card>
           </Link>
         ))}
+      </div>
+
+      <p className="my-6">{t('or-other.label')}</p>
+
+      <div>
+        <div className="flex flex-col gap-4">
+          {otherProviders.map((provider) => (
+            <Link href={provider.link} key={provider.type}>
+              <Card className="w-96 hover:outline hover:cursor-pointer">
+                <div className="flex items-center px-4">
+                  <div>{provider.icon}</div>
+                  <div className="grow">
+                    <CardHeader>
+                      <CardTitle>{t(`links.${provider.id}.title`)}</CardTitle>
+                      <CardDescription>
+                        {t(`links.${provider.id}.description`)}
+                      </CardDescription>
+                    </CardHeader>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

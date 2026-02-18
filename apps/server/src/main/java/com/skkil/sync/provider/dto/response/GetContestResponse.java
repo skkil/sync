@@ -1,0 +1,21 @@
+package com.skkil.sync.provider.dto.response;
+
+import com.skkil.sync.provider.constant.ProviderType;
+import java.time.LocalDateTime;
+import lombok.Builder;
+
+@Builder
+public record GetContestResponse(
+    Long id,
+    ProviderType type,
+    String name,
+    String description,
+    Long verifiedBy,
+    Provider hostProvider,
+    String contactInfo,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt)
+    implements GetProviderResponse {
+
+  public static record Provider(Long id, ProviderType type, String name) {}
+}

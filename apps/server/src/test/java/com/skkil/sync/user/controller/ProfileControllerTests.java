@@ -43,7 +43,7 @@ class ProfileControllerTests {
             .bio("bio")
             .build();
 
-    when(profileService.getProfile(eq(1L))).thenReturn(response);
+    when(profileService.getProfile(eq(null), eq(1L))).thenReturn(response);
 
     mockMvc
         .perform(get("/profiles/{userId}", 1L))
@@ -56,6 +56,9 @@ class ProfileControllerTests {
                     fieldWithPath("userId").type(JsonFieldType.STRING).description("User ID"),
                     fieldWithPath("name").type(JsonFieldType.STRING).description("User name"),
                     fieldWithPath("email").type(JsonFieldType.STRING).description("User email"),
-                    fieldWithPath("bio").type(JsonFieldType.STRING).description("User bio"))));
+                    fieldWithPath("bio").type(JsonFieldType.STRING).description("User bio"),
+                    fieldWithPath("isFollowing")
+                        .type(JsonFieldType.BOOLEAN)
+                        .description("Is following"))));
   }
 }

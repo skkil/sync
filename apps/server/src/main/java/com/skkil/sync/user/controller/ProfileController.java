@@ -25,8 +25,10 @@ public class ProfileController {
 
   @GetMapping("/profiles/{userId}")
   @ResponseStatus(HttpStatus.OK)
-  public GetProfileResponse getProfile(@PathVariable Long userId) {
-    return profileService.getProfile(userId);
+  public GetProfileResponse getProfile(
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long userId) {
+    Long requesterId = user == null ? null : user.userId();
+    return profileService.getProfile(requesterId, userId);
   }
 
   @PatchMapping("/profiles/me")

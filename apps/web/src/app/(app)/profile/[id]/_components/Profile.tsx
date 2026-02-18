@@ -18,6 +18,7 @@ import { Experience, ExperienceType } from '@/types/experience';
 import AddExperienceButton from './AddExperienceButton';
 import EducationExperience from './EducationExperience';
 import EmploymentExperience from './EmploymentExperience';
+import FollowButton from './FollowButton';
 
 interface ProfileProps {
   userId: string;
@@ -46,7 +47,7 @@ const categories: {
 export default function Profile({ userId }: ProfileProps) {
   const t = useTranslations('pages.profile');
 
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const { data: profile, isError } = useGetProfileQuery(userId);
 
   const { data: experiences } = useGetExperiencesQuery(userId);
@@ -69,14 +70,16 @@ export default function Profile({ userId }: ProfileProps) {
             <div className="flex justify-between items-center">
               <h2 className="text-3xl font-bold mt-3">{profile.name}</h2>
 
-              {session?.user.id !== profile.id && (
-                <div className="flex gap-2">
-                  <Button>{t('header.follow')}</Button>
-                  <Link href={`/messages?to=${profile.id}`}>
-                    <Button variant="outline">{t('header.message')}</Button>
-                  </Link>
-                </div>
-              )}
+              <div className="h-9">
+                {!isPending && session?.user.id !== profile.id && (
+                  <div className="flex gap-2">
+                    <FollowButton userId={userId} />
+                    <Link href={`/messages?to=${profile.id}`}>
+                      <Button variant="outline">{t('header.message')}</Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col-reverse md:flex-row md:justify-between mt-2 gap-4">

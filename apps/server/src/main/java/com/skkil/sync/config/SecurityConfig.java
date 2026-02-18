@@ -56,10 +56,14 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
-                    .requestMatchers("/users/me", "/proiles/me", "/media/**")
+                    .requestMatchers("/users/**", "/profiles/me", "/media/**")
                     .authenticated()
                     .requestMatchers(
-                        "/profiles/**", "/auth/login", "/auth/register", "/providers/**")
+                        "/profiles/**",
+                        "/auth/login",
+                        "/auth/register",
+                        "/providers/**",
+                        "/search/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
