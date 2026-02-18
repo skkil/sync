@@ -23,3 +23,9 @@ export type Experience = {
       major?: string;
     }
 );
+
+export interface Reflection {
+  id: string;
+  content: string;
+  createdAt: Date;
+}

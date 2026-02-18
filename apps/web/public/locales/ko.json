@@ -241,6 +241,27 @@
             }
           },
           "delete": "경력 삭제"
+        },
+        "reflection": {
+          "title": "경력 회고",
+          "not-found": "회고가 없습니다. 회고를 작성하여 경험을 공유하세요.",
+          "add-reflection": {
+            "title": "회고 추가",
+            "description": "이 경험에서 배운 점과 느낀 점을 공유하세요.",
+            "form": {
+              "content": {
+                "label": "회고 내용",
+                "description": "이 경험에서 배운 점과 느낀 점을 공유하세요.",
+                "placeholder": "회고 내용을 입력하세요"
+              },
+              "cancel": {
+                "label": "취소"
+              },
+              "submit": {
+                "label": "저장"
+              }
+            }
+          }
         }
       },
       "employment": {

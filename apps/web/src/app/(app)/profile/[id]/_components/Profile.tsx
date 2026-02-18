@@ -1,6 +1,7 @@
 'use client';
 
 import { EnvelopeIcon } from '@phosphor-icons/react';
+import _ from 'lodash';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -9,6 +10,7 @@ import { ComponentType } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { useGetExperiencesQuery } from '@/features/experience/api/get-experiences';
 import { useGetProfileQuery } from '@/features/profile/api/get-profile';
 import { useSession } from '@/lib/auth/client';
@@ -55,8 +57,10 @@ export default function Profile({ userId }: ProfileProps) {
     notFound();
   }
 
+  const experiencesByType = _.groupBy(experiences, 'type');
+
   return (
-    <div className="flex flex-col gap-4 mt-4">
+    <div className="flex flex-col gap-4 my-4">
       <Card className="mx-auto w-full max-w-3xl min-h-96 p-0">
         <CardHeader className="relative h-48 bg-muted">
           <Avatar className="h-32 w-32 absolute left-8 -bottom-16">
@@ -109,16 +113,16 @@ export default function Profile({ userId }: ProfileProps) {
             </CardHeader>
 
             <CardContent>
-              {experiences &&
-                experiences
-                  .filter((experience) => experience.type === type)
-                  .map((experience) => (
-                    <Component
-                      key={experience.id}
-                      userId={userId}
-                      experience={experience}
-                    />
-                  ))}
+              {experiencesByType[type]?.map((experience, index) => (
+                <div key={experience.id}>
+                  <Component userId={userId} experience={experience} />
+
+                  {experiencesByType[type] &&
+                    index < experiencesByType[type]?.length - 1 && (
+                      <Separator className="my-4" />
+                    )}
+                </div>
+              ))}
             </CardContent>
           </Card>
         );
