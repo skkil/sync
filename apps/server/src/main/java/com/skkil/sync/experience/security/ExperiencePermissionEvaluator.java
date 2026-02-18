@@ -31,6 +31,7 @@ public class ExperiencePermissionEvaluator implements CustomPermissionEvaluator 
 
     return switch (permission) {
       case READ -> canRead(user, experience);
+      case EDIT -> canEdit(user, experience);
 
       default -> {
         yield false;
@@ -43,6 +44,14 @@ public class ExperiencePermissionEvaluator implements CustomPermissionEvaluator 
       return true;
     }
 
+    if (user == null) {
+      return false;
+    }
+
+    return user.userId().equals(experience.getUser().getId());
+  }
+
+  private boolean canEdit(AuthenticatedUser user, Experience experience) {
     if (user == null) {
       return false;
     }

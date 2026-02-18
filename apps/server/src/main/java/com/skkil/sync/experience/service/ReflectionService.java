@@ -26,6 +26,7 @@ public class ReflectionService {
   }
 
   @Transactional
+  @PreAuthorize("hasPermission(#experienceId, 'EXPERIENCE', 'EDIT')")
   public void createReflection(Long experienceId, CreateReflectionRequest request) {
     Experience experience = experienceRepository.getReferenceById(experienceId);
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { EnvelopeIcon } from '@phosphor-icons/react';
+import _ from 'lodash';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -56,6 +57,8 @@ export default function Profile({ userId }: ProfileProps) {
     notFound();
   }
 
+  const experiencesByType = _.groupBy(experiences, 'type');
+
   return (
     <div className="flex flex-col gap-4 my-4">
       <Card className="mx-auto w-full max-w-3xl min-h-96 p-0">
@@ -110,22 +113,16 @@ export default function Profile({ userId }: ProfileProps) {
             </CardHeader>
 
             <CardContent>
-              {experiences &&
-                experiences
-                  .filter((experience) => experience.type === type)
-                  .map((experience, index) => (
-                    <div key={experience.id}>
-                      <Component userId={userId} experience={experience} />
+              {experiencesByType[type]?.map((experience, index) => (
+                <div key={experience.id}>
+                  <Component userId={userId} experience={experience} />
 
-                      {index ===
-                      experiences.filter(
-                        (experience) => experience.type === type,
-                      ).length -
-                        1 ? null : (
-                        <Separator className="my-4" />
-                      )}
-                    </div>
-                  ))}
+                  {experiencesByType[type] &&
+                    index < experiencesByType[type]?.length - 1 && (
+                      <Separator className="my-4" />
+                    )}
+                </div>
+              ))}
             </CardContent>
           </Card>
         );

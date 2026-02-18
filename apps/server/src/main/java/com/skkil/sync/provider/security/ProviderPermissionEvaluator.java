@@ -36,7 +36,7 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
 
     return switch (permission) {
       case READ -> canRead(user, provider);
-      case UPDATE -> canUpdate(user, provider);
+      case EDIT -> canEdit(user, provider);
 
       default -> {
         log.debug("Unsupported permission operation: {}", permission);
@@ -75,7 +75,7 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
     return false;
   }
 
-  private boolean canUpdate(AuthenticatedUser user, Provider provider) {
+  private boolean canEdit(AuthenticatedUser user, Provider provider) {
     if (user == null) {
       log.debug("Unauthenticated user trying to update provider {}", provider.getId());
       return false;

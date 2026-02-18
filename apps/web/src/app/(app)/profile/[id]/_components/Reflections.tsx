@@ -60,7 +60,7 @@ export default function Reflections({
       </CardHeader>
 
       <CardContent>
-        <ScrollArea className="h-150">
+        <ScrollArea className="h-120">
           {reflections && reflections.length > 0 ? (
             reflections.map((reflection) => (
               <div key={reflection.id} className="mb-4">
@@ -105,7 +105,7 @@ function AddReflectionDialog({ experience }: { experience: Experience }) {
           <PencilIcon />
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-3xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>{t('description')}</DialogDescription>
@@ -123,7 +123,7 @@ function AddReflectionDialog({ experience }: { experience: Experience }) {
 
         <DialogFooter>
           <Button
-            variant="destructive"
+            variant="outline"
             onClick={() => {
               handleClose();
             }}
