@@ -4,7 +4,7 @@ import { BuildingsIcon, UserIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { SearchType, useSearchQuery } from '@/features/search/api/search';
+import { url } from '@/util/server';
 
 type SearchCategory = 'user' | 'school';
 
@@ -33,7 +34,7 @@ const SearchCategories = (
   {
     id: 'user',
     type: SearchType.USER,
-    urlPrefix: 'profiles',
+    urlPrefix: 'profile',
     label: t('filters.people'),
     icon: <UserIcon />,
   },
@@ -62,14 +63,23 @@ export default function Search() {
     query,
     type: categories.find((c) => c.id === category)?.type || SearchType.USER,
     page,
-    size: 10,
+    size: 25,
   });
 
-  const hasPreviousPage = page > 1;
+  useEffect(() => {
+    setPage(0);
+  }, [query, category]);
+
+  const hasPreviousPage = page > 0;
   const hasNextPage = providers && page < providers.page.totalPages - 1;
 
   const handleCategoryChange = (c: SearchCategory) => {
-    router.push(`/search?q=${query}&c=${c}`);
+    router.push(
+      url('/search', {
+        q: query,
+        c,
+      }),
+    );
   };
 
   return (
@@ -116,7 +126,7 @@ export default function Search() {
         }
 
         <div className="min-h-120">
-          {providers && providers.page.size > 0 ? (
+          {providers && providers.content.length > 0 ? (
             providers.content.map((provider) => (
               <Link
                 key={provider.id}
@@ -150,47 +160,51 @@ export default function Search() {
           )}
         </div>
 
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                className={
-                  hasPreviousPage ? '' : 'pointer-events-none opacity-50'
-                }
-                onClick={() => {
-                  if (hasPreviousPage) {
-                    setPage(page - 1);
+        {providers && providers.page.totalPages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  className={
+                    hasPreviousPage ? '' : 'pointer-events-none opacity-50'
                   }
-                }}
-              />
-            </PaginationItem>
-
-            {Array.from({
-              length: providers?.page.totalPages || 0,
-            }).map((_, index) => (
-              <PaginationItem key={index}>
-                <PaginationLink
-                  isActive={page === index}
-                  onClick={() => setPage(index)}
-                  aria-current={page === index ? 'page' : undefined}
-                >
-                  {index + 1}
-                </PaginationLink>
+                  onClick={() => {
+                    if (hasPreviousPage) {
+                      setPage(page - 1);
+                    }
+                  }}
+                />
               </PaginationItem>
-            ))}
 
-            <PaginationItem>
-              <PaginationNext
-                className={hasNextPage ? '' : 'pointer-events-none opacity-50'}
-                onClick={() => {
-                  if (hasNextPage) {
-                    setPage(page + 1);
+              {Array.from({
+                length: providers?.page.totalPages || 0,
+              }).map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    isActive={page === index}
+                    onClick={() => setPage(index)}
+                    aria-current={page === index ? 'page' : undefined}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  className={
+                    hasNextPage ? '' : 'pointer-events-none opacity-50'
                   }
-                }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+                  onClick={() => {
+                    if (hasNextPage) {
+                      setPage(page + 1);
+                    }
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </main>
     </div>
   );

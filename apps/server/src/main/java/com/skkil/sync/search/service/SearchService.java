@@ -40,8 +40,6 @@ public class SearchService {
         providerService.searchProviders(ProviderType.SCHOOL, query, page, size);
 
     log.debug("Found {} schools matching query '{}'", schools.getTotalElements(), query);
-    schools.forEach(
-        school -> log.debug("Found school: id={}, name={}", school.getId(), school.getName()));
 
     return new SearchResponse(
         schools.map(

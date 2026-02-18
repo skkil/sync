@@ -64,8 +64,10 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      {isPending && <Spinner />}
-      {children}
+      <div className="flex items-center gap-2">
+        {isPending && <Spinner />}
+        {children}
+      </div>
     </Comp>
   );
 }

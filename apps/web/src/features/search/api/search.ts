@@ -40,5 +40,6 @@ export function useSearchQuery(params: SearchParams) {
     queryKey: ['search', params],
     queryFn: () => search(params),
     placeholderData: keepPreviousData,
+    enabled: params.query.trim().length > 0,
   });
 }

@@ -13,7 +13,7 @@ function Input({
   return (
     <div className="relative">
       {startingIcon && (
-        <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 peer-disabled:opacity-50">
+        <div className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
           {startingIcon}
         </div>
       )}
