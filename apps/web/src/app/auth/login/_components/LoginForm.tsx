@@ -17,12 +17,15 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useLoginMutation } from '@/features/auth/api/login';
+import { useSession } from '@/lib/auth/client';
 
 export default function LoginForm() {
   const t = useTranslations('pages.login.form');
 
   const router = useRouter();
   const { mutate: login } = useLoginMutation();
+
+  const { refetch: refetchSession } = useSession();
 
   const LoginFormSchema = z.object({
     email: z
@@ -55,6 +58,7 @@ export default function LoginForm() {
       },
       {
         onSuccess: () => {
+          refetchSession();
           router.push('/');
         },
         onError: () => {

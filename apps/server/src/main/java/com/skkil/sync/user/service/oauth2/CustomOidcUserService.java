@@ -2,9 +2,12 @@ package com.skkil.sync.user.service.oauth2;
 
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.user.constant.OAuth2Provider;
+import com.skkil.sync.user.dto.request.RegisterRequest;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserOAuth2Account;
 import com.skkil.sync.user.repository.UserRepository;
+import com.skkil.sync.user.service.AuthService;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
@@ -17,9 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class CustomOidcUserService extends OidcUserService {
 
+  private final AuthService authService;
   private final UserRepository userRepository;
 
-  public CustomOidcUserService(UserRepository userRepository) {
+  public CustomOidcUserService(AuthService authService, UserRepository userRepository) {
+    this.authService = authService;
     this.userRepository = userRepository;
   }
 
@@ -45,16 +50,18 @@ public class CustomOidcUserService extends OidcUserService {
   @Transactional
   public User processOAuth2User(OAuth2Provider provider, OidcUser oidcUser) {
     String email = oidcUser.getEmail();
-    String fullName = oidcUser.getFullName() == null ? "" : oidcUser.getFullName();
 
-    User user =
-        userRepository
-            .findByEmailWithOAuthAccounts(email)
-            .orElseGet(
-                () -> {
-                  log.debug("User not found with email: {}. Creating new user.", email);
-                  return User.builder().email(email).fullName(fullName).build();
-                });
+    Optional<User> optionalUser = userRepository.findByEmailWithOAuthAccounts(email);
+
+    User user;
+
+    if (optionalUser.isPresent()) {
+      user = optionalUser.get();
+    } else {
+      log.debug("User not found with email: {}. Creating new user.", email);
+      user = authService.registerUser(new RegisterRequest(email, null));
+      user.setFullName(oidcUser.getFullName() == null ? "" : oidcUser.getFullName());
+    }
 
     if (user.getOAuth2Accounts().stream()
         .noneMatch(account -> provider.equals(account.getOAuth2Provider()))) {
@@ -66,8 +73,9 @@ public class CustomOidcUserService extends OidcUserService {
                   .oAuth2Provider(provider)
                   .oAuth2ProviderUserId(oidcUser.getSubject())
                   .build());
+      user = userRepository.save(user);
     }
 
-    return userRepository.save(user);
+    return user;
   }
 }

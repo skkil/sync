@@ -7,9 +7,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.skkil.sync.user.constant.OAuth2Provider;
+import com.skkil.sync.user.dto.request.RegisterRequest;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserOAuth2Account;
 import com.skkil.sync.user.repository.UserRepository;
+import com.skkil.sync.user.service.AuthService;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ public class CustomOidcUserServiceTests {
 
   @InjectMocks private CustomOidcUserService customOidcUserService;
 
+  @Mock private AuthService authService;
   @Mock private UserRepository userRepository;
 
   @Test
@@ -53,6 +56,14 @@ public class CustomOidcUserServiceTests {
 
     when(userRepository.findByEmailWithOAuthAccounts("user@email.com"))
         .thenReturn(Optional.empty());
+
+    when(authService.registerUser(any(RegisterRequest.class)))
+        .thenAnswer(
+            i -> {
+              RegisterRequest request = i.getArgument(0);
+              return User.builder().email(request.email()).fullName("").build();
+            });
+
     when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
 
     User result = customOidcUserService.processOAuth2User(provider, oidcUser);
@@ -115,7 +126,6 @@ public class CustomOidcUserServiceTests {
 
     when(userRepository.findByEmailWithOAuthAccounts("user@email.com"))
         .thenReturn(Optional.of(existingUser));
-    when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
 
     User result = customOidcUserService.processOAuth2User(provider, oidcUser);
 
