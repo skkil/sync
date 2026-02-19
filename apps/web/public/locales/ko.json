@@ -226,6 +226,37 @@
       }
     },
     "profile": {
+      "edit": {
+        "title": "프로필 편집",
+        "description": "프로필 정보를 업데이트하세요",
+        "form": {
+          "groups": {
+            "basic": "기본 정보"
+          },
+          "fields": {
+            "name": {
+              "label": "이름",
+              "placeholder": "이름을 입력하세요"
+            },
+            "profession": {
+              "label": "직업",
+              "placeholder": "직업을 입력하세요"
+            },
+            "bio": {
+              "label": "한 줄 소개",
+              "placeholder": "한 줄로 자신을 소개하세요"
+            }
+          },
+          "errors": {
+            "required_name": "이름은 필수 항목입니다."
+          },
+          "actions": {
+            "submit": {
+              "label": "저장"
+            }
+          }
+        }
+      },
       "header": {
         "follow": "팔로우",
         "unfollow": "언팔로우",

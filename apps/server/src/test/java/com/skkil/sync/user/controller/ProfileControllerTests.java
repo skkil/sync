@@ -41,6 +41,7 @@ class ProfileControllerTests {
             .name("name")
             .email("email@example.com")
             .bio("bio")
+            .profession("profession")
             .profileImageUrl("https://example.com/profile-image.png")
             .build();
 
@@ -58,6 +59,9 @@ class ProfileControllerTests {
                     fieldWithPath("name").type(JsonFieldType.STRING).description("User name"),
                     fieldWithPath("email").type(JsonFieldType.STRING).description("User email"),
                     fieldWithPath("bio").type(JsonFieldType.STRING).description("User bio"),
+                    fieldWithPath("profession")
+                        .type(JsonFieldType.STRING)
+                        .description("User profession"),
                     fieldWithPath("profileImageUrl")
                         .type(JsonFieldType.STRING)
                         .description("User profile image url"),

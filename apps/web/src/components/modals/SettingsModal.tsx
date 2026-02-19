@@ -1,9 +1,9 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { ChangeEvent, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useQueryClient } from '@tanstack/react-query';
 
 import {
   PROFILE_IMAGE_ALLOWED_TYPES,
@@ -189,11 +189,11 @@ export default function SettingsModal() {
                 />
 
                 <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSaving}
-              onClick={() => fileInputRef.current?.click()}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isSaving}
+                    onClick={() => fileInputRef.current?.click()}
                   >
                     {t('profile.image.actions.select')}
                   </Button>
@@ -233,25 +233,17 @@ export default function SettingsModal() {
           </div>
 
           <div className="flex flex-col gap-2">
-          <Label>{t('profile.name.label')}</Label>
-          <Input
-            type="text"
-            value={name}
-            onChange={(e) => setEditedName(e.target.value)}
-          />
+            <Label>{t('profile.name.label')}</Label>
+            <Input
+              type="text"
+              value={name}
+              onChange={(e) => setEditedName(e.target.value)}
+            />
           </div>
         </div>
 
         <DialogFooter>
           <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="destructive"
-              disabled={isSaving}
-              onClick={onSave}
-            >
-              {t('actions.save')}
-            </Button>
             <Button
               type="button"
               variant="outline"
@@ -262,6 +254,9 @@ export default function SettingsModal() {
               }}
             >
               {t('actions.cancel')}
+            </Button>
+            <Button type="button" disabled={isSaving} onClick={onSave}>
+              {t('actions.save')}
             </Button>
           </div>
         </DialogFooter>

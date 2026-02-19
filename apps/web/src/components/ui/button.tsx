@@ -47,6 +47,7 @@ function Button({
   variant = 'default',
   size = 'default',
   asChild = false,
+  disabled,
   isPending = false,
   ...props
 }: React.ComponentProps<'button'> &
@@ -61,7 +62,15 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      disabled={isPending || disabled}
+      className={cn(
+        isPending && 'pointer-events-none opacity-80',
+        buttonVariants({
+          variant,
+          size,
+          className,
+        }),
+      )}
       {...props}
     >
       <div className="flex items-center gap-2">

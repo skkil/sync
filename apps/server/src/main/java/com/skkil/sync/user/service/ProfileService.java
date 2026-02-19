@@ -51,6 +51,7 @@ public class ProfileService {
         .name(user.getFullName())
         .email(user.getEmail())
         .bio(user.getBio())
+        .profession(user.getProfession())
         .profileImageUrl(profileImageUrl)
         .isFollowing(isFollowing)
         .build();
@@ -82,9 +83,9 @@ public class ProfileService {
             .findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-    if (request.name() != null) {
-      user.setFullName(request.name());
-    }
+    log.debug("Updating profile for user {}", userId);
+
+    user.updateFields(request.name(), request.profession(), request.bio());
 
     if (Boolean.TRUE.equals(request.removeProfileImage()) && user.getProfileImage() != null) {
       user.getProfileImage().setStatus(MediaStatus.DELETED);
