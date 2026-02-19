@@ -17,6 +17,7 @@ import { useSession } from '@/lib/auth/client';
 import { Experience, ExperienceType } from '@/types/experience';
 
 import AddExperienceButton from './AddExperienceButton';
+import EditProfileDialog from './EditProfileDialog';
 import EducationExperience from './EducationExperience';
 import EmploymentExperience from './EmploymentExperience';
 import FollowButton from './FollowButton';
@@ -69,24 +70,40 @@ export default function Profile({ userId }: ProfileProps) {
         </CardHeader>
 
         {profile && (
-          <CardContent className="mt-10 mx-4">
+          <CardContent className="my-10 mx-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold mt-3">{profile.name}</h2>
+              <div className="flex flex-col gap-1">
+                <h2 className="text-3xl font-bold mt-3">{profile.name}</h2>
+                <p>{profile.profession}</p>
+              </div>
 
               <div className="h-9">
-                {!isPending && session?.user.id !== profile.id && (
+                {!isPending && (
                   <div className="flex gap-2">
-                    <FollowButton userId={userId} />
-                    <Link href={`/messages?to=${profile.id}`}>
-                      <Button variant="outline">{t('header.message')}</Button>
-                    </Link>
+                    {session?.user.id === profile.id ? (
+                      <EditProfileDialog />
+                    ) : (
+                      <>
+                        <FollowButton userId={userId} />
+                        <Link href={`/messages?to=${profile.id}`}>
+                          <Button variant="outline">
+                            {t('header.message')}
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
             </div>
 
             <div className="flex flex-col-reverse md:flex-row md:justify-between mt-2 gap-4">
-              {profile.bio}
+              {profile.bio && (
+                <div className="border-black border-l-2 p-2 w-96 text-pretty break-words">
+                  {profile.bio}
+                </div>
+              )}
+
               <div className="flex flex-col">
                 <div className="text-sm text-muted-foreground flex items-center gap-2">
                   <p>
