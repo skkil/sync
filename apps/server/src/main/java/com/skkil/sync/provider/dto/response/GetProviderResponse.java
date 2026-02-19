@@ -33,4 +33,6 @@ public sealed interface GetProviderResponse
   LocalDateTime updatedAt();
 
   Long verifiedBy();
+
+  boolean isMaintainer();
 }

@@ -3,7 +3,9 @@ package com.skkil.sync.provider.security;
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.common.security.CustomPermissionEvaluator;
 import com.skkil.sync.common.security.PermissionOperation;
+import com.skkil.sync.provider.exception.ProviderNotFoundException;
 import com.skkil.sync.provider.model.Provider;
+import com.skkil.sync.provider.repository.MaintainerRepository;
 import com.skkil.sync.provider.repository.ProviderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,9 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
 
   private final ProviderRepository providerRepository;
+  private final MaintainerRepository maintainerRepository;
 
-  public ProviderPermissionEvaluator(ProviderRepository providerRepository) {
+  public ProviderPermissionEvaluator(
+      ProviderRepository providerRepository, MaintainerRepository maintainerRepository) {
     this.providerRepository = providerRepository;
+    this.maintainerRepository = maintainerRepository;
   }
 
   @Override
@@ -31,7 +36,7 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
     Provider provider = providerRepository.findById(targetId).orElse(null);
     if (provider == null) {
       log.debug("Provider with ID {} not found", targetId);
-      return false;
+      throw new ProviderNotFoundException(targetId);
     }
 
     return switch (permission) {
@@ -53,7 +58,7 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
 
     if (user == null) {
       log.debug("Unauthenticated user trying to access unverified provider {}", provider.getId());
-      return false;
+      throw new ProviderNotFoundException(provider.getId());
     }
 
     if (user.isAdmin()) {
@@ -64,21 +69,21 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
       return true;
     }
 
-    if (user.userId().equals(provider.getCreatedBy().getId())) {
+    if (maintainerRepository.existsByProviderIdAndUserId(provider.getId(), user.userId())) {
       log.debug(
-          "User {} is the creator, granting read access to unverified provider {}",
+          "User {} is a maintainer, granting read access to unverified provider {}",
           user.userId(),
           provider.getId());
       return true;
     }
 
-    return false;
+    throw new ProviderNotFoundException(provider.getId());
   }
 
   private boolean canEdit(AuthenticatedUser user, Provider provider) {
     if (user == null) {
       log.debug("Unauthenticated user trying to update provider {}", provider.getId());
-      return false;
+      throw new ProviderNotFoundException(provider.getId());
     }
 
     if (user.isAdmin()) {
@@ -89,9 +94,9 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
       return true;
     }
 
-    if (user.userId().equals(provider.getCreatedBy().getId())) {
+    if (maintainerRepository.existsByProviderIdAndUserId(provider.getId(), user.userId())) {
       log.debug(
-          "User {} is the creator, granting update access to provider {}",
+          "User {} is a maintainer, granting update access to provider {}",
           user.userId(),
           provider.getId());
       return true;

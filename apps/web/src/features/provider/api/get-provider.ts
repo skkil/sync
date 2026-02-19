@@ -10,6 +10,7 @@ type GetProviderResponse = {
   createdAt: string;
   updatedAt: string;
   verifiedBy: string | null;
+  isMaintainer: boolean;
 } & {
   type: ProviderType;
   schoolType: SchoolType;

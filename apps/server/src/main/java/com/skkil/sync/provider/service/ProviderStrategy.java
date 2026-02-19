@@ -12,7 +12,7 @@ interface ProviderStrategy {
 
   Provider createProvider(CreateProviderRequest request);
 
-  GetProviderResponse toGetProviderResponse(Provider provider);
+  GetProviderResponse toGetProviderResponse(Provider provider, boolean isMaintainer);
 
   void updateProvider(Provider provider, UpdateProviderRequest request);
 }

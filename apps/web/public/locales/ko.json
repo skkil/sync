@@ -128,7 +128,21 @@
         "people": "관련 인물",
         "reviews": "리뷰",
         "occurrences": "회차"
+      },
+      "admin": {
+        "viewing-as-member": {
+          "title": "현재 {name}를 일반 사용자로 보고 있습니다.",
+          "description": "관리자가 아닌 일반 사용자는 이 페이지를 이렇게 보게 됩니다.",
+          "view-as-admin": "관리자로 보기"
+        }
       }
+    },
+    "provider-admin": {
+      "sections": {
+        "about": "소개",
+        "settings": "설정"
+      },
+      "view-as-member": "일반 사용자로 보기"
     },
     "search": {
       "results": {
@@ -307,6 +321,9 @@
           "verify": "검증"
         }
       }
+    },
+    "not-found": {
+      "title": "페이지를 찾을 수 없습니다"
     }
   },
   "modals": {

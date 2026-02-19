@@ -18,7 +18,8 @@ public record GetLabResponse(
     String contactInfo,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    Long verifiedBy)
+    Long verifiedBy,
+    boolean isMaintainer)
     implements GetProviderResponse {
 
   public record ProfessorInfo(String id, String fullName, String email) {}

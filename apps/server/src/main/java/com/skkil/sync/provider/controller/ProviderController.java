@@ -52,7 +52,8 @@ public class ProviderController {
   @ResponseStatus(HttpStatus.OK)
   public GetProviderResponse getProvider(
       @AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long id) {
-    return providerService.getProvider(id);
+    Long requesterId = user == null ? null : user.userId();
+    return providerService.getProvider(requesterId, id);
   }
 
   @PatchMapping("/providers/{id}")
