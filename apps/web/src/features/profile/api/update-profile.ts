@@ -4,7 +4,8 @@ import { server } from '@/lib/server';
 
 interface UpdateProfileRequest {
   name?: string;
-  profileImageId?: string;
+  profileImageId?: number;
+  removeProfileImage?: boolean;
   isOnboarded?: boolean;
 }
 

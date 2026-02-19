@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 export AWS_ACCESS_KEY_ID=skkil
 export AWS_SECRET_ACCESS_KEY=sync
 

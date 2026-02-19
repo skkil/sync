@@ -4,4 +4,9 @@ import lombok.Builder;
 
 @Builder
 public record GetProfileResponse(
-    String userId, String name, String email, String bio, boolean isFollowing) {}
+    String userId,
+    String name,
+    String email,
+    String bio,
+    String profileImageUrl,
+    boolean isFollowing) {}

@@ -8,6 +8,7 @@ export interface GetProfileResponse {
   name: string;
   email: string;
   bio: string;
+  profileImageUrl: string | null;
   isFollowing: boolean;
 }
 
@@ -24,6 +25,7 @@ export async function getProfile(userId: string) {
       name: data.name,
       email: data.email,
       bio: data.bio,
+      profileImageUrl: data.profileImageUrl,
       isFollowing: data.isFollowing,
     }));
 }
