@@ -47,6 +47,7 @@ function Button({
   variant = 'default',
   size = 'default',
   asChild = false,
+  disabled,
   isPending = false,
   ...props
 }: React.ComponentProps<'button'> &
@@ -61,6 +62,7 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
+      disabled={isPending || disabled}
       className={cn(
         isPending && 'pointer-events-none opacity-80',
         buttonVariants({

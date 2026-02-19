@@ -84,7 +84,7 @@ export default function EditProfileDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button variant="ghost" aria-label={t('title')}>
           <PencilIcon />
         </Button>
       </DialogTrigger>

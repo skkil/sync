@@ -43,9 +43,6 @@ export default function SettingsModal() {
 
         <DialogFooter>
           <div className="flex gap-2">
-            <Button variant="destructive" onClick={() => {}}>
-              {t('actions.save')}
-            </Button>
             <Button
               variant="outline"
               onClick={() => {
@@ -53,6 +50,13 @@ export default function SettingsModal() {
               }}
             >
               {t('actions.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                closeModal();
+              }}
+            >
+              {t('actions.save')}
             </Button>
           </div>
         </DialogFooter>

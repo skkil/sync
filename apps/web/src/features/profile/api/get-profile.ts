@@ -7,8 +7,8 @@ export interface GetProfileResponse {
   userId: string;
   name: string;
   email: string;
-  profession: string;
-  bio: string;
+  profession: string | null;
+  bio: string | null;
   isFollowing: boolean;
 }
 
