@@ -30,11 +30,11 @@ public class CompanyReview extends Review {
   }
 
   public static class CompanyReviewDetails implements ReviewDetails {
-    public Integer totalScore; // 총점
-    public Integer workCulture; // 회사 문화
-    public Integer salary; // 연봉
-    public Integer growthOpportunity; // 성장 기회
-    public Integer workLifeBalance; // 워라밸
+    public Double totalScore; // 총점
+    public Double workCulture; // 회사 문화
+    public Double salary; // 연봉
+    public Double growthOpportunity; // 성장 기회
+    public Double workLifeBalance; // 워라밸
   }
 
   @Override

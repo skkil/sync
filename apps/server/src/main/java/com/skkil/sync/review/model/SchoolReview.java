@@ -28,10 +28,10 @@ public class SchoolReview extends Review {
   }
 
   public static class SchoolReviewDetails implements ReviewDetails {
-    public Integer academicQuality; // 학문 수준
-    public Integer campusFacilities; // 캠퍼스 시설
-    public Integer studentLife; // 학생 생활
-    public Integer valueForMoney; // 가성비
+    public Double academicQuality; // 학문 수준
+    public Double campusFacilities; // 캠퍼스 시설
+    public Double studentLife; // 학생 생활
+    public Double valueForMoney; // 가성비
   }
 
   @Override

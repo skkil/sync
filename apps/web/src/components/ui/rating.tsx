@@ -211,6 +211,7 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         aria-label={readOnly ? `${value} stars` : 'Rating'}
         aria-valuemin={0}
         aria-valuenow={value}
+        aria-valuemax={5}
         {...props}
       >
         {stars.map(({ key, points }) => (

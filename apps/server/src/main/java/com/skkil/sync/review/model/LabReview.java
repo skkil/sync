@@ -29,11 +29,11 @@ public class LabReview extends Review {
   }
 
   public static class LabReviewDetails implements ReviewDetails {
-    public Integer totalScore; // 총점
-    public Integer professorPersonality; // 교수 인성
-    public Integer labAtmosphere; // 랩 분위기
-    public Integer workLifeBalance; // 워라밸
-    public Integer compensation; // 인건비
+    public Double totalScore; // 총점
+    public Double professorPersonality; // 교수 인성
+    public Double labAtmosphere; // 랩 분위기
+    public Double workLifeBalance; // 워라밸
+    public Double compensation; // 인건비
   }
 
   @Override
