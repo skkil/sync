@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { server } from '@/lib/server';
+import SyncError, { ErrorCode } from '@/lib/error';
 
 export const PROFILE_IMAGE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
@@ -37,7 +38,10 @@ async function uploadProfileImage(file: File): Promise<number> {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to upload profile image');
+    throw new SyncError(
+      'Failed to upload profile image',
+      ErrorCode.MEDIA_UPLOAD_FAILED,
+    );
   }
 
   return mediaId;
