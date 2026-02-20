@@ -4,8 +4,10 @@ import { server } from '@/lib/server';
 
 interface UpdateProfileRequest {
   name?: string;
-  profileImageId?: string;
+  profession?: string;
   isOnboarded?: boolean;
+  bio?: string;
+  profileImageId?: string;
 }
 
 async function updateProfile(request: UpdateProfileRequest) {

@@ -16,7 +16,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,16 +51,19 @@ public class ProviderService {
   }
 
   @Transactional(readOnly = true)
-  public GetProvidersResponse getProviders(ProviderType type) {
-    List<Provider> providers = providerRepository.findByTypeAndVerified(type);
+  public GetProvidersResponse getProviders(
+      String query, List<ProviderType> types, Long cursor, int size) {
+    PageRequest pageRequest = PageRequest.of(0, size);
 
+    var providers = providerRepository.searchByTypeAndVerified(query, types, cursor, pageRequest);
     return new GetProvidersResponse(
-        providers.stream()
-            .map(
-                provider ->
-                    new GetProvidersResponse.Provider(
-                        provider.getId().toString(), provider.getName()))
-            .toList());
+        providers.map(
+            provider ->
+                GetProvidersResponse.Provider.builder()
+                    .type(provider.getType())
+                    .id(provider.getId().toString())
+                    .name(provider.getName())
+                    .build()));
   }
 
   @Transactional(readOnly = true)
@@ -88,6 +93,12 @@ public class ProviderService {
 
     ProviderStrategy providerStrategy = getProviderStrategy(provider.getType());
     return providerStrategy.toGetProviderResponse(provider);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<Provider> searchProviders(ProviderType type, String query, int page, int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    return providerRepository.searchProviders(type, query, pageable);
   }
 
   @Transactional

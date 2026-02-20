@@ -1,8 +1,11 @@
 package com.skkil.sync.provider.dto.response;
 
-import java.util.List;
+import com.skkil.sync.provider.constant.ProviderType;
+import lombok.Builder;
+import org.springframework.data.domain.Page;
 
-public record GetProvidersResponse(List<Provider> providers) {
+public record GetProvidersResponse(Page<Provider> providers) {
 
-  public static record Provider(String id, String name) {}
+  @Builder
+  public static record Provider(ProviderType type, String id, String name) {}
 }

@@ -34,6 +34,9 @@
     "create-provider": {
       "title": "찾는 기관이 없으신가요?",
       "description": "직접 페이지를 만들어 보세요.",
+      "or-other": {
+        "label": "또는"
+      },
       "links": {
         "company": {
           "title": "기업",
@@ -42,6 +45,10 @@
         "school": {
           "title": "교육 기관",
           "description": "학교 및 대학교"
+        },
+        "contest": {
+          "title": "대회",
+          "description": "대회 및 공모전 페이지"
         }
       }
     },
@@ -72,6 +79,30 @@
         "required_name": "이름은 필수 항목입니다.",
         "required_description": "설명은 필수 항목입니다.",
         "required_school_type": "학교 유형은 필수 항목입니다."
+      }
+    },
+    "create-contest": {
+      "title": "만들고자 하는 대회에 대해 알려주세요",
+      "form": {
+        "name": {
+          "label": "이름",
+          "placeholder": "대회 이름을 입력하세요"
+        },
+        "description": {
+          "label": "설명",
+          "placeholder": "대회에 대한 간단한 설명을 입력하세요"
+        },
+        "host": {
+          "label": "주최 기관",
+          "placeholder": "대회를 주최하는 기관을 입력하세요"
+        },
+        "submit": {
+          "label": "대회 만들기"
+        }
+      },
+      "errors": {
+        "required_name": "이름은 필수 항목입니다.",
+        "required_description": "설명은 필수 항목입니다."
       }
     },
     "provider": {
@@ -112,7 +143,21 @@
       "sections": {
         "about": "소개",
         "people": "관련 인물",
-        "reviews": "리뷰"
+        "reviews": "리뷰",
+        "occurrences": "회차"
+      }
+    },
+    "search": {
+      "results": {
+        "title": "{query}에 대한 검색 결과",
+        "no-results": "{query}에 대한 검색 결과가 없습니다."
+      },
+      "filters": {
+        "title": "필터",
+        "people": "사람",
+        "schools": "학교",
+        "companies": "회사",
+        "contests": "대회"
       }
     },
     "login": {
@@ -198,6 +243,37 @@
       }
     },
     "profile": {
+      "edit": {
+        "title": "프로필 편집",
+        "description": "프로필 정보를 업데이트하세요",
+        "form": {
+          "groups": {
+            "basic": "기본 정보"
+          },
+          "fields": {
+            "name": {
+              "label": "이름",
+              "placeholder": "이름을 입력하세요"
+            },
+            "profession": {
+              "label": "직업",
+              "placeholder": "직업을 입력하세요"
+            },
+            "bio": {
+              "label": "한 줄 소개",
+              "placeholder": "한 줄로 자신을 소개하세요"
+            }
+          },
+          "errors": {
+            "required_name": "이름은 필수 항목입니다."
+          },
+          "actions": {
+            "submit": {
+              "label": "저장"
+            }
+          }
+        }
+      },
       "header": {
         "follow": "팔로우",
         "unfollow": "언팔로우",
@@ -213,6 +289,27 @@
             }
           },
           "delete": "경력 삭제"
+        },
+        "reflection": {
+          "title": "경력 회고",
+          "not-found": "회고가 없습니다. 회고를 작성하여 경험을 공유하세요.",
+          "add-reflection": {
+            "title": "회고 추가",
+            "description": "이 경험에서 배운 점과 느낀 점을 공유하세요.",
+            "form": {
+              "content": {
+                "label": "회고 내용",
+                "description": "이 경험에서 배운 점과 느낀 점을 공유하세요.",
+                "placeholder": "회고 내용을 입력하세요"
+              },
+              "cancel": {
+                "label": "취소"
+              },
+              "submit": {
+                "label": "저장"
+              }
+            }
+          }
         }
       },
       "employment": {
@@ -232,18 +329,6 @@
         "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
       },
       "form": {
-        "provider": {
-          "label": {
-            "EMPLOYMENT": "회사를 선택하세요",
-            "EDUCATION": "학교를 선택하세요"
-          },
-          "placeholder": {
-            "EMPLOYMENT": "회사 이름을 입력하세요",
-            "EDUCATION": "학교 이름을 입력하세요"
-          },
-          "not-found": "기관을 찾을 수 없으십니까?",
-          "create-link": "여기를 클릭하여 새 기관을 만드세요"
-        },
         "major": {
           "label": "전공",
           "placeholder": "전공을 입력하세요"
@@ -256,7 +341,6 @@
             "label": "취소"
           }
         },
-
         "errors": {
           "required-provider": "기관은 필수 항목입니다.",
           "required-major": "전공은 필수 항목입니다."
@@ -290,12 +374,22 @@
   },
   "components": {
     "navigation": {
+      "search": {
+        "placeholder": "사람, 기관 또는 프로젝트 검색..."
+      },
       "login": "로그인",
       "user": {
         "profile": "내 프로필",
         "settings": "설정",
         "sign-out": "로그아웃"
       }
+    },
+    "select-providers": {
+      "label": "기관 선택",
+      "placeholder": "기관을 검색하세요",
+      "provider-not-found": "기관을 찾을 수 없으십니까?",
+      "create-link": "여기를 클릭하여 새 기관을 만드세요",
+      "enter-query": "검색어를 입력하세요"
     }
   },
   "errors": {

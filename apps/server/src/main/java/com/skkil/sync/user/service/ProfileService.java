@@ -46,6 +46,7 @@ public class ProfileService {
         .name(user.getFullName())
         .email(user.getEmail())
         .bio(user.getBio())
+        .profession(user.getProfession())
         .isFollowing(isFollowing)
         .build();
   }
@@ -76,9 +77,9 @@ public class ProfileService {
             .findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-    if (request.name() != null) {
-      user.setFullName(request.name());
-    }
+    log.debug("Updating profile for user {}", userId);
+
+    user.updateFields(request.name(), request.profession(), request.bio());
 
     if (request.profileImageId() != null) {
       if (user.getProfileImage() != null) {

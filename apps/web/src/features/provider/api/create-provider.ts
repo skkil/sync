@@ -6,11 +6,16 @@ import { ProviderType, SchoolType } from '@/types/provider';
 type CreateProviderRequest = {
   name: string;
   description: string;
-} & {
-  type: ProviderType.SCHOOL;
-  schoolType: SchoolType;
-};
-
+} & (
+  | {
+      type: ProviderType.SCHOOL;
+      schoolType: SchoolType;
+    }
+  | {
+      type: ProviderType.CONTEST;
+      hostProviderId?: string;
+    }
+);
 type CreateProviderResponse = {
   id: number;
 };

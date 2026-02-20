@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import Logo from '@/components/ui/logo';
 import { auth } from '@/lib/auth';
 
+import SearchBar from './_components/SearchBar';
 import UserAvatar from './_components/UserAvatar';
 
 export default async function NavigationBar() {
@@ -20,6 +21,8 @@ export default async function NavigationBar() {
       </Link>
 
       <div className="flex items-center gap-2">
+        <SearchBar />
+
         {session && (
           <>
             <Link href="/provider/create">
