@@ -1,6 +1,7 @@
 export enum ProviderType {
   COMPANY = 'COMPANY',
   SCHOOL = 'SCHOOL',
+  LAB = 'LAB',
   CONTEST = 'CONTEST',
 }
 

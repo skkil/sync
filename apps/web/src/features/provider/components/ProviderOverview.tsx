@@ -13,6 +13,8 @@ import {
 import useGetProviderQuery from '@/features/provider/api/get-provider';
 import { ProviderType } from '@/types/provider';
 
+import ProviderReviewDialog from './ProviderReviewDialog';
+
 interface ProviderOverviewProps {
   id: string;
   type: ProviderType;
@@ -31,7 +33,7 @@ export default function ProviderOverview({ id, type }: ProviderOverviewProps) {
       <div className="relative h-44 w-full bg-muted/60">
         <div className="absolute right-8 top-6 flex items-center gap-2">
           <Button variant="outline">{t('actions.follow')}</Button>
-          <Button>{t('actions.review')}</Button>
+          <ProviderReviewDialog providerType={type} providerId={id} />
         </div>
       </div>
 
