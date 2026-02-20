@@ -287,8 +287,49 @@
               "PUBLIC": "공개",
               "PRIVATE": "비공개"
             }
+          }
+        },
+        "form": {
+          "major": {
+            "label": "전공",
+            "placeholder": "전공을 입력하세요"
           },
-          "delete": "경력 삭제"
+          "actions": {
+            "submit": {
+              "label": "저장"
+            },
+            "cancel": {
+              "label": "취소"
+            }
+          },
+          "errors": {
+            "required-provider": "기관은 필수 항목입니다.",
+            "required-major": "전공은 필수 항목입니다."
+          }
+        },
+        "add-experience": {
+          "title": {
+            "EMPLOYMENT": "경력 추가",
+            "EDUCATION": "학력 추가"
+          },
+          "description": {
+            "EMPLOYMENT": "이전 및 현재 직장 정보를 추가하세요",
+            "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
+          }
+        },
+        "update-experience": {
+          "menu": "경력 업데이트",
+          "title": "경력 업데이트",
+          "description": "이 경력에 대한 정보를 업데이트하세요"
+        },
+        "delete-experience": {
+          "menu": "경력 삭제",
+          "title": "경력 삭제",
+          "description": "이 경력을 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+          "actions": {
+            "confirm": "삭제",
+            "cancel": "취소"
+          }
         },
         "reflection": {
           "title": "경력 회고",
@@ -317,34 +358,6 @@
       },
       "education": {
         "title": "학력"
-      }
-    },
-    "add-experience": {
-      "title": {
-        "EMPLOYMENT": "경력 추가",
-        "EDUCATION": "학력 추가"
-      },
-      "description": {
-        "EMPLOYMENT": "이전 및 현재 직장 정보를 추가하세요",
-        "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
-      },
-      "form": {
-        "major": {
-          "label": "전공",
-          "placeholder": "전공을 입력하세요"
-        },
-        "actions": {
-          "submit": {
-            "label": "저장"
-          },
-          "cancel": {
-            "label": "취소"
-          }
-        },
-        "errors": {
-          "required-provider": "기관은 필수 항목입니다.",
-          "required-major": "전공은 필수 항목입니다."
-        }
       }
     },
     "admin": {

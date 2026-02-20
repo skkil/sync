@@ -9,6 +9,7 @@ import com.skkil.sync.experience.service.ExperienceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,5 +50,12 @@ public class ExperienceController {
       @PathVariable Long experienceId,
       @RequestBody @Validated UpdateExperienceRequest request) {
     experienceService.updateExperience(user.userId(), experienceId, request);
+  }
+
+  @DeleteMapping("/experiences/{experienceId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteExperience(
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long experienceId) {
+    experienceService.deleteExperience(experienceId);
   }
 }

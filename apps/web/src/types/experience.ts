@@ -13,7 +13,7 @@ export type Experience = {
     name: string;
   };
   startDate: Date;
-  endDate: Date;
+  endDate: Date | null;
 } & (
   | {
       type: ExperienceType.EMPLOYMENT;
@@ -21,6 +21,7 @@ export type Experience = {
   | {
       type: ExperienceType.EDUCATION;
       major?: string;
+      gpa?: number;
     }
 );
 

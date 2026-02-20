@@ -23,12 +23,14 @@ import { ProviderType } from '@/types/provider';
 import { useGetProvidersQuery } from '../api/get-providers';
 
 interface SelectProvidersProps {
+  defaultValue?: { type: ProviderType; id: string; name: string };
   placeholder?: string;
   onChange: (value: { type: ProviderType; id: string; name: string }) => void;
   types: ProviderType[];
 }
 
 export default function SelectProviders({
+  defaultValue,
   placeholder,
   onChange,
   types,
@@ -42,7 +44,9 @@ export default function SelectProviders({
   const [selectedProvider, setSelectedProvider] = useState<{
     id: string;
     name: string;
-  } | null>(null);
+  } | null>(
+    defaultValue ? { id: defaultValue.id, name: defaultValue.name } : null,
+  );
 
   const { data: providers, isPending: isGetProvidersPending } =
     useGetProvidersQuery({
@@ -56,7 +60,9 @@ export default function SelectProviders({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline">
-          {selectedProvider ? selectedProvider.name : placeholder || t('label')}
+          {selectedProvider && selectedProvider.name !== ''
+            ? selectedProvider.name
+            : placeholder || t('label')}
         </Button>
       </PopoverTrigger>
 

@@ -9,17 +9,25 @@ import {
 import { url } from '@/util/server';
 
 type GetExperiencesResponse = {
-  experiences: {
+  experiences: ({
     id: string;
-    type: ExperienceType;
     visibility: ExperienceVisibility;
     provider: {
       id: string;
       name: string;
     };
     startDate: string;
-    endDate: string;
-  }[];
+    endDate?: string;
+  } & (
+    | {
+        type: ExperienceType.EMPLOYMENT;
+      }
+    | {
+        type: ExperienceType.EDUCATION;
+        gpa?: number;
+        major?: string;
+      }
+  ))[];
 };
 
 async function getExperiences(userId: string): Promise<Experience[]> {
@@ -28,15 +36,9 @@ async function getExperiences(userId: string): Promise<Experience[]> {
     .json()
     .then((data) =>
       data.experiences.map((experience) => ({
-        id: experience.id,
-        visibility: experience.visibility,
-        provider: {
-          id: experience.provider.id,
-          name: experience.provider.name,
-        },
+        ...experience,
         startDate: new Date(experience.startDate),
-        endDate: new Date(experience.endDate),
-        type: experience.type,
+        endDate: experience.endDate ? new Date(experience.endDate) : null,
       })),
     );
 }
