@@ -58,7 +58,7 @@ export default function SettingsModal() {
   const hasExistingProfileImage = Boolean(session?.user?.image);
   const profileImageSrc =
     profileImagePreviewUrl ??
-    (isProfileImageMarkedForRemoval ? null : session?.user?.image ?? null);
+    (isProfileImageMarkedForRemoval ? null : (session?.user?.image ?? null));
 
   const clearSelectedProfileImage = () => {
     setSelectedProfileImageFile(null);
@@ -226,7 +226,9 @@ export default function SettingsModal() {
                 )}
 
                 {profileImageError && (
-                  <p className="text-sm text-destructive">{profileImageError}</p>
+                  <p className="text-sm text-destructive">
+                    {profileImageError}
+                  </p>
                 )}
               </div>
             </div>

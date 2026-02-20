@@ -58,7 +58,14 @@ export const auth = betterAuth({
                 return null;
               }
 
-              const { userId, fullName, email, profileImageUrl, isOnboarded, role } = response;
+              const {
+                userId,
+                fullName,
+                email,
+                profileImageUrl,
+                isOnboarded,
+                role,
+              } = response;
 
               const user = await ctx.context.internalAdapter.createUser({
                 id: userId,

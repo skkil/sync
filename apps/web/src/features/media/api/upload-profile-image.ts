@@ -4,10 +4,7 @@ import { server } from '@/lib/server';
 
 export const PROFILE_IMAGE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
-export const PROFILE_IMAGE_ALLOWED_TYPES = [
-  'image/jpeg',
-  'image/png',
-] as const;
+export const PROFILE_IMAGE_ALLOWED_TYPES = ['image/jpeg', 'image/png'] as const;
 
 interface UploadMediaRequest {
   mediaType: string;
