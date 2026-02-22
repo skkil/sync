@@ -23,6 +23,11 @@ public class School extends Provider {
 
   protected School() {}
 
+  public School(Long id) {
+    super(ProviderType.SCHOOL, null, null, null, null);
+    this.id = id;
+  }
+
   @Builder
   public School(
       String name,

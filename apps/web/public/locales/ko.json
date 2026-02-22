@@ -106,9 +106,26 @@
       }
     },
     "provider": {
+      "review": {
+        "button": "리뷰 작성",
+        "form": {
+          "title": "리뷰 작성",
+          "description": "이 기관에 대한 리뷰를 작성하세요",
+          "anonymous": "익명으로 작성",
+          "fields": {
+            "academicQuality": "학업 수준",
+            "campusFacilities": "캠퍼스 시설",
+            "studentLife": "학생 생활",
+            "valueForMoney": "가성비"
+          },
+          "submit": {
+            "label": "리뷰 제출",
+            "error": "리뷰 제출에 실패했습니다. 나중에 다시 시도하세요."
+          }
+        }
+      },
       "actions": {
         "follow": "팔로우",
-        "review": "리뷰 작성",
         "view": "프로필 보기",
         "moreReviews": "리뷰 더 보기",
         "collapseReviews": "접기"
@@ -240,6 +257,37 @@
       }
     },
     "profile": {
+      "edit": {
+        "title": "프로필 편집",
+        "description": "프로필 정보를 업데이트하세요",
+        "form": {
+          "groups": {
+            "basic": "기본 정보"
+          },
+          "fields": {
+            "name": {
+              "label": "이름",
+              "placeholder": "이름을 입력하세요"
+            },
+            "profession": {
+              "label": "직업",
+              "placeholder": "직업을 입력하세요"
+            },
+            "bio": {
+              "label": "한 줄 소개",
+              "placeholder": "한 줄로 자신을 소개하세요"
+            }
+          },
+          "errors": {
+            "required_name": "이름은 필수 항목입니다."
+          },
+          "actions": {
+            "submit": {
+              "label": "저장"
+            }
+          }
+        }
+      },
       "header": {
         "follow": "팔로우",
         "unfollow": "언팔로우",

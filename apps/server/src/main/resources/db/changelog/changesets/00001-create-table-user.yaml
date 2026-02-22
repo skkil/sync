@@ -39,6 +39,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: profession
+                  type: VARCHAR(255)
+              - column:
                   name: bio
                   type: TEXT
               - column:

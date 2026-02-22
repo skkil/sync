@@ -71,12 +71,12 @@ export default async function SchoolAdmin({ params }: SchoolProps) {
                 ))}
               </TabsList>
 
-              <Button variant="outline" asChild>
-                <Link href={`/school/${id}?m=true`}>
+              <Link href={`/school/${id}?m=true`}>
+                <Button variant="outline" asChild>
                   <EyeIcon />
                   {t('view-as-member')}
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
 
             <Card className="min-h-96 overflow-auto">
