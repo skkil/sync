@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ComponentType } from 'react';
+import { ComponentType, useState } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useGetExperiencesQuery } from '@/features/experience/api/get-experiences';
 import { useGetProfileQuery } from '@/features/profile/api/get-profile';
+import { ContactFields } from '@/features/profile/util/contacts';
 import { useSession } from '@/lib/auth/client';
 import { Experience, ExperienceType } from '@/types/experience';
 
@@ -80,7 +81,7 @@ export default function Profile({ userId }: ProfileProps) {
               <div className="h-9">
                 {!isPending && (
                   <div className="flex gap-2">
-                    {session?.user.id === profile.id ? (
+                    {!session ? null : session?.user.id === profile.id ? (
                       <EditProfileDialog />
                     ) : (
                       <>
@@ -104,12 +105,16 @@ export default function Profile({ userId }: ProfileProps) {
                 </div>
               )}
 
-              <div className="flex flex-col">
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  <p>
-                    <EnvelopeIcon />
-                  </p>
-                  <p>{profile.email}</p>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col">
+                  <div className="text-sm text-muted-foreground flex items-center gap-2">
+                    <p>
+                      <EnvelopeIcon />
+                    </p>
+                    <p>{profile.email}</p>
+                  </div>
+
+                  <ProfileContacts id={profile.id} />
                 </div>
               </div>
             </div>
@@ -145,5 +150,60 @@ export default function Profile({ userId }: ProfileProps) {
         );
       })}
     </div>
+  );
+}
+
+function ProfileContacts({ id }: { id: string }) {
+  const t = useTranslations('pages.profile');
+
+  const [showAllContacts, setShowAllContacts] = useState(false);
+
+  const { data: profile } = useGetProfileQuery(id);
+
+  if (!profile || !profile.contacts) {
+    return null;
+  }
+
+  const contacts = profile.contacts;
+
+  const filteredFields = ContactFields.filter(
+    (field) => contacts[field.id as keyof typeof profile.contacts],
+  );
+
+  const displayFields = showAllContacts
+    ? filteredFields
+    : filteredFields.slice(0, 2);
+
+  return (
+    <>
+      {displayFields.map((field) => (
+        <Link
+          key={field.id}
+          className="text-sm text-muted-foreground flex items-center gap-2"
+          href={`${field.prefix}${
+            contacts[field.id as keyof typeof profile.contacts]
+          }`}
+        >
+          <p>{field.icon}</p>
+          <p>
+            {field.prefix}
+            {contacts[field.id as keyof typeof profile.contacts]}
+          </p>
+        </Link>
+      ))}
+
+      {filteredFields.length > 2 && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowAllContacts(!showAllContacts)}
+          className="w-fit text-sm"
+        >
+          {showAllContacts
+            ? t('header.contacts.show-less')
+            : `${t('header.contacts.show-more')} (${filteredFields.length - 2})`}
+        </Button>
+      )}
+    </>
   );
 }

@@ -63,6 +63,30 @@ class ProfileControllerTests {
                         .description("User profession"),
                     fieldWithPath("isFollowing")
                         .type(JsonFieldType.BOOLEAN)
-                        .description("Is following"))));
+                        .description("Is following"),
+                    fieldWithPath("contacts")
+                        .optional()
+                        .type(JsonFieldType.OBJECT)
+                        .description("Contacts"),
+                    fieldWithPath("contacts.custom")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description("Custom contact"),
+                    fieldWithPath("contacts.linkedin")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description(""),
+                    fieldWithPath("contacts.github")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description(""),
+                    fieldWithPath("contacts.instagram")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description(""),
+                    fieldWithPath("contacts.twitter")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description(""))));
   }
 }

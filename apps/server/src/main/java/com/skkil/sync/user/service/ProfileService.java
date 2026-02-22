@@ -7,7 +7,9 @@ import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetAuthenticatedUserResponse;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.exception.UserNotFoundException;
+import com.skkil.sync.user.mapper.ProfileMapper;
 import com.skkil.sync.user.model.User;
+import com.skkil.sync.user.model.UserContacts;
 import com.skkil.sync.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,14 +22,17 @@ public class ProfileService {
   private final UserRelationshipService userRelationshipService;
   private final UserRepository userRepository;
   private final MediaService mediaService;
+  private final ProfileMapper profileMapper;
 
   public ProfileService(
       UserRelationshipService userRelationshipService,
       UserRepository userRepository,
-      MediaService mediaService) {
+      MediaService mediaService,
+      ProfileMapper profileMapper) {
     this.userRelationshipService = userRelationshipService;
     this.userRepository = userRepository;
     this.mediaService = mediaService;
+    this.profileMapper = profileMapper;
   }
 
   @Transactional(readOnly = true)
@@ -48,6 +53,7 @@ public class ProfileService {
         .bio(user.getBio())
         .profession(user.getProfession())
         .isFollowing(isFollowing)
+        .contacts(profileMapper.toGetProfileResponseContacts(user.getContacts()))
         .build();
   }
 
@@ -104,6 +110,11 @@ public class ProfileService {
 
     if (request.isOnboarded() != null) {
       user.onboard();
+    }
+
+    if (request.contacts() != null) {
+      UserContacts contacts = profileMapper.toUserContacts(request.contacts());
+      user.setContacts(contacts);
     }
   }
 }
