@@ -40,9 +40,15 @@ databaseChangeLog:
             referencedTableName: providers
             referencedColumnNames: id
             constraintName: fk_maintainers_provider_id
+            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: maintainers
             baseColumnNames: user_id
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_maintainers_user_id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: maintainers
+            columnNames: provider_id, user_id
+            constraintName: uk_maintainers_provider_user

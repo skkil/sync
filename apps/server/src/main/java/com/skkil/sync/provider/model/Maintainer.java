@@ -7,11 +7,18 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Builder;
 import lombok.Getter;
 
 @Entity
-@Table(name = "maintainers")
+@Table(
+    name = "maintainers",
+    uniqueConstraints = {
+      @UniqueConstraint(
+          name = "uk_maintainers_provider_user",
+          columnNames = {"provider_id", "user_id"})
+    })
 @Getter
 public class Maintainer extends BaseEntity {
 

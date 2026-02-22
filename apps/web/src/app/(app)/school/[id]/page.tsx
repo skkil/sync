@@ -91,9 +91,11 @@ export default async function School({ params, searchParams }: SchoolProps) {
                   </CardDescription>
                 </div>
 
-                <Link href={`/school/${id}/admin`}>
-                  <Button>{t('admin.viewing-as-member.view-as-admin')}</Button>
-                </Link>
+                <Button asChild>
+                  <Link href={`/school/${id}/admin`}>
+                    {t('admin.viewing-as-member.view-as-admin')}
+                  </Link>
+                </Button>
               </div>
             </CardHeader>
           </Card>
