@@ -38,7 +38,7 @@ class SchoolService implements ProviderStrategy {
   }
 
   @Override
-  public GetProviderResponse toGetProviderResponse(Provider provider) {
+  public GetProviderResponse toGetProviderResponse(Provider provider, boolean isMaintainer) {
     return GetSchoolResponse.builder()
         .id(provider.getId())
         .type(provider.getType())
@@ -49,6 +49,7 @@ class SchoolService implements ProviderStrategy {
         .createdAt(LocalDateTime.ofInstant(provider.getCreatedAt(), ZoneId.systemDefault()))
         .updatedAt(LocalDateTime.ofInstant(provider.getUpdatedAt(), ZoneId.systemDefault()))
         .verifiedBy(provider.getVerifiedBy() != null ? provider.getVerifiedBy().getId() : null)
+        .isMaintainer(isMaintainer)
         .build();
   }
 

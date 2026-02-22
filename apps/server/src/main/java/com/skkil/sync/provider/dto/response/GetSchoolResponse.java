@@ -15,5 +15,6 @@ public record GetSchoolResponse(
     SchoolType schoolType,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    Long verifiedBy)
+    Long verifiedBy,
+    boolean isMaintainer)
     implements GetProviderResponse {}
