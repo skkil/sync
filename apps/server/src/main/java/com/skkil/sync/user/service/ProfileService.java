@@ -10,6 +10,8 @@ import com.skkil.sync.user.exception.UserNotFoundException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +70,20 @@ public class ProfileService {
         .profileImageUrl(profileImageUrl)
         .isOnboarded(user.getIsOnboarded())
         .build();
+  }
+
+  @Transactional(readOnly = true)
+  public Page<User> searchUsers(String query, int page, int size) {
+    log.debug("Searching for users with query '{}', page {}, size {}", query, page, size);
+
+    Pageable pageable = Pageable.ofSize(size).withPage(page);
+    return userRepository.findByFullNameContainingIgnoreCase(query, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public long countUsers(String query) {
+    log.debug("Counting users with query '{}'", query);
+    return userRepository.countByFullNameContainingIgnoreCase(query);
   }
 
   @Transactional
