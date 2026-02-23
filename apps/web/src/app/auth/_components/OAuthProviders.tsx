@@ -4,16 +4,15 @@ import { GoogleLogoIcon } from '@phosphor-icons/react';
 import { redirect } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
-import { env } from '@/lib/env';
-
-type OAuthProvider = 'google';
+import { getOAuth2AuthorizationUrl } from '@/features/user/util/oauth2';
+import { OAuth2Provider } from '@/types/profile';
 
 const providers: {
-  id: OAuthProvider;
+  id: OAuth2Provider;
   icon: React.ReactNode;
 }[] = [
   {
-    id: 'google',
+    id: 'GOOGLE',
     icon: <GoogleLogoIcon />,
   },
 ];
@@ -27,9 +26,7 @@ export default function OAuthProviders() {
           variant="outline"
           size="icon"
           onClick={() => {
-            redirect(
-              `${env.NEXT_PUBLIC_BACKEND_URL}/oauth2/authorization/${provider.id}`,
-            );
+            redirect(getOAuth2AuthorizationUrl(provider.id));
           }}
         >
           {provider.icon}

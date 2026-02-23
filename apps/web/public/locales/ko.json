@@ -377,6 +377,23 @@
   "modals": {
     "settings": {
       "title": "설정",
+      "categories": {
+        "account": {
+          "label": "계정",
+          "title": "계정 설정",
+          "description": "계정 정보 및 보안 설정을 관리하세요",
+          "oauth2": {
+            "title": "소셜 로그인",
+            "description": "계정을 연결하여 더 쉽게 로그인하세요",
+            "connected": {
+              "GOOGLE": "Google에 연결됨"
+            },
+            "connect": {
+              "GOOGLE": "Google 계정 연결"
+            }
+          }
+        }
+      },
       "description": "계정 설정 관리",
       "profile": {
         "name": {
