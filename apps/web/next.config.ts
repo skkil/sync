@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
+  reactCompiler: false,
 };
 
 const withNextIntl = createNextIntlPlugin('./src/lib/i18n.ts');

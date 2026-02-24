@@ -1,5 +1,6 @@
 package com.skkil.sync.user.service;
 
+import com.skkil.sync.user.dto.response.GetConnectionsResponse;
 import com.skkil.sync.user.exception.UserCannotFollowSelfException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserFollowRelationship;
@@ -43,6 +44,20 @@ public class UserRelationshipService {
     var relationship =
         UserFollowRelationship.builder().follower(follower).followee(followee).build();
     userFollowRelationshipRepository.save(relationship);
+  }
+
+  @Transactional(readOnly = true)
+  public GetConnectionsResponse getConnections(Long userId) {
+    log.debug("Retrieving connections for user {}", userId);
+    var followers = userFollowRelationshipRepository.findByFollower(new User(userId));
+
+    return new GetConnectionsResponse(
+        followers.stream()
+            .map(
+                follower ->
+                    new GetConnectionsResponse.Connection(
+                        follower.getFollowee().getId(), follower.getFollowee().getFullName()))
+            .toList());
   }
 
   @Transactional(readOnly = true)

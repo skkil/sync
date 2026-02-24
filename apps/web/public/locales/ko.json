@@ -333,6 +333,14 @@
         "title": "학력"
       }
     },
+    "network": {
+      "connections": {
+        "title": "네트워크",
+        "table": {
+          "name": "이름"
+        }
+      }
+    },
     "add-experience": {
       "title": {
         "EMPLOYMENT": "경력 추가",
