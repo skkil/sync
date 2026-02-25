@@ -4,6 +4,7 @@ import { server } from '@/lib/server';
 
 interface UpdateProfileRequest {
   name?: string;
+  handle?: string;
   profession?: string;
   isOnboarded?: boolean;
   bio?: string;

@@ -31,6 +31,11 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
+                  name: handle
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+              - column:
                   name: hashed_password
                   type: VARCHAR(255)
               - column:

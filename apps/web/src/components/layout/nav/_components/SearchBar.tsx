@@ -5,7 +5,11 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { Input } from '@/components/ui/input';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 
 export default function SearchBar() {
   const t = useTranslations('components.navigation');
@@ -14,19 +18,23 @@ export default function SearchBar() {
   const [query, setQuery] = useState('');
 
   return (
-    <Input
-      startingIcon={<MagnifyingGlassIcon />}
-      placeholder={t('search.placeholder')}
-      className="w-64"
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          setQuery('');
-          router.push(`/search?q=${encodeURIComponent(query)}`);
-        }
-      }}
-    />
+    <InputGroup>
+      <InputGroupAddon>
+        <MagnifyingGlassIcon />
+      </InputGroupAddon>
+      <InputGroupInput
+        placeholder={t('search.placeholder')}
+        className="w-64"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            setQuery('');
+            router.push(`/search?q=${encodeURIComponent(query)}`);
+          }
+        }}
+      />
+    </InputGroup>
   );
 }

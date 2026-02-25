@@ -245,6 +245,17 @@
           "title": "sync에 오신 것을 환영합니다!",
           "description": "시작하려면 몇 가지 질문에 답해주세요."
         },
+        "choose-handle": {
+          "title": "사용자 이름 선택",
+          "description": "다른 사용자가 볼 수 있는 고유한 사용자 이름을 선택하세요.",
+          "form": {
+            "errors": {
+              "minimum_length": "사용자 이름은 최소 {length}자 이상이어야 합니다.",
+              "maximum_length": "사용자 이름은 최대 {length}자 이하여야 합니다.",
+              "handle_in_use": "이 사용자 이름은 이미 사용 중입니다."
+            }
+          }
+        },
         "finished": {
           "title": "이제 sync를 사용할 준비가 끝났습니다!",
           "description": "프로필을 탐색하고 네트워크를 확장하세요."
