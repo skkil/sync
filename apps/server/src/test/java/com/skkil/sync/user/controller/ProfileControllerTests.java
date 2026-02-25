@@ -75,18 +75,18 @@ class ProfileControllerTests {
                     fieldWithPath("contacts.linkedin")
                         .optional()
                         .type(JsonFieldType.STRING)
-                        .description(""),
+                        .description("LinkedIn username"),
                     fieldWithPath("contacts.github")
                         .optional()
                         .type(JsonFieldType.STRING)
-                        .description(""),
+                        .description("GitHub username"),
                     fieldWithPath("contacts.instagram")
                         .optional()
                         .type(JsonFieldType.STRING)
-                        .description(""),
+                        .description("Instagram username"),
                     fieldWithPath("contacts.twitter")
                         .optional()
                         .type(JsonFieldType.STRING)
-                        .description(""))));
+                        .description("Twitter username"))));
   }
 }

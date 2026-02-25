@@ -1,5 +1,8 @@
 package com.skkil.sync.user.dto.request;
 
+import com.skkil.sync.common.util.validator.ValidUrl;
+import com.skkil.sync.common.util.validator.ValidUsername;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
 public record UpdateProfileRequest(
@@ -8,12 +11,12 @@ public record UpdateProfileRequest(
     Boolean isOnboarded,
     @Size(max = 1000) String bio,
     @Size(max = 255) String profession,
-    Contacts contacts) {
+    @Valid Contacts contacts) {
 
   public static record Contacts(
-      @Size(max = 255) String custom,
-      @Size(max = 255) String linkedin,
-      @Size(max = 255) String github,
-      @Size(max = 255) String instagram,
-      @Size(max = 255) String twitter) {}
+      @ValidUrl @Size(max = 255) String custom,
+      @ValidUsername @Size(max = 255) String linkedin,
+      @ValidUsername @Size(max = 255) String github,
+      @ValidUsername @Size(max = 255) String instagram,
+      @ValidUsername @Size(max = 255) String twitter) {}
 }

@@ -8,6 +8,13 @@ interface UpdateProfileRequest {
   isOnboarded?: boolean;
   bio?: string;
   profileImageId?: string;
+  contacts?: {
+    custom?: string;
+    linkedin?: string;
+    github?: string;
+    instagram?: string;
+    twitter?: string;
+  };
 }
 
 async function updateProfile(request: UpdateProfileRequest) {

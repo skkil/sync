@@ -1,14 +1,27 @@
 package com.skkil.sync.user.model;
 
-public class UserContacts {
+import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
-  public String custom;
+@Getter
+@Setter
+public class UserContacts implements Serializable {
 
-  public String linkedin;
+  private String custom;
 
-  public String github;
+  private String linkedin;
 
-  public String instagram;
+  private String github;
 
-  public String twitter;
+  private String instagram;
+
+  private String twitter;
+
+  @Override
+  public String toString() {
+    return String.format(
+        "UserContacts{custom='%s', linkedin='%s', github='%s', instagram='%s', twitter='%s'}",
+        custom, linkedin, github, instagram, twitter);
+  }
 }

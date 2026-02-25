@@ -166,9 +166,10 @@ function ProfileContacts({ id }: { id: string }) {
 
   const contacts = profile.contacts;
 
-  const filteredFields = ContactFields.filter(
-    (field) => contacts[field.id as keyof typeof profile.contacts],
-  );
+  const filteredFields = ContactFields.filter((field) => {
+    const contact = contacts[field.id as keyof typeof profile.contacts];
+    return contact && contact.trim() !== '';
+  });
 
   const displayFields = showAllContacts
     ? filteredFields
@@ -176,21 +177,25 @@ function ProfileContacts({ id }: { id: string }) {
 
   return (
     <>
-      {displayFields.map((field) => (
-        <Link
-          key={field.id}
-          className="text-sm text-muted-foreground flex items-center gap-2"
-          href={`${field.prefix}${
-            contacts[field.id as keyof typeof profile.contacts]
-          }`}
-        >
-          <p>{field.icon}</p>
-          <p>
-            {field.prefix}
-            {contacts[field.id as keyof typeof profile.contacts]}
-          </p>
-        </Link>
-      ))}
+      {displayFields.map((field) => {
+        const contact = contacts[field.id as keyof typeof profile.contacts];
+
+        return (
+          <Link
+            key={field.id}
+            className="text-sm text-muted-foreground flex items-center gap-2"
+            href={`${field.prefix}${contact}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <p>{field.icon}</p>
+            <p>
+              {field.prefix}
+              {contact}
+            </p>
+          </Link>
+        );
+      })}
 
       {filteredFields.length > 2 && (
         <Button

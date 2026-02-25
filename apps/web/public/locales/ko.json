@@ -280,7 +280,8 @@
             }
           },
           "errors": {
-            "required_name": "이름은 필수 항목입니다."
+            "required_name": "이름은 필수 항목입니다.",
+            "invalid_fields": "하나 이상의 필드에 유효하지 않은 입력이 있습니다."
           },
           "actions": {
             "submit": {

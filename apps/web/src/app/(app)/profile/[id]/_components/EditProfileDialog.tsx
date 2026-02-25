@@ -3,6 +3,7 @@ import { PencilIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -104,6 +105,9 @@ export default function EditProfileDialog() {
           queryKey: ['profile', session?.user.id],
         });
         refetchSession();
+      },
+      onError: () => {
+        toast.error(t('form.errors.invalid_fields'));
       },
     });
   };
@@ -213,9 +217,11 @@ export default function EditProfileDialog() {
                     <Field data-invalid={fieldState.invalid}>
                       <InputGroup>
                         <InputGroupAddon>{contactField.icon}</InputGroupAddon>
-                        <InputGroupAddon className="text-muted-foreground">
-                          {contactField.prefix}
-                        </InputGroupAddon>
+                        {contactField.prefix && (
+                          <InputGroupAddon className="text-muted-foreground">
+                            {contactField.prefix}
+                          </InputGroupAddon>
+                        )}
                         <InputGroupInput {...field} />
                       </InputGroup>
                     </Field>
