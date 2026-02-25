@@ -18,6 +18,9 @@ databaseChangeLog:
               - column:
                   name: company_size
                   type: INTEGER
+              - column:
+                  name: industry
+                  type: VARCHAR(255)
         - addForeignKeyConstraint:
             baseTableName: companies
             baseColumnNames: id

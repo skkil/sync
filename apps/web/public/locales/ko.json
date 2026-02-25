@@ -52,6 +52,31 @@
         }
       }
     },
+    "create-company": {
+      "title": "만들고자 하는 회사에 대해 알려주세요",
+      "form": {
+        "name": {
+          "label": "이름",
+          "placeholder": "회사 이름을 입력하세요"
+        },
+        "description": {
+          "label": "설명",
+          "placeholder": "회사에 대한 간단한 설명을 입력하세요"
+        },
+        "industry": {
+          "label": "산업",
+          "placeholder": "회사가 속한 산업을 입력하세요"
+        },
+        "submit": {
+          "label": "회사 만들기"
+        }
+      },
+      "errors": {
+        "required_name": "이름은 필수 항목입니다.",
+        "required_description": "설명은 필수 항목입니다.",
+        "required_industry": "산업은 필수 항목입니다."
+      }
+    },
     "create-school": {
       "title": "만들고자 하는 학교에 대해 알려주세요",
       "form": {

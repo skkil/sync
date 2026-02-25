@@ -8,6 +8,10 @@ type CreateProviderRequest = {
   description: string;
 } & (
   | {
+      type: ProviderType.COMPANY;
+      industry: string;
+    }
+  | {
       type: ProviderType.SCHOOL;
       schoolType: SchoolType;
     }
