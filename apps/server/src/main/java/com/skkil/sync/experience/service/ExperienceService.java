@@ -84,8 +84,7 @@ public class ExperienceService {
             ? experienceRepository.findByUserWithProvider(userId)
             : experienceRepository.findByUserAndPublicWithProvider(userId);
 
-    var experienceResponse =
-        experiences.stream().map(experienceMapper::toExperienceResponse);
+    var experienceResponse = experiences.stream().map(experienceMapper::toExperienceResponse);
 
     return new GetExperiencesResponse(experienceResponse.toList());
   }

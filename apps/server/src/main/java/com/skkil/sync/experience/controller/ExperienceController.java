@@ -54,8 +54,7 @@ public class ExperienceController {
 
   @DeleteMapping("/experiences/{experienceId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteExperience(
-      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long experienceId) {
+  public void deleteExperience(@PathVariable Long experienceId) {
     experienceService.deleteExperience(experienceId);
   }
 }

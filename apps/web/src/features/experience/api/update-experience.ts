@@ -44,7 +44,11 @@ export function useUpdateExperienceMutation(userId: string) {
 
       context.client.setQueryData(
         ['users', userId, 'experiences'],
-        (old: Experience[]) => {
+        (old: Experience[] | undefined) => {
+          if (!old) {
+            return old;
+          }
+
           return [
             ...old.filter((e) => e.id !== experienceId),
             {
@@ -62,9 +66,9 @@ export function useUpdateExperienceMutation(userId: string) {
 
       context.client.setQueryData(
         ['users', userId, 'experiences'],
-        (old: Experience[]) => {
+        (old: Experience[] | undefined) => {
           return [
-            ...old.filter((e) => e.id !== experienceId),
+            ...(old ? old.filter((e) => e.id !== experienceId) : []),
             onMutateResult?.oldExperience,
           ];
         },

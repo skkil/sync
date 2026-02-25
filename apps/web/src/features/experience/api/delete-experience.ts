@@ -4,7 +4,7 @@ import { server } from '@/lib/server';
 import { Experience } from '@/types/experience';
 
 async function deleteExperience(experienceId: string) {
-  server.delete(`experiences/${experienceId}`);
+  return server.delete(`experiences/${experienceId}`);
 }
 
 export function useDeleteExperienceMutation({ userId }: { userId: string }) {
