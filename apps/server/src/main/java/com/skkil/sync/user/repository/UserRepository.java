@@ -14,7 +14,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("SELECT u FROM User u LEFT JOIN FETCH u.oAuth2Accounts WHERE u.email = :email")
   Optional<User> findByEmailWithOAuthAccounts(String email);
 
+  @Query(
+      """
+      SELECT u FROM User u
+      WHERE LOWER(u.fullName) LIKE LOWER(CONCAT('%', :fullName, '%')) AND u.deletedAt IS NULL
+      """)
   Page<User> findByFullNameContainingIgnoreCase(String fullName, Pageable pageable);
 
+  @Query(
+      """
+      SELECT COUNT(u) FROM User u
+      WHERE LOWER(u.fullName) LIKE LOWER(CONCAT('%', :fullName, '%')) AND u.deletedAt IS NULL
+      """)
   long countByFullNameContainingIgnoreCase(String fullName);
 }

@@ -72,7 +72,7 @@ export default function Search() {
 
   const hasPreviousPage = page > 0;
   const hasNextPage =
-    searchResults && page < searchResults?.results.page.totalPages - 1;
+    searchResults && page < searchResults.results.page.totalPages - 1;
 
   const handleCategoryChange = (c: SearchCategory) => {
     router.push(
@@ -180,7 +180,7 @@ export default function Search() {
               </PaginationItem>
 
               {Array.from({
-                length: searchResults?.results.page.totalPages || 0,
+                length: searchResults.results.page.totalPages || 0,
               }).map((_, index) => (
                 <PaginationItem key={index}>
                   <PaginationLink
