@@ -59,7 +59,7 @@ export default function Search() {
 
   const [page, setPage] = useState(0);
 
-  const { data: providers } = useSearchQuery({
+  const { data: searchResults } = useSearchQuery({
     query,
     type: categories.find((c) => c.id === category)?.type || SearchType.USER,
     page,
@@ -71,7 +71,8 @@ export default function Search() {
   }, [query, category]);
 
   const hasPreviousPage = page > 0;
-  const hasNextPage = providers && page < providers.page.totalPages - 1;
+  const hasNextPage =
+    searchResults && page < searchResults.results.page.totalPages - 1;
 
   const handleCategoryChange = (c: SearchCategory) => {
     router.push(
@@ -107,7 +108,9 @@ export default function Search() {
                     <span>{c.label}</span>
                   </div>
                   <Badge variant="secondary" className="ml-auto">
-                    0
+                    {searchResults
+                      ? getSearchCount(searchResults.count, c.id)
+                      : 0}
                   </Badge>
                 </Button>
               );
@@ -126,23 +129,23 @@ export default function Search() {
         }
 
         <div className="min-h-120">
-          {providers && providers.content.length > 0 ? (
-            providers.content.map((provider) => (
+          {searchResults && searchResults.results.content.length > 0 ? (
+            searchResults.results.content.map((result) => (
               <Link
-                key={provider.id}
-                href={`/${categories.find((c) => c.id === category)?.urlPrefix}/${provider.id}`}
+                key={result.id}
+                href={`/${categories.find((c) => c.id === category)?.urlPrefix}/${result.id}`}
                 className="block py-1"
               >
                 <div className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/50">
                   <div className="flex items-start gap-3">
                     <Avatar className="h-10 w-10">
                       <AvatarFallback>
-                        {provider.name.charAt(0).toUpperCase()}
+                        {result.name.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1">
                       <h3 className="font-semibold text-foreground">
-                        {provider.name}
+                        {result.name}
                       </h3>
                     </div>
                   </div>
@@ -160,7 +163,7 @@ export default function Search() {
           )}
         </div>
 
-        {providers && providers.page.totalPages > 1 && (
+        {searchResults && searchResults.results.page.totalPages > 1 && (
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -177,7 +180,7 @@ export default function Search() {
               </PaginationItem>
 
               {Array.from({
-                length: providers?.page.totalPages || 0,
+                length: searchResults.results.page.totalPages || 0,
               }).map((_, index) => (
                 <PaginationItem key={index}>
                   <PaginationLink
@@ -218,5 +221,19 @@ function getSearchCategory(category: string | null): SearchCategory {
       return 'school';
     default:
       return 'user';
+  }
+}
+
+function getSearchCount(
+  count: { userCount: number; schoolCount: number },
+  category: SearchCategory,
+) {
+  switch (category) {
+    case 'user':
+      return count.userCount;
+    case 'school':
+      return count.schoolCount;
+    default:
+      return 0;
   }
 }
