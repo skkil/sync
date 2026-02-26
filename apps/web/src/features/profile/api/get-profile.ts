@@ -9,6 +9,7 @@ export interface GetProfileResponse {
   email: string;
   profession: string | null;
   bio: string | null;
+  profileImageUrl: string | null;
   isFollowing: boolean;
 }
 
@@ -28,6 +29,7 @@ export async function getProfile(
       email: data.email,
       profession: data.profession,
       bio: data.bio,
+      profileImageUrl: data.profileImageUrl,
       isFollowing: data.isFollowing,
     }));
 }

@@ -44,12 +44,18 @@ public class ProfileService {
             ? false
             : userRelationshipService.isFollowing(requesterId, userId);
 
+    String profileImageUrl = null;
+    if (user.getProfileImage() != null) {
+      profileImageUrl = mediaService.getMediaUrl(user.getProfileImage().getId()).toExternalForm();
+    }
+
     return GetProfileResponse.builder()
         .userId(user.getId().toString())
         .name(user.getFullName())
         .email(user.getEmail())
         .bio(user.getBio())
         .profession(user.getProfession())
+        .profileImageUrl(profileImageUrl)
         .isFollowing(isFollowing)
         .build();
   }
@@ -97,6 +103,11 @@ public class ProfileService {
     log.debug("Updating profile for user {}", userId);
 
     user.updateFields(request.name(), request.profession(), request.bio());
+
+    if (Boolean.TRUE.equals(request.removeProfileImage()) && user.getProfileImage() != null) {
+      user.getProfileImage().setStatus(MediaStatus.DELETED);
+      user.setProfileImage(null);
+    }
 
     if (request.profileImageId() != null) {
       if (user.getProfileImage() != null) {

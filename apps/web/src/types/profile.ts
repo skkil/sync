@@ -4,4 +4,5 @@ export interface Profile {
   name: string;
   bio: string | null;
   profession: string | null;
+  profileImageUrl: string | null;
 }
