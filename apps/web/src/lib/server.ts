@@ -1,11 +1,10 @@
 import ky from 'ky';
 
+import { getCsrfToken, getCsrfTokenServer } from '@/util/cookie';
 import { isServer } from '@/util/server';
 
 import { env } from './env';
 import SyncError, { ErrorCode } from './error';
-
-const CSRF_COOKIE_NAME = 'XSRF-TOKEN';
 
 interface ErrorResponse {
   detail: string;
@@ -33,24 +32,6 @@ async function getCookies() {
   return undefined;
 }
 
-async function getCsrfToken(): Promise<string | undefined> {
-  if (isServer()) {
-    try {
-      const { cookies } = await import('next/headers');
-      const cookieStore = await cookies();
-      return cookieStore.get(CSRF_COOKIE_NAME)?.value;
-    } catch {
-      return undefined;
-    }
-  } else {
-    const value = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith(`${CSRF_COOKIE_NAME}=`))
-      ?.split('=')[1];
-    return value ? decodeURIComponent(value) : undefined;
-  }
-}
-
 export const server = ky.extend({
   prefixUrl: env.NEXT_PUBLIC_BACKEND_URL,
   credentials: 'include',
@@ -71,7 +52,9 @@ export const server = ky.extend({
       },
       async (request) => {
         if (request.method !== 'GET' && request.method !== 'HEAD') {
-          const csrfToken = await getCsrfToken();
+          const csrfToken = await (isServer()
+            ? getCsrfTokenServer()
+            : getCsrfToken());
           if (csrfToken) {
             request.headers.set('X-XSRF-TOKEN', csrfToken);
           }
