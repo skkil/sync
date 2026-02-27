@@ -1,9 +1,11 @@
+'use client';
+
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
+import { env } from '@/lib/env';
+import { getCsrfToken } from '@/util/cookie';
 import { isServer } from '@/util/server';
-
-import { env } from './env';
 
 let client: Client | null = null;
 
@@ -21,6 +23,9 @@ export function getStompClient(): Client {
   client = new Client({
     webSocketFactory: () => {
       return new SockJS(url);
+    },
+    connectHeaders: {
+      'X-XSRF-TOKEN': getCsrfToken(),
     },
     debug: (message) => {
       console.log(`[STOMP] ${message}`);

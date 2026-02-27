@@ -7,10 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface MessageInputProps {
-  to: string;
+  conversationId: string;
 }
 
-export default function MessageInput({ to }: MessageInputProps) {
+export default function MessageInput({ conversationId }: MessageInputProps) {
   const t = useTranslations('pages.messages');
   const [message, setMessage] = useState('');
 
@@ -22,9 +22,8 @@ export default function MessageInput({ to }: MessageInputProps) {
     }
 
     publish(
-      '/app/conversations/send',
+      `/app/conversations/${conversationId}/send`,
       JSON.stringify({
-        to,
         content,
       }),
     );

@@ -1,18 +1,23 @@
 'use client';
 
-import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 import { useTranslations } from 'next-intl';
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import { getStompClient } from '@/lib/ws';
+import { IncomingMessageWebSocketEventHandler } from '@/features/message/handler/IncomingMessageWebSocketEventHandler';
+import { useSession } from '@/lib/auth/client';
+import { getStompClient } from '@/lib/ws/client';
+import { WebSocketEventManager } from '@/lib/ws/manager';
+
+enum WebSocketConnectionStatus {
+  CONNECTING,
+  CONNECTED,
+  FAILED,
+}
 
 interface WebSocketContextType {
   publish: (destination: string, body: string) => void;
-  subscribe: (
-    destination: string,
-    callback: (message: IMessage) => void,
-  ) => StompSubscription | undefined;
 }
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
@@ -26,38 +31,62 @@ export default function WebSocketProvider({
 }: WebSocketProviderProps) {
   const t = useTranslations();
 
-  const client = useRef<Client | null>(null);
+  const { data: session } = useSession();
+
+  const [connectionStatus, setConnectionStatus] =
+    useState<WebSocketConnectionStatus>(WebSocketConnectionStatus.CONNECTING);
+
+  const clientRef = useRef<Client | null>(null);
+  const managerRef = useRef<WebSocketEventManager | null>(null);
 
   useEffect(() => {
-    if (!client.current) {
-      client.current = getStompClient();
+    if (!clientRef.current) {
+      clientRef.current = getStompClient();
+      clientRef.current.onConnect = () => {
+        setConnectionStatus(WebSocketConnectionStatus.CONNECTED);
+        if (session?.user) {
+          managerRef.current?.subscribe(session.user.id);
+        }
+      };
+
+      managerRef.current = new WebSocketEventManager(clientRef.current);
+
+      managerRef.current.registerHandler(
+        new IncomingMessageWebSocketEventHandler(),
+      );
     }
 
-    client.current.activate();
+    clientRef.current.activate();
 
     return () => {
-      if (client.current) {
-        client.current.deactivate();
+      if (clientRef.current) {
+        clientRef.current.deactivate();
       }
     };
-  }, [client]);
+  }, [clientRef, session]);
+
+  useEffect(() => {
+    if (!session || !session.user) {
+      return;
+    }
+
+    if (connectionStatus === WebSocketConnectionStatus.CONNECTED) {
+      managerRef.current?.subscribe(session.user.id);
+    }
+
+    return () => {
+      managerRef.current?.unsubscribeAll();
+    };
+  }, [session, connectionStatus]);
 
   return (
     <WebSocketContext.Provider
       value={{
         publish(destination, body) {
-          if (client.current && client.current.connected) {
-            client.current.publish({ destination, body });
+          if (clientRef.current && clientRef.current.connected) {
+            clientRef.current.publish({ destination, body });
           } else {
             toast.error(t('errors.connection-failed'));
-          }
-        },
-        subscribe(destination, callback) {
-          if (client.current && client.current.connected) {
-            return client.current.subscribe(destination, callback);
-          } else {
-            toast.error(t('errors.connection-failed'));
-            return undefined;
           }
         },
       }}

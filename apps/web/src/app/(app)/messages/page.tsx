@@ -4,11 +4,12 @@ import { SidebarIcon } from '@phosphor-icons/react';
 import { useWindowSize } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import { redirect, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useCreateConversationMutation } from '@/features/message/api/create-conversation';
 import { useSession } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 
@@ -18,22 +19,38 @@ import MessagesList from './_components/MessagesList';
 import SelectedProfile from './_components/SelectedProfile';
 
 export default function Messages() {
-  const searchParams = useSearchParams();
-  const to = searchParams.get('to');
-
   const t = useTranslations('pages.messages');
 
   const { data: session, isPending } = useSession();
+
+  const [selectedConversation, setSelectedConversation] = useState<
+    string | null
+  >(null);
+
+  const searchParams = useSearchParams();
+  const to = searchParams.get('to');
+
+  const { mutate: createConversation } = useCreateConversationMutation();
+
+  useEffect(() => {
+    if (to && session) {
+      createConversation(to, {
+        onSuccess: ({ conversationId }) => {
+          setSelectedConversation(conversationId);
+        },
+      });
+    }
+  }, [to, session, createConversation]);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const { width } = useWindowSize();
 
-  useEffect(() => {
+  useEffectEvent(() => {
     if (width) {
       setSidebarOpen(width >= 768);
     }
-  }, [width]);
+  });
 
   if (isPending) {
     return null;
@@ -84,7 +101,12 @@ export default function Messages() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4">
-                  <ConversationList selected={to} />
+                  <ConversationList
+                    selectedConversationId={selectedConversation}
+                    onSelectConversation={(conversationId) => {
+                      setSelectedConversation(conversationId);
+                    }}
+                  />
                 </div>
               </div>
             )}
@@ -109,10 +131,16 @@ export default function Messages() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {to && <MessagesList to={to} />}
+              {selectedConversation && (
+                <MessagesList conversationId={selectedConversation} />
+              )}
             </div>
 
-            <div className="border-t p-4">{to && <MessageInput to={to} />}</div>
+            <div className="border-t p-4">
+              {selectedConversation && (
+                <MessageInput conversationId={selectedConversation!} />
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

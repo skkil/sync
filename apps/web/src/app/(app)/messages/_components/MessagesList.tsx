@@ -1,57 +1,17 @@
 import { format } from 'date-fns';
-import { useEffect } from 'react';
 
-import { useWebSocket } from '@/components/providers/WebSocketProvider';
-import { useGetMessages } from '@/features/message/api/get-messages';
+import { useGetMessagesQuery } from '@/features/message/api/get-messages';
 import { useSession } from '@/lib/auth/client';
-import { getQueryClient } from '@/lib/query';
 import { cn } from '@/lib/utils';
-import { Message } from '@/types/message';
 
 interface MessagesListProps {
-  to: string;
+  conversationId: string;
 }
 
-export default function MessagesList({ to }: MessagesListProps) {
+export default function MessagesList({ conversationId }: MessagesListProps) {
   const { data: session } = useSession();
-  const { subscribe } = useWebSocket();
 
-  const queryClient = getQueryClient();
-
-  const { data: messages } = useGetMessages(to);
-  useEffect(() => {
-    if (!session) {
-      return;
-    }
-
-    const subscription = subscribe(
-      `/topic/users/${session.user.id}/messages`,
-      (message) => {
-        queryClient.setQueryData(['messages', to], (oldMessages: Message[]) => {
-          const newMessage: {
-            messageId: string;
-            content: string;
-            senderId: string;
-            sentAt: string;
-          } = JSON.parse(message.body);
-
-          return [
-            ...(oldMessages || []),
-            {
-              id: newMessage.messageId,
-              content: newMessage.content,
-              senderId: newMessage.senderId,
-              sentAt: new Date(newMessage.sentAt),
-            } satisfies Message,
-          ];
-        });
-      },
-    );
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [session, queryClient, to, subscribe]);
+  const { data: messages } = useGetMessagesQuery(conversationId);
 
   if (!messages || !session?.user) {
     return null;

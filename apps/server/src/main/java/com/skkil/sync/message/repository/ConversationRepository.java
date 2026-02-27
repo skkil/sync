@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
 
   @Override
-  @EntityGraph(attributePaths = {"participants, participants.user"})
+  @EntityGraph(attributePaths = {"participants"})
   Optional<Conversation> findById(Long conversationId);
 
   @Query(

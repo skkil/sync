@@ -1,8 +1,10 @@
 package com.skkil.sync.message.service;
 
 import com.skkil.sync.message.dto.request.SendMessageRequest;
+import com.skkil.sync.message.dto.response.CreateConversationResponse;
 import com.skkil.sync.message.dto.response.GetConversationsResponse;
 import com.skkil.sync.message.dto.response.GetMessagesResponse;
+import com.skkil.sync.message.dto.response.SendMessageResponse;
 import com.skkil.sync.message.exception.MessageToSelfException;
 import com.skkil.sync.message.model.Conversation;
 import com.skkil.sync.message.model.Message;
@@ -13,7 +15,6 @@ import com.skkil.sync.user.service.UserService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -40,31 +41,39 @@ public class ConversationService {
   }
 
   @Transactional
-  public Conversation getOrCreateConversation(Long user1, Long user2) {
-    var conversation = conversationRepository.findByParticipants(user1, user2);
-    if (conversation.isPresent()) {
-      log.debug("Conversation between {} and {} already exists", user1, user2);
-      return conversation.get();
+  public CreateConversationResponse createConversation(Long userId, Long participantId) {
+    if (userId.equals(participantId)) {
+      throw new MessageToSelfException();
     }
 
-    log.debug("Creating new conversation between {} and {}", user1, user2);
-    var newConversation = new Conversation();
+    var conversationOptional = conversationRepository.findByParticipants(userId, participantId);
+    Conversation conversation;
 
-    Participant
-        participant1 =
-            Participant.builder()
-                .user(userService.getUserReference(user1))
-                .conversation(newConversation)
-                .build(),
-        participant2 =
-            Participant.builder()
-                .user(userService.getUserReference(user2))
-                .conversation(newConversation)
-                .build();
+    if (conversationOptional.isEmpty()) {
+      log.debug(
+          "No existing conversation between {} and {}, creating new one", userId, participantId);
+      var newConversation = new Conversation();
 
-    newConversation.getParticipants().add(participant1);
-    newConversation.getParticipants().add(participant2);
-    return conversationRepository.save(newConversation);
+      Participant
+          participant1 =
+              Participant.builder()
+                  .user(userService.getUserReference(userId))
+                  .conversation(newConversation)
+                  .build(),
+          participant2 =
+              Participant.builder()
+                  .user(userService.getUserReference(participantId))
+                  .conversation(newConversation)
+                  .build();
+
+      newConversation.getParticipants().add(participant1);
+      newConversation.getParticipants().add(participant2);
+      conversation = conversationRepository.save(newConversation);
+    } else {
+      conversation = conversationOptional.get();
+    }
+
+    return new CreateConversationResponse(conversation.getId().toString());
   }
 
   @Transactional(readOnly = true)
@@ -110,16 +119,11 @@ public class ConversationService {
   }
 
   @Transactional(readOnly = true)
-  public GetMessagesResponse getMessages(Long userId, Long participantId, Long after, Long size) {
-    var conversation = conversationRepository.findByParticipants(userId, participantId);
-    if (conversation.isEmpty()) {
-      return new GetMessagesResponse(Page.empty());
-    }
-
+  public GetMessagesResponse getMessages(Long userId, Long conversationId, Long after, Long size) {
     Pageable pageable = Pageable.ofSize(size.intValue());
     var messages =
         messageRepository
-            .getMessages(conversation.get(), after, pageable)
+            .getMessages(conversationRepository.getReferenceById(conversationId), after, pageable)
             .map(
                 message ->
                     GetMessagesResponse.Message.builder()
@@ -134,12 +138,8 @@ public class ConversationService {
   }
 
   @Transactional
-  public void sendMessage(Long senderId, SendMessageRequest request) {
-    if (senderId.equals(request.to())) {
-      throw new MessageToSelfException();
-    }
-
-    Conversation conversation = getOrCreateConversation(senderId, request.to());
+  public void sendMessage(Long conversationId, Long senderId, SendMessageRequest request) {
+    Conversation conversation = conversationRepository.findById(conversationId).orElseThrow();
 
     Participant sender =
         conversation.getParticipants().stream()
@@ -156,13 +156,19 @@ public class ConversationService {
     messageRepository.save(message);
 
     for (Participant participant : conversation.getParticipants()) {
-      messagingTemplate.convertAndSend(
-          "/topic/users/" + participant.getUser().getId() + "/messages",
-          new GetMessagesResponse.Message(
-              message.getId().toString(),
-              sender.getUser().getId().toString(),
-              message.getContent(),
-              LocalDateTime.ofInstant(message.getCreatedAt(), ZoneId.systemDefault())));
+      log.debug(
+          "Sending message {} to participant {}", message.getId(), participant.getUser().getId());
+
+      messagingTemplate.convertAndSendToUser(
+          participant.getUser().getId().toString(),
+          "queue/messages",
+          SendMessageResponse.builder()
+              .conversationId(conversation.getId().toString())
+              .messageId(message.getId().toString())
+              .senderId(sender.getUser().getId().toString())
+              .content(message.getContent())
+              .sentAt(LocalDateTime.ofInstant(message.getCreatedAt(), ZoneId.systemDefault()))
+              .build());
     }
   }
 }
