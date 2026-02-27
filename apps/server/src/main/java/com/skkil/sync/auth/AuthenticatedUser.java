@@ -1,6 +1,7 @@
 package com.skkil.sync.auth;
 
 import com.skkil.sync.user.constant.Role;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 @Builder
 public record AuthenticatedUser(
     Long userId, String fullName, String email, String password, Role role)
-    implements UserDetails, OidcUser {
+    implements UserDetails, OidcUser, Principal {
 
   @Override
   public String getUsername() {
@@ -29,7 +30,7 @@ public record AuthenticatedUser(
 
   @Override
   public String getName() {
-    return email;
+    return userId.toString();
   }
 
   @Override
