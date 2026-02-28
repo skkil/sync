@@ -43,6 +43,8 @@ app:
   cors.allowed-origins: http://localhost:3000
   oauth2:
     frontend-redirect-uri: http://localhost:3000
+  slack:
+    webhook-url: ${SLACK_WEBHOOK_URL}
 
 server:
   servlet:
