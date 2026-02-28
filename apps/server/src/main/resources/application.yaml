@@ -44,7 +44,7 @@ app:
   oauth2:
     frontend-redirect-uri: http://localhost:3000
   slack:
-    webhook-url: ${SLACK_WEBHOOK_URL}
+    webhook-url: ${SLACK_WEBHOOK_URL:}
 
 server:
   servlet:
