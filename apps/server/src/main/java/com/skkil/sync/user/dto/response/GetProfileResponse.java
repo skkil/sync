@@ -9,6 +9,7 @@ public record GetProfileResponse(
     String email,
     String bio,
     String profession,
+    String profileImageUrl,
     boolean isFollowing,
     Contacts contacts) {
 

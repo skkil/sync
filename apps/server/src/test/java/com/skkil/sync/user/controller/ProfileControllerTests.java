@@ -42,6 +42,7 @@ class ProfileControllerTests {
             .email("email@example.com")
             .bio("bio")
             .profession("profession")
+            .profileImageUrl("https://example.com/profile-image.png")
             .build();
 
     when(profileService.getProfile(eq(null), eq(1L))).thenReturn(response);
@@ -61,6 +62,9 @@ class ProfileControllerTests {
                     fieldWithPath("profession")
                         .type(JsonFieldType.STRING)
                         .description("User profession"),
+                    fieldWithPath("profileImageUrl")
+                        .type(JsonFieldType.STRING)
+                        .description("User profile image url"),
                     fieldWithPath("isFollowing")
                         .type(JsonFieldType.BOOLEAN)
                         .description("Is following"),

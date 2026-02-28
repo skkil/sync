@@ -37,8 +37,8 @@ class ProfileServiceTests {
 
     assertThat(response)
         .isNotNull()
-        .extracting("userId", "name", "email", "bio")
-        .containsExactly("1", "Test User", "user@email.com", "");
+        .extracting("userId", "name", "email", "bio", "profileImageUrl")
+        .containsExactly("1", "Test User", "user@email.com", "", null);
   }
 
   @Test

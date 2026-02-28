@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ComponentType, useState } from 'react';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -66,6 +66,7 @@ export default function Profile({ userId }: ProfileProps) {
       <Card className="mx-auto w-full max-w-3xl min-h-96 p-0">
         <CardHeader className="relative h-48 bg-muted">
           <Avatar className="h-32 w-32 absolute left-8 -bottom-16">
+            <AvatarImage src={profile?.profileImageUrl ?? undefined} />
             <AvatarFallback></AvatarFallback>
           </Avatar>
         </CardHeader>
