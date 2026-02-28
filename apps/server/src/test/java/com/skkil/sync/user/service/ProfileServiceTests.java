@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.exception.UserNotFoundException;
+import com.skkil.sync.user.mapper.ProfileMapper;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProfileServiceTests {
 
   @Mock private UserRepository userRepository;
+  @Mock private ProfileMapper profileMapper;
 
   @InjectMocks private ProfileService profileService;
 
@@ -29,6 +31,7 @@ class ProfileServiceTests {
     user.setId(userId);
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(profileMapper.toGetProfileResponseContacts(null)).thenReturn(null);
 
     GetProfileResponse response = profileService.getProfile(null, userId);
 

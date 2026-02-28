@@ -10,4 +10,9 @@ public record GetProfileResponse(
     String bio,
     String profession,
     String profileImageUrl,
-    boolean isFollowing) {}
+    boolean isFollowing,
+    Contacts contacts) {
+
+  public static record Contacts(
+      String custom, String linkedin, String github, String instagram, String twitter) {}
+}
