@@ -14,6 +14,13 @@ export interface UpdateProfileRequest {
   bio?: string;
   profileImageId?: number;
   removeProfileImage?: boolean;
+  contacts?: {
+    custom?: string;
+    linkedin?: string;
+    github?: string;
+    instagram?: string;
+    twitter?: string;
+  };
 }
 
 async function updateProfile(request: UpdateProfileRequest) {
@@ -27,7 +34,9 @@ type UpdateProfileMutationOptions = Omit<
   'mutationFn'
 >;
 
-export function useUpdateProfileMutation(options?: UpdateProfileMutationOptions) {
+export function useUpdateProfileMutation(
+  options?: UpdateProfileMutationOptions,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -42,8 +51,10 @@ export function useUpdateProfileMutation(options?: UpdateProfileMutationOptions)
   });
 }
 
-export interface UpdateProfileWithImageRequest
-  extends Omit<UpdateProfileRequest, 'profileImageId'> {
+export interface UpdateProfileWithImageRequest extends Omit<
+  UpdateProfileRequest,
+  'profileImageId'
+> {
   profileImageFile?: File | null;
 }
 
@@ -55,8 +66,10 @@ type UpdateProfileWithImageMutationOptions = Omit<
 export function useUpdateProfileWithImageMutation(
   options?: UpdateProfileWithImageMutationOptions,
 ) {
-  const { mutateAsync: uploadProfileImage, isPending: isUploadingProfileImage } =
-    useUploadProfileImageMutation();
+  const {
+    mutateAsync: uploadProfileImage,
+    isPending: isUploadingProfileImage,
+  } = useUploadProfileImageMutation();
   const { mutateAsync: updateProfile, isPending: isUpdatingProfile } =
     useUpdateProfileMutation();
 

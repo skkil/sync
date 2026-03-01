@@ -25,6 +25,11 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -33,6 +38,7 @@ import {
 } from '@/features/media/api/upload-profile-image';
 import { useGetProfileQuery } from '@/features/profile/api/get-profile';
 import { useUpdateProfileWithImageMutation } from '@/features/profile/api/update-profile';
+import { ContactFields } from '@/features/profile/util/contacts';
 import { useSession } from '@/lib/auth/client';
 import SyncError, { ErrorCode } from '@/lib/error';
 
@@ -41,6 +47,13 @@ const EditProfileFormSchema = (t: ReturnType<typeof useTranslations>) =>
     name: z.string().min(1, t('form.errors.required_name')),
     profession: z.string(),
     bio: z.string(),
+    contacts: z.object({
+      custom: z.string(),
+      linkedin: z.string(),
+      github: z.string(),
+      instagram: z.string(),
+      twitter: z.string(),
+    }),
   });
 
 export default function EditProfileDialog() {
@@ -62,6 +75,13 @@ export default function EditProfileDialog() {
       name: '',
       profession: '',
       bio: '',
+      contacts: {
+        custom: '',
+        linkedin: '',
+        github: '',
+        instagram: '',
+        twitter: '',
+      },
     },
   });
 
@@ -85,6 +105,13 @@ export default function EditProfileDialog() {
         name: profile.name || '',
         profession: profile.profession || '',
         bio: profile.bio || '',
+        contacts: {
+          custom: profile.contacts?.custom || '',
+          linkedin: profile.contacts?.linkedin || '',
+          github: profile.contacts?.github || '',
+          instagram: profile.contacts?.instagram || '',
+          twitter: profile.contacts?.twitter || '',
+        },
       });
     }
   }, [form, profile]);
@@ -200,7 +227,9 @@ export default function EditProfileDialog() {
 
   const profileImageSrc =
     profileImagePreviewUrl ??
-    (isProfileImageMarkedForRemoval ? null : (profile?.profileImageUrl ?? null));
+    (isProfileImageMarkedForRemoval
+      ? null
+      : (profile?.profileImageUrl ?? null));
   const currentName = form.watch('name');
 
   return (
@@ -267,7 +296,8 @@ export default function EditProfileDialog() {
                         type="button"
                         variant="ghost"
                         disabled={
-                          (!selectedProfileImageFile && !profile?.profileImageUrl) ||
+                          (!selectedProfileImageFile &&
+                            !profile?.profileImageUrl) ||
                           isSaving
                         }
                         onClick={onClickProfileImageAction}
@@ -328,7 +358,9 @@ export default function EditProfileDialog() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <div className="flex items-center justify-between">
-                      <FieldLabel>{t('form.fields.profession.label')}</FieldLabel>
+                      <FieldLabel>
+                        {t('form.fields.profession.label')}
+                      </FieldLabel>
 
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -365,6 +397,30 @@ export default function EditProfileDialog() {
                   </Field>
                 )}
               />
+            </FieldGroup>
+
+            <h2 className="text-lg font-bold">{t('form.groups.contacts')}</h2>
+            <FieldGroup className="p-3">
+              {ContactFields.map((contactField) => (
+                <Controller
+                  key={contactField.id}
+                  name={`contacts.${contactField.id}`}
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <InputGroup>
+                        <InputGroupAddon>{contactField.icon}</InputGroupAddon>
+                        {contactField.prefix && (
+                          <InputGroupAddon className="text-muted-foreground">
+                            {contactField.prefix}
+                          </InputGroupAddon>
+                        )}
+                        <InputGroupInput {...field} />
+                      </InputGroup>
+                    </Field>
+                  )}
+                />
+              ))}
             </FieldGroup>
           </ScrollArea>
 

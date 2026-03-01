@@ -262,7 +262,8 @@
         "description": "프로필 정보를 업데이트하세요",
         "form": {
           "groups": {
-            "basic": "기본 정보"
+            "basic": "기본 정보",
+            "contacts": "연락처"
           },
           "fields": {
             "name": {
@@ -279,7 +280,8 @@
             }
           },
           "errors": {
-            "required_name": "이름은 필수 항목입니다."
+            "required_name": "이름은 필수 항목입니다.",
+            "invalid_fields": "하나 이상의 필드에 유효하지 않은 입력이 있습니다."
           },
           "actions": {
             "submit": {
@@ -291,7 +293,11 @@
       "header": {
         "follow": "팔로우",
         "unfollow": "언팔로우",
-        "message": "메시지 보내기"
+        "message": "메시지 보내기",
+        "contacts": {
+          "show-more": "연락처 더 보기",
+          "show-less": "연락처 접기"
+        }
       },
       "experience": {
         "menu": {

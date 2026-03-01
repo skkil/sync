@@ -11,6 +11,13 @@ export interface GetProfileResponse {
   bio: string | null;
   profileImageUrl: string | null;
   isFollowing: boolean;
+  contacts?: {
+    custom: string | null;
+    linkedin: string | null;
+    github: string | null;
+    instagram: string | null;
+    twitter: string | null;
+  };
 }
 
 export type GetProfileQueryResponse = Profile & {
@@ -24,6 +31,7 @@ export async function getProfile(
     .get<GetProfileResponse>(`profiles/${userId}`)
     .json()
     .then((data) => ({
+      ...data,
       id: data.userId,
       name: data.name,
       email: data.email,
