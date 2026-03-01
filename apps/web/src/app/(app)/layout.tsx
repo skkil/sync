@@ -7,8 +7,10 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <>
-      <NavigationBar />
-      {children}
+      <div className="h-16">
+        <NavigationBar />
+      </div>
+      <div className="h-[calc(100vh-4rem)]">{children}</div>
     </>
   );
 }

@@ -61,7 +61,7 @@ export default function Messages() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 min-h-screen bg-background p-4">
+    <div className="flex flex-col items-center gap-4 h-full bg-background p-4">
       <Card className="grow w-full h-full flex p-0">
         <CardContent className="flex-1 flex overflow-hidden p-0 relative">
           {sidebarOpen && (
@@ -75,7 +75,7 @@ export default function Messages() {
             className={cn(
               'border-r transition-all duration-300 flex flex-col',
               sidebarOpen
-                ? 'w-full md:w-80 absolute md:relative top-0 left-0 bottom-0 z-20 md:z-auto'
+                ? 'w-full md:w-80 absolute md:relative top-0 left-0 bottom-0 z-20 md:z-auto bg-background'
                 : 'w-0',
             )}
           >
@@ -112,35 +112,37 @@ export default function Messages() {
             )}
           </div>
 
-          <div className="flex-1 flex flex-col">
-            <div className="border-b p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  {!sidebarOpen && (
-                    <Button
-                      onClick={() => setSidebarOpen(true)}
-                      variant="ghost"
-                    >
-                      <SidebarIcon />
-                    </Button>
-                  )}
+          <div className="grow flex flex-col">
+            {selectedConversation && (
+              <div className="border-b p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    {!sidebarOpen && (
+                      <Button
+                        onClick={() => setSidebarOpen(true)}
+                        variant="ghost"
+                      >
+                        <SidebarIcon />
+                      </Button>
+                    )}
 
-                  {to && <SelectedProfile to={to} />}
+                    {to && <SelectedProfile to={to} />}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="grow overflow-y-auto p-4 space-y-4">
               {selectedConversation && (
                 <MessagesList conversationId={selectedConversation} />
               )}
             </div>
 
-            <div className="border-t p-4">
-              {selectedConversation && (
+            {selectedConversation && (
+              <div className="border-t p-4">
                 <MessageInput conversationId={selectedConversation!} />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
