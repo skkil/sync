@@ -1,9 +1,11 @@
 package com.skkil.sync.message.service;
 
+import com.skkil.sync.media.service.MediaService;
 import com.skkil.sync.message.dto.request.SendMessageRequest;
 import com.skkil.sync.message.dto.response.CreateConversationResponse;
 import com.skkil.sync.message.dto.response.GetConversationsResponse;
 import com.skkil.sync.message.dto.response.GetMessagesResponse;
+import com.skkil.sync.message.dto.response.GetUnreadMessagesCountResponse;
 import com.skkil.sync.message.dto.response.SendMessageResponse;
 import com.skkil.sync.message.exception.MessageToSelfException;
 import com.skkil.sync.message.model.Conversation;
@@ -28,16 +30,19 @@ public class ConversationService {
   private final MessageRepository messageRepository;
   private final SimpMessagingTemplate messagingTemplate;
   private final UserService userService;
+  private final MediaService mediaService;
 
   public ConversationService(
       ConversationRepository conversationRepository,
       MessageRepository messageRepository,
       SimpMessagingTemplate messagingTemplate,
-      UserService userService) {
+      UserService userService,
+      MediaService mediaService) {
     this.conversationRepository = conversationRepository;
     this.messageRepository = messageRepository;
     this.messagingTemplate = messagingTemplate;
     this.userService = userService;
+    this.mediaService = mediaService;
   }
 
   @Transactional
@@ -78,44 +83,45 @@ public class ConversationService {
 
   @Transactional(readOnly = true)
   public GetConversationsResponse getConversations(Long userId) {
-    var conversations =
-        conversationRepository.findByUserId(userId).stream()
+    var conversations = conversationRepository.getConversationsForUser(userId);
+
+    return new GetConversationsResponse(
+        conversations.stream()
             .map(
                 conversation -> {
                   var participants =
-                      conversation.getParticipants().stream()
+                      conversation.participants().stream()
                           .map(
                               participant ->
-                                  new GetConversationsResponse.Participant(
-                                      participant.getUser().getId().toString(),
-                                      participant.getUser().getFullName()))
+                                  GetConversationsResponse.Participant.builder()
+                                      .userId(participant.id().toString())
+                                      .name(participant.name())
+                                      .profileImageUrl(
+                                          participant.profileImageId() == null
+                                              ? null
+                                              : mediaService
+                                                  .getMediaUrl(participant.profileImageId())
+                                                  .toString())
+                                      .build())
                           .toList();
 
                   var lastMessage =
-                      messageRepository
-                          .findLastMessageByConversation(conversation.getId())
-                          .map(
-                              m ->
-                                  GetConversationsResponse.Message.builder()
-                                      .messageId(m.getId().toString())
-                                      .senderId(m.getSender().getUser().getId().toString())
-                                      .content(m.getContent())
-                                      .sentAt(
-                                          m.getCreatedAt()
-                                              .atZone(ZoneId.systemDefault())
-                                              .toLocalDateTime())
-                                      .build())
-                          .orElse(null);
+                      conversation.lastMessage() == null
+                          ? null
+                          : GetConversationsResponse.Message.builder()
+                              .messageId(conversation.lastMessage().id().toString())
+                              .senderId(conversation.lastMessage().senderId().toString())
+                              .content(conversation.lastMessage().content())
+                              .sentAt(conversation.lastMessage().timestamp())
+                              .build();
 
                   return GetConversationsResponse.Conversation.builder()
-                      .conversationId(conversation.getId().toString())
+                      .conversationId(conversation.conversationId().toString())
                       .participants(participants)
                       .lastMessage(lastMessage)
                       .build();
                 })
-            .toList();
-
-    return new GetConversationsResponse(conversations);
+            .toList());
   }
 
   @Transactional(readOnly = true)
@@ -170,5 +176,18 @@ public class ConversationService {
               .sentAt(LocalDateTime.ofInstant(message.getCreatedAt(), ZoneId.systemDefault()))
               .build());
     }
+  }
+
+  @Transactional(readOnly = true)
+  public GetUnreadMessagesCountResponse getUnreadMessagesCount(Long userId) {
+    var conversations = messageRepository.getUnreadMessagesCount(userId);
+    return new GetUnreadMessagesCountResponse(
+        conversations.stream()
+            .map(
+                conversation ->
+                    new GetUnreadMessagesCountResponse.Conversation(
+                        conversation.conversationId().toString(),
+                        conversation.unreadMessageCount()))
+            .toList());
   }
 }

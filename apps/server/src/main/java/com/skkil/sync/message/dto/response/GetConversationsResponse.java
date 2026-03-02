@@ -10,7 +10,8 @@ public record GetConversationsResponse(List<Conversation> conversations) {
   public static record Conversation(
       String conversationId, List<Participant> participants, Message lastMessage) {}
 
-  public static record Participant(String userId, String name) {}
+  @Builder
+  public static record Participant(String userId, String name, String profileImageUrl) {}
 
   @Builder
   public static record Message(

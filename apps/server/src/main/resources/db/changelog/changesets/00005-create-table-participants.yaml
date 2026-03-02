@@ -37,6 +37,9 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: false
+              - column:
+                  name: last_read_at
+                  type: TIMESTAMP
         - addForeignKeyConstraint:
             baseTableName: participants
             baseColumnNames: conversation_id

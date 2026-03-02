@@ -44,6 +44,7 @@ export class IncomingMessageWebSocketEventHandler implements WebSocketEventHandl
     const conversations = queryClient.getQueryData<Conversation[]>([
       'conversations',
     ]);
+
     if (
       conversations &&
       conversations.find((conv) => conv.id === event.payload.conversationId) ===
@@ -84,6 +85,51 @@ export class IncomingMessageWebSocketEventHandler implements WebSocketEventHandl
         };
 
         return [...(oldMessages || []), newMessage];
+      },
+    );
+
+    queryClient.setQueryData(
+      ['unreadMessagesCount'],
+      (
+        conversations:
+          | {
+              conversationId: string;
+              unreadCount: number;
+            }[]
+          | undefined,
+      ) => {
+        if (!conversations) {
+          return [
+            {
+              conversationId: event.payload.conversationId,
+              unreadCount: 1,
+            },
+          ];
+        }
+
+        if (
+          conversations.find(
+            (conv) => conv.conversationId === event.payload.conversationId,
+          )
+        ) {
+          return conversations.map((conv) => {
+            if (conv.conversationId === event.payload.conversationId) {
+              return {
+                ...conv,
+                unreadCount: conv.unreadCount + 1,
+              };
+            }
+            return conv;
+          });
+        }
+
+        return [
+          ...conversations,
+          {
+            conversationId: event.payload.conversationId,
+            unreadCount: 1,
+          },
+        ];
       },
     );
   }
