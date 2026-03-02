@@ -390,6 +390,9 @@
             },
             "connect": {
               "GOOGLE": "Google 계정 연결"
+            },
+            "errors": {
+              "cannot_be_deleted": "이 로그인 방법은 삭제할 수 없습니다. 다른 로그인 방법을 먼저 연결하세요."
             }
           }
         }

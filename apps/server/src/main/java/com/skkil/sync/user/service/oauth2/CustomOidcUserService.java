@@ -56,9 +56,7 @@ public class CustomOidcUserService extends OidcUserService {
 
       if (!authenticatedUser.email().equals(oidcUser.getEmail())) {
         log.debug(
-            "Authenticated user's email does not match OIDC user email. Cannot link accounts",
-            authenticatedUser.email(),
-            oidcUser.getEmail());
+            "Authenticated user's email does not match OIDC user email. Cannot link accounts");
         throw new OAuth2AccountCannotBeLinkedException(
             "Authenticated user email does not match OIDC user email. Cannot link accounts.");
       }

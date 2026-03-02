@@ -6,13 +6,13 @@ import { OAuth2Provider } from '@/types/profile';
 import { GetOAuth2AccountsQueryData } from './get-oauth2-accounts';
 
 async function deleteOAuth2Account(provider: OAuth2Provider) {
-  server.delete(`users/me/oauth2/${provider}`);
+  return server.delete(`users/me/oauth2/${provider}`);
 }
 
 export function useDeleteOAuth2AccountMutation() {
   return useMutation({
     mutationFn: deleteOAuth2Account,
-    onMutate: (provider, context) => {
+    onSuccess: (_data, provider, _onMutateResult, context) => {
       const accounts = context.client.getQueryData<GetOAuth2AccountsQueryData>([
         'oauth2-accounts',
       ]);

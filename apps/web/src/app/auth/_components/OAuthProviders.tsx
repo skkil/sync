@@ -1,7 +1,7 @@
 'use client';
 
 import { GoogleLogoIcon } from '@phosphor-icons/react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { getOAuth2AuthorizationUrl } from '@/features/user/util/oauth2';
@@ -18,6 +18,8 @@ const providers: {
 ];
 
 export default function OAuthProviders() {
+  const router = useRouter();
+
   return (
     <div className="flex gap-4 w-full justify-center items-center">
       {providers.map((provider) => (
@@ -26,7 +28,7 @@ export default function OAuthProviders() {
           variant="outline"
           size="icon"
           onClick={() => {
-            redirect(getOAuth2AuthorizationUrl(provider.id));
+            router.push(getOAuth2AuthorizationUrl(provider.id));
           }}
         >
           {provider.icon}

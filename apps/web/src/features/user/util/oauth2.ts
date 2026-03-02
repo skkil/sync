@@ -5,6 +5,9 @@ function getClientId(provider: OAuth2Provider) {
   switch (provider) {
     case 'GOOGLE':
       return 'google';
+
+    default:
+      return provider;
   }
 }
 

@@ -2,13 +2,15 @@
 
 import { GoogleLogoIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { forwardRef, useImperativeHandle } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { useDeleteOAuth2AccountMutation } from '@/features/user/api/delete-oauth2-account';
 import { useGetOAuth2AccountsQuery } from '@/features/user/api/get-oauth2-accounts';
 import { getOAuth2AuthorizationUrl } from '@/features/user/util/oauth2';
+import SyncError, { ErrorCode } from '@/lib/error';
 import { OAuth2Provider } from '@/types/profile';
 
 import { SettingsCategoryRef } from '..';
@@ -25,6 +27,7 @@ const OAuth2Providers: {
 
 const AccountSettings = forwardRef<SettingsCategoryRef>(({}, ref) => {
   const t = useTranslations('modals.settings.categories.account');
+  const router = useRouter();
 
   const { data: oauth2Accounts } = useGetOAuth2AccountsQuery();
   const { mutate: deleteOAuth2Account } = useDeleteOAuth2AccountMutation();
@@ -53,9 +56,21 @@ const AccountSettings = forwardRef<SettingsCategoryRef>(({}, ref) => {
               variant="outline"
               onClick={() => {
                 if (provider.connected) {
-                  deleteOAuth2Account(provider.id);
+                  deleteOAuth2Account(provider.id, {
+                    onError: (error) => {
+                      if (error instanceof SyncError) {
+                        const { code } = error;
+
+                        if (
+                          code === ErrorCode.OAUTH2_ACCOUNT_CANNOT_BE_DELETED
+                        ) {
+                          toast.error(t('oauth2.errors.cannot_be_deleted'));
+                        }
+                      }
+                    },
+                  });
                 } else {
-                  redirect(getOAuth2AuthorizationUrl(provider.id));
+                  router.push(getOAuth2AuthorizationUrl(provider.id));
                 }
               }}
             >
