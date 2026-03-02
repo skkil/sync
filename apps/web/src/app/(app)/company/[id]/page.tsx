@@ -92,9 +92,7 @@ export default async function Company({ params, searchParams }: CompanyProps) {
                 </div>
 
                 <Link href={`/company/${id}/admin`}>
-                  <Button asChild>
-                    {t('admin.viewing-as-member.view-as-admin')}
-                  </Button>
+                  <Button>{t('admin.viewing-as-member.view-as-admin')}</Button>
                 </Link>
               </div>
             </CardHeader>

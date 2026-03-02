@@ -44,8 +44,7 @@ export default async function ProviderAdminPage({
       throw error;
     });
 
-  const providerPath =
-    providerType === ProviderType.SCHOOL ? `/school/${id}` : `/company/${id}`;
+  const providerPath = getProviderPath(providerType, id);
 
   if (!provider || !provider.isMaintainer) {
     redirect(providerPath);
@@ -73,4 +72,16 @@ export default async function ProviderAdminPage({
       </ProviderAdminLayout>
     </HydrationBoundary>
   );
+}
+
+function getProviderPath(providerType: ProviderType, id: string) {
+  switch (providerType) {
+    case ProviderType.SCHOOL:
+      return `/school/${id}`;
+    case ProviderType.COMPANY:
+      return `/company/${id}`;
+    default:
+      console.warn('Unknown provider type:', providerType);
+      return '/';
+  }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { EyeIcon } from '@phosphor-icons/react/dist/ssr';
+import { EyeIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { ReactNode } from 'react';
@@ -44,7 +44,7 @@ export default function ProviderAdminLayout({
             </TabsList>
 
             <Link href={viewAsPath}>
-              <Button variant="outline" asChild>
+              <Button variant="outline">
                 <EyeIcon />
                 {t('view-as-member')}
               </Button>
