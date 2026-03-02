@@ -1,14 +1,14 @@
 import ProviderAdminPage from '@/features/provider/components/ProviderAdminPage';
 import { ProviderType } from '@/types/provider';
 
-interface SchoolProps {
+interface CompanyProps {
   params: Promise<{
     id: string;
   }>;
 }
 
-export default async function SchoolAdmin({ params }: SchoolProps) {
+export default async function CompanyAdmin({ params }: CompanyProps) {
   const { id } = await params;
 
-  return <ProviderAdminPage id={id} providerType={ProviderType.SCHOOL} />;
+  return <ProviderAdminPage id={id} providerType={ProviderType.COMPANY} />;
 }
