@@ -62,4 +62,14 @@ class CustomConversationRepositoryImpl implements CustomConversationRepository {
                 .and(PARTICIPANTS.USER_ID.eq(userId)))
         .fetchInto(ConversationData.class);
   }
+
+  @Override
+  public boolean existsByConversationIdAndUserId(Long conversationId, Long userId) {
+    return dsl.selectOne()
+        .from(PARTICIPANTS)
+        .where(PARTICIPANTS.CONVERSATION_ID.eq(conversationId))
+        .and(PARTICIPANTS.USER_ID.eq(userId))
+        .fetchOptional()
+        .isPresent();
+  }
 }

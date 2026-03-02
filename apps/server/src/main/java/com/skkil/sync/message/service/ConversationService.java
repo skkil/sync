@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,6 +126,7 @@ public class ConversationService {
   }
 
   @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#conversationId, 'CONVERSATION', 'READ')")
   public GetMessagesResponse getMessages(Long userId, Long conversationId, Long after, Long size) {
     Pageable pageable = Pageable.ofSize(size.intValue());
     var messages =
@@ -144,6 +146,7 @@ public class ConversationService {
   }
 
   @Transactional
+  @PreAuthorize("hasPermission(#conversationId, 'CONVERSATION', 'EDIT')")
   public void sendMessage(Long conversationId, Long senderId, SendMessageRequest request) {
     Conversation conversation = conversationRepository.findById(conversationId).orElseThrow();
 

@@ -6,4 +6,6 @@ import java.util.List;
 interface CustomConversationRepository {
 
   List<ConversationData> getConversationsForUser(Long userId);
+
+  boolean existsByConversationIdAndUserId(Long conversationId, Long userId);
 }

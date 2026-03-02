@@ -1,6 +1,7 @@
 package com.skkil.sync.common.security;
 
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.common.security.enums.PermissionEvaluatorType;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class GlobalPermissionEvaluator implements PermissionEvaluator {
 
-  private Map<String, CustomPermissionEvaluator> evaluators;
+  private Map<PermissionEvaluatorType, CustomPermissionEvaluator> evaluators;
 
   public GlobalPermissionEvaluator(List<CustomPermissionEvaluator> evaluators) {
     this.evaluators =
@@ -39,7 +40,8 @@ public class GlobalPermissionEvaluator implements PermissionEvaluator {
       return false;
     }
 
-    var evaluator = evaluators.get(targetType);
+    PermissionEvaluatorType type = PermissionEvaluatorType.fromString(targetType);
+    var evaluator = evaluators.get(type);
     if (evaluator == null) {
       log.debug("No permission evaluator found for target type: {}", targetType);
       return false;

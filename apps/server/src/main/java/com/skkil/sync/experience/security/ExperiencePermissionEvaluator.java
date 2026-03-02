@@ -3,6 +3,7 @@ package com.skkil.sync.experience.security;
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.common.security.CustomPermissionEvaluator;
 import com.skkil.sync.common.security.PermissionOperation;
+import com.skkil.sync.common.security.enums.PermissionEvaluatorType;
 import com.skkil.sync.experience.model.Experience;
 import com.skkil.sync.experience.repository.ExperienceRepository;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,8 @@ public class ExperiencePermissionEvaluator implements CustomPermissionEvaluator 
   }
 
   @Override
-  public String type() {
-    return "EXPERIENCE";
+  public PermissionEvaluatorType type() {
+    return PermissionEvaluatorType.EXPERIENCE;
   }
 
   @Override
