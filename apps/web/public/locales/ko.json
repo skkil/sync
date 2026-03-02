@@ -408,6 +408,26 @@
   "modals": {
     "settings": {
       "title": "설정",
+      "categories": {
+        "account": {
+          "label": "계정",
+          "title": "계정 설정",
+          "description": "계정 정보 및 보안 설정을 관리하세요",
+          "oauth2": {
+            "title": "소셜 로그인",
+            "description": "계정을 연결하여 더 쉽게 로그인하세요",
+            "connected": {
+              "GOOGLE": "Google에 연결됨"
+            },
+            "connect": {
+              "GOOGLE": "Google 계정 연결"
+            },
+            "errors": {
+              "cannot_be_deleted": "이 로그인 방법은 삭제할 수 없습니다. 다른 로그인 방법을 먼저 연결하세요."
+            }
+          }
+        }
+      },
       "description": "계정 설정 관리",
       "profile": {
         "image": {

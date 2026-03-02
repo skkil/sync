@@ -1,6 +1,7 @@
 package com.skkil.sync.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.skkil.sync.auth.handler.OAuth2AuthenticationFailureHandler;
+import com.skkil.sync.auth.handler.OAuth2AuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -9,15 +10,19 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class OAuthSecurityConfig {
-
-  @Value("${app.oauth2.frontend-redirect-uri}")
-  private String frontendRedirectUri;
+public class OAuth2SecurityConfig {
 
   private final OidcUserService oidcUserService;
+  private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+  private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
-  public OAuthSecurityConfig(OidcUserService oidcUserService) {
+  public OAuth2SecurityConfig(
+      OidcUserService oidcUserService,
+      OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
+      OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
     this.oidcUserService = oidcUserService;
+    this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
+    this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
   }
 
   @Bean
@@ -28,10 +33,8 @@ public class OAuthSecurityConfig {
             oauth2 ->
                 oauth2
                     .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService))
-                    .successHandler(
-                        (req, res, auth) -> {
-                          res.sendRedirect(frontendRedirectUri);
-                        }))
+                    .successHandler(oAuth2AuthenticationSuccessHandler)
+                    .failureHandler(oAuth2AuthenticationFailureHandler))
         .build();
   }
 }
