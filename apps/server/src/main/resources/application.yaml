@@ -27,8 +27,8 @@ spring:
       client:
         registration:
           google:
-            client-id: ${OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID}
-            client-secret: ${OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET}
+            client-id: ${OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID:ID}
+            client-secret: ${OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET:SECRET}
             scope:
               - openid
               - profile
