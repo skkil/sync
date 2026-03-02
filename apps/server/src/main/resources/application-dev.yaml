@@ -4,8 +4,8 @@ spring:
       endpoint: http://localhost:4566
       region.static: us-east-1
       credentials:
-        access-key: skkil
-        secret-key: sync
+        access-key: test
+        secret-key: test
       s3:
         path-style-access-enabled: true
 

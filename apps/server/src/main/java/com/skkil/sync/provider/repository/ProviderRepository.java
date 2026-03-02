@@ -33,4 +33,11 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
       p.name LIKE %:query% AND p.verifiedBy IS NOT NULL AND p.type = :type
       """)
   public Page<Provider> searchProviders(ProviderType type, String query, Pageable pageable);
+
+  @Query(
+      """
+      SELECT COUNT(p) FROM Provider p
+      WHERE p.name LIKE %:query% AND p.verifiedBy IS NOT NULL AND p.type = :type
+      """)
+  public long countProviders(ProviderType type, String query);
 }

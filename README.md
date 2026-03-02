@@ -35,3 +35,17 @@
     cd apps/web
     pnpm run dev
     ```
+
+## 로컬 인프라 실행 (DB/S3)
+
+- DB(Postgres) 실행
+
+  ```bash
+  docker compose -f apps/server/compose.yaml up -d
+  ```
+
+- LocalStack(S3) 실행
+
+  ```bash
+  docker compose -f infra/localstack/docker-compose.yml up -d
+  ```
