@@ -49,14 +49,15 @@ public class UserRelationshipService {
   @Transactional(readOnly = true)
   public GetConnectionsResponse getConnections(Long userId) {
     log.debug("Retrieving connections for user {}", userId);
-    var followers = userFollowRelationshipRepository.findByFollower(new User(userId));
+    var connections = userFollowRelationshipRepository.findByFollower(new User(userId));
 
     return new GetConnectionsResponse(
-        followers.stream()
+        connections.stream()
             .map(
                 follower ->
                     new GetConnectionsResponse.Connection(
-                        follower.getFollowee().getId(), follower.getFollowee().getFullName()))
+                        follower.getFollowee().getId().toString(),
+                        follower.getFollowee().getFullName()))
             .toList());
   }
 

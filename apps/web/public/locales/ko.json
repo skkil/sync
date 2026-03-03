@@ -337,7 +337,8 @@
       "connections": {
         "title": "네트워크",
         "table": {
-          "name": "이름"
+          "name": "이름",
+          "empty": "네트워크에 연결된 사람이 없습니다."
         }
       }
     },
