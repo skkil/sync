@@ -116,6 +116,12 @@ public class ProviderService {
     return providerRepository.searchProviders(type, query, pageable);
   }
 
+  @Transactional(readOnly = true)
+  public long countProviders(ProviderType type, String query) {
+    log.debug("Counting providers of type '{}' with query '{}'", type, query);
+    return providerRepository.countProviders(type, query);
+  }
+
   @Transactional
   public void updateProvider(Long id, UpdateProviderRequest request) {
     Provider provider =

@@ -21,6 +21,10 @@ interface SearchResponse {
     id: string;
     name: string;
   }>;
+  count: {
+    userCount: number;
+    schoolCount: number;
+  };
 }
 
 async function search(params: SearchParams) {
@@ -30,8 +34,7 @@ async function search(params: SearchParams) {
         ...params,
       }),
     )
-    .json()
-    .then((data) => data.results);
+    .json();
 }
 
 export function useSearchQuery(params: SearchParams) {

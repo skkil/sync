@@ -9,7 +9,7 @@ import { useModal } from '@/hooks/store';
 const modals: {
   [K in ModalType]: ComponentType<{}>;
 } = {
-  [ModalType.SETTINGS]: dynamic(() => import('../modals/SettingsModal')),
+  [ModalType.SETTINGS]: dynamic(() => import('../modals/settings')),
 };
 
 export default function ModalProvider() {

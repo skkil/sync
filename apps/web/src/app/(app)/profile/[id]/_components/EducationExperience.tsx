@@ -19,7 +19,8 @@ export default function EducationExperience({
     <ExperienceWrapper userId={userId} experience={education}>
       <h3 className="font-semibold">{education.provider.name}</h3>
       {education.major && <p>{education.major}</p>}
-      {education.startDate.getFullYear()} - {education.endDate.getFullYear()}
+      {education.startDate.getFullYear()} -{' '}
+      {education.endDate ? education.endDate.getFullYear() : ''}
     </ExperienceWrapper>
   );
 }

@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { server } from '@/lib/server';
-import { ExperienceType } from '@/types/experience';
+import { Experience, ExperienceType } from '@/types/experience';
 
 type CreateExperienceRequest = {
   providerId: string;
@@ -32,8 +32,70 @@ async function createExperience(
     .json();
 }
 
-export function useCreateExperienceMutation() {
+export function useCreateExperienceMutation(userId: string) {
   return useMutation({
     mutationFn: createExperience,
+    onMutate: async (data, context) => {
+      const experiences = context.client.getQueryData<Experience[]>([
+        'users',
+        userId,
+        'experiences',
+      ]);
+
+      const tempId = 'temp-id' + Date.now();
+
+      context.client.setQueryData<Experience[]>(
+        ['users', userId, 'experiences'],
+        [
+          ...(experiences || []),
+          {
+            id: tempId,
+            visibility: 'PRIVATE',
+            provider: {
+              id: data.providerId,
+              name: '',
+            },
+            ...data,
+            startDate: new Date(data.startDate),
+            endDate: data.endDate ? new Date(data.endDate) : null,
+          },
+        ],
+      );
+
+      return {
+        id: tempId,
+      };
+    },
+    onSuccess: (data, _variables, onMutateResult, context) => {
+      const id = data.id;
+
+      const experiences = context.client.getQueryData<Experience[]>([
+        'users',
+        userId,
+        'experiences',
+      ]);
+
+      context.client.setQueryData<Experience[]>(
+        ['users', userId, 'experiences'],
+        experiences?.map((experience) =>
+          experience.id === onMutateResult.id
+            ? { ...experience, id }
+            : experience,
+        ) || [],
+      );
+    },
+    onError: (_error, _variables, onMutateResult, context) => {
+      const experiences = context.client.getQueryData<Experience[]>([
+        'users',
+        userId,
+        'experiences',
+      ]);
+      context.client.setQueryData<Experience[]>(
+        ['users', userId, 'experiences'],
+        experiences?.filter(
+          (experience) => experience.id !== onMutateResult?.id,
+        ) || [],
+      );
+    },
   });
 }

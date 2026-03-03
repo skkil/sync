@@ -22,6 +22,7 @@ export default function SearchBar() {
       <InputGroupAddon>
         <MagnifyingGlassIcon />
       </InputGroupAddon>
+
       <InputGroupInput
         placeholder={t('search.placeholder')}
         className="w-64"

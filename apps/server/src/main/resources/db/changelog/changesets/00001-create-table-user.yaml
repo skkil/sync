@@ -44,6 +44,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: contacts
+                  type: JSONB
+              - column:
                   name: profession
                   type: VARCHAR(255)
               - column:

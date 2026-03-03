@@ -20,7 +20,9 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "users")
@@ -46,6 +48,10 @@ public class User extends BaseEntity {
   @Column(name = "full_name", nullable = false, length = 255)
   @Setter
   private String fullName;
+
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "contacts", columnDefinition = "jsonb")
+  private UserContacts contacts;
 
   @Column(name = "profession", length = 255)
   private String profession;
@@ -111,6 +117,10 @@ public class User extends BaseEntity {
     if (bio != null) {
       this.bio = bio;
     }
+  }
+
+  public void setContacts(UserContacts contacts) {
+    this.contacts = contacts;
   }
 
   private static boolean validateHandle(String handle) {

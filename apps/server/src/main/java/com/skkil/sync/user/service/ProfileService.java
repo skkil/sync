@@ -7,9 +7,14 @@ import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetAuthenticatedUserResponse;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.exception.UserNotFoundException;
+import com.skkil.sync.user.mapper.ProfileMapper;
 import com.skkil.sync.user.model.User;
+import com.skkil.sync.user.model.UserContacts;
 import com.skkil.sync.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +25,17 @@ public class ProfileService {
   private final UserRelationshipService userRelationshipService;
   private final UserRepository userRepository;
   private final MediaService mediaService;
+  private final ProfileMapper profileMapper;
 
   public ProfileService(
       UserRelationshipService userRelationshipService,
       UserRepository userRepository,
-      MediaService mediaService) {
+      MediaService mediaService,
+      ProfileMapper profileMapper) {
     this.userRelationshipService = userRelationshipService;
     this.userRepository = userRepository;
     this.mediaService = mediaService;
+    this.profileMapper = profileMapper;
   }
 
   @Transactional(readOnly = true)
@@ -41,13 +49,20 @@ public class ProfileService {
             ? false
             : userRelationshipService.isFollowing(requesterId, userId);
 
+    String profileImageUrl = null;
+    if (user.getProfileImage() != null) {
+      profileImageUrl = mediaService.getMediaUrl(user.getProfileImage().getId()).toExternalForm();
+    }
+
     return GetProfileResponse.builder()
         .userId(user.getId().toString())
         .name(user.getFullName())
         .email(user.getEmail())
         .bio(user.getBio())
         .profession(user.getProfession())
+        .profileImageUrl(profileImageUrl)
         .isFollowing(isFollowing)
+        .contacts(profileMapper.toGetProfileResponseContacts(user.getContacts()))
         .build();
   }
 
@@ -70,6 +85,20 @@ public class ProfileService {
         .build();
   }
 
+  @Transactional(readOnly = true)
+  public Page<User> searchUsers(String query, int page, int size) {
+    log.debug("Searching for users with query '{}', page {}, size {}", query, page, size);
+
+    Pageable pageable = PageRequest.of(page, size);
+    return userRepository.findByFullNameContainingIgnoreCase(query, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public long countUsers(String query) {
+    log.debug("Counting users with query '{}'", query);
+    return userRepository.countByFullNameContainingIgnoreCase(query);
+  }
+
   @Transactional
   public void updateProfile(Long userId, UpdateProfileRequest request) {
     var user =
@@ -83,6 +112,11 @@ public class ProfileService {
 
     if (request.handle() != null) {
       user.updateHandle(request.handle());
+    }
+
+    if (Boolean.TRUE.equals(request.removeProfileImage()) && user.getProfileImage() != null) {
+      user.getProfileImage().setStatus(MediaStatus.DELETED);
+      user.setProfileImage(null);
     }
 
     if (request.profileImageId() != null) {
@@ -108,6 +142,11 @@ public class ProfileService {
 
     if (request.isOnboarded() != null) {
       user.onboard();
+    }
+
+    if (request.contacts() != null) {
+      UserContacts contacts = profileMapper.toUserContacts(request.contacts());
+      user.setContacts(contacts);
     }
   }
 }
