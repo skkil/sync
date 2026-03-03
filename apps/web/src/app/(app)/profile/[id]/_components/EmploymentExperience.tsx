@@ -18,7 +18,8 @@ export default function EmploymentExperience({
   return (
     <ExperienceWrapper userId={userId} experience={employment}>
       <h3 className="font-semibold">{employment.provider.name}</h3>
-      {employment.startDate.getFullYear()} - {employment.endDate.getFullYear()}
+      {employment.startDate.getFullYear()} -{' '}
+      {employment.endDate ? employment.endDate.getFullYear() : ''}
     </ExperienceWrapper>
   );
 }
