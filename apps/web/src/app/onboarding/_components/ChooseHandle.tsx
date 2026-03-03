@@ -29,6 +29,9 @@ export const ChooseHandle = forwardRef<
   const ChooseHandleFormSchema = z.object({
     handle: z
       .string()
+      .regex(/^[a-zA-Z0-9_]+$/, {
+        error: t('form.errors.invalid_characters'),
+      })
       .min(MINIMUM_HANDLE_LENGTH, {
         error: t('form.errors.minimum_length', {
           length: MINIMUM_HANDLE_LENGTH,
@@ -50,7 +53,9 @@ export const ChooseHandle = forwardRef<
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const handle = form.watch('handle');
+
   const debouncedHandle = useDebounce(handle, 500);
 
   const {
@@ -89,10 +94,17 @@ export const ChooseHandle = forwardRef<
   ]);
 
   useImperativeHandle(ref, () => ({
-    submit: () => {
-      updateProfile({
-        handle,
-      });
+    submit: (onSuccess) => {
+      updateProfile(
+        {
+          handle,
+        },
+        {
+          onSuccess: () => {
+            onSuccess();
+          },
+        },
+      );
     },
   }));
 
@@ -108,6 +120,7 @@ export const ChooseHandle = forwardRef<
               <InputGroupInput
                 aria-invalid={fieldState.invalid}
                 type="text"
+                placeholder={t('form.handle.placeholder')}
                 {...field}
               />
             </InputGroup>

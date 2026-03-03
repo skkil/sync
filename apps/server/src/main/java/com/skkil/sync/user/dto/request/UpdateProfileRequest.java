@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 public record UpdateProfileRequest(
     @Size(min = 1, max = 255) String name,
-    @Size(min = Handle.MIN_LENGTH, max = Handle.MAX_LENGTH) String handle,
+    @ValidUsername @Size(min = Handle.MIN_LENGTH, max = Handle.MAX_LENGTH) String handle,
     Long profileImageId,
     Boolean removeProfileImage,
     Boolean isOnboarded,

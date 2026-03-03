@@ -92,7 +92,7 @@ public class User extends BaseEntity {
   }
 
   public void onboard() {
-    if (!validateHandle(handle)) {
+    if (handle == null || !validateHandle(handle)) {
       throw new IllegalArgumentException("Handle is invalid");
     }
 

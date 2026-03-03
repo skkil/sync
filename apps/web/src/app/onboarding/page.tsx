@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +20,7 @@ import { useSession } from '@/lib/auth/client';
 import { ChooseHandle } from './_components/ChooseHandle';
 
 export interface OnboardingStepContentRef {
-  submit: () => void;
+  submit: (onSuccess: () => void) => void;
 }
 
 export interface OnboardingStepContentProps {
@@ -63,6 +63,13 @@ export default function Onboarding() {
 
   const { mutate: updateProfile } = useUpdateProfileMutation();
 
+  const handleStateChange = useCallback(
+    ({ isPending, isValid }: { isPending: boolean; isValid: boolean }) => {
+      setState({ isPending, isValid });
+    },
+    [],
+  );
+
   useEffect(() => {
     if (!isSessionPending && !session) {
       router.push('/auth/login');
@@ -75,16 +82,34 @@ export default function Onboarding() {
 
   const previousButtonClickHandler = () => {
     setStep(stepIndex - 1);
+    setState({
+      isPending: false,
+      isValid: true,
+    });
   };
 
   const nextButtonClickHandler = () => {
     if (!state.isPending && state.isValid) {
-      contentRef.current?.submit();
-      setStep(stepIndex + 1);
       setState({
-        isPending: false,
+        isPending: true,
         isValid: true,
       });
+
+      if (contentRef.current) {
+        contentRef.current.submit(() => {
+          setStep(stepIndex + 1);
+          setState({
+            isPending: false,
+            isValid: true,
+          });
+        });
+      } else {
+        setStep(stepIndex + 1);
+        setState({
+          isPending: false,
+          isValid: true,
+        });
+      }
     }
   };
 
@@ -117,12 +142,7 @@ export default function Onboarding() {
 
       <CardContent>
         {step?.content ? (
-          <step.content
-            ref={contentRef}
-            onStateChange={({ isPending, isValid }) => {
-              setState({ isPending, isValid });
-            }}
-          />
+          <step.content ref={contentRef} onStateChange={handleStateChange} />
         ) : null}
       </CardContent>
 
