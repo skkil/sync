@@ -110,6 +110,10 @@ public class ProfileService {
 
     user.updateFields(request.name(), request.profession(), request.bio());
 
+    if (request.handle() != null) {
+      user.updateHandle(request.handle());
+    }
+
     if (Boolean.TRUE.equals(request.removeProfileImage()) && user.getProfileImage() != null) {
       user.getProfileImage().setStatus(MediaStatus.DELETED);
       user.setProfileImage(null);

@@ -9,6 +9,7 @@ import { server } from '@/lib/server';
 
 export interface UpdateProfileRequest {
   name?: string;
+  handle?: string;
   profession?: string;
   isOnboarded?: boolean;
   bio?: string;

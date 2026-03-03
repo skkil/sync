@@ -2,11 +2,13 @@ package com.skkil.sync.user.dto.request;
 
 import com.skkil.sync.common.util.validator.ValidUrl;
 import com.skkil.sync.common.util.validator.ValidUsername;
+import com.skkil.sync.user.constant.Handle;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
 public record UpdateProfileRequest(
     @Size(min = 1, max = 255) String name,
+    @ValidUsername @Size(min = Handle.MIN_LENGTH, max = Handle.MAX_LENGTH) String handle,
     Long profileImageId,
     Boolean removeProfileImage,
     Boolean isOnboarded,

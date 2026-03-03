@@ -2,6 +2,7 @@ package com.skkil.sync.user.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.media.model.Media;
+import com.skkil.sync.user.constant.Handle;
 import com.skkil.sync.user.constant.Role;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,6 +32,9 @@ public class User extends BaseEntity {
 
   @Column(name = "email", nullable = false, unique = true, length = 255)
   private String email;
+
+  @Column(name = "handle", unique = true, length = 255)
+  private String handle;
 
   @Column(name = "hashed_password", nullable = true, length = 255)
   @Setter
@@ -88,7 +92,19 @@ public class User extends BaseEntity {
   }
 
   public void onboard() {
+    if (handle == null || !validateHandle(handle)) {
+      throw new IllegalArgumentException("Handle is invalid");
+    }
+
     this.isOnboarded = true;
+  }
+
+  public void updateHandle(String handle) {
+    if (!validateHandle(handle)) {
+      throw new IllegalArgumentException("Handle is invalid");
+    }
+
+    this.handle = handle;
   }
 
   public void updateFields(String fullName, String profession, String bio) {
@@ -105,5 +121,17 @@ public class User extends BaseEntity {
 
   public void setContacts(UserContacts contacts) {
     this.contacts = contacts;
+  }
+
+  private static boolean validateHandle(String handle) {
+    if (handle == null || handle.isBlank()) {
+      return false;
+    }
+
+    if (handle.length() < Handle.MIN_LENGTH || handle.length() > Handle.MAX_LENGTH) {
+      return false;
+    }
+
+    return true;
   }
 }

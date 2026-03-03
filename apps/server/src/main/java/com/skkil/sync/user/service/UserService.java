@@ -1,6 +1,7 @@
 package com.skkil.sync.user.service;
 
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.user.dto.response.GetHandleAvailabilityResponse;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -36,5 +37,11 @@ public class UserService implements UserDetailsService {
 
   public User getUserReference(Long userId) {
     return userRepository.getReferenceById(userId);
+  }
+
+  @Transactional(readOnly = true)
+  public GetHandleAvailabilityResponse getHandleAvailability(String handle) {
+    boolean available = !userRepository.existsByHandle(handle);
+    return new GetHandleAvailabilityResponse(available);
   }
 }
