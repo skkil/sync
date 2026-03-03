@@ -14,7 +14,8 @@ public record GetContestResponse(
     Provider hostProvider,
     String contactInfo,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt)
+    LocalDateTime updatedAt,
+    boolean isMaintainer)
     implements GetProviderResponse {
 
   public static record Provider(Long id, ProviderType type, String name) {}

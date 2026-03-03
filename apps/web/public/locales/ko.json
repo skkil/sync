@@ -52,6 +52,31 @@
         }
       }
     },
+    "create-company": {
+      "title": "만들고자 하는 회사에 대해 알려주세요",
+      "form": {
+        "name": {
+          "label": "이름",
+          "placeholder": "회사 이름을 입력하세요"
+        },
+        "description": {
+          "label": "설명",
+          "placeholder": "회사에 대한 간단한 설명을 입력하세요"
+        },
+        "industry": {
+          "label": "산업",
+          "placeholder": "회사가 속한 산업을 입력하세요"
+        },
+        "submit": {
+          "label": "회사 만들기"
+        }
+      },
+      "errors": {
+        "required_name": "이름은 필수 항목입니다.",
+        "required_description": "설명은 필수 항목입니다.",
+        "required_industry": "산업은 필수 항목입니다."
+      }
+    },
     "create-school": {
       "title": "만들고자 하는 학교에 대해 알려주세요",
       "form": {
@@ -145,7 +170,21 @@
         "people": "관련 인물",
         "reviews": "리뷰",
         "occurrences": "회차"
+      },
+      "admin": {
+        "viewing-as-member": {
+          "title": "현재 {name}를 일반 사용자로 보고 있습니다.",
+          "description": "관리자가 아닌 일반 사용자는 이 페이지를 이렇게 보게 됩니다.",
+          "view-as-admin": "관리자로 보기"
+        }
       }
+    },
+    "provider-admin": {
+      "sections": {
+        "about": "소개",
+        "settings": "설정"
+      },
+      "view-as-member": "일반 사용자로 보기"
     },
     "search": {
       "results": {
@@ -248,7 +287,8 @@
         "description": "프로필 정보를 업데이트하세요",
         "form": {
           "groups": {
-            "basic": "기본 정보"
+            "basic": "기본 정보",
+            "contacts": "연락처"
           },
           "fields": {
             "name": {
@@ -265,7 +305,8 @@
             }
           },
           "errors": {
-            "required_name": "이름은 필수 항목입니다."
+            "required_name": "이름은 필수 항목입니다.",
+            "invalid_fields": "하나 이상의 필드에 유효하지 않은 입력이 있습니다."
           },
           "actions": {
             "submit": {
@@ -277,7 +318,11 @@
       "header": {
         "follow": "팔로우",
         "unfollow": "언팔로우",
-        "message": "메시지 보내기"
+        "message": "메시지 보내기",
+        "contacts": {
+          "show-more": "연락처 더 보기",
+          "show-less": "연락처 접기"
+        }
       },
       "experience": {
         "menu": {
@@ -360,6 +405,43 @@
         "title": "학력"
       }
     },
+    "network": {
+      "connections": {
+        "title": "네트워크",
+        "table": {
+          "name": "이름",
+          "empty": "네트워크에 연결된 사람이 없습니다."
+        }
+      }
+    },
+    "add-experience": {
+      "title": {
+        "EMPLOYMENT": "경력 추가",
+        "EDUCATION": "학력 추가"
+      },
+      "description": {
+        "EMPLOYMENT": "이전 및 현재 직장 정보를 추가하세요",
+        "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
+      },
+      "form": {
+        "major": {
+          "label": "전공",
+          "placeholder": "전공을 입력하세요"
+        },
+        "actions": {
+          "submit": {
+            "label": "저장"
+          },
+          "cancel": {
+            "label": "취소"
+          }
+        },
+        "errors": {
+          "required-provider": "기관은 필수 항목입니다.",
+          "required-major": "전공은 필수 항목입니다."
+        }
+      }
+    },
     "admin": {
       "unverified-providers": {
         "title": "검증되지 않은 기관",
@@ -368,13 +450,51 @@
           "verify": "검증"
         }
       }
+    },
+    "not-found": {
+      "title": "페이지를 찾을 수 없습니다"
     }
   },
   "modals": {
     "settings": {
       "title": "설정",
+      "categories": {
+        "account": {
+          "label": "계정",
+          "title": "계정 설정",
+          "description": "계정 정보 및 보안 설정을 관리하세요",
+          "oauth2": {
+            "title": "소셜 로그인",
+            "description": "계정을 연결하여 더 쉽게 로그인하세요",
+            "connected": {
+              "GOOGLE": "Google에 연결됨"
+            },
+            "connect": {
+              "GOOGLE": "Google 계정 연결"
+            },
+            "errors": {
+              "cannot_be_deleted": "이 로그인 방법은 삭제할 수 없습니다. 다른 로그인 방법을 먼저 연결하세요."
+            }
+          }
+        }
+      },
       "description": "계정 설정 관리",
       "profile": {
+        "image": {
+          "label": "프로필 사진",
+          "helpText": "JPG, PNG 형식만 지원하며 최대 5MB까지 업로드할 수 있습니다.",
+          "actions": {
+            "select": "사진 선택",
+            "clearSelection": "선택 취소",
+            "remove": "사진 삭제",
+            "undoRemove": "삭제 취소"
+          },
+          "errors": {
+            "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
+            "maxSize": "파일 크기는 5MB 이하여야 합니다.",
+            "uploadFailed": "프로필 사진 업로드에 실패했습니다."
+          }
+        },
         "name": {
           "label": "이름"
         }
@@ -382,6 +502,9 @@
       "actions": {
         "save": "저장",
         "cancel": "취소"
+      },
+      "messages": {
+        "saveSuccess": "설정이 저장되었습니다."
       }
     }
   },

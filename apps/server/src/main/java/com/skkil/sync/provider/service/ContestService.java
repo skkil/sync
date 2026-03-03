@@ -56,7 +56,7 @@ public class ContestService implements ProviderStrategy {
   }
 
   @Override
-  public GetProviderResponse toGetProviderResponse(Provider provider) {
+  public GetProviderResponse toGetProviderResponse(Provider provider, boolean isMaintainer) {
     Contest contest = (Contest) provider;
 
     var hostProvider =
@@ -77,6 +77,7 @@ public class ContestService implements ProviderStrategy {
         .contactInfo(provider.getContactInfo())
         .createdAt(LocalDateTime.ofInstant(provider.getCreatedAt(), ZoneId.systemDefault()))
         .updatedAt(LocalDateTime.ofInstant(provider.getUpdatedAt(), ZoneId.systemDefault()))
+        .isMaintainer(isMaintainer)
         .build();
   }
 

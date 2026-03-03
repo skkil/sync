@@ -1,5 +1,7 @@
 package com.skkil.sync.media.constant;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum MediaContext {
   PROFILE_IMAGE("profile-image");
 
@@ -9,6 +11,7 @@ public enum MediaContext {
     this.name = name;
   }
 
+  @JsonValue
   @Override
   public String toString() {
     return name;

@@ -103,7 +103,7 @@ public class ProviderControllerTests {
             .updatedAt(LocalDateTime.now(ZoneId.systemDefault()))
             .build();
 
-    Mockito.when(providerService.getProvider(eq(1L))).thenReturn(response);
+    Mockito.when(providerService.getProvider(eq(1L), eq(1L))).thenReturn(response);
 
     mockMvc
         .perform(get("/providers/{id}", 1L))
@@ -130,7 +130,10 @@ public class ProviderControllerTests {
                     fieldWithPath("verifiedBy")
                         .type(JsonFieldType.NUMBER)
                         .description("Verified by")
-                        .optional())));
+                        .optional(),
+                    fieldWithPath("isMaintainer")
+                        .type(JsonFieldType.BOOLEAN)
+                        .description("Is the authenticated user a maintainer of the provider"))));
   }
 
   @Test

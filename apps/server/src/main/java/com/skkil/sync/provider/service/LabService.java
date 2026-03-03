@@ -61,7 +61,7 @@ public class LabService implements ProviderStrategy {
   }
 
   @Override
-  public GetProviderResponse toGetProviderResponse(Provider provider) {
+  public GetProviderResponse toGetProviderResponse(Provider provider, boolean isMaintainer) {
     Lab lab = (Lab) provider;
 
     return GetLabResponse.builder()
@@ -77,6 +77,8 @@ public class LabService implements ProviderStrategy {
         .detailedResearchField(lab.getDetailedResearchField())
         .createdAt(LocalDateTime.ofInstant(lab.getCreatedAt(), ZoneId.systemDefault()))
         .updatedAt(LocalDateTime.ofInstant(lab.getUpdatedAt(), ZoneId.systemDefault()))
+        .verifiedBy(lab.getVerifiedBy() != null ? lab.getVerifiedBy().getId() : null)
+        .isMaintainer(isMaintainer)
         .build();
   }
 

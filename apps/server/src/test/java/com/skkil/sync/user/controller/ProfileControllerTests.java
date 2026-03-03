@@ -42,6 +42,7 @@ class ProfileControllerTests {
             .email("email@example.com")
             .bio("bio")
             .profession("profession")
+            .profileImageUrl("https://example.com/profile-image.png")
             .build();
 
     when(profileService.getProfile(eq(null), eq(1L))).thenReturn(response);
@@ -61,8 +62,35 @@ class ProfileControllerTests {
                     fieldWithPath("profession")
                         .type(JsonFieldType.STRING)
                         .description("User profession"),
+                    fieldWithPath("profileImageUrl")
+                        .type(JsonFieldType.STRING)
+                        .description("User profile image url"),
                     fieldWithPath("isFollowing")
                         .type(JsonFieldType.BOOLEAN)
-                        .description("Is following"))));
+                        .description("Is following"),
+                    fieldWithPath("contacts")
+                        .optional()
+                        .type(JsonFieldType.OBJECT)
+                        .description("Contacts"),
+                    fieldWithPath("contacts.custom")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description("Custom contact"),
+                    fieldWithPath("contacts.linkedin")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description("LinkedIn username"),
+                    fieldWithPath("contacts.github")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description("GitHub username"),
+                    fieldWithPath("contacts.instagram")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description("Instagram username"),
+                    fieldWithPath("contacts.twitter")
+                        .optional()
+                        .type(JsonFieldType.STRING)
+                        .description("Twitter username"))));
   }
 }

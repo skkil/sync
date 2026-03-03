@@ -8,7 +8,9 @@ import com.skkil.sync.provider.dto.response.GetProviderResponse;
 import com.skkil.sync.provider.dto.response.GetProvidersResponse;
 import com.skkil.sync.provider.dto.response.GetUnverifiedProvidersResponse;
 import com.skkil.sync.provider.exception.ProviderNotFoundException;
+import com.skkil.sync.provider.model.Maintainer;
 import com.skkil.sync.provider.model.Provider;
+import com.skkil.sync.provider.repository.MaintainerRepository;
 import com.skkil.sync.provider.repository.ProviderRepository;
 import com.skkil.sync.user.model.User;
 import java.util.List;
@@ -28,11 +30,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProviderService {
 
   private final ProviderRepository providerRepository;
+  private final MaintainerRepository maintainerRepository;
   private final Map<ProviderType, ProviderStrategy> providerStrategyMap;
 
   public ProviderService(
-      ProviderRepository providerRepository, List<ProviderStrategy> providerStrategies) {
+      ProviderRepository providerRepository,
+      MaintainerRepository maintainerRepository,
+      List<ProviderStrategy> providerStrategies) {
     this.providerRepository = providerRepository;
+    this.maintainerRepository = maintainerRepository;
     this.providerStrategyMap =
         providerStrategies.stream()
             .collect(Collectors.toMap(ProviderStrategy::getProviderType, Function.identity()));
@@ -43,9 +49,13 @@ public class ProviderService {
     ProviderStrategy providerStrategy = getProviderStrategy(request.type());
 
     Provider provider = providerStrategy.createProvider(request);
-    provider.setCreatedBy(new User(userId));
 
+    User creator = new User(userId);
+    provider.setCreatedBy(creator);
     providerRepository.save(provider);
+
+    Maintainer maintainer = Maintainer.builder().provider(provider).user(creator).build();
+    maintainerRepository.save(maintainer);
 
     return new CreateProviderResponse(provider.getId());
   }
@@ -87,18 +97,29 @@ public class ProviderService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#id, 'PROVIDER', 'READ')")
-  public GetProviderResponse getProvider(Long id) {
+  public GetProviderResponse getProvider(Long requesterId, Long id) {
     Provider provider =
         providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
 
+    boolean isMaintainer =
+        requesterId == null
+            ? false
+            : maintainerRepository.existsByProviderIdAndUserId(id, requesterId);
+
     ProviderStrategy providerStrategy = getProviderStrategy(provider.getType());
-    return providerStrategy.toGetProviderResponse(provider);
+    return providerStrategy.toGetProviderResponse(provider, isMaintainer);
   }
 
   @Transactional(readOnly = true)
   public Page<Provider> searchProviders(ProviderType type, String query, int page, int size) {
     Pageable pageable = PageRequest.of(page, size);
     return providerRepository.searchProviders(type, query, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public long countProviders(ProviderType type, String query) {
+    log.debug("Counting providers of type '{}' with query '{}'", type, query);
+    return providerRepository.countProviders(type, query);
   }
 
   @Transactional

@@ -13,6 +13,9 @@ import lombok.Setter;
 @Getter
 public class Company extends Provider {
 
+  @Column(name = "industry")
+  private String industry;
+
   @Column(name = "company_size")
   @Setter
   private Integer companySize;
@@ -25,8 +28,24 @@ public class Company extends Provider {
       String description,
       String contactInfo,
       String oneLineReview,
+      String industry,
       Integer companySize) {
     super(ProviderType.COMPANY, name, description, contactInfo, oneLineReview);
+    this.industry = industry;
     this.companySize = companySize;
+  }
+
+  public void updateFields(String name, String description, String industry) {
+    if (name != null) {
+      setName(name);
+    }
+
+    if (description != null) {
+      setDescription(description);
+    }
+
+    if (industry != null) {
+      this.industry = industry;
+    }
   }
 }
