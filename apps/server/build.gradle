@@ -227,8 +227,6 @@ tasks.register("stopDatabase") {
 tasks.named('update') {
 	dependsOn 'startDatabase'
 
-	inputs.dir 'src/main/resources/db/changelog'
-
 	doFirst {
 		liquibase.activities {
 			jooq {
@@ -246,6 +244,7 @@ tasks.named('jooqCodegen') {
 	dependsOn 'update'
 
 	inputs.dir 'src/main/resources/db/changelog'
+	outputs.dir 'build/generated/jooq'
 
 	doFirst {
 		jooq {
