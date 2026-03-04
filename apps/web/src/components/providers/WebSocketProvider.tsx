@@ -63,7 +63,7 @@ export default function WebSocketProvider({
         clientRef.current.deactivate();
       }
     };
-  }, [clientRef, session]);
+  }, [session]);
 
   useEffect(() => {
     if (!session || !session.user) {

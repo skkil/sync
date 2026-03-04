@@ -140,7 +140,7 @@ export default function Messages() {
 
             {selectedConversation && (
               <div className="border-t p-4">
-                <MessageInput conversationId={selectedConversation!} />
+                <MessageInput conversationId={selectedConversation} />
               </div>
             )}
           </div>
