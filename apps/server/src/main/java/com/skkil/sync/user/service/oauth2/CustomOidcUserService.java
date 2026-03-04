@@ -3,12 +3,15 @@ package com.skkil.sync.user.service.oauth2;
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.user.constant.OAuth2Provider;
 import com.skkil.sync.user.dto.request.RegisterRequest;
+import com.skkil.sync.user.exception.OAuth2AccountCannotBeLinkedException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserOAuth2Account;
 import com.skkil.sync.user.repository.UserRepository;
 import com.skkil.sync.user.service.AuthService;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -32,12 +35,47 @@ public class CustomOidcUserService extends OidcUserService {
   public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
     String registrationId = userRequest.getClientRegistration().getRegistrationId();
     OAuth2Provider provider = OAuth2Provider.from(registrationId);
-    log.debug("Loading OIDC user from provider: {}", provider);
+    log.debug("Received OIDC user request for provider: {}", provider);
 
+    log.debug("Loading OIDC user from provider: {}", provider);
     OidcUser oidcUser = super.loadUser(userRequest);
     log.debug("OIDC user loaded: {}", oidcUser.getEmail());
 
-    User user = processOAuth2User(provider, oidcUser);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null) {
+      log.debug("Authentication found in security context: {}", authentication.getName());
+
+      if (authentication.getPrincipal() == null
+          || !(authentication.getPrincipal() instanceof AuthenticatedUser)) {
+        log.debug("Authentication principal is not an instance of AuthenticatedUser.");
+        throw new IllegalStateException(
+            "Authentication principal is not an instance of AuthenticatedUser");
+      }
+
+      AuthenticatedUser authenticatedUser = (AuthenticatedUser) authentication.getPrincipal();
+
+      if (!authenticatedUser.email().equals(oidcUser.getEmail())) {
+        log.debug(
+            "Authenticated user's email does not match OIDC user email. Cannot link accounts");
+        throw new OAuth2AccountCannotBeLinkedException(
+            "Authenticated user email does not match OIDC user email. Cannot link accounts.");
+      }
+
+      User user =
+          userRepository
+              .findByEmailWithOAuthAccounts(authenticatedUser.email())
+              .orElseThrow(
+                  () ->
+                      new OAuth2AuthenticationException(
+                          "Authenticated user not found in database."));
+
+      linkOAuth2Account(user, provider, oidcUser);
+      return authenticatedUser;
+    }
+
+    log.debug("No authentication found in security context. Processing OIDC user as new login.");
+
+    User user = getOrCreateUser(provider, oidcUser);
     return AuthenticatedUser.builder()
         .userId(user.getId())
         .fullName(user.getFullName())
@@ -48,7 +86,7 @@ public class CustomOidcUserService extends OidcUserService {
   }
 
   @Transactional
-  public User processOAuth2User(OAuth2Provider provider, OidcUser oidcUser) {
+  User getOrCreateUser(OAuth2Provider provider, OidcUser oidcUser) {
     String email = oidcUser.getEmail();
 
     Optional<User> optionalUser = userRepository.findByEmailWithOAuthAccounts(email);
@@ -63,19 +101,32 @@ public class CustomOidcUserService extends OidcUserService {
       user.setFullName(oidcUser.getFullName() == null ? "" : oidcUser.getFullName());
     }
 
+    linkOAuth2Account(user, provider, oidcUser);
+    return user;
+  }
+
+  @Transactional
+  void linkOAuth2Account(User user, OAuth2Provider provider, OidcUser oidcUser) {
     if (user.getOAuth2Accounts().stream()
-        .noneMatch(account -> provider.equals(account.getOAuth2Provider()))) {
-      log.debug("Linking OAuth2 provider {} to user with email: {}", provider, user.getEmail());
-      user.getOAuth2Accounts()
-          .add(
-              UserOAuth2Account.builder()
-                  .user(user)
-                  .oAuth2Provider(provider)
-                  .oAuth2ProviderUserId(oidcUser.getSubject())
-                  .build());
-      user = userRepository.save(user);
+        .anyMatch(account -> provider.equals(account.getOAuth2Provider()))) {
+      log.debug("User with email: {} already linked to provider: {}", user.getEmail(), provider);
+      return;
     }
 
-    return user;
+    if (oidcUser.getEmail() == null || !oidcUser.getEmail().equals(user.getEmail())) {
+      log.debug("Email from OIDC user does not match the user's email. Cannot link accounts.");
+      throw new OAuth2AccountCannotBeLinkedException(
+          "Email from OIDC user does not match the user's email. Cannot link accounts.");
+    }
+
+    log.debug("Linking OAuth2 provider {} to user with email: {}", provider, user.getEmail());
+    user.getOAuth2Accounts()
+        .add(
+            UserOAuth2Account.builder()
+                .user(user)
+                .oAuth2Provider(provider)
+                .oAuth2ProviderUserId(oidcUser.getSubject())
+                .build());
+    user = userRepository.save(user);
   }
 }

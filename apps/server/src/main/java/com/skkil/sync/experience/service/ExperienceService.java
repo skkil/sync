@@ -7,6 +7,7 @@ import com.skkil.sync.experience.dto.response.CreateExperienceResponse;
 import com.skkil.sync.experience.dto.response.GetExperiencesResponse;
 import com.skkil.sync.experience.exception.ExperienceNotFoundException;
 import com.skkil.sync.experience.exception.ProviderNotVerifiedException;
+import com.skkil.sync.experience.mapper.ExperienceMapper;
 import com.skkil.sync.experience.model.Experience;
 import com.skkil.sync.experience.repository.ExperienceRepository;
 import com.skkil.sync.provider.model.Provider;
@@ -17,25 +18,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class ExperienceService {
 
   private final UserService userService;
   private final ProviderService providerService;
   private final ExperienceRepository experienceRepository;
+  private final ExperienceMapper experienceMapper;
   private final Map<ExperienceType, ExperienceStrategy> experienceStrategyMap;
 
   public ExperienceService(
       UserService userService,
       ProviderService providerService,
       ExperienceRepository experienceRepository,
+      ExperienceMapper experienceMapper,
       List<ExperienceStrategy> experienceStrategies) {
     this.userService = userService;
     this.providerService = providerService;
     this.experienceRepository = experienceRepository;
+    this.experienceMapper = experienceMapper;
     this.experienceStrategyMap =
         experienceStrategies.stream()
             .collect(Collectors.toMap(ExperienceStrategy::getExperienceType, Function.identity()));
@@ -77,22 +84,7 @@ public class ExperienceService {
             ? experienceRepository.findByUserWithProvider(userId)
             : experienceRepository.findByUserAndPublicWithProvider(userId);
 
-    var experienceResponse =
-        experiences.stream()
-            .map(
-                experience -> {
-                  var provider =
-                      new GetExperiencesResponse.Provider(
-                          experience.getProvider().getId(), experience.getProvider().getName());
-
-                  return new GetExperiencesResponse.Experience(
-                      experience.getType(),
-                      experience.getVisibility(),
-                      provider,
-                      experience.getId(),
-                      experience.getStartDate(),
-                      experience.getEndDate());
-                });
+    var experienceResponse = experiences.stream().map(experienceMapper::toExperienceResponse);
 
     return new GetExperiencesResponse(experienceResponse.toList());
   }
@@ -111,10 +103,27 @@ public class ExperienceService {
     if (request.visibility() != null) {
       experience.setVisibility(request.visibility());
     }
+
+    if (request.providerId() != null) {
+      Provider provider = providerService.getProviderEntity(request.providerId());
+      if (!request.type().getProviderType().equals(provider.getType())) {
+        throw new IllegalArgumentException("Provider type does not match experience type");
+      }
+
+      if (!provider.isVerified()) {
+        throw new ProviderNotVerifiedException(provider.getId());
+      }
+
+      experience.setProvider(provider);
+    }
+
+    experienceMapper.updateExperience(request, experience);
   }
 
   @Transactional
+  @PreAuthorize("hasPermission(#id, 'EXPERIENCE', 'DELETE')")
   public void deleteExperience(Long id) {
+    log.debug("Deleting experience with id: {}", id);
     experienceRepository.deleteById(id);
   }
 

@@ -52,6 +52,31 @@
         }
       }
     },
+    "create-company": {
+      "title": "만들고자 하는 회사에 대해 알려주세요",
+      "form": {
+        "name": {
+          "label": "이름",
+          "placeholder": "회사 이름을 입력하세요"
+        },
+        "description": {
+          "label": "설명",
+          "placeholder": "회사에 대한 간단한 설명을 입력하세요"
+        },
+        "industry": {
+          "label": "산업",
+          "placeholder": "회사가 속한 산업을 입력하세요"
+        },
+        "submit": {
+          "label": "회사 만들기"
+        }
+      },
+      "errors": {
+        "required_name": "이름은 필수 항목입니다.",
+        "required_description": "설명은 필수 항목입니다.",
+        "required_industry": "산업은 필수 항목입니다."
+      }
+    },
     "create-school": {
       "title": "만들고자 하는 학교에 대해 알려주세요",
       "form": {
@@ -245,6 +270,21 @@
           "title": "sync에 오신 것을 환영합니다!",
           "description": "시작하려면 몇 가지 질문에 답해주세요."
         },
+        "choose-handle": {
+          "title": "사용자 이름 선택",
+          "description": "다른 사용자가 볼 수 있는 고유한 사용자 이름을 선택하세요.",
+          "form": {
+            "handle": {
+              "placeholder": "사용자 이름을 입력하세요 (예: username123)"
+            },
+            "errors": {
+              "invalid_characters": "사용자 이름에는 영문자, 숫자, 밑줄만 사용할 수 있습니다.",
+              "minimum_length": "사용자 이름은 최소 {length}자 이상이어야 합니다.",
+              "maximum_length": "사용자 이름은 최대 {length}자 이하여야 합니다.",
+              "handle_in_use": "이 사용자 이름은 이미 사용 중입니다."
+            }
+          }
+        },
         "finished": {
           "title": "이제 sync를 사용할 준비가 끝났습니다!",
           "description": "프로필을 탐색하고 네트워크를 확장하세요."
@@ -307,8 +347,49 @@
               "PUBLIC": "공개",
               "PRIVATE": "비공개"
             }
+          }
+        },
+        "form": {
+          "major": {
+            "label": "전공",
+            "placeholder": "전공을 입력하세요"
           },
-          "delete": "경력 삭제"
+          "actions": {
+            "submit": {
+              "label": "저장"
+            },
+            "cancel": {
+              "label": "취소"
+            }
+          },
+          "errors": {
+            "required-provider": "기관은 필수 항목입니다.",
+            "required-major": "전공은 필수 항목입니다."
+          }
+        },
+        "add-experience": {
+          "title": {
+            "EMPLOYMENT": "경력 추가",
+            "EDUCATION": "학력 추가"
+          },
+          "description": {
+            "EMPLOYMENT": "이전 및 현재 직장 정보를 추가하세요",
+            "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
+          }
+        },
+        "update-experience": {
+          "menu": "경력 업데이트",
+          "title": "경력 업데이트",
+          "description": "이 경력에 대한 정보를 업데이트하세요"
+        },
+        "delete-experience": {
+          "menu": "경력 삭제",
+          "title": "경력 삭제",
+          "description": "이 경력을 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+          "actions": {
+            "confirm": "삭제",
+            "cancel": "취소"
+          }
         },
         "reflection": {
           "title": "경력 회고",
@@ -337,6 +418,15 @@
       },
       "education": {
         "title": "학력"
+      }
+    },
+    "network": {
+      "connections": {
+        "title": "네트워크",
+        "table": {
+          "name": "이름",
+          "empty": "네트워크에 연결된 사람이 없습니다."
+        }
       }
     },
     "add-experience": {
@@ -383,6 +473,26 @@
   "modals": {
     "settings": {
       "title": "설정",
+      "categories": {
+        "account": {
+          "label": "계정",
+          "title": "계정 설정",
+          "description": "계정 정보 및 보안 설정을 관리하세요",
+          "oauth2": {
+            "title": "소셜 로그인",
+            "description": "계정을 연결하여 더 쉽게 로그인하세요",
+            "connected": {
+              "GOOGLE": "Google에 연결됨"
+            },
+            "connect": {
+              "GOOGLE": "Google 계정 연결"
+            },
+            "errors": {
+              "cannot_be_deleted": "이 로그인 방법은 삭제할 수 없습니다. 다른 로그인 방법을 먼저 연결하세요."
+            }
+          }
+        }
+      },
       "description": "계정 설정 관리",
       "profile": {
         "image": {

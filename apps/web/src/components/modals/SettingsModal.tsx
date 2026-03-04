@@ -17,6 +17,7 @@ import {
 
 export default function SettingsModal() {
   const t = useTranslations('modals.settings');
+
   const { isOpen, closeModal } = useModal();
 
   return (

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,12 +17,33 @@ import { Spinner } from '@/components/ui/spinner';
 import { useUpdateProfileMutation } from '@/features/profile/api/update-profile';
 import { useSession } from '@/lib/auth/client';
 
-const steps = [
+import { ChooseHandle } from './_components/ChooseHandle';
+
+export interface OnboardingStepContentRef {
+  submit: (onSuccess: () => void) => void;
+}
+
+export interface OnboardingStepContentProps {
+  onStateChange: (state: { isPending: boolean; isValid: boolean }) => void;
+}
+
+const steps: {
+  id: string;
+  content: ReturnType<
+    typeof forwardRef<OnboardingStepContentRef, OnboardingStepContentProps>
+  > | null;
+}[] = [
   {
     id: 'welcome',
+    content: null,
+  },
+  {
+    id: 'choose-handle',
+    content: ChooseHandle,
   },
   {
     id: 'finished',
+    content: null,
   },
 ];
 
@@ -30,27 +51,66 @@ export default function Onboarding() {
   const t = useTranslations('pages.onboarding');
 
   const router = useRouter();
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending: isSessionPending } = useSession();
 
-  const [step, setStep] = useState(0);
+  const contentRef = useRef<OnboardingStepContentRef | null>(null);
+
+  const [stepIndex, setStep] = useState(0);
+  const [state, setState] = useState({
+    isPending: false,
+    isValid: true,
+  });
+
   const { mutate: updateProfile } = useUpdateProfileMutation();
 
+  const handleStateChange = useCallback(
+    ({ isPending, isValid }: { isPending: boolean; isValid: boolean }) => {
+      setState({ isPending, isValid });
+    },
+    [],
+  );
+
   useEffect(() => {
-    if (!isPending && !session) {
+    if (!isSessionPending && !session) {
       router.push('/auth/login');
     }
-  }, [session, isPending, router]);
+  }, [session, isSessionPending, router]);
 
-  if (isPending) {
+  if (isSessionPending) {
     return <Spinner />;
   }
 
   const previousButtonClickHandler = () => {
-    setStep(step - 1);
+    setStep(stepIndex - 1);
+    setState({
+      isPending: false,
+      isValid: true,
+    });
   };
 
   const nextButtonClickHandler = () => {
-    setStep(step + 1);
+    if (!state.isPending && state.isValid) {
+      setState({
+        isPending: true,
+        isValid: true,
+      });
+
+      if (contentRef.current) {
+        contentRef.current.submit(() => {
+          setStep(stepIndex + 1);
+          setState({
+            isPending: false,
+            isValid: true,
+          });
+        });
+      } else {
+        setStep(stepIndex + 1);
+        setState({
+          isPending: false,
+          isValid: true,
+        });
+      }
+    }
   };
 
   const finishedButtonClickHandler = () => {
@@ -66,35 +126,45 @@ export default function Onboarding() {
     );
   };
 
+  const step = steps[stepIndex];
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
-          <span>{t(`steps.${steps[step]?.id}.title`)}</span>
+          <span>{t(`steps.${step?.id}.title`)}</span>
           <span className="text-xs">
-            {step + 1} / {steps.length}
+            {stepIndex + 1} / {steps.length}
           </span>
         </CardTitle>
-        <CardDescription>
-          {t(`steps.${steps[step]?.id}.description`)}
-        </CardDescription>
+        <CardDescription>{t(`steps.${step?.id}.description`)}</CardDescription>
       </CardHeader>
 
-      <CardContent></CardContent>
+      <CardContent>
+        {step?.content ? (
+          <step.content ref={contentRef} onStateChange={handleStateChange} />
+        ) : null}
+      </CardContent>
 
       <CardFooter className="self-end flex gap-4">
-        {step > 0 && (
+        {stepIndex > 0 && (
           <Button variant="outline" onClick={previousButtonClickHandler}>
             {t('actions.previous')}
           </Button>
         )}
 
-        {step === steps.length - 1 ? (
+        {stepIndex === steps.length - 1 ? (
           <Button onClick={finishedButtonClickHandler}>
             {t('actions.finish')}
           </Button>
         ) : (
-          <Button onClick={nextButtonClickHandler}>{t('actions.next')}</Button>
+          <Button
+            isPending={state.isPending}
+            disabled={!state.isValid}
+            onClick={nextButtonClickHandler}
+          >
+            {t('actions.next')}
+          </Button>
         )}
       </CardFooter>
     </Card>

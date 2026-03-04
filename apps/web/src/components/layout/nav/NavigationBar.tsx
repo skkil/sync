@@ -1,4 +1,4 @@
-import { PlusIcon } from '@phosphor-icons/react/ssr';
+import { PlusIcon, UsersIcon } from '@phosphor-icons/react/ssr';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 
@@ -29,6 +29,12 @@ export default async function NavigationBar() {
             <Link href="/provider/create">
               <Button variant="ghost" size="icon">
                 <PlusIcon />
+              </Button>
+            </Link>
+
+            <Link href="/network">
+              <Button variant="ghost" size="icon">
+                <UsersIcon />
               </Button>
             </Link>
 

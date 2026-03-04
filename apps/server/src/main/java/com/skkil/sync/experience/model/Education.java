@@ -37,4 +37,12 @@ public class Education extends Experience {
     this.major = major;
     this.gpa = gpa;
   }
+
+  public void setMajor(String major) {
+    this.major = major;
+  }
+
+  public void setGpa(BigDecimal gpa) {
+    this.gpa = gpa;
+  }
 }
