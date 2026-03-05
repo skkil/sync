@@ -54,7 +54,7 @@ export default async function ProviderAdminPage({
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout />,
+      content: <ProviderAbout id={id} />,
     },
     {
       id: 'settings',

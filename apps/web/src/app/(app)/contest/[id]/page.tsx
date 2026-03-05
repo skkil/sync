@@ -28,7 +28,7 @@ export default async function Contest({ params }: ContestProps) {
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout />,
+      content: <ProviderAbout id={id} />,
     },
     {
       id: 'occurrences',

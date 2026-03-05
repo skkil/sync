@@ -56,7 +56,7 @@ export default async function School({ params, searchParams }: SchoolProps) {
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout />,
+      content: <ProviderAbout id={id} />,
     },
     {
       id: 'people',

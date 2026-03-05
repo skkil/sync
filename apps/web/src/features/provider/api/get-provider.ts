@@ -6,14 +6,16 @@ import { ProviderType, SchoolType } from '@/types/provider';
 type GetProviderResponse = {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
+  contactInfo: string | null;
   createdAt: string;
   updatedAt: string;
   verifiedBy: string | null;
   isMaintainer: boolean;
 } & {
   type: ProviderType;
-  schoolType: SchoolType;
+  schoolType?: SchoolType | null;
+  industry?: string | null;
 };
 
 async function getProvider(id: string) {
