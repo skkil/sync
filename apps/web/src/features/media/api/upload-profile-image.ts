@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { server } from '@/lib/server';
 import SyncError, { ErrorCode } from '@/lib/error';
+import { server } from '@/lib/server';
 
 export const PROFILE_IMAGE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
