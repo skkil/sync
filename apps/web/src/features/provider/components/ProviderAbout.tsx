@@ -3,11 +3,13 @@
 import { ArrowSquareOutIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 
+import { Button } from '@/components/ui/button';
 import useGetProviderQuery from '@/features/provider/api/get-provider';
 import { ProviderType, SchoolType } from '@/types/provider';
 
 interface ProviderAboutProps {
   id: string;
+  showEditButton?: boolean;
 }
 
 interface DetailRow {
@@ -15,7 +17,10 @@ interface DetailRow {
   value: string;
 }
 
-export default function ProviderAbout({ id }: ProviderAboutProps) {
+export default function ProviderAbout({
+  id,
+  showEditButton = false,
+}: ProviderAboutProps) {
   const tProvider = useTranslations('pages.provider');
   const tCreateSchool = useTranslations('pages.create-school');
 
@@ -29,13 +34,20 @@ export default function ProviderAbout({ id }: ProviderAboutProps) {
     );
   }
 
-  const fallback = tProvider('about.fallback');
-  const detailedIntroduction = fallback;
-  const website = provider.contactInfo?.trim() || fallback;
-  const industry = provider.industry?.trim() || fallback;
-  const size = fallback;
-  const location = fallback;
-  const category = fallback;
+  const detailedIntroductionFallback = tProvider('about.fallbacks.description');
+  const websiteFallback = tProvider('about.fallbacks.website');
+  const industryFallback = tProvider('about.fallbacks.industry');
+  const sizeFallback = tProvider('about.fallbacks.size');
+  const locationFallback = tProvider('about.fallbacks.location');
+  const categoryFallback = tProvider('about.fallbacks.subcategory');
+  const schoolTypeFallback = tProvider('about.fallbacks.schoolType');
+
+  const detailedIntroduction = detailedIntroductionFallback;
+  const website = provider.contactInfo?.trim() || websiteFallback;
+  const industry = provider.industry?.trim() || industryFallback;
+  const size = sizeFallback;
+  const location = locationFallback;
+  const category = categoryFallback;
 
   const locationLabel =
     provider.type === ProviderType.COMPANY
@@ -45,7 +57,7 @@ export default function ProviderAbout({ id }: ProviderAboutProps) {
   const schoolType = getSchoolTypeLabel(
     provider.schoolType ?? null,
     tCreateSchool,
-    fallback,
+    schoolTypeFallback,
   );
 
   const detailRows: DetailRow[] = [
@@ -86,6 +98,11 @@ export default function ProviderAbout({ id }: ProviderAboutProps) {
     <div>
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-xl">{tProvider('sections.about')}</h1>
+        {showEditButton && (
+          <Button type="button" variant="outline">
+            {tProvider('about.actions.edit')}
+          </Button>
+        )}
       </div>
 
       <p className="mb-6 text-sm leading-7 whitespace-pre-wrap text-muted-foreground">

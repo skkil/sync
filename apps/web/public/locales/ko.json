@@ -173,8 +173,19 @@
       },
       "about": {
         "loading": "불러오는 중...",
-        "fallback": "추가 예정",
+        "fallbacks": {
+          "description": "소개 정보가 아직 입력되지 않았습니다.",
+          "website": "등록된 웹사이트가 없습니다.",
+          "industry": "입력된 업계 정보가 없습니다.",
+          "size": "입력된 규모 정보가 없습니다.",
+          "location": "입력된 위치 정보가 없습니다.",
+          "subcategory": "입력된 세부 분야 정보가 없습니다.",
+          "schoolType": "입력된 학교 구분 정보가 없습니다."
+        },
         "base-info": "기본 정보",
+        "actions": {
+          "edit": "소개 수정"
+        },
         "fields": {
           "website": "웹사이트",
           "industry": "업계",
