@@ -3,9 +3,10 @@
 import { ArrowSquareOutIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 
-import { Button } from '@/components/ui/button';
 import useGetProviderQuery from '@/features/provider/api/get-provider';
 import { ProviderType, SchoolType } from '@/types/provider';
+
+import ProviderAboutEditDialog from './ProviderAboutEditDialog';
 
 interface ProviderAboutProps {
   id: string;
@@ -34,7 +35,7 @@ export default function ProviderAbout({
     );
   }
 
-  const detailedIntroductionFallback = tProvider('about.fallbacks.description');
+  const longDescriptionFallback = tProvider('about.fallbacks.longDescription');
   const websiteFallback = tProvider('about.fallbacks.website');
   const industryFallback = tProvider('about.fallbacks.industry');
   const sizeFallback = tProvider('about.fallbacks.size');
@@ -42,7 +43,11 @@ export default function ProviderAbout({
   const categoryFallback = tProvider('about.fallbacks.subcategory');
   const schoolTypeFallback = tProvider('about.fallbacks.schoolType');
 
-  const detailedIntroduction = detailedIntroductionFallback;
+  // Existing backend field: description (currently used as short intro in overview card).
+  const description = provider.description?.trim() ?? '';
+
+  // New "About" body field (long description): backend field not introduced yet.
+  const longDescription = longDescriptionFallback;
   const website = provider.contactInfo?.trim() || websiteFallback;
   const industry = provider.industry?.trim() || industryFallback;
   const size = sizeFallback;
@@ -99,14 +104,24 @@ export default function ProviderAbout({
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-xl">{tProvider('sections.about')}</h1>
         {showEditButton && (
-          <Button type="button" variant="outline">
-            {tProvider('about.actions.edit')}
-          </Button>
+          <ProviderAboutEditDialog
+            providerType={provider.type}
+            triggerLabel={tProvider('about.actions.edit')}
+            defaultValues={{
+              description,
+              longDescription: '',
+              website: provider.contactInfo?.trim() ?? '',
+              industry: provider.industry?.trim() ?? '',
+              size: '',
+              location: '',
+              subcategory: '',
+            }}
+          />
         )}
       </div>
 
       <p className="mb-6 text-sm leading-7 whitespace-pre-wrap text-muted-foreground">
-        {detailedIntroduction}
+        {longDescription}
       </p>
 
       <section className="rounded-2xl border bg-background p-4 md:p-5">

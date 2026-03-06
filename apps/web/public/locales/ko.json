@@ -174,7 +174,7 @@
       "about": {
         "loading": "불러오는 중...",
         "fallbacks": {
-          "description": "소개 정보가 아직 입력되지 않았습니다.",
+          "longDescription": "상세 소개가 아직 입력되지 않았습니다.",
           "website": "등록된 웹사이트가 없습니다.",
           "industry": "입력된 업계 정보가 없습니다.",
           "size": "입력된 규모 정보가 없습니다.",
@@ -185,6 +185,22 @@
         "base-info": "기본 정보",
         "actions": {
           "edit": "소개 수정"
+        },
+        "edit-dialog": {
+          "title": "소개 수정",
+          "description": "소개 탭에 표시할 정보를 입력하세요.",
+          "actions": {
+            "cancel": "취소",
+            "save": "저장"
+          },
+          "fields": {
+            "longDescription": "상세 소개",
+            "website": "웹사이트",
+            "industry": "업계",
+            "size": "규모",
+            "location": "위치",
+            "subcategory": "세부 분야"
+          }
         },
         "fields": {
           "website": "웹사이트",
@@ -571,3 +587,4 @@
     "connection-failed": "서버에 연결할 수 없습니다. 나중에 다시 시도하세요."
   }
 }
+
