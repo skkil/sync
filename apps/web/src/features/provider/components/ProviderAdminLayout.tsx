@@ -53,7 +53,7 @@ export default function ProviderAdminLayout({
 
           <Card className="min-h-96 overflow-auto">
             {tabs.map((tab) => (
-              <TabsContent key={tab.id} value={tab.id}>
+              <TabsContent key={tab.id} value={tab.id} className="px-5">
                 {tab.content}
               </TabsContent>
             ))}

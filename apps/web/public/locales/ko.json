@@ -171,6 +171,19 @@
         "reviews": "리뷰",
         "occurrences": "회차"
       },
+      "about": {
+        "loading": "불러오는 중...",
+        "fallback": "추가 예정",
+        "base-info": "기본 정보",
+        "fields": {
+          "website": "웹사이트",
+          "industry": "업계",
+          "size": "규모",
+          "headquarters": "본사",
+          "location": "위치",
+          "subcategory": "세부 분야"
+        }
+      },
       "admin": {
         "viewing-as-member": {
           "title": "현재 {name}를 일반 사용자로 보고 있습니다.",

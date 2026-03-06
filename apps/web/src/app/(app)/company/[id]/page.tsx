@@ -113,7 +113,7 @@ export default async function Company({ params, searchParams }: CompanyProps) {
 
             <Card className="min-h-96 overflow-auto">
               {tabs.map((tab) => (
-                <TabsContent key={tab.id} value={tab.id}>
+                <TabsContent key={tab.id} value={tab.id} className="px-5">
                   {tab.content}
                 </TabsContent>
               ))}
