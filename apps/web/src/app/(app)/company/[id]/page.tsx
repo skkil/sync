@@ -16,6 +16,7 @@ import ProviderAbout from '@/features/provider/components/ProviderAbout';
 import ProviderOverview from '@/features/provider/components/ProviderOverview';
 import ProviderRelatedPeople from '@/features/provider/components/ProviderPeople';
 import ProviderReviews from '@/features/provider/components/ProviderReviews';
+import JobPostings from '@/features/provider/components/company/JobPostings';
 import SyncError, { ErrorCode } from '@/lib/error';
 import { getQueryClient } from '@/lib/query';
 import { ProviderType } from '@/types/provider';
@@ -57,6 +58,11 @@ export default async function Company({ params, searchParams }: CompanyProps) {
       id: 'about',
       title: t('sections.about'),
       content: <ProviderAbout />,
+    },
+    {
+      id: 'jobs',
+      title: t('sections.jobs'),
+      content: <JobPostings id={id} />,
     },
     {
       id: 'people',
@@ -113,7 +119,7 @@ export default async function Company({ params, searchParams }: CompanyProps) {
 
             <Card className="min-h-96 overflow-auto">
               {tabs.map((tab) => (
-                <TabsContent key={tab.id} value={tab.id}>
+                <TabsContent key={tab.id} value={tab.id} className="px-5">
                   {tab.content}
                 </TabsContent>
               ))}

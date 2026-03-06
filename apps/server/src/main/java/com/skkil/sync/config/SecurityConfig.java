@@ -55,7 +55,8 @@ public class SecurityConfig {
                         "/auth/login",
                         "/auth/register",
                         "/providers/**",
-                        "/search/**")
+                        "/search/**",
+                        "/companies/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
