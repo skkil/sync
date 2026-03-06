@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -162,7 +162,11 @@ export default function ProviderAboutEditDialog({
 
         <DialogFooter>
           <div className="w-full flex items-center justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
               {t('actions.cancel')}
             </Button>
             <Button type="button" disabled={!hasChanges}>
