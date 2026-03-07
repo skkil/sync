@@ -20,7 +20,7 @@ async function getConnections() {
         id: connection.userId,
         name: connection.name,
         providerName: connection.providerName,
-        profession: connection.profession
+        profession: connection.profession,
       })),
     );
 }

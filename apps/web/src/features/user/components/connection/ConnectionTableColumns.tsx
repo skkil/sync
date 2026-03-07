@@ -49,10 +49,15 @@ export const columns: ColumnDef<Connection>[] = [
   {
     accessorKey: 'message',
     header: ({ column, table }) => (
-      <DataTableColumnHeader title={table.options.meta?.t('message') || ''} column={column} />
+      <DataTableColumnHeader
+        title={table.options.meta?.t('message') || ''}
+        column={column}
+      />
     ),
     cell: ({ table }) => {
-      return <Link href={`/messages`}>{table.options.meta?.t('message') || ''}</Link>;
+      return (
+        <Link href={`/messages`}>{table.options.meta?.t('message') || ''}</Link>
+      );
     },
     enableSorting: false,
   },

@@ -2,9 +2,9 @@ package com.skkil.sync.user.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.media.model.Media;
+import com.skkil.sync.provider.model.Provider;
 import com.skkil.sync.user.constant.Handle;
 import com.skkil.sync.user.constant.Role;
-import com.skkil.sync.provider.model.Provider;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -78,12 +78,13 @@ public class User extends BaseEntity {
   @Column(name = "deleted_at", nullable = true)
   private Instant deletedAt;
 
-  @OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-      CascadeType.REMOVE }, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "user",
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+      orphanRemoval = true)
   private List<UserOAuth2Account> oAuth2Accounts = new ArrayList<>();
 
-  protected User() {
-  }
+  protected User() {}
 
   public User(Long id) {
     this.id = id;

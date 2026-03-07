@@ -41,7 +41,8 @@ public class UserRelationshipService {
     User follower = userRepository.getReferenceById(followerId),
         followee = userRepository.getReferenceById(followeeId);
 
-    var relationship = UserFollowRelationship.builder().follower(follower).followee(followee).build();
+    var relationship =
+        UserFollowRelationship.builder().follower(follower).followee(followee).build();
     userFollowRelationshipRepository.save(relationship);
   }
 
@@ -52,17 +53,18 @@ public class UserRelationshipService {
 
     return new GetConnectionsResponse(
         connections.stream()
-            .map(rel -> {
-              var followee = rel.getFollowee();
-              var provider = followee.getCurrentProvider();
-              String providerName = (provider != null) ? provider.getName() : null;
+            .map(
+                rel -> {
+                  var followee = rel.getFollowee();
+                  var provider = followee.getCurrentProvider();
+                  String providerName = (provider != null) ? provider.getName() : null;
 
-              return new GetConnectionsResponse.Connection(
-                  followee.getId().toString(),
-                  followee.getFullName(),
-                  providerName,
-                  followee.getProfession());
-            })
+                  return new GetConnectionsResponse.Connection(
+                      followee.getId().toString(),
+                      followee.getFullName(),
+                      providerName,
+                      followee.getProfession());
+                })
             .toList());
   }
 
@@ -76,7 +78,8 @@ public class UserRelationshipService {
       return false;
     }
 
-    boolean result = userFollowRelationshipRepository.existsByFollowerAndFollowee(followerId, followeeId);
+    boolean result =
+        userFollowRelationshipRepository.existsByFollowerAndFollowee(followerId, followeeId);
     log.debug("User {} is {}following user {}", followerId, result ? "" : "not ", followeeId);
 
     return result;
