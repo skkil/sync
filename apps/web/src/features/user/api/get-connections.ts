@@ -6,6 +6,8 @@ interface GetConnectionsResponse {
   connections: {
     userId: string;
     name: string;
+    providerName: string | null;
+    profession: string | null;
   }[];
 }
 
@@ -17,6 +19,8 @@ async function getConnections() {
       data.connections.map((connection) => ({
         id: connection.userId,
         name: connection.name,
+        providerName: connection.providerName,
+        profession: connection.profession
       })),
     );
 }
