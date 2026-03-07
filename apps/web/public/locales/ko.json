@@ -49,6 +49,10 @@
         "contest": {
           "title": "대회",
           "description": "대회 및 공모전 페이지"
+        },
+        "project": {
+          "title": "프로젝트",
+          "description": "개인 및 팀 프로젝트"
         }
       }
     },
@@ -130,6 +134,26 @@
         "required_description": "설명은 필수 항목입니다."
       }
     },
+    "create-project": {
+      "title": "만들고자 하는 프로젝트에 대해 알려주세요",
+      "form": {
+        "name": {
+          "label": "이름",
+          "placeholder": "프로젝트 이름을 입력하세요"
+        },
+        "description": {
+          "label": "설명",
+          "placeholder": "프로젝트에 대한 간단한 설명을 입력하세요"
+        },
+        "submit": {
+          "label": "프로젝트 만들기"
+        }
+      },
+      "errors": {
+        "required_name": "이름은 필수 항목입니다.",
+        "required_description": "설명은 필수 항목입니다."
+      }
+    },
     "provider": {
       "review": {
         "button": "리뷰 작성",
@@ -196,7 +220,8 @@
         "people": "사람",
         "schools": "학교",
         "companies": "회사",
-        "contests": "대회"
+        "contests": "대회",
+        "projects": "프로젝트"
       }
     },
     "login": {
