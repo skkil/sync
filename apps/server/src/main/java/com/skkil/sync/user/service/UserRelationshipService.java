@@ -57,12 +57,19 @@ public class UserRelationshipService {
                 rel -> {
                   var followee = rel.getFollowee();
                   var provider = followee.getCurrentProvider();
-                  String providerName = (provider != null) ? provider.getName() : null;
+
+                  GetConnectionsResponse.Provider providerDto =
+                      (provider != null)
+                          ? new GetConnectionsResponse.Provider(
+                              provider.getId().toString(),
+                              provider.getType().name(),
+                              provider.getName())
+                          : null;
 
                   return new GetConnectionsResponse.Connection(
                       followee.getId().toString(),
                       followee.getFullName(),
-                      providerName,
+                      providerDto,
                       followee.getProfession());
                 })
             .toList());
