@@ -79,6 +79,8 @@ function getProviderPath(providerType: ProviderType, id: string) {
       return `/school/${id}`;
     case ProviderType.COMPANY:
       return `/company/${id}`;
+    case ProviderType.PROJECT:
+      return `/project/${id}`;
     default:
       console.warn('Unknown provider type:', providerType);
       return '/';

@@ -19,6 +19,9 @@ type CreateProviderRequest = {
       type: ProviderType.CONTEST;
       hostProviderId?: string;
     }
+  | {
+      type: ProviderType.PROJECT;
+    }
 );
 type CreateProviderResponse = {
   id: number;
