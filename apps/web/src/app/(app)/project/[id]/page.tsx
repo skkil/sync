@@ -15,7 +15,6 @@ import { GetProviderQueryOptions } from '@/features/provider/api/get-provider';
 import ProviderAbout from '@/features/provider/components/ProviderAbout';
 import ProviderOverview from '@/features/provider/components/ProviderOverview';
 import ProviderRelatedPeople from '@/features/provider/components/ProviderPeople';
-import ProviderReviews from '@/features/provider/components/ProviderReviews';
 import SyncError, { ErrorCode } from '@/lib/error';
 import { getQueryClient } from '@/lib/query';
 import { ProviderType } from '@/types/provider';
@@ -62,11 +61,6 @@ export default async function Project({ params, searchParams }: ProjectProps) {
       id: 'people',
       title: t('sections.people'),
       content: <ProviderRelatedPeople />,
-    },
-    {
-      id: 'reviews',
-      title: t('sections.reviews'),
-      content: <ProviderReviews />,
     },
   ];
 
