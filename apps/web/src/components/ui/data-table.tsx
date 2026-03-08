@@ -102,11 +102,12 @@ interface DataTableColumnHeaderProps<
 export function DataTableColumnHeader<TData, TValue>({
   title,
   icon,
+  ...props
 }: DataTableColumnHeaderProps<TData, TValue> & {
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2" {...props}>
       {icon && icon}
       {title}
     </div>

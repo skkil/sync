@@ -43,7 +43,7 @@ public class CompanyControllerTests {
     CreateJobPostingRequest request =
         new CreateJobPostingRequest("Job Title", "Job Description", "Location");
 
-    CreateJobPostingResponse response = new CreateJobPostingResponse(1L);
+    CreateJobPostingResponse response = new CreateJobPostingResponse("1");
     Mockito.when(jobPostingService.createJobPosting(any(), any())).thenReturn(response);
 
     mockMvc
@@ -61,7 +61,7 @@ public class CompanyControllerTests {
         new GetJobPostingsResponse(
             List.of(
                 new GetJobPostingsResponse.JobPosting(
-                    1L,
+                    "1",
                     "",
                     "",
                     "",

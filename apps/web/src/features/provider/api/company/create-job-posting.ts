@@ -27,5 +27,10 @@ export function useCreateJobPostingMutation(companyId: string) {
   return useMutation({
     mutationFn: (request: CreateJobPostingRequest) =>
       createJobPosting(companyId, request),
+    onSuccess: (_data, _variables, _onMutateResult, context) => {
+      context.client.invalidateQueries({
+        queryKey: ['company', companyId, 'job-postings'],
+      });
+    },
   });
 }

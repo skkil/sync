@@ -40,7 +40,11 @@ export default function JobPostingModal({
                 {jobPosting.jobTitle}
               </DialogTitle>
               <DialogDescription className="flex items-center gap-2">
-                <span>{jobPosting.location}</span>|
+                {jobPosting.location && (
+                  <>
+                    <span>{jobPosting.location}</span>|
+                  </>
+                )}
                 <span>
                   {t('posted-on')}{' '}
                   {new Date(jobPosting.createdAt).toLocaleDateString()}

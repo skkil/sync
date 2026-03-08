@@ -19,10 +19,10 @@ public class JobPosting extends BaseEntity {
   @JoinColumn(name = "company_id", nullable = false)
   private Company company;
 
-  @Column(name = "job_title")
+  @Column(name = "job_title", nullable = false)
   private String jobTitle;
 
-  @Column(name = "job_description", columnDefinition = "TEXT")
+  @Column(name = "job_description", columnDefinition = "TEXT", nullable = false)
   private String jobDescription;
 
   @Column(name = "location")
@@ -38,8 +38,7 @@ public class JobPosting extends BaseEntity {
     this.location = location;
   }
 
-  public void updateFields(
-      String jobTitle, String jobDescription, String qualifications, String location) {
+  public void updateFields(String jobTitle, String jobDescription, String location) {
     if (jobTitle != null) {
       this.jobTitle = jobTitle;
     }

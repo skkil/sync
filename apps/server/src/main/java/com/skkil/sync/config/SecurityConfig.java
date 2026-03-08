@@ -46,6 +46,8 @@ public class SecurityConfig {
                     .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/experiences/**")
                     .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/companies/**")
+                    .permitAll()
                     .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
                     .requestMatchers("/users/**", "/profiles/me", "/media/**")
@@ -55,8 +57,7 @@ public class SecurityConfig {
                         "/auth/login",
                         "/auth/register",
                         "/providers/**",
-                        "/search/**",
-                        "/companies/**")
+                        "/search/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

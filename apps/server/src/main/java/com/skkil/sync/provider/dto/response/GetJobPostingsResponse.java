@@ -8,7 +8,7 @@ import lombok.Builder;
 public record GetJobPostingsResponse(List<JobPosting> postings) {
 
   public static record JobPosting(
-      Long id,
+      String id,
       String jobTitle,
       String jobDescription,
       String location,

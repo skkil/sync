@@ -5,7 +5,7 @@ databaseChangeLog:
       preConditions:
         - not:
             tableExists:
-              tableName: job-postings
+              tableName: job_postings
       changes:
         - createTable:
             tableName: job_postings
@@ -32,9 +32,13 @@ databaseChangeLog:
               - column:
                   name: job_title
                   type: VARCHAR(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: job_description
                   type: TEXT
+                  constraints:
+                    nullable: false
               - column:
                   name: location
                   type: VARCHAR(255)

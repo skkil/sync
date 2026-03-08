@@ -47,7 +47,7 @@ public class JobPostingService {
     jobPosting = jobPostingRepository.save(jobPosting);
     log.debug("Created job posting with id {} for company {}", jobPosting.getId(), companyId);
 
-    return new CreateJobPostingResponse(jobPosting.getId());
+    return new CreateJobPostingResponse(jobPosting.getId().toString());
   }
 
   @Transactional(readOnly = true)
