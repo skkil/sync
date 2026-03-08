@@ -23,12 +23,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   t: Translations;
+  onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   t,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -67,6 +69,7 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
+                onClick={() => onRowClick?.(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -98,6 +101,15 @@ interface DataTableColumnHeaderProps<
 
 export function DataTableColumnHeader<TData, TValue>({
   title,
-}: DataTableColumnHeaderProps<TData, TValue>) {
-  return <>{title}</>;
+  icon,
+  ...props
+}: DataTableColumnHeaderProps<TData, TValue> & {
+  icon?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-2" {...props}>
+      {icon && icon}
+      {title}
+    </div>
+  );
 }

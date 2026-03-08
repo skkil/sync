@@ -169,6 +169,7 @@
         "about": "소개",
         "people": "관련 인물",
         "reviews": "리뷰",
+        "jobs": "채용 공고",
         "occurrences": "회차"
       },
       "admin": {
@@ -182,9 +183,54 @@
     "provider-admin": {
       "sections": {
         "about": "소개",
-        "settings": "설정"
+        "settings": "설정",
+        "job-postings": "채용 공고"
       },
       "view-as-member": "일반 사용자로 보기"
+    },
+    "company": {
+      "job-postings": {
+        "title": "채용 공고",
+        "table": {
+          "empty": "이 회사에는 현재 채용 공고가 없습니다.",
+          "job-title": "직책",
+          "location": "근무 지역",
+          "posted-date": "게시 날짜"
+        },
+        "modal": {
+          "posted-on": "게시 날짜"
+        },
+        "create-posting": {
+          "form": {
+            "label": "채용 공고 만들기",
+            "title": "채용 공고 만들기",
+            "description": "이 회사에 대한 새로운 채용 공고를 작성하세요",
+            "job-title": {
+              "label": "직책",
+              "placeholder": "예: 소프트웨어 엔지니어"
+            },
+            "job-description": {
+              "label": "직무 설명",
+              "placeholder": "이 직책에 대한 자세한 설명을 입력하세요"
+            },
+            "location": {
+              "label": "근무 지역",
+              "placeholder": "예: 서울시 강남구"
+            },
+            "submit": {
+              "label": "채용 공고 제출"
+            },
+            "messages": {
+              "success": "채용 공고가 성공적으로 생성되었습니다.",
+              "error": "채용 공고 생성에 실패했습니다."
+            },
+            "errors": {
+              "required-job-title": "직책은 필수 항목입니다.",
+              "required-job-description": "직무 설명은 필수 항목입니다."
+            }
+          }
+        }
+      }
     },
     "search": {
       "results": {

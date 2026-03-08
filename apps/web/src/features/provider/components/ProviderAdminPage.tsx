@@ -50,20 +50,19 @@ export default async function ProviderAdminPage({
     redirect(providerPath);
   }
 
-  const baseTabs: Tab[] = [
+  const tabs = [
     {
       id: 'about',
       title: t('sections.about'),
       content: <ProviderAbout />,
     },
+    ...additionalTabs,
     {
       id: 'settings',
       title: t('sections.settings'),
       content: <div></div>,
     },
   ];
-
-  const tabs = [...baseTabs, ...additionalTabs];
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
