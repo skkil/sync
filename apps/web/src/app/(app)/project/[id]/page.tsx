@@ -55,7 +55,7 @@ export default async function Project({ params, searchParams }: ProjectProps) {
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout />,
+      content: <ProviderAbout id={id} />,
     },
     {
       id: 'people',
