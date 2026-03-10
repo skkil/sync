@@ -3,6 +3,7 @@ export enum ProviderType {
   SCHOOL = 'SCHOOL',
   LAB = 'LAB',
   CONTEST = 'CONTEST',
+  PROJECT = 'PROJECT',
 }
 
 export enum SchoolType {
@@ -23,5 +24,8 @@ export type Provider = {
     }
   | {
       type: ProviderType.CONTEST;
+    }
+  | {
+      type: ProviderType.PROJECT;
     }
 );

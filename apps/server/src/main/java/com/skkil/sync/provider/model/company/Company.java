@@ -1,6 +1,7 @@
-package com.skkil.sync.provider.model;
+package com.skkil.sync.provider.model.company;
 
 import com.skkil.sync.provider.constant.ProviderType;
+import com.skkil.sync.provider.model.Provider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

@@ -14,9 +14,14 @@ import com.skkil.sync.provider.constant.ProviderType;
   @JsonSubTypes.Type(value = UpdateSchoolRequest.class, name = ProviderType.Constants.SCHOOL),
   @JsonSubTypes.Type(value = UpdateLabRequest.class, name = ProviderType.Constants.LAB),
   @JsonSubTypes.Type(value = UpdateContestRequest.class, name = ProviderType.Constants.CONTEST),
+  @JsonSubTypes.Type(value = UpdateProjectRequest.class, name = ProviderType.Constants.PROJECT)
 })
 public sealed interface UpdateProviderRequest
-    permits UpdateCompanyRequest, UpdateSchoolRequest, UpdateLabRequest, UpdateContestRequest {
+    permits UpdateCompanyRequest,
+        UpdateSchoolRequest,
+        UpdateLabRequest,
+        UpdateContestRequest,
+        UpdateProjectRequest {
 
   ProviderType type();
 

@@ -15,20 +15,18 @@ import { GetProviderQueryOptions } from '@/features/provider/api/get-provider';
 import ProviderAbout from '@/features/provider/components/ProviderAbout';
 import ProviderOverview from '@/features/provider/components/ProviderOverview';
 import ProviderRelatedPeople from '@/features/provider/components/ProviderPeople';
-import ProviderReviews from '@/features/provider/components/ProviderReviews';
-import JobPostings from '@/features/provider/components/company/JobPostings';
 import SyncError, { ErrorCode } from '@/lib/error';
 import { getQueryClient } from '@/lib/query';
 import { ProviderType } from '@/types/provider';
 
-interface CompanyProps {
+interface ProjectProps {
   params: Promise<{
     id: string;
   }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function Company({ params, searchParams }: CompanyProps) {
+export default async function Project({ params, searchParams }: ProjectProps) {
   const { id } = await params;
   const t = await getTranslations('pages.provider');
 
@@ -50,29 +48,19 @@ export default async function Company({ params, searchParams }: CompanyProps) {
     });
 
   if (!viewAsMember && provider?.isMaintainer) {
-    redirect(`/company/${id}/admin`);
+    redirect(`/project/${id}/admin`);
   }
 
   const tabs = [
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout id={id} />,
-    },
-    {
-      id: 'jobs',
-      title: t('sections.jobs'),
-      content: <JobPostings id={id} />,
+      content: <ProviderAbout />,
     },
     {
       id: 'people',
       title: t('sections.people'),
       content: <ProviderRelatedPeople />,
-    },
-    {
-      id: 'reviews',
-      title: t('sections.reviews'),
-      content: <ProviderReviews />,
     },
   ];
 
@@ -97,7 +85,7 @@ export default async function Company({ params, searchParams }: CompanyProps) {
                   </CardDescription>
                 </div>
 
-                <Link href={`/company/${id}/admin`}>
+                <Link href={`/project/${id}/admin`}>
                   <Button>{t('admin.viewing-as-member.view-as-admin')}</Button>
                 </Link>
               </div>
@@ -105,7 +93,7 @@ export default async function Company({ params, searchParams }: CompanyProps) {
           </Card>
         )}
 
-        <ProviderOverview id={id} type={ProviderType.COMPANY} />
+        <ProviderOverview id={id} type={ProviderType.PROJECT} />
 
         <div className="grow">
           <Tabs defaultValue={tabs[0]?.id} className="w-full">
@@ -119,7 +107,7 @@ export default async function Company({ params, searchParams }: CompanyProps) {
 
             <Card className="min-h-96 overflow-auto">
               {tabs.map((tab) => (
-                <TabsContent key={tab.id} value={tab.id} className="px-5">
+                <TabsContent key={tab.id} value={tab.id}>
                   {tab.content}
                 </TabsContent>
               ))}

@@ -1,5 +1,6 @@
 import {
   BuildingOfficeIcon,
+  LightbulbIcon,
   StudentIcon,
   TrophyIcon,
 } from '@phosphor-icons/react/dist/ssr';
@@ -37,6 +38,12 @@ const providers: ProviderComponentOptions[] = [
 ];
 
 const otherProviders: ProviderComponentOptions[] = [
+  {
+    id: 'project',
+    type: ProviderType.PROJECT,
+    icon: <LightbulbIcon />,
+    link: '/provider/create/project',
+  },
   {
     id: 'contest',
     type: ProviderType.CONTEST,

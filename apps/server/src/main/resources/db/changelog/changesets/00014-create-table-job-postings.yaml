@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00014-create-table-job-postings
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: job_postings
+      changes:
+        - createTable:
+            tableName: job_postings
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: company_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location
+                  type: VARCHAR(255)
+        - addForeignKeyConstraint:
+            baseTableName: job_postings
+            baseColumnNames: company_id
+            referencedTableName: companies
+            referencedColumnNames: id
+            constraintName: fk_job_postings_company_id
+            onDelete: CASCADE

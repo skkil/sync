@@ -14,10 +14,15 @@ import java.time.LocalDateTime;
   @JsonSubTypes.Type(value = GetCompanyResponse.class, name = ProviderType.Constants.COMPANY),
   @JsonSubTypes.Type(value = GetSchoolResponse.class, name = ProviderType.Constants.SCHOOL),
   @JsonSubTypes.Type(value = GetLabResponse.class, name = ProviderType.Constants.LAB),
-  @JsonSubTypes.Type(value = GetContestResponse.class, name = ProviderType.Constants.CONTEST)
+  @JsonSubTypes.Type(value = GetContestResponse.class, name = ProviderType.Constants.CONTEST),
+  @JsonSubTypes.Type(value = GetProjectResponse.class, name = ProviderType.Constants.PROJECT)
 })
 public sealed interface GetProviderResponse
-    permits GetCompanyResponse, GetSchoolResponse, GetLabResponse, GetContestResponse {
+    permits GetCompanyResponse,
+        GetSchoolResponse,
+        GetLabResponse,
+        GetContestResponse,
+        GetProjectResponse {
 
   Long id();
 
