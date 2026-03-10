@@ -206,9 +206,16 @@
           "website": "웹사이트",
           "industry": "업계",
           "size": "규모",
+          "schoolType": "학교 구분",
           "headquarters": "본사",
           "location": "위치",
           "subcategory": "세부 분야"
+        },
+        "school-type": {
+          "types": {
+            "UNIVERSITY": "대학교",
+            "HIGH_SCHOOL": "고등학교"
+          }
         }
       },
       "admin": {

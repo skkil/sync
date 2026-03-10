@@ -1,7 +1,10 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,164 +19,198 @@ import {
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import useGetProviderQuery from '@/features/provider/api/get-provider';
 import { ProviderType } from '@/types/provider';
 
+const ProviderAboutEditFormSchema = z.object({
+  longDescription: z.string(),
+  website: z.string(),
+  industry: z.string(),
+  size: z.string(),
+  location: z.string(),
+  subcategory: z.string(),
+});
+
+type ProviderAboutEditFormValues = z.infer<typeof ProviderAboutEditFormSchema>;
+
 interface ProviderAboutEditDialogProps {
-  providerType: ProviderType;
-  triggerLabel: string;
-  defaultValues: {
-    description: string;
-    longDescription: string;
-    website: string;
-    industry: string;
-    size: string;
-    location: string;
-    subcategory: string;
-  };
+  id: string;
+  onSave?: (values: ProviderAboutEditFormValues) => void | Promise<void>;
 }
 
-export default function ProviderAboutEditDialog({
-  providerType,
-  triggerLabel,
-  defaultValues,
-}: ProviderAboutEditDialogProps) {
-  const t = useTranslations('pages.provider.about.edit-dialog');
-  const [open, setOpen] = useState(false);
-  const [formValues, setFormValues] = useState(defaultValues);
+const EMPTY_VALUES: ProviderAboutEditFormValues = {
+  longDescription: '',
+  website: '',
+  industry: '',
+  size: '',
+  location: '',
+  subcategory: '',
+};
 
-  const isSchool = providerType === ProviderType.SCHOOL;
-  const hasChanges = useMemo(
-    () =>
-      formValues.longDescription !== defaultValues.longDescription ||
-      formValues.website !== defaultValues.website ||
-      formValues.industry !== defaultValues.industry ||
-      formValues.size !== defaultValues.size ||
-      formValues.location !== defaultValues.location ||
-      formValues.subcategory !== defaultValues.subcategory,
-    [defaultValues, formValues],
-  );
+export default function ProviderAboutEditDialog({
+  id,
+  onSave,
+}: ProviderAboutEditDialogProps) {
+  const tProvider = useTranslations('pages.provider');
+  const t = useTranslations('pages.provider.about.edit-dialog');
+
+  const [open, setOpen] = useState(false);
+  const { data: provider } = useGetProviderQuery(id);
+
+  const defaultValues = useMemo<ProviderAboutEditFormValues>(() => {
+    if (!provider) {
+      return EMPTY_VALUES;
+    }
+
+    return {
+      longDescription: '',
+      website: provider.contactInfo?.trim() ?? '',
+      industry: provider.industry?.trim() ?? '',
+      size: '',
+      location: '',
+      subcategory: '',
+    };
+  }, [provider]);
+
+  const form = useForm<ProviderAboutEditFormValues>({
+    resolver: zodResolver(ProviderAboutEditFormSchema),
+    defaultValues: EMPTY_VALUES,
+  });
 
   useEffect(() => {
     if (open) {
-      setFormValues(defaultValues);
+      form.reset(defaultValues);
     }
-  }, [defaultValues, open]);
+  }, [defaultValues, form, open]);
+
+  const isSchool = provider?.type === ProviderType.SCHOOL;
+  const canSubmit = typeof onSave === 'function';
+
+  const formSubmitHandler = form.handleSubmit(async (values) => {
+    if (!onSave) {
+      return;
+    }
+
+    await onSave(values);
+    setOpen(false);
+  });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button">{triggerLabel}</Button>
+        <Button type="button" disabled={!provider}>
+          {tProvider('about.actions.edit')}
+        </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[85vh] sm:max-w-xl grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden">
+      <DialogContent className="grid max-h-[85vh] grid-rows-[auto_minmax(0,1fr)] overflow-hidden sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
 
-        <div className="min-h-0 overflow-y-auto px-1 py-1">
-          <FieldGroup className="pb-1">
-            <Field>
-              <FieldLabel>{t('fields.longDescription')}</FieldLabel>
-              <Textarea
-                value={formValues.longDescription}
-                onChange={(event) =>
-                  setFormValues((prev) => ({
-                    ...prev,
-                    longDescription: event.target.value,
-                  }))
-                }
-                rows={5}
+        <form
+          onSubmit={formSubmitHandler}
+          className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto]"
+        >
+          <div className="min-h-0 overflow-y-auto px-1 py-1">
+            <FieldGroup className="pb-1">
+              <Controller
+                name="longDescription"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel>{t('fields.longDescription')}</FieldLabel>
+                    <Textarea {...field} rows={5} />
+                  </Field>
+                )}
               />
-            </Field>
 
-            <Field>
-              <FieldLabel>{t('fields.website')}</FieldLabel>
-              <Input
-                value={formValues.website}
-                onChange={(event) =>
-                  setFormValues((prev) => ({
-                    ...prev,
-                    website: event.target.value,
-                  }))
-                }
+              <Controller
+                name="website"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel>{t('fields.website')}</FieldLabel>
+                    <Input {...field} />
+                  </Field>
+                )}
               />
-            </Field>
 
-            {!isSchool && (
-              <Field>
-                <FieldLabel>{t('fields.industry')}</FieldLabel>
-                <Input
-                  value={formValues.industry}
-                  onChange={(event) =>
-                    setFormValues((prev) => ({
-                      ...prev,
-                      industry: event.target.value,
-                    }))
-                  }
+              {!isSchool && (
+                <Controller
+                  name="industry"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Field>
+                      <FieldLabel>{t('fields.industry')}</FieldLabel>
+                      <Input {...field} />
+                    </Field>
+                  )}
                 />
-              </Field>
-            )}
+              )}
 
-            {!isSchool && (
-              <Field>
-                <FieldLabel>{t('fields.size')}</FieldLabel>
-                <Input
-                  value={formValues.size}
-                  onChange={(event) =>
-                    setFormValues((prev) => ({
-                      ...prev,
-                      size: event.target.value,
-                    }))
-                  }
+              {!isSchool && (
+                <Controller
+                  name="size"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Field>
+                      <FieldLabel>{t('fields.size')}</FieldLabel>
+                      <Input {...field} />
+                    </Field>
+                  )}
                 />
-              </Field>
-            )}
+              )}
 
-            <Field>
-              <FieldLabel>{t('fields.location')}</FieldLabel>
-              <Input
-                value={formValues.location}
-                onChange={(event) =>
-                  setFormValues((prev) => ({
-                    ...prev,
-                    location: event.target.value,
-                  }))
-                }
+              <Controller
+                name="location"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel>{t('fields.location')}</FieldLabel>
+                    <Input {...field} />
+                  </Field>
+                )}
               />
-            </Field>
 
-            {!isSchool && (
-              <Field>
-                <FieldLabel>{t('fields.subcategory')}</FieldLabel>
-                <Input
-                  value={formValues.subcategory}
-                  onChange={(event) =>
-                    setFormValues((prev) => ({
-                      ...prev,
-                      subcategory: event.target.value,
-                    }))
-                  }
+              {!isSchool && (
+                <Controller
+                  name="subcategory"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Field>
+                      <FieldLabel>{t('fields.subcategory')}</FieldLabel>
+                      <Input {...field} />
+                    </Field>
+                  )}
                 />
-              </Field>
-            )}
-          </FieldGroup>
-        </div>
-
-        <DialogFooter>
-          <div className="w-full flex items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
-              {t('actions.cancel')}
-            </Button>
-            <Button type="button" disabled={!hasChanges}>
-              {t('actions.save')}
-            </Button>
+              )}
+            </FieldGroup>
           </div>
-        </DialogFooter>
+
+          <DialogFooter>
+            <div className="flex w-full items-center justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                {t('actions.cancel')}
+              </Button>
+              <Button
+                type="submit"
+                disabled={
+                  !canSubmit ||
+                  !form.formState.isDirty ||
+                  form.formState.isSubmitting
+                }
+              >
+                {t('actions.save')}
+              </Button>
+            </div>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

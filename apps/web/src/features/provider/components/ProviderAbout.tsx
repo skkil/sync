@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { ArrowSquareOutIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
@@ -13,9 +13,20 @@ interface ProviderAboutProps {
   showEditButton?: boolean;
 }
 
+type DetailFieldId =
+  | 'website'
+  | 'industry'
+  | 'size'
+  | 'location'
+  | 'subcategory'
+  | 'schoolType';
+type AboutFallbackId = DetailFieldId | 'longDescription';
+
 interface DetailRow {
+  id: DetailFieldId;
   label: string;
   value: string;
+  isUrl?: boolean;
 }
 
 export default function ProviderAbout({
@@ -23,8 +34,6 @@ export default function ProviderAbout({
   showEditButton = false,
 }: ProviderAboutProps) {
   const tProvider = useTranslations('pages.provider');
-  const tCreateSchool = useTranslations('pages.create-school');
-
   const { data: provider } = useGetProviderQuery(id);
 
   if (!provider) {
@@ -35,92 +44,77 @@ export default function ProviderAbout({
     );
   }
 
-  const longDescriptionFallback = tProvider('about.fallbacks.longDescription');
-  const websiteFallback = tProvider('about.fallbacks.website');
-  const industryFallback = tProvider('about.fallbacks.industry');
-  const sizeFallback = tProvider('about.fallbacks.size');
-  const locationFallback = tProvider('about.fallbacks.location');
-  const categoryFallback = tProvider('about.fallbacks.subcategory');
-  const schoolTypeFallback = tProvider('about.fallbacks.schoolType');
+  const getFallback = (fieldId: AboutFallbackId) =>
+    tProvider(`about.fallbacks.${fieldId}`);
 
-  // Existing backend field: description (currently used as short intro in overview card).
-  const description = provider.description?.trim() ?? '';
-
-  // New "About" body field (long description): backend field not introduced yet.
-  const longDescription = longDescriptionFallback;
-  const website = provider.contactInfo?.trim() || websiteFallback;
-  const industry = provider.industry?.trim() || industryFallback;
-  const size = sizeFallback;
-  const location = locationFallback;
-  const category = categoryFallback;
-
+  const longDescription = getFallback('longDescription');
+  const websiteValue = provider.contactInfo?.trim() ?? '';
+  const industryValue = provider.industry?.trim() ?? '';
   const locationLabel =
     provider.type === ProviderType.COMPANY
       ? tProvider('about.fields.headquarters')
       : tProvider('about.fields.location');
-
   const schoolType = getSchoolTypeLabel(
     provider.schoolType ?? null,
-    tCreateSchool,
-    schoolTypeFallback,
+    tProvider,
+    getFallback('schoolType'),
   );
 
   const detailRows: DetailRow[] = [
-    { label: tProvider('about.fields.website'), value: website },
+    {
+      id: 'website',
+      label: tProvider('about.fields.website'),
+      value: websiteValue || getFallback('website'),
+      isUrl: websiteValue.length > 0,
+    },
+    ...(provider.type === ProviderType.COMPANY
+      ? [
+          {
+            id: 'industry' as const,
+            label: tProvider('about.fields.industry'),
+            value: industryValue || getFallback('industry'),
+          },
+        ]
+      : []),
+    ...(provider.type === ProviderType.SCHOOL
+      ? [
+          {
+            id: 'schoolType' as const,
+            label: tProvider('about.fields.schoolType'),
+            value: schoolType,
+          },
+        ]
+      : [
+          {
+            id: 'size' as const,
+            label: tProvider('about.fields.size'),
+            value: getFallback('size'),
+          },
+        ]),
+    {
+      id: 'location',
+      label: locationLabel,
+      value: getFallback('location'),
+    },
+    ...(provider.type === ProviderType.SCHOOL
+      ? []
+      : [
+          {
+            id: 'subcategory' as const,
+            label: tProvider('about.fields.subcategory'),
+            value: getFallback('subcategory'),
+          },
+        ]),
   ];
-
-  if (provider.type === ProviderType.COMPANY) {
-    detailRows.push({
-      label: tProvider('about.fields.industry'),
-      value: industry,
-    });
-  }
-
-  if (provider.type === ProviderType.SCHOOL) {
-    detailRows.push({
-      label: tCreateSchool('form.school-type.label'),
-      value: schoolType,
-    });
-  }
-
-  if (provider.type !== ProviderType.SCHOOL) {
-    detailRows.push({
-      label: tProvider('about.fields.size'),
-      value: size,
-    });
-  }
-
-  detailRows.push({ label: locationLabel, value: location });
-
-  if (provider.type !== ProviderType.SCHOOL) {
-    detailRows.push({
-      label: tProvider('about.fields.subcategory'),
-      value: category,
-    });
-  }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-5">
+      <div className="mb-5 flex items-center justify-between">
         <h1 className="text-xl">{tProvider('sections.about')}</h1>
-        {showEditButton && (
-          <ProviderAboutEditDialog
-            providerType={provider.type}
-            triggerLabel={tProvider('about.actions.edit')}
-            defaultValues={{
-              description,
-              longDescription: '',
-              website: provider.contactInfo?.trim() ?? '',
-              industry: provider.industry?.trim() ?? '',
-              size: '',
-              location: '',
-              subcategory: '',
-            }}
-          />
-        )}
+        {showEditButton && <ProviderAboutEditDialog id={id} />}
       </div>
 
-      <p className="mb-6 text-sm leading-7 whitespace-pre-wrap text-muted-foreground">
+      <p className="mb-6 whitespace-pre-wrap text-sm leading-7 text-muted-foreground">
         {longDescription}
       </p>
 
@@ -130,8 +124,8 @@ export default function ProviderAbout({
         </p>
 
         <dl className="divide-y divide-border/70">
-          {detailRows.map((row) => (
-            <FieldRow key={row.label} label={row.label} value={row.value} />
+          {detailRows.map(({ id: rowId, isUrl, label, value }) => (
+            <FieldRow key={rowId} label={label} value={value} isUrl={isUrl} />
           ))}
         </dl>
       </section>
@@ -142,11 +136,10 @@ export default function ProviderAbout({
 interface FieldRowProps {
   label: string;
   value: string;
+  isUrl?: boolean;
 }
 
-function FieldRow({ label, value }: FieldRowProps) {
-  const isUrl = /^https?:\/\//i.test(value);
-
+function FieldRow({ label, value, isUrl = false }: FieldRowProps) {
   return (
     <div className="grid gap-2 py-3 md:grid-cols-[170px_1fr] md:gap-8">
       <dt className="text-sm font-medium text-foreground">{label}</dt>
@@ -176,9 +169,9 @@ function getSchoolTypeLabel(
 ) {
   switch (schoolType) {
     case SchoolType.UNIVERSITY:
-      return t('form.school-type.types.UNIVERSITY');
+      return t('about.school-type.types.UNIVERSITY');
     case SchoolType.HIGH_SCHOOL:
-      return t('form.school-type.types.HIGH_SCHOOL');
+      return t('about.school-type.types.HIGH_SCHOOL');
     default:
       return fallbackValue;
   }
