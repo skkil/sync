@@ -29,4 +29,8 @@ public class Reflection extends BaseEntity {
     this.experience = experience;
     this.content = content;
   }
+
+  public void updateContent(String content) {
+    this.content = content;
+  }
 }
