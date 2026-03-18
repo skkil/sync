@@ -12,7 +12,10 @@ import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.user.constant.Role;
 import com.skkil.sync.user.dto.request.LoginRequest;
 import com.skkil.sync.user.dto.request.RegisterRequest;
+import com.skkil.sync.user.repository.UserRepository;
 import com.skkil.sync.user.service.AuthService;
+import com.skkil.sync.user.service.EmailVerificationService;
+import com.skkil.sync.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +43,22 @@ class AuthControllerTests {
 
   @MockitoBean private AuthService authService;
 
+  @SuppressWarnings("UnusedVariable")
+  @MockitoBean
+  private EmailVerificationService emailVerificationService;
+
+  @SuppressWarnings("UnusedVariable")
+  @MockitoBean
+  private UserService userService;
+
+  @MockitoBean private UserRepository userRepository;
+
   @Test
   void login() throws Exception {
     LoginRequest request = new LoginRequest("user@example.com", "password123");
 
     AuthenticatedUser user =
-        new AuthenticatedUser(1L, "user", "user@example.com", "hashedPassword", Role.USER);
+        new AuthenticatedUser(1L, "user", "user@example.com", "hashedPassword", Role.USER, true);
     Authentication authentication =
         new UsernamePasswordAuthenticationToken(user, request.password(), user.getAuthorities());
 
@@ -68,6 +81,8 @@ class AuthControllerTests {
   @Test
   void register() throws Exception {
     RegisterRequest request = new RegisterRequest("newuser@example.com", "password123");
+
+    when(userRepository.findByEmail(request.email())).thenReturn(java.util.Optional.empty());
 
     mockMvc
         .perform(

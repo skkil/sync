@@ -3,15 +3,14 @@ package com.skkil.sync.user.service.oauth2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.skkil.sync.user.constant.OAuth2Provider;
-import com.skkil.sync.user.dto.request.RegisterRequest;
 import com.skkil.sync.user.exception.OAuth2AccountCannotBeLinkedException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
-import com.skkil.sync.user.service.AuthService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -30,11 +29,10 @@ public class CustomOidcUserServiceTests {
 
   @InjectMocks private CustomOidcUserService customOidcUserService;
 
-  @Mock private AuthService authService;
   @Mock private UserRepository userRepository;
 
   @Test
-  void getOrCreateUser_userNotExists_registerUser() {
+  void getOrCreateUser_userNotExists_createNewUser() {
     String email = "newuser@email.com";
     String fullName = "New User";
     OidcUser oidcUser = createMockOidcUser(email, fullName);
@@ -42,9 +40,10 @@ public class CustomOidcUserServiceTests {
     User newUser =
         User.builder().email(email).fullName(fullName).hashedPassword(null).bio("").build();
     newUser.setId(1L);
+    newUser.verifyEmail();
 
     when(userRepository.findByEmailWithOAuthAccounts(email)).thenReturn(Optional.empty());
-    when(authService.registerUser(any(RegisterRequest.class))).thenReturn(newUser);
+    when(userRepository.count()).thenReturn(1L);
     when(userRepository.save(any(User.class))).thenReturn(newUser);
 
     User result = customOidcUserService.getOrCreateUser(OAuth2Provider.GOOGLE, oidcUser);
@@ -53,9 +52,9 @@ public class CustomOidcUserServiceTests {
     assertThat(result.getEmail()).isEqualTo(email);
     assertThat(result.getFullName()).isEqualTo(fullName);
     assertThat(result.getId()).isEqualTo(1L);
+    assertThat(result.isEmailVerified()).isTrue();
     verify(userRepository).findByEmailWithOAuthAccounts(email);
-    verify(authService).registerUser(any(RegisterRequest.class));
-    verify(userRepository).save(any(User.class));
+    verify(userRepository, atLeastOnce()).save(any());
   }
 
   @Test

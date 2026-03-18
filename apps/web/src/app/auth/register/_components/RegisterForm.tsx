@@ -24,7 +24,7 @@ const MIN_PASSWORD_LENGTH = 8;
 export default function RegisterForm() {
   const t = useTranslations('pages.register.form');
 
-  const { mutate: register } = useRegisterMutation();
+  const { mutateAsync: register, isPending } = useRegisterMutation();
   const router = useRouter();
 
   const RegisterFormSchema = z
@@ -72,26 +72,28 @@ export default function RegisterForm() {
   });
 
   const onFormSubmit = async (values: RegisterFormValues) => {
-    register(
-      {
+    if (isPending) {
+      return;
+    }
+
+    try {
+      await register({
         email: values.email,
         password: values.password,
-      },
-      {
-        onSuccess: () => {
-          router.push('/auth/login');
-        },
-        onError: (error) => {
-          if (error instanceof SyncError) {
-            const { code } = error;
+      });
 
-            if (code === ErrorCode.USER_ALREADY_EXISTS) {
-              toast.error(t('errors.user-already-exists'));
-            }
-          }
-        },
-      },
-    );
+      sessionStorage.setItem('pendingEmail', values.email);
+      router.push('/auth/verify-email');
+    } catch (error) {
+      console.error('Registration error:', error);
+      if (error instanceof SyncError) {
+        const { code } = error;
+
+        if (code === ErrorCode.USER_ALREADY_EXISTS) {
+          toast.error(t('errors.user-already-exists'));
+        }
+      }
+    }
   };
 
   return (
@@ -177,11 +179,11 @@ export default function RegisterForm() {
           />
 
           <div>
-            <Button className="w-full" type="submit">
+            <Button className="w-full" type="submit" isPending={isPending}>
               {t('submit.label')}
             </Button>
 
-            <Button className="w-full" variant="link">
+            <Button className="w-full" variant="link" type="button">
               <Link href="/auth/login">{t('links.login.label')}</Link>
             </Button>
           </div>

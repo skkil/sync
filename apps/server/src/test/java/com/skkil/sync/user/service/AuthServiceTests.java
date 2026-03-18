@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.user.constant.Role;
 import com.skkil.sync.user.dto.request.LoginRequest;
-import com.skkil.sync.user.dto.request.RegisterRequest;
 import com.skkil.sync.user.exception.UserAlreadyExistsException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
@@ -24,7 +23,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +37,6 @@ public class AuthServiceTests {
   @Mock private UserRepository userRepository;
   @Mock private AuthenticationManager authenticationManager;
   @Mock private PasswordEncoder passwordEncoder;
-  @Mock private ApplicationEventPublisher eventPublisher;
 
   @InjectMocks private AuthService authService;
 
@@ -48,7 +45,8 @@ public class AuthServiceTests {
   void authenticate_validUser_success() {
     LoginRequest request = new LoginRequest("user@example.com", "password123");
     AuthenticatedUser authenticatedUser =
-        new AuthenticatedUser(1L, "Test User", "user@example.com", "hashedPassword", Role.USER);
+        new AuthenticatedUser(
+            1L, "Test User", "user@example.com", "hashedPassword", Role.USER, true);
 
     when(userService.loadUserByUsername("user@example.com")).thenReturn(authenticatedUser);
     Authentication mockAuth = mock(Authentication.class);
@@ -59,6 +57,22 @@ public class AuthServiceTests {
     assertThat(result).isNotNull();
     verify(userService).loadUserByUsername("user@example.com");
     verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+  }
+
+  @Test
+  @DisplayName("authenticate 시 이메일 미인증 사용자는 로그인 실패")
+  void authenticate_unverifiedUser_throwBadCredentialsException() {
+    LoginRequest request = new LoginRequest("user@example.com", "password123");
+    AuthenticatedUser authenticatedUser =
+        new AuthenticatedUser(
+            1L, "Test User", "user@example.com", "hashedPassword", Role.USER, false);
+
+    when(userService.loadUserByUsername("user@example.com")).thenReturn(authenticatedUser);
+
+    assertThatThrownBy(() -> authService.authenticate(request))
+        .isInstanceOf(BadCredentialsException.class);
+
+    verify(authenticationManager, never()).authenticate(any(Authentication.class));
   }
 
   @Test
@@ -81,7 +95,7 @@ public class AuthServiceTests {
   void authenticate_oAuthUserWithNoPassword_throwIllegalArgumentException() {
     LoginRequest request = new LoginRequest("oauth@example.com", "password123");
     AuthenticatedUser authenticatedUser =
-        new AuthenticatedUser(1L, "OAuth User", "oauth@example.com", null, Role.USER);
+        new AuthenticatedUser(1L, "OAuth User", "oauth@example.com", null, Role.USER, true);
 
     when(userService.loadUserByUsername("oauth@example.com")).thenReturn(authenticatedUser);
 
@@ -92,13 +106,13 @@ public class AuthServiceTests {
   }
 
   @Test
-  @DisplayName("registerUser 시 새 사용자는 등록 성공")
-  void registerUser_newUser_success() {
-    RegisterRequest request = new RegisterRequest("newuser@example.com", "password123");
+  @DisplayName("registerUserAfterEmailVerification 시 새 사용자는 등록 성공")
+  void registerUserAfterEmailVerification_newUser_success() {
     String encodedPassword = "encodedPassword";
 
     when(userRepository.findByEmail("newuser@example.com")).thenReturn(Optional.empty());
     when(passwordEncoder.encode("password123")).thenReturn(encodedPassword);
+    when(userRepository.count()).thenReturn(1L);
     when(userRepository.save(any(User.class)))
         .thenAnswer(
             invocation -> {
@@ -107,7 +121,8 @@ public class AuthServiceTests {
               return user;
             });
 
-    authService.registerUser(request);
+    User result =
+        authService.registerUserAfterEmailVerification("newuser@example.com", "password123");
 
     ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
     verify(userRepository).save(userCaptor.capture());
@@ -116,17 +131,16 @@ public class AuthServiceTests {
     assertThat(savedUser)
         .hasFieldOrPropertyWithValue("email", "newuser@example.com")
         .hasFieldOrPropertyWithValue("hashedPassword", encodedPassword)
-        .hasFieldOrPropertyWithValue("fullName", "");
+        .hasFieldOrPropertyWithValue("fullName", "")
+        .hasFieldOrPropertyWithValue("emailVerified", true);
 
     verify(passwordEncoder).encode("password123");
-
-    verify(eventPublisher).publishEvent(any());
+    assertThat(result).isNotNull().hasFieldOrPropertyWithValue("email", "newuser@example.com");
   }
 
   @Test
-  @DisplayName("registerUser 시 이미 존재하는 이메일은 UserAlreadyExistsException 발생")
-  void registerUser_existingEmail_throwUserAlreadyExistsException() {
-    RegisterRequest request = new RegisterRequest("existing@example.com", "password123");
+  @DisplayName("registerUserAfterEmailVerification 시 이미 존재하는 이메일은 UserAlreadyExistsException 발생")
+  void registerUserAfterEmailVerification_existingEmail_throwUserAlreadyExistsException() {
     User existingUser =
         User.builder()
             .email("existing@example.com")
@@ -136,7 +150,10 @@ public class AuthServiceTests {
 
     when(userRepository.findByEmail("existing@example.com")).thenReturn(Optional.of(existingUser));
 
-    assertThatThrownBy(() -> authService.registerUser(request))
+    assertThatThrownBy(
+            () ->
+                authService.registerUserAfterEmailVerification(
+                    "existing@example.com", "password123"))
         .isInstanceOf(UserAlreadyExistsException.class);
 
     verify(passwordEncoder, never()).encode(anyString());
@@ -144,13 +161,13 @@ public class AuthServiceTests {
   }
 
   @Test
-  @DisplayName("registerUser 시 비밀번호는 암호화되어 저장")
-  void registerUser_passwordIsEncoded() {
-    RegisterRequest request = new RegisterRequest("user@example.com", "plainPassword");
+  @DisplayName("registerUserAfterEmailVerification 시 비밀번호는 암호화되어 저장")
+  void registerUserAfterEmailVerification_passwordIsEncoded() {
     String encodedPassword = "encodedHashedPassword";
 
     when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.empty());
     when(passwordEncoder.encode("plainPassword")).thenReturn(encodedPassword);
+    when(userRepository.count()).thenReturn(1L);
     when(userRepository.save(any(User.class)))
         .thenAnswer(
             invocation -> {
@@ -159,7 +176,7 @@ public class AuthServiceTests {
               return user;
             });
 
-    authService.registerUser(request);
+    authService.registerUserAfterEmailVerification("user@example.com", "plainPassword");
 
     ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
     verify(userRepository).save(userCaptor.capture());

@@ -14,7 +14,7 @@ public class WithAuthenticatedUserSecurityContextFactory
   @Override
   public SecurityContext createSecurityContext(WithAuthenticatedUser annotation) {
     AuthenticatedUser authenticatedUser =
-        new AuthenticatedUser(1L, "User Name", "email@email.com", "password", Role.USER);
+        new AuthenticatedUser(1L, "User Name", "email@email.com", "password", Role.USER, true);
 
     Authentication authentication =
         UsernamePasswordAuthenticationToken.authenticated(

@@ -1,5 +1,6 @@
 package com.skkil.sync.config;
 
+import com.skkil.sync.common.security.EmailVerificationFilter;
 import com.skkil.sync.common.security.GlobalPermissionEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
@@ -28,6 +30,12 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
+  private final EmailVerificationFilter emailVerificationFilter;
+
+  public SecurityConfig(EmailVerificationFilter emailVerificationFilter) {
+    this.emailVerificationFilter = emailVerificationFilter;
+  }
+
   @Bean
   @Order(2)
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,7 +43,8 @@ public class SecurityConfig {
         .csrf(
             csrf ->
                 csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                    .ignoringRequestMatchers("/auth/register", "/auth/verify-email"))
         .formLogin(formLogin -> formLogin.disable())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
@@ -54,11 +63,13 @@ public class SecurityConfig {
                         "/profiles/**",
                         "/auth/login",
                         "/auth/register",
+                        "/auth/verify-email",
                         "/providers/**",
                         "/search/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
+        .addFilterAfter(emailVerificationFilter, UsernamePasswordAuthenticationFilter.class)
         .exceptionHandling(
             exception ->
                 exception.authenticationEntryPoint(

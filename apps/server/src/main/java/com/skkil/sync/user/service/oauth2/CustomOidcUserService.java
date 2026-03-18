@@ -2,12 +2,11 @@ package com.skkil.sync.user.service.oauth2;
 
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.user.constant.OAuth2Provider;
-import com.skkil.sync.user.dto.request.RegisterRequest;
+import com.skkil.sync.user.constant.Role;
 import com.skkil.sync.user.exception.OAuth2AccountCannotBeLinkedException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserOAuth2Account;
 import com.skkil.sync.user.repository.UserRepository;
-import com.skkil.sync.user.service.AuthService;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -23,11 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class CustomOidcUserService extends OidcUserService {
 
-  private final AuthService authService;
   private final UserRepository userRepository;
 
-  public CustomOidcUserService(AuthService authService, UserRepository userRepository) {
-    this.authService = authService;
+  public CustomOidcUserService(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
@@ -82,6 +79,7 @@ public class CustomOidcUserService extends OidcUserService {
         .email(user.getEmail())
         .password(null)
         .role(user.getRole())
+        .emailVerified(user.isEmailVerified())
         .build();
   }
 
@@ -96,9 +94,22 @@ public class CustomOidcUserService extends OidcUserService {
     if (optionalUser.isPresent()) {
       user = optionalUser.get();
     } else {
-      log.debug("User not found with email: {}. Creating new user.", email);
-      user = authService.registerUser(new RegisterRequest(email, null));
-      user.setFullName(oidcUser.getFullName() == null ? "" : oidcUser.getFullName());
+      log.debug("User not found with email: {}. Creating new user from OAuth2.", email);
+      user =
+          User.builder()
+              .email(email)
+              .fullName(oidcUser.getFullName() == null ? "" : oidcUser.getFullName())
+              .hashedPassword(null)
+              .build();
+      // OAuth2 제공자가 이메일 인증을 확인했으므로 바로 verified로 설정
+      user.verifyEmail();
+
+      if (userRepository.count() == 0) {
+        log.info("Registering first user from OAuth2, assigning ADMIN role");
+        user.setRole(Role.ADMIN);
+      }
+
+      user = userRepository.save(user);
     }
 
     linkOAuth2Account(user, provider, oidcUser);

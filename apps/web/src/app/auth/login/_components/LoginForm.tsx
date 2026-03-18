@@ -129,7 +129,7 @@ export default function LoginForm() {
               {t('submit.label')}
             </Button>
 
-            <Button className="w-full" variant="link">
+            <Button className="w-full" variant="link" type="button">
               <Link href="/auth/register">{t('links.register.label')}</Link>
             </Button>
           </div>

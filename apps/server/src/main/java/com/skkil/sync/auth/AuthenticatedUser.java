@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 @Builder
 public record AuthenticatedUser(
-    Long userId, String fullName, String email, String password, Role role)
+    Long userId, String fullName, String email, String password, Role role, boolean emailVerified)
     implements UserDetails, OidcUser {
 
   @Override
@@ -64,5 +64,9 @@ public record AuthenticatedUser(
 
   public boolean isAdmin() {
     return role == Role.ADMIN;
+  }
+
+  public boolean isEmailVerified() {
+    return emailVerified;
   }
 }

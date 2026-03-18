@@ -42,6 +42,12 @@ public class User extends BaseEntity {
   @Setter
   private String hashedPassword;
 
+  @Column(nullable = false)
+  private boolean emailVerified;
+
+  @Column(nullable = false)
+  private boolean enabled;
+
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "profile_image_id")
   @Setter
@@ -96,6 +102,8 @@ public class User extends BaseEntity {
     this.hashedPassword = hashedPassword;
     this.fullName = fullName;
     this.bio = bio;
+    this.emailVerified = false;
+    this.enabled = true;
   }
 
   public void onboard() {
@@ -128,6 +136,10 @@ public class User extends BaseEntity {
 
   public void setContacts(UserContacts contacts) {
     this.contacts = contacts;
+  }
+
+  public void verifyEmail() {
+    this.emailVerified = true;
   }
 
   private static boolean validateHandle(String handle) {
