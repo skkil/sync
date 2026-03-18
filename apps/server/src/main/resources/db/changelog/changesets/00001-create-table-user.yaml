@@ -44,6 +44,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: current_provider_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
                   name: contacts
                   type: JSONB
               - column:

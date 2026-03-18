@@ -54,10 +54,24 @@ public class UserRelationshipService {
     return new GetConnectionsResponse(
         connections.stream()
             .map(
-                follower ->
-                    new GetConnectionsResponse.Connection(
-                        follower.getFollowee().getId().toString(),
-                        follower.getFollowee().getFullName()))
+                rel -> {
+                  var followee = rel.getFollowee();
+                  var provider = followee.getCurrentProvider();
+
+                  GetConnectionsResponse.Provider providerDto =
+                      (provider != null)
+                          ? new GetConnectionsResponse.Provider(
+                              provider.getId().toString(),
+                              provider.getType().name(),
+                              provider.getName())
+                          : null;
+
+                  return new GetConnectionsResponse.Connection(
+                      followee.getId().toString(),
+                      followee.getFullName(),
+                      providerDto,
+                      followee.getProfession());
+                })
             .toList());
   }
 
