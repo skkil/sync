@@ -588,6 +588,10 @@
         "description": "기관을 검토하고 검증하세요",
         "actions": {
           "verify": "검증"
+        },
+        "messages": {
+          "success": "기관 검증이 완료되었습니다.",
+          "error": "기관 검증에 실패했습니다."
         }
       }
     },

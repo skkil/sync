@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,18 +30,37 @@ export default function UnverifiedProviders() {
   const t = useTranslations('pages.admin.unverified-providers');
 
   const [currentPage, setCurrentPage] = useState(0);
+  const [verifyingProviderId, setVerifyingProviderId] = useState<string | null>(
+    null,
+  );
 
   const { data: unverifiedProviders } = useGetUnverifiedProvidersQuery(
     currentPage,
     PAGE_SIZE,
   );
 
-  const { mutate: verifyProvider } = useVerifyProviderMutation();
+  const { mutate: verifyProvider, isPending } = useVerifyProviderMutation();
 
   const hasPreviousPage = currentPage > 0;
   const hasNextPage =
     unverifiedProviders &&
     currentPage < unverifiedProviders.page.totalPages - 1;
+
+  const verifyProviderHandler = (providerId: string) => {
+    setVerifyingProviderId(providerId);
+
+    verifyProvider(providerId, {
+      onSuccess: () => {
+        toast.success(t('messages.success'));
+      },
+      onError: () => {
+        toast.error(t('messages.error'));
+      },
+      onSettled: () => {
+        setVerifyingProviderId(null);
+      },
+    });
+  };
 
   return (
     <Card>
@@ -61,8 +81,14 @@ export default function UnverifiedProviders() {
 
                 <div>
                   <Button
+                    isPending={
+                      isPending && verifyingProviderId === provider.id
+                    }
+                    disabled={
+                      isPending && verifyingProviderId !== provider.id
+                    }
                     onClick={() => {
-                      verifyProvider(provider.id);
+                      verifyProviderHandler(provider.id);
                     }}
                   >
                     {t('actions.verify')}
