@@ -57,7 +57,7 @@ export default async function Company({ params, searchParams }: CompanyProps) {
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout />,
+      content: <ProviderAbout id={id} />,
     },
     {
       id: 'jobs',
