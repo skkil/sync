@@ -81,12 +81,8 @@ export default function UnverifiedProviders() {
 
                 <div>
                   <Button
-                    isPending={
-                      isPending && verifyingProviderId === provider.id
-                    }
-                    disabled={
-                      isPending && verifyingProviderId !== provider.id
-                    }
+                    isPending={isPending && verifyingProviderId === provider.id}
+                    disabled={isPending && verifyingProviderId !== provider.id}
                     onClick={() => {
                       verifyProviderHandler(provider.id);
                     }}
