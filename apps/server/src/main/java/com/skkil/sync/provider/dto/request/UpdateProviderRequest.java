@@ -3,6 +3,7 @@ package com.skkil.sync.provider.dto.request;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.skkil.sync.provider.constant.ProviderType;
+import com.skkil.sync.provider.project.dto.request.UpdateProjectRequest;
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -16,12 +17,7 @@ import com.skkil.sync.provider.constant.ProviderType;
   @JsonSubTypes.Type(value = UpdateContestRequest.class, name = ProviderType.Constants.CONTEST),
   @JsonSubTypes.Type(value = UpdateProjectRequest.class, name = ProviderType.Constants.PROJECT)
 })
-public sealed interface UpdateProviderRequest
-    permits UpdateCompanyRequest,
-        UpdateSchoolRequest,
-        UpdateLabRequest,
-        UpdateContestRequest,
-        UpdateProjectRequest {
+public interface UpdateProviderRequest {
 
   ProviderType type();
 
