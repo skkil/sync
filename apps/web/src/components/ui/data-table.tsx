@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import { Translations } from '@/types/i18n';
 
 interface DataTableProps<TData, TValue> {
@@ -95,6 +96,7 @@ interface DataTableColumnHeaderProps<
   TData,
   TValue,
 > extends React.HTMLAttributes<HTMLDivElement> {
+  align?: 'start' | 'center' | 'end';
   column: Column<TData, TValue>;
   title: string;
 }
@@ -102,14 +104,24 @@ interface DataTableColumnHeaderProps<
 export function DataTableColumnHeader<TData, TValue>({
   title,
   icon,
+  align = 'center',
   ...props
 }: DataTableColumnHeaderProps<TData, TValue> & {
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-2" {...props}>
-      {icon && icon}
-      {title}
+    <div
+      className={cn(
+        'flex',
+        align === 'start' && 'justify-start',
+        align === 'center' && 'justify-center',
+        align === 'end' && 'justify-end',
+      )}
+    >
+      <div className="flex items-center gap-2" {...props}>
+        {icon && icon}
+        {title}
+      </div>
     </div>
   );
 }

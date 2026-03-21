@@ -1,6 +1,7 @@
-package com.skkil.sync.provider.dto.response;
+package com.skkil.sync.provider.project.dto.response;
 
 import com.skkil.sync.provider.constant.ProviderType;
+import com.skkil.sync.provider.dto.response.GetProviderResponse;
 import java.time.LocalDateTime;
 import lombok.Builder;
 

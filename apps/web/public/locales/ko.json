@@ -136,6 +136,45 @@
         "required_description": "설명은 필수 항목입니다."
       }
     },
+    "project": {
+      "about": {
+        "label": "소개"
+      },
+      "team-building": {
+        "label": "팀 빌딩",
+        "list": {
+          "title": "제목",
+          "empty": "팀 빌딩 공고가 없습니다."
+        }
+      },
+      "admin": {
+        "about": {
+          "label": "소개"
+        },
+        "team-building": {
+          "label": "팀 빌딩",
+          "form": {
+            "label": "새로운 팀 빌딩 공고 작성하기",
+            "title": "팀 빌딩 공고 작성",
+            "form-description": "팀 빌딩 공고에 대한 정보를 입력하세요",
+            "post-title": {
+              "label": "제목",
+              "placeholder": "팀 빌딩 공고 제목을 입력하세요"
+            },
+            "content": {
+              "label": "설명",
+              "placeholder": "팀 빌딩 공고에 대한 자세한 설명을 입력하세요"
+            },
+            "submit": {
+              "label": "공고 작성"
+            },
+            "errors": {
+              "required-title": "제목은 필수 항목입니다."
+            }
+          }
+        }
+      }
+    },
     "create-project": {
       "title": "만들고자 하는 프로젝트에 대해 알려주세요",
       "form": {
@@ -649,6 +688,16 @@
     }
   },
   "components": {
+    "provider": {
+      "maintainer": {
+        "view-as-public": "일반 사용자로 보기",
+        "viewing-as-public": {
+          "title": "현재 {name}를 일반 사용자로 보고 있습니다.",
+          "description": "관리자가 아닌 일반 사용자는 이 페이지를 이렇게 보게 됩니다.",
+          "view-as-admin": "관리자로 보기"
+        }
+      }
+    },
     "navigation": {
       "search": {
         "placeholder": "사람, 기관 또는 프로젝트 검색..."

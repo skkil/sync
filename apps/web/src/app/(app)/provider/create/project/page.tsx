@@ -58,7 +58,7 @@ export default function CreateProject() {
       },
       {
         onSuccess: (data) => {
-          router.push(`/project/${data.id}`);
+          router.push(`/project/${data.id}/admin`);
         },
       },
     );

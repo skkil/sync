@@ -1,13 +1,14 @@
-package com.skkil.sync.provider.service;
+package com.skkil.sync.provider.project.service;
 
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.dto.request.CreateProviderRequest;
-import com.skkil.sync.provider.dto.request.UpdateProjectRequest;
 import com.skkil.sync.provider.dto.request.UpdateProviderRequest;
-import com.skkil.sync.provider.dto.response.GetProjectResponse;
 import com.skkil.sync.provider.dto.response.GetProviderResponse;
-import com.skkil.sync.provider.model.Project;
 import com.skkil.sync.provider.model.Provider;
+import com.skkil.sync.provider.project.dto.request.UpdateProjectRequest;
+import com.skkil.sync.provider.project.dto.response.GetProjectResponse;
+import com.skkil.sync.provider.project.model.Project;
+import com.skkil.sync.provider.service.ProviderStrategy;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import org.springframework.stereotype.Service;
