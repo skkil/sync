@@ -1,8 +1,12 @@
 package com.skkil.sync.message.service;
 
+import com.skkil.sync.media.service.MediaService;
 import com.skkil.sync.message.dto.request.SendMessageRequest;
+import com.skkil.sync.message.dto.response.CreateConversationResponse;
 import com.skkil.sync.message.dto.response.GetConversationsResponse;
 import com.skkil.sync.message.dto.response.GetMessagesResponse;
+import com.skkil.sync.message.dto.response.GetUnreadMessagesCountResponse;
+import com.skkil.sync.message.dto.response.SendMessageResponse;
 import com.skkil.sync.message.exception.MessageToSelfException;
 import com.skkil.sync.message.model.Conversation;
 import com.skkil.sync.message.model.Message;
@@ -13,9 +17,9 @@ import com.skkil.sync.user.service.UserService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,99 +31,107 @@ public class ConversationService {
   private final MessageRepository messageRepository;
   private final SimpMessagingTemplate messagingTemplate;
   private final UserService userService;
+  private final MediaService mediaService;
 
   public ConversationService(
       ConversationRepository conversationRepository,
       MessageRepository messageRepository,
       SimpMessagingTemplate messagingTemplate,
-      UserService userService) {
+      UserService userService,
+      MediaService mediaService) {
     this.conversationRepository = conversationRepository;
     this.messageRepository = messageRepository;
     this.messagingTemplate = messagingTemplate;
     this.userService = userService;
+    this.mediaService = mediaService;
   }
 
   @Transactional
-  public Conversation getOrCreateConversation(Long user1, Long user2) {
-    var conversation = conversationRepository.findByParticipants(user1, user2);
-    if (conversation.isPresent()) {
-      log.debug("Conversation between {} and {} already exists", user1, user2);
-      return conversation.get();
+  public CreateConversationResponse createConversation(Long userId, Long participantId) {
+    if (userId.equals(participantId)) {
+      throw new MessageToSelfException();
     }
 
-    log.debug("Creating new conversation between {} and {}", user1, user2);
-    var newConversation = new Conversation();
+    var conversationOptional = conversationRepository.findByParticipants(userId, participantId);
+    Conversation conversation;
 
-    Participant
-        participant1 =
-            Participant.builder()
-                .user(userService.getUserReference(user1))
-                .conversation(newConversation)
-                .build(),
-        participant2 =
-            Participant.builder()
-                .user(userService.getUserReference(user2))
-                .conversation(newConversation)
-                .build();
+    if (conversationOptional.isEmpty()) {
+      log.debug(
+          "No existing conversation between {} and {}, creating new one", userId, participantId);
+      var newConversation = new Conversation();
 
-    newConversation.getParticipants().add(participant1);
-    newConversation.getParticipants().add(participant2);
-    return conversationRepository.save(newConversation);
+      Participant
+          participant1 =
+              Participant.builder()
+                  .user(userService.getUserReference(userId))
+                  .conversation(newConversation)
+                  .build(),
+          participant2 =
+              Participant.builder()
+                  .user(userService.getUserReference(participantId))
+                  .conversation(newConversation)
+                  .build();
+
+      newConversation.getParticipants().add(participant1);
+      newConversation.getParticipants().add(participant2);
+      conversation = conversationRepository.save(newConversation);
+    } else {
+      conversation = conversationOptional.get();
+    }
+
+    return new CreateConversationResponse(conversation.getId().toString());
   }
 
   @Transactional(readOnly = true)
   public GetConversationsResponse getConversations(Long userId) {
-    var conversations =
-        conversationRepository.findByUserId(userId).stream()
+    var conversations = conversationRepository.getConversationsForUser(userId);
+
+    return new GetConversationsResponse(
+        conversations.stream()
             .map(
                 conversation -> {
                   var participants =
-                      conversation.getParticipants().stream()
+                      conversation.participants().stream()
                           .map(
                               participant ->
-                                  new GetConversationsResponse.Participant(
-                                      participant.getUser().getId().toString(),
-                                      participant.getUser().getFullName()))
+                                  GetConversationsResponse.Participant.builder()
+                                      .userId(participant.id().toString())
+                                      .name(participant.name())
+                                      .profileImageUrl(
+                                          participant.profileImageId() == null
+                                              ? null
+                                              : mediaService
+                                                  .getMediaUrl(participant.profileImageId())
+                                                  .toString())
+                                      .build())
                           .toList();
 
                   var lastMessage =
-                      messageRepository
-                          .findLastMessageByConversation(conversation.getId())
-                          .map(
-                              m ->
-                                  GetConversationsResponse.Message.builder()
-                                      .messageId(m.getId().toString())
-                                      .senderId(m.getSender().getUser().getId().toString())
-                                      .content(m.getContent())
-                                      .sentAt(
-                                          m.getCreatedAt()
-                                              .atZone(ZoneId.systemDefault())
-                                              .toLocalDateTime())
-                                      .build())
-                          .orElse(null);
+                      conversation.lastMessage() == null
+                          ? null
+                          : GetConversationsResponse.Message.builder()
+                              .messageId(conversation.lastMessage().id().toString())
+                              .senderId(conversation.lastMessage().senderId().toString())
+                              .content(conversation.lastMessage().content())
+                              .sentAt(conversation.lastMessage().timestamp())
+                              .build();
 
                   return GetConversationsResponse.Conversation.builder()
-                      .conversationId(conversation.getId().toString())
+                      .conversationId(conversation.conversationId().toString())
                       .participants(participants)
                       .lastMessage(lastMessage)
                       .build();
                 })
-            .toList();
-
-    return new GetConversationsResponse(conversations);
+            .toList());
   }
 
   @Transactional(readOnly = true)
-  public GetMessagesResponse getMessages(Long userId, Long participantId, Long after, Long size) {
-    var conversation = conversationRepository.findByParticipants(userId, participantId);
-    if (conversation.isEmpty()) {
-      return new GetMessagesResponse(Page.empty());
-    }
-
+  @PreAuthorize("hasPermission(#conversationId, 'CONVERSATION', 'READ')")
+  public GetMessagesResponse getMessages(Long userId, Long conversationId, Long after, Long size) {
     Pageable pageable = Pageable.ofSize(size.intValue());
     var messages =
         messageRepository
-            .getMessages(conversation.get(), after, pageable)
+            .getMessages(conversationRepository.getReferenceById(conversationId), after, pageable)
             .map(
                 message ->
                     GetMessagesResponse.Message.builder()
@@ -134,12 +146,9 @@ public class ConversationService {
   }
 
   @Transactional
-  public void sendMessage(Long senderId, SendMessageRequest request) {
-    if (senderId.equals(request.to())) {
-      throw new MessageToSelfException();
-    }
-
-    Conversation conversation = getOrCreateConversation(senderId, request.to());
+  @PreAuthorize("hasPermission(#conversationId, 'CONVERSATION', 'EDIT')")
+  public void sendMessage(Long conversationId, Long senderId, SendMessageRequest request) {
+    Conversation conversation = conversationRepository.findById(conversationId).orElseThrow();
 
     Participant sender =
         conversation.getParticipants().stream()
@@ -156,13 +165,32 @@ public class ConversationService {
     messageRepository.save(message);
 
     for (Participant participant : conversation.getParticipants()) {
-      messagingTemplate.convertAndSend(
-          "/topic/users/" + participant.getUser().getId() + "/messages",
-          new GetMessagesResponse.Message(
-              message.getId().toString(),
-              sender.getUser().getId().toString(),
-              message.getContent(),
-              LocalDateTime.ofInstant(message.getCreatedAt(), ZoneId.systemDefault())));
+      log.debug(
+          "Sending message {} to participant {}", message.getId(), participant.getUser().getId());
+
+      messagingTemplate.convertAndSendToUser(
+          participant.getUser().getId().toString(),
+          "queue/messages",
+          SendMessageResponse.builder()
+              .conversationId(conversation.getId().toString())
+              .messageId(message.getId().toString())
+              .senderId(sender.getUser().getId().toString())
+              .content(message.getContent())
+              .sentAt(LocalDateTime.ofInstant(message.getCreatedAt(), ZoneId.systemDefault()))
+              .build());
     }
+  }
+
+  @Transactional(readOnly = true)
+  public GetUnreadMessagesCountResponse getUnreadMessagesCount(Long userId) {
+    var conversations = messageRepository.getUnreadMessagesCount(userId);
+    return new GetUnreadMessagesCountResponse(
+        conversations.stream()
+            .map(
+                conversation ->
+                    new GetUnreadMessagesCountResponse.Conversation(
+                        conversation.conversationId().toString(),
+                        conversation.unreadMessageCount()))
+            .toList());
   }
 }

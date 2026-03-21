@@ -40,13 +40,13 @@ export async function getConversations(): Promise<Conversation[]> {
     );
 }
 
-export const useGetConversationsOptions = (): UseQueryOptions<
+export const useGetConversationsQueryOptions = (): UseQueryOptions<
   Conversation[]
 > => ({
   queryKey: ['conversations'],
   queryFn: () => getConversations(),
 });
 
-export function useGetConversations() {
-  return useQuery<Conversation[]>(useGetConversationsOptions());
+export function useGetConversationsQuery() {
+  return useQuery<Conversation[]>(useGetConversationsQueryOptions());
 }

@@ -1,8 +1,4 @@
-import {
-  ChatCircleDotsIcon,
-  PlusIcon,
-  UsersIcon,
-} from '@phosphor-icons/react/ssr';
+import { PlusIcon, UsersIcon } from '@phosphor-icons/react/ssr';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 
@@ -10,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import Logo from '@/components/ui/logo';
 import { auth } from '@/lib/auth';
 
+import { MessagesButton } from './_components/MessageButton';
 import SearchBar from './_components/SearchBar';
 import UserAvatar from './_components/UserAvatar';
 
@@ -41,11 +38,7 @@ export default async function NavigationBar() {
               </Button>
             </Link>
 
-            <Link href="/messages">
-              <Button variant="ghost" size="icon-lg">
-                <ChatCircleDotsIcon />
-              </Button>
-            </Link>
+            <MessagesButton />
           </>
         )}
 

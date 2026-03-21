@@ -15,13 +15,9 @@ interface GetMessagesResponse {
   };
 }
 
-async function getMessages(participantId: string): Promise<Message[]> {
+async function getMessages(conversationId: string): Promise<Message[]> {
   return server
-    .get<GetMessagesResponse>(
-      url('conversations/messages', {
-        participantId,
-      }),
-    )
+    .get<GetMessagesResponse>(url(`conversations/${conversationId}/messages`))
     .json()
     .then((data) =>
       data.messages.content.map((message) => ({
@@ -33,9 +29,9 @@ async function getMessages(participantId: string): Promise<Message[]> {
     );
 }
 
-export function useGetMessages(participantId: string) {
+export function useGetMessagesQuery(conversationId: string) {
   return useQuery({
-    queryKey: ['messages', participantId],
-    queryFn: () => getMessages(participantId),
+    queryKey: ['conversations', conversationId, 'messages'],
+    queryFn: () => getMessages(conversationId),
   });
 }

@@ -1,4 +1,13 @@
 import net.ltgt.gradle.errorprone.CheckSeverity
+import org.testcontainers.containers.PostgreSQLContainer
+
+buildscript {
+	dependencies {
+		classpath 'org.testcontainers:testcontainers-postgresql:2.0.3'
+		classpath 'org.postgresql:postgresql:42.7.10'
+		classpath 'org.liquibase:liquibase-core:5.0.1'
+	}
+}
 
 plugins {
 	id 'java'
@@ -7,6 +16,8 @@ plugins {
 	id 'com.diffplug.spotless' version '8.1.0'
 	id 'net.ltgt.errorprone' version '4.3.0'
 	id 'org.asciidoctor.jvm.convert' version '4.0.5'
+	id 'org.jooq.jooq-codegen-gradle' version '3.19.30'
+	id 'org.liquibase.gradle' version '3.1.0'
 }
 
 group = 'com.skkil'
@@ -16,6 +27,14 @@ description = ''
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs += 'build/generated/jooq'
+		}
 	}
 }
 
@@ -44,7 +63,6 @@ ext {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-jooq'
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-liquibase'
 	implementation 'org.springframework.boot:spring-boot-starter-restclient'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -85,6 +103,12 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	errorprone 'com.uber.nullaway:nullaway:0.12.12'
 	errorprone 'com.google.errorprone:error_prone_core:2.42.0'
+	jooqCodegen 'org.postgresql:postgresql'
+	jooqCodegen 'org.testcontainers:testcontainers-postgresql'
+	liquibaseRuntime 'org.liquibase:liquibase-core'
+	liquibaseRuntime 'info.picocli:picocli:4.7.7'
+	liquibaseRuntime 'org.postgresql:postgresql'
+	liquibaseRuntime 'org.testcontainers:testcontainers-postgresql'
 }
 
 tasks.withType(JavaCompile) {
@@ -124,8 +148,9 @@ tasks.withType(JavaCompile) {
 	}
 }
 
-tasks.named('build') {
-	dependsOn('spotlessApply')
+tasks.named('compileJava') {
+	dependsOn 'spotlessApply'
+	dependsOn 'jooqCodegen'
 }
 
 tasks.named('test') {
@@ -153,4 +178,88 @@ spotless {
 		target '**/*.gradle'
 		greclipse()
 	}
+}
+
+liquibase {
+	activities {
+		jooq {
+			changelogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
+		}
+	}
+}
+
+jooq {
+	configuration {
+		logging = org.jooq.meta.jaxb.Logging.WARN
+		generator {
+			database {
+				name = "org.jooq.meta.postgres.PostgresDatabase"
+				inputSchema = "public"
+				excludes = "databasechangelog.*"
+			}
+			target {
+				packageName = "com.skkil.sync.jooq"
+				directory = "build/generated/jooq"
+			}
+		}
+	}
+}
+
+def db = new PostgreSQLContainer('postgres:18-alpine')
+
+tasks.register("startDatabase") {
+	doLast {
+		db.start()
+
+		project.ext.dbUrl = db.getJdbcUrl()
+		project.ext.dbUsername = db.getUsername()
+		project.ext.dbPassword = db.getPassword()
+		project.ext.dbDriver = db.getDriverClassName()
+	}
+}
+
+tasks.register("stopDatabase") {
+	doLast {
+		db.stop()
+	}
+}
+
+tasks.named('update') {
+	dependsOn 'startDatabase'
+
+	doFirst {
+		liquibase.activities {
+			jooq {
+				url project.ext.dbUrl
+				username project.ext.dbUsername
+				password project.ext.dbPassword
+				driver project.ext.dbDriver
+			}
+		}
+	}
+}
+
+tasks.named('jooqCodegen') {
+	dependsOn 'spotlessApply'
+	dependsOn 'update'
+
+	inputs.dir 'src/main/resources/db/changelog'
+	outputs.dir 'build/generated/jooq'
+
+	doFirst {
+		jooq {
+			configuration {
+				generator {
+					jdbc {
+						url = project.ext.dbUrl
+						username = project.ext.dbUsername
+						password = project.ext.dbPassword
+						driver = project.ext.dbDriver
+					}
+				}
+			}
+		}
+	}
+
+	finalizedBy 'stopDatabase'
 }
