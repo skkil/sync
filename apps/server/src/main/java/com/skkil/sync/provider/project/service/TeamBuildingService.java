@@ -41,6 +41,7 @@ public class TeamBuildingService {
   }
 
   @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'PROVIDER', 'READ')")
   public GetProjectTeamBuildingPosts getProjectTeamBuildingPosts(Long projectId) {
     Project project = projectRepository.getReferenceById(projectId);
 

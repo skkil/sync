@@ -3,6 +3,8 @@ import { getTranslations } from 'next-intl/server';
 import { ProviderTabs } from '@/features/provider/components/ProviderTabs';
 import ViewProviderAsPublicButton from '@/features/provider/components/ViewProviderAsPublicButton';
 
+import ProjectAdminOverview from './_components/ProjectAdminOverview';
+
 interface ProjectAdminLayoutProps {
   content: React.ReactNode;
   params: Promise<{
@@ -36,6 +38,7 @@ export default async function ProjectAdminLayout({
 
   return (
     <div className="max-w-5xl mx-auto p-4 flex flex-col gap-5">
+      <ProjectAdminOverview id={id} />
       <div className="grow">
         <ProviderTabs
           tabs={tabs}

@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -35,17 +36,18 @@ export default function ViewProviderAsMaintainerButton({
 
   const { data: provider } = useGetProviderQuery(id);
 
+  useEffect(() => {
+    if (!viewAsMember) {
+      router.push(href);
+    }
+  }, [viewAsMember, router, href]);
+
   if (!provider) {
     return null;
   }
 
-  if (!provider.isMaintainer) {
+  if (!provider.isMaintainer || !viewAsMember) {
     return null;
-  }
-
-  if (!viewAsMember) {
-    router.push(href);
-    return;
   }
 
   return (
@@ -64,9 +66,9 @@ export default function ViewProviderAsMaintainerButton({
             <CardDescription>{t('description')}</CardDescription>
           </div>
 
-          <Link href={href}>
-            <Button>{t('view-as-admin')}</Button>
-          </Link>
+          <Button asChild>
+            <Link href={href}>{t('view-as-admin')}</Link>
+          </Button>
         </div>
       </CardHeader>
     </Card>

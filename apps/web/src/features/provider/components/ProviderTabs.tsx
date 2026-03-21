@@ -30,9 +30,11 @@ export function ProviderTabs({ tabs, right, children }: ProviderTabsProps) {
       <div className="flex items-center justify-between mb-4">
         <TabsList>
           {tabs.map((tab) => (
-            <Link key={tab.id} href={`${tab.href}?${searchParams.toString()}`}>
-              <TabsTrigger value={tab.id}>{tab.title}</TabsTrigger>
-            </Link>
+            <TabsTrigger key={tab.id} value={tab.id} asChild>
+              <Link href={`${tab.href}?${searchParams.toString()}`}>
+                {tab.title}
+              </Link>
+            </TabsTrigger>
           ))}
         </TabsList>
 
@@ -40,11 +42,13 @@ export function ProviderTabs({ tabs, right, children }: ProviderTabsProps) {
       </div>
 
       <Card className="min-h-96 overflow-auto">
-        {tabs.map((tab) => (
-          <TabsContent key={tab.id} value={tab.id} className="px-5">
-            {children}
-          </TabsContent>
-        ))}
+        {tabs.map((tab) =>
+          tab.id === activeTab ? (
+            <TabsContent key={tab.id} value={tab.id} className="px-5">
+              {children}
+            </TabsContent>
+          ) : null,
+        )}
       </Card>
     </Tabs>
   );
