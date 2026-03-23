@@ -1,0 +1,290 @@
+openapi: 3.0.1
+info:
+  title: sync
+  description: ""
+  version: 0.0.1
+servers:
+- url: ""
+tags: []
+paths:
+  /media:
+    post:
+      tags:
+      - media
+      summary: Upload Media
+      description: Upload Media
+      operationId: UploadMedia
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadMediaRequest"
+            examples:
+              UploadMedia:
+                value: "{\"mediaType\":\"image/jpeg\",\"mediaContext\":\"profile-image\"\
+                  ,\"fileName\":\"test.jpg\",\"fileSize\":100}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadMediaResponse"
+              examples:
+                UploadMedia:
+                  value: |-
+                    {
+                      "mediaId" : 1,
+                      "uploadUrl" : "https://example.com/upload",
+                      "expiresAt" : "2026-03-23T10:44:38.017882256"
+                    }
+  /profiles/me:
+    get:
+      tags:
+      - profile
+      summary: Get Authenticated User Profile
+      description: Get Authenticated User Profile
+      operationId: GetAuthenticatedUser
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProfileResponse"
+              examples:
+                GetAuthenticatedUser:
+                  value: "{\"userId\":\"1\",\"handle\":\"username\",\"name\":\"name\"\
+                    ,\"email\":\"email@example.com\",\"bio\":\"bio\",\"profession\"\
+                    :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
+                    ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
+                    :false,\"role\":\"USER\",\"contacts\":null}"
+    patch:
+      tags:
+      - profile
+      summary: Update Profile
+      description: Update Profile
+      operationId: UpdateProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+            examples:
+              UpdateProfile:
+                value: "{\"name\":\"name\",\"handle\":\"username\",\"profileImageId\"\
+                  :1,\"removeProfileImage\":false,\"isOnboarded\":true,\"bio\":\"\
+                  bio\",\"profession\":\"profession\",\"contacts\":{\"custom\":\"\
+                  https://example.com\",\"linkedin\":\"linkedinUser\",\"github\":\"\
+                  githubUser\",\"instagram\":\"instagramUser\",\"twitter\":\"twitterUser\"\
+                  }}"
+      responses:
+        "204":
+          description: "204"
+  /profiles/{handle}:
+    get:
+      tags:
+      - profile
+      summary: Get Profile By Handle
+      description: Get Profile By Handle
+      operationId: GetProfile
+      parameters:
+      - name: handle
+        in: path
+        description: Handle
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProfileResponse"
+              examples:
+                GetProfileByHandle:
+                  value: "{\"userId\":\"1\",\"handle\":\"username\",\"name\":\"name\"\
+                    ,\"email\":\"email@example.com\",\"bio\":\"bio\",\"profession\"\
+                    :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
+                    ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
+                    :false,\"role\":\"USER\",\"contacts\":null}"
+                GetProfileResponse:
+                  value: "{\"userId\":\"1\",\"handle\":\"username\",\"name\":\"name\"\
+                    ,\"email\":\"email@example.com\",\"bio\":\"bio\",\"profession\"\
+                    :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
+                    ,\"isFollowing\":true,\"isEnabled\":true,\"isAuthenticatedUser\"\
+                    :false,\"contacts\":null}"
+components:
+  schemas:
+    UploadMediaResponse:
+      title: UploadMediaResponse
+      required:
+      - expiresAt
+      - mediaId
+      - uploadUrl
+      type: object
+      properties:
+        uploadUrl:
+          type: string
+          description: Pre-signed Upload URL
+        mediaId:
+          type: number
+          description: Media ID
+        expiresAt:
+          type: string
+          description: Expiration Time
+    UploadMediaRequest:
+      title: UploadMediaRequest
+      required:
+      - fileName
+      - fileSize
+      - mediaContext
+      - mediaType
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: File Name
+        fileSize:
+          type: number
+          description: File Size
+        mediaContext:
+          type: string
+          description: Meida Context
+        mediaType:
+          type: string
+          description: Media Type
+    GetProfileResponse:
+      title: GetProfileResponse
+      required:
+      - bio
+      - email
+      - handle
+      - isAuthenticatedUser
+      - isEnabled
+      - isFollowing
+      - isOnboarded
+      - name
+      - profession
+      - profileImageUrl
+      - role
+      - userId
+      type: object
+      properties:
+        profession:
+          type: string
+          description: Profession
+        isFollowing:
+          type: boolean
+          description: Is Following
+        role:
+          type: string
+          description: Role
+        bio:
+          type: string
+          description: Bio
+        handle:
+          type: string
+          description: Handle
+        userId:
+          type: string
+          description: ID
+        isAuthenticatedUser:
+          type: boolean
+          description: Is Authenticated User
+        isEnabled:
+          type: boolean
+          description: Is Enabled
+        name:
+          type: string
+          description: Full Name
+        profileImageUrl:
+          type: string
+          description: Profile Image URL
+        contacts:
+          type: object
+          properties:
+            twitter:
+              type: string
+              description: Twitter Username
+              nullable: true
+            github:
+              type: string
+              description: GitHub Username
+              nullable: true
+            custom:
+              type: string
+              description: Custom Contact
+              nullable: true
+            instagram:
+              type: string
+              description: Instagram Username
+              nullable: true
+            linkedin:
+              type: string
+              description: LinkedIn Username
+              nullable: true
+          description: Contacts
+        email:
+          type: string
+          description: E-mail
+        isOnboarded:
+          type: boolean
+          description: Is Onboarded
+    UpdateProfileRequest:
+      title: UpdateProfileRequest
+      type: object
+      properties:
+        profession:
+          type: string
+          description: Profession
+          nullable: true
+        profileImageId:
+          type: number
+          description: Profile Image ID
+          nullable: true
+        name:
+          type: string
+          description: Full Name
+          nullable: true
+        bio:
+          type: string
+          description: Bio
+          nullable: true
+        handle:
+          type: string
+          description: Handle
+          nullable: true
+        removeProfileImage:
+          type: boolean
+          description: Remove Profile Image
+          nullable: true
+        contacts:
+          type: object
+          properties:
+            twitter:
+              type: string
+              description: Twitter Username
+              nullable: true
+            github:
+              type: string
+              description: GitHub Username
+              nullable: true
+            custom:
+              type: string
+              description: Custom Contact
+              nullable: true
+            instagram:
+              type: string
+              description: Instagram Username
+              nullable: true
+            linkedin:
+              type: string
+              description: LinkedIn Username
+              nullable: true
+          description: Contacts
+        isOnboarded:
+          type: boolean
+          description: Is Onboarded
+          nullable: true

@@ -5,7 +5,9 @@ import com.skkil.sync.common.util.validator.ValidUsername;
 import com.skkil.sync.user.constant.Handle;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record UpdateProfileRequest(
     @Size(min = 1, max = 255) String name,
     @ValidUsername @Size(min = Handle.MIN_LENGTH, max = Handle.MAX_LENGTH) String handle,
