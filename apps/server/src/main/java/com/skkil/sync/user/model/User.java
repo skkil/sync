@@ -61,11 +61,11 @@ public class User extends BaseEntity {
   private Provider currentProvider;
 
   @Column(name = "profession", length = 255)
-  private String profession;
+  private String profession = "";
 
   @Column(name = "bio", columnDefinition = "TEXT")
   @Setter
-  private String bio;
+  private String bio = "";
 
   @Enumerated(EnumType.STRING)
   @Column(name = "role", nullable = false)
@@ -91,11 +91,10 @@ public class User extends BaseEntity {
   }
 
   @Builder
-  public User(String email, String hashedPassword, String fullName, String bio) {
+  public User(String email, String hashedPassword, String fullName) {
     this.email = email;
     this.hashedPassword = hashedPassword;
     this.fullName = fullName;
-    this.bio = bio;
   }
 
   public boolean isEnabled() {

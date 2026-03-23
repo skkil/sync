@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 
+import { useGetProfile } from '@/api/__generated__/profile/profile';
 import { Button } from '@/components/ui/button';
-import { useGetProfileQuery } from '@/features/profile/api/get-profile';
 import { useFollowUserMutation } from '@/features/user/api/follow-user';
 import { useUnfollowUserMutation } from '@/features/user/api/unfollow-user';
 import { useSession } from '@/lib/auth/client';
@@ -14,7 +14,7 @@ export default function FollowButton({ userId }: FollowButtonProps) {
   const t = useTranslations('pages.profile.header');
 
   const { data: session } = useSession();
-  const { data: profile, isPending } = useGetProfileQuery(userId);
+  const { data: profile, isPending } = useGetProfile(userId);
 
   const { mutate: followUser } = useFollowUserMutation();
   const { mutate: unfollowUser } = useUnfollowUserMutation();
@@ -27,7 +27,7 @@ export default function FollowButton({ userId }: FollowButtonProps) {
     return null;
   }
 
-  if (profile.isFollowing) {
+  if (profile.data.isFollowing) {
     return (
       <Button
         onClick={() => {

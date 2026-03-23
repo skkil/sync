@@ -85,6 +85,7 @@ function FileInput({
         disabled={disabled}
         onChange={handleChange}
         hidden
+        tabIndex={-1}
         {...props}
       />
 
@@ -102,4 +103,5 @@ function FileInput({
   );
 }
 
+export type { FileInputError };
 export { Input, FileInput };
