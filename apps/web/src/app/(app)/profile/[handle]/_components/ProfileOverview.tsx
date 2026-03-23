@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { useGetProfile } from '@/api/__generated__/profile/profile';
+import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -24,7 +24,12 @@ interface ProfileOverviewProps {
 export default function ProfileOverview({ handle }: ProfileOverviewProps) {
   const t = useTranslations('pages.profile');
 
-  const { data: profile, isPending, error, isError } = useGetProfile(handle);
+  const {
+    data: profile,
+    isPending,
+    error,
+    isError,
+  } = useGetProfileByHandle(handle);
 
   useEffect(() => {
     if (isError && error instanceof SyncError) {
@@ -63,8 +68,8 @@ export default function ProfileOverview({ handle }: ProfileOverviewProps) {
                     <EditProfileDialog />
                   ) : (
                     <>
-                      <FollowButton userId={profile.data.userId} />
-                      <Link href={`/messages?to=${profile.data.userId}`}>
+                      <FollowButton handle={profile.data.handle} />
+                      <Link href={`/messages?to=${profile.data.handle}`}>
                         <Button variant="outline">{t('header.message')}</Button>
                       </Link>
                     </>
@@ -105,7 +110,7 @@ function ProfileContacts({ handle }: { handle: string }) {
 
   const [showAllContacts, setShowAllContacts] = useState(false);
 
-  const { data: profile } = useGetProfile(handle);
+  const { data: profile } = useGetProfileByHandle(handle);
 
   if (!profile || !profile.data.contacts) {
     return null;

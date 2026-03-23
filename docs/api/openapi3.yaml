@@ -36,7 +36,7 @@ paths:
                     {
                       "mediaId" : 1,
                       "uploadUrl" : "https://example.com/upload",
-                      "expiresAt" : "2026-03-23T10:44:38.017882256"
+                      "expiresAt" : "-999999999-01-01T00:00:00"
                     }
   /profiles/me:
     get:
@@ -87,7 +87,7 @@ paths:
       - profile
       summary: Get Profile By Handle
       description: Get Profile By Handle
-      operationId: GetProfile
+      operationId: GetProfileByHandle
       parameters:
       - name: handle
         in: path
@@ -109,12 +109,6 @@ paths:
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
                     ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
                     :false,\"role\":\"USER\",\"contacts\":null}"
-                GetProfileResponse:
-                  value: "{\"userId\":\"1\",\"handle\":\"username\",\"name\":\"name\"\
-                    ,\"email\":\"email@example.com\",\"bio\":\"bio\",\"profession\"\
-                    :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
-                    ,\"isFollowing\":true,\"isEnabled\":true,\"isAuthenticatedUser\"\
-                    :false,\"contacts\":null}"
 components:
   schemas:
     UploadMediaResponse:
@@ -162,7 +156,6 @@ components:
       - email
       - handle
       - isAuthenticatedUser
-      - isEnabled
       - isFollowing
       - isOnboarded
       - name
@@ -175,33 +168,30 @@ components:
         profession:
           type: string
           description: Profession
-        isFollowing:
+        isAuthenticatedUser:
           type: boolean
-          description: Is Following
+          description: Is Authenticated User
         role:
           type: string
           description: Role
+        isFollowing:
+          type: boolean
+          description: Is Following
+        name:
+          type: string
+          description: Full Name
         bio:
           type: string
           description: Bio
         handle:
           type: string
           description: Handle
-        userId:
-          type: string
-          description: ID
-        isAuthenticatedUser:
-          type: boolean
-          description: Is Authenticated User
-        isEnabled:
-          type: boolean
-          description: Is Enabled
-        name:
-          type: string
-          description: Full Name
         profileImageUrl:
           type: string
           description: Profile Image URL
+        userId:
+          type: string
+          description: ID
         contacts:
           type: object
           properties:

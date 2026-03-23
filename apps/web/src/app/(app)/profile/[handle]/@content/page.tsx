@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { notFound, useParams } from 'next/navigation';
 import { ComponentType } from 'react';
 
-import { useGetProfile } from '@/api/__generated__/profile/profile';
+import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useGetExperiencesQuery } from '@/features/experience/api/get-experiences';
@@ -40,7 +40,9 @@ export default function ProfileResume() {
 
   const { handle } = useParams();
 
-  const { data: profile, isError } = useGetProfile(handle?.toString() || '');
+  const { data: profile, isError } = useGetProfileByHandle(
+    handle?.toString() || '',
+  );
 
   const { data: experiences } = useGetExperiencesQuery(
     profile?.data.userId || '',

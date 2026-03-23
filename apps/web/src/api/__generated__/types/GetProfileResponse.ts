@@ -9,24 +9,22 @@ import type { GetProfileResponseContacts } from './GetProfileResponseContacts';
 export interface GetProfileResponse {
   /** Profession */
   profession: string;
-  /** Is Following */
-  isFollowing: boolean;
+  /** Is Authenticated User */
+  isAuthenticatedUser: boolean;
   /** Role */
   role: string;
+  /** Is Following */
+  isFollowing: boolean;
+  /** Full Name */
+  name: string;
   /** Bio */
   bio: string;
   /** Handle */
   handle: string;
-  /** ID */
-  userId: string;
-  /** Is Authenticated User */
-  isAuthenticatedUser: boolean;
-  /** Is Enabled */
-  isEnabled: boolean;
-  /** Full Name */
-  name: string;
   /** Profile Image URL */
   profileImageUrl: string;
+  /** ID */
+  userId: string;
   /** Contacts */
   contacts?: GetProfileResponseContacts;
   /** E-mail */

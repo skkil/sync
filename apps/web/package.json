@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"orval --config orval.config.ts --watch\" \"next dev\"",
-    "build": "next build",
+    "build": "rm -rf ./src/api/__generated__ && orval --config orval.config.ts && next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "orval": "rm -rf ./src/api/__generated__ && orval --config orval.config.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

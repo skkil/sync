@@ -26,7 +26,6 @@ import com.skkil.sync.media.dto.request.UploadMediaRequest;
 import com.skkil.sync.media.dto.response.UploadMediaResponse;
 import com.skkil.sync.media.service.MediaService;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -106,7 +105,7 @@ class MediaControllerTests {
     return UploadMediaResponse.builder()
         .mediaId(1L)
         .uploadUrl("https://example.com/upload")
-        .expiresAt(LocalDateTime.now(ZoneId.systemDefault()))
+        .expiresAt(LocalDateTime.MIN)
         .build();
   }
 

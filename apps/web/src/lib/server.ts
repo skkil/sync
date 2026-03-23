@@ -80,4 +80,5 @@ export const api = async <T>(url: string, options: RequestInit): Promise<T> => {
   return { status: response.status, data, headers: response.headers } as T;
 };
 
-export type ErrorType<T> = SyncError;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type ErrorType<_T> = SyncError;

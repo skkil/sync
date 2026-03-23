@@ -9,7 +9,7 @@ import z from 'zod';
 import { useUploadMedia } from '@/api/__generated__/media/media';
 import {
   getGetAuthenticatedUserQueryKey,
-  getGetProfileQueryKey,
+  getGetProfileByHandleQueryKey,
   useGetAuthenticatedUser,
   useUpdateProfile,
 } from '@/api/__generated__/profile/profile';
@@ -106,7 +106,7 @@ export default function EditProfileDialog() {
           });
 
           await context.client.invalidateQueries({
-            queryKey: getGetProfileQueryKey(profile?.data.handle || ''),
+            queryKey: getGetProfileByHandleQueryKey(profile?.data.handle || ''),
           });
 
           toast.success(t('messages.success'));
@@ -298,7 +298,7 @@ function ProfileImageField() {
         });
 
         await context.client.invalidateQueries({
-          queryKey: getGetProfileQueryKey(profile?.data.handle || ''),
+          queryKey: getGetProfileByHandleQueryKey(profile?.data.handle || ''),
         });
       },
     },

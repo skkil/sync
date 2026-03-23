@@ -296,53 +296,59 @@ export const useUpdateProfile = <
  * Get Profile By Handle
  * @summary Get Profile By Handle
  */
-export type getProfileResponse200 = {
+export type getProfileByHandleResponse200 = {
   data: GetProfileResponse;
   status: 200;
 };
 
-export type getProfileResponseSuccess = getProfileResponse200 & {
-  headers: Headers;
-};
-export type getProfileResponse = getProfileResponseSuccess;
+export type getProfileByHandleResponseSuccess =
+  getProfileByHandleResponse200 & {
+    headers: Headers;
+  };
+export type getProfileByHandleResponse = getProfileByHandleResponseSuccess;
 
-export const getGetProfileUrl = (handle: string) => {
+export const getGetProfileByHandleUrl = (handle: string) => {
   return `/profiles/${handle}`;
 };
 
-export const getProfile = async (
+export const getProfileByHandle = async (
   handle: string,
   options?: RequestInit,
-): Promise<getProfileResponse> => {
-  return api<getProfileResponse>(getGetProfileUrl(handle), {
+): Promise<getProfileByHandleResponse> => {
+  return api<getProfileByHandleResponse>(getGetProfileByHandleUrl(handle), {
     ...options,
     method: 'GET',
   });
 };
 
-export const getGetProfileQueryKey = (handle: string) => {
+export const getGetProfileByHandleQueryKey = (handle: string) => {
   return [`/profiles/${handle}`] as const;
 };
 
-export const getGetProfileQueryOptions = <
-  TData = Awaited<ReturnType<typeof getProfile>>,
+export const getGetProfileByHandleQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProfileByHandle>>,
   TError = ErrorType<unknown>,
 >(
   handle: string,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProfile>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
     >;
     request?: SecondParameter<typeof api>;
   },
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetProfileQueryKey(handle);
+  const queryKey =
+    queryOptions?.queryKey ?? getGetProfileByHandleQueryKey(handle);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProfile>>> = ({
-    signal,
-  }) => getProfile(handle, { signal, ...requestOptions });
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProfileByHandle>>
+  > = ({ signal }) => getProfileByHandle(handle, { signal, ...requestOptions });
 
   return {
     queryKey,
@@ -350,31 +356,35 @@ export const getGetProfileQueryOptions = <
     enabled: !!handle,
     ...queryOptions,
   } as UseQueryOptions<
-    Awaited<ReturnType<typeof getProfile>>,
+    Awaited<ReturnType<typeof getProfileByHandle>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetProfileQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getProfile>>
+export type GetProfileByHandleQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProfileByHandle>>
 >;
-export type GetProfileQueryError = ErrorType<unknown>;
+export type GetProfileByHandleQueryError = ErrorType<unknown>;
 
-export function useGetProfile<
-  TData = Awaited<ReturnType<typeof getProfile>>,
+export function useGetProfileByHandle<
+  TData = Awaited<ReturnType<typeof getProfileByHandle>>,
   TError = ErrorType<unknown>,
 >(
   handle: string,
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProfile>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getProfile>>,
+          Awaited<ReturnType<typeof getProfileByHandle>>,
           TError,
-          Awaited<ReturnType<typeof getProfile>>
+          Awaited<ReturnType<typeof getProfileByHandle>>
         >,
         'initialData'
       >;
@@ -384,20 +394,24 @@ export function useGetProfile<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetProfile<
-  TData = Awaited<ReturnType<typeof getProfile>>,
+export function useGetProfileByHandle<
+  TData = Awaited<ReturnType<typeof getProfileByHandle>>,
   TError = ErrorType<unknown>,
 >(
   handle: string,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProfile>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getProfile>>,
+          Awaited<ReturnType<typeof getProfileByHandle>>,
           TError,
-          Awaited<ReturnType<typeof getProfile>>
+          Awaited<ReturnType<typeof getProfileByHandle>>
         >,
         'initialData'
       >;
@@ -407,14 +421,18 @@ export function useGetProfile<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetProfile<
-  TData = Awaited<ReturnType<typeof getProfile>>,
+export function useGetProfileByHandle<
+  TData = Awaited<ReturnType<typeof getProfileByHandle>>,
   TError = ErrorType<unknown>,
 >(
   handle: string,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProfile>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
     >;
     request?: SecondParameter<typeof api>;
   },
@@ -426,14 +444,18 @@ export function useGetProfile<
  * @summary Get Profile By Handle
  */
 
-export function useGetProfile<
-  TData = Awaited<ReturnType<typeof getProfile>>,
+export function useGetProfileByHandle<
+  TData = Awaited<ReturnType<typeof getProfileByHandle>>,
   TError = ErrorType<unknown>,
 >(
   handle: string,
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getProfile>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
     >;
     request?: SecondParameter<typeof api>;
   },
@@ -441,7 +463,7 @@ export function useGetProfile<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetProfileQueryOptions(handle, options);
+  const queryOptions = getGetProfileByHandleQueryOptions(handle, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
