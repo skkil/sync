@@ -1,10 +1,10 @@
 package com.skkil.sync.user.service;
 
+import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.media.constant.MediaStatus;
 import com.skkil.sync.media.model.Media;
 import com.skkil.sync.media.service.MediaService;
 import com.skkil.sync.user.dto.request.UpdateProfileRequest;
-import com.skkil.sync.user.dto.response.GetAuthenticatedUserResponse;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.exception.UserNotFoundException;
 import com.skkil.sync.user.mapper.ProfileMapper;
@@ -39,49 +39,51 @@ public class ProfileService {
   }
 
   @Transactional(readOnly = true)
-  public GetProfileResponse getProfile(Long requesterId, Long userId) {
+  public GetProfileResponse getProfileByHandle(AuthenticatedUser requester, String handle) {
+    User user =
+        userRepository.findByHandle(handle).orElseThrow(() -> new UserNotFoundException(handle));
+
+    return getProfileById(requester, user.getId());
+  }
+
+  @Transactional(readOnly = true)
+  public GetProfileResponse getProfileById(AuthenticatedUser requester, Long userId) {
+    Long requesterId = requester != null ? requester.userId() : null;
     log.debug("User {} is requesting profile for user {}", requesterId, userId);
+
     User user =
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
-    boolean isFollowing =
-        (requesterId == null || requesterId.equals(userId))
-            ? false
-            : userRelationshipService.isFollowing(requesterId, userId);
+    boolean isAuthenticatedUser = requesterId != null && requesterId.equals(userId);
+    if (!user.isEnabled() && !isAuthenticatedUser) {
+      log.debug("User {} is trying to access disabled profile of user {}", requesterId, userId);
+      throw new UserNotFoundException(userId);
+    }
 
     String profileImageUrl = null;
     if (user.getProfileImage() != null) {
+      log.debug(
+          "User {} has profile image with media ID {}, generating URL",
+          userId,
+          user.getProfileImage().getId());
       profileImageUrl = mediaService.getMediaUrl(user.getProfileImage().getId()).toExternalForm();
     }
 
+    boolean isFollowing = userRelationshipService.isFollowing(requesterId, userId);
+
     return GetProfileResponse.builder()
         .userId(user.getId().toString())
+        .handle(user.getHandle())
         .name(user.getFullName())
         .email(user.getEmail())
         .bio(user.getBio())
         .profession(user.getProfession())
         .profileImageUrl(profileImageUrl)
         .isFollowing(isFollowing)
-        .contacts(profileMapper.toGetProfileResponseContacts(user.getContacts()))
-        .build();
-  }
-
-  @Transactional(readOnly = true)
-  public GetAuthenticatedUserResponse getAuthenticatedUser(Long userId) {
-    User user = userRepository.findById(userId).orElseThrow();
-
-    String profileImageUrl = null;
-    if (user.getProfileImage() != null) {
-      profileImageUrl = mediaService.getMediaUrl(user.getProfileImage().getId()).toExternalForm();
-    }
-
-    return GetAuthenticatedUserResponse.builder()
-        .role(user.getRole())
-        .userId(user.getId())
-        .fullName(user.getFullName())
-        .email(user.getEmail())
-        .profileImageUrl(profileImageUrl)
         .isOnboarded(user.getIsOnboarded())
+        .isAuthenticatedUser(isAuthenticatedUser)
+        .role(user.getRole())
+        .contacts(profileMapper.toGetProfileResponseContacts(user.getContacts()))
         .build();
   }
 

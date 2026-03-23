@@ -17,6 +17,10 @@ public record AuthenticatedUser(
     Long userId, String fullName, String email, String password, Role role)
     implements UserDetails, OidcUser {
 
+  public AuthenticatedUser(Long userId) {
+    this(userId, null, null, null, null);
+  }
+
   @Override
   public String getUsername() {
     return email;

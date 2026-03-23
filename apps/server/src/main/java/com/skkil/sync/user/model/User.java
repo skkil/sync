@@ -98,6 +98,10 @@ public class User extends BaseEntity {
     this.bio = bio;
   }
 
+  public boolean isEnabled() {
+    return isOnboarded && deletedAt == null;
+  }
+
   public void onboard() {
     if (handle == null || !validateHandle(handle)) {
       throw new IllegalArgumentException("Handle is invalid");
