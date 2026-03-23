@@ -1,11 +1,9 @@
 import ky from 'ky';
 
-import { isServer } from '@/util/server';
+import { getCookies, getCsrfToken, isServer } from '@/util/server';
 
 import { env } from './env';
 import SyncError, { ErrorCode } from './error';
-
-const CSRF_COOKIE_NAME = 'XSRF-TOKEN';
 
 interface ErrorResponse {
   detail: string;
@@ -13,42 +11,6 @@ interface ErrorResponse {
   status: number;
   title: string;
   code: ErrorCode;
-}
-
-async function getCookies() {
-  if (isServer()) {
-    try {
-      const { cookies } = await import('next/headers');
-      const cookieStore = await cookies();
-      const allCookies = cookieStore.getAll();
-
-      return allCookies
-        .map((cookie) => `${cookie.name}=${cookie.value}`)
-        .join('; ');
-    } catch {
-      return undefined;
-    }
-  }
-
-  return undefined;
-}
-
-async function getCsrfToken(): Promise<string | undefined> {
-  if (isServer()) {
-    try {
-      const { cookies } = await import('next/headers');
-      const cookieStore = await cookies();
-      return cookieStore.get(CSRF_COOKIE_NAME)?.value;
-    } catch {
-      return undefined;
-    }
-  } else {
-    const value = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith(`${CSRF_COOKIE_NAME}=`))
-      ?.split('=')[1];
-    return value ? decodeURIComponent(value) : undefined;
-  }
 }
 
 export const server = ky.extend({
@@ -92,3 +54,30 @@ export const server = ky.extend({
     ],
   },
 });
+
+const getUrl = (url: string) => {
+  if (url.startsWith('/')) {
+    return url.slice(1);
+  }
+
+  return url;
+};
+
+const getBody = <T>(c: Response | Request): Promise<T> => {
+  const contentType = c.headers.get('content-type');
+
+  if (contentType && contentType.includes('application/json')) {
+    return c.json();
+  }
+
+  return c.text() as Promise<T>;
+};
+
+export const api = async <T>(url: string, options: RequestInit): Promise<T> => {
+  const response = await server(getUrl(url), options);
+  const data = await getBody<T>(response);
+
+  return { status: response.status, data, headers: response.headers } as T;
+};
+
+export type ErrorType<T> = SyncError;
