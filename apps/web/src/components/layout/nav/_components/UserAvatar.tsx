@@ -58,7 +58,7 @@ export default function UserAvatar() {
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={() => {
-              router.push(`/profile/${session.user.id}`);
+              router.push(`/@${session.user.handle}`);
             }}
           >
             <UserIcon />

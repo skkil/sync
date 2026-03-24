@@ -1,20 +1,20 @@
 import { useTranslations } from 'next-intl';
 
+import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { Button } from '@/components/ui/button';
-import { useGetProfileQuery } from '@/features/profile/api/get-profile';
 import { useFollowUserMutation } from '@/features/user/api/follow-user';
 import { useUnfollowUserMutation } from '@/features/user/api/unfollow-user';
 import { useSession } from '@/lib/auth/client';
 
 interface FollowButtonProps {
-  userId: string;
+  handle: string;
 }
 
-export default function FollowButton({ userId }: FollowButtonProps) {
+export default function FollowButton({ handle }: FollowButtonProps) {
   const t = useTranslations('pages.profile.header');
 
   const { data: session } = useSession();
-  const { data: profile, isPending } = useGetProfileQuery(userId);
+  const { data: profile, isPending } = useGetProfileByHandle(handle);
 
   const { mutate: followUser } = useFollowUserMutation();
   const { mutate: unfollowUser } = useUnfollowUserMutation();
@@ -23,15 +23,15 @@ export default function FollowButton({ userId }: FollowButtonProps) {
     return null;
   }
 
-  if (session?.user.id === userId) {
+  if (session?.user.id === profile.data.userId) {
     return null;
   }
 
-  if (profile.isFollowing) {
+  if (profile.data.isFollowing) {
     return (
       <Button
         onClick={() => {
-          unfollowUser(userId);
+          unfollowUser(handle);
         }}
       >
         {t('unfollow')}
@@ -41,7 +41,7 @@ export default function FollowButton({ userId }: FollowButtonProps) {
     return (
       <Button
         onClick={() => {
-          followUser(userId);
+          followUser(handle);
         }}
       >
         {t('follow')}

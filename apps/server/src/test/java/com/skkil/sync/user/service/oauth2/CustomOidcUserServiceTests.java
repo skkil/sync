@@ -39,8 +39,7 @@ public class CustomOidcUserServiceTests {
     String fullName = "New User";
     OidcUser oidcUser = createMockOidcUser(email, fullName);
 
-    User newUser =
-        User.builder().email(email).fullName(fullName).hashedPassword(null).bio("").build();
+    User newUser = User.builder().email(email).fullName(fullName).hashedPassword(null).build();
     newUser.setId(1L);
 
     when(userRepository.findByEmailWithOAuthAccounts(email)).thenReturn(Optional.empty());
@@ -65,12 +64,7 @@ public class CustomOidcUserServiceTests {
     OidcUser oidcUser = createMockOidcUser(email, fullName);
 
     User existingUser =
-        User.builder()
-            .email(email)
-            .fullName(fullName)
-            .hashedPassword("hashedPassword")
-            .bio("Bio")
-            .build();
+        User.builder().email(email).fullName(fullName).hashedPassword("hashedPassword").build();
     existingUser.setId(2L);
 
     when(userRepository.findByEmailWithOAuthAccounts(email)).thenReturn(Optional.of(existingUser));
@@ -91,12 +85,7 @@ public class CustomOidcUserServiceTests {
     OidcUser oidcUser = createMockOidcUser(email, "User Name");
 
     User user =
-        User.builder()
-            .email(email)
-            .fullName("User Name")
-            .hashedPassword("password")
-            .bio("")
-            .build();
+        User.builder().email(email).fullName("User Name").hashedPassword("password").build();
     user.setId(1L);
 
     when(userRepository.save(any(User.class))).thenReturn(user);
@@ -116,12 +105,7 @@ public class CustomOidcUserServiceTests {
     OidcUser oidcUser = createMockOidcUser(oidcEmail, "Different User");
 
     User user =
-        User.builder()
-            .email(userEmail)
-            .fullName("User Name")
-            .hashedPassword("password")
-            .bio("")
-            .build();
+        User.builder().email(userEmail).fullName("User Name").hashedPassword("password").build();
     user.setId(1L);
 
     assertThatThrownBy(
@@ -135,12 +119,7 @@ public class CustomOidcUserServiceTests {
     OidcUser oidcUser = createMockOidcUser(email, "User Name");
 
     User user =
-        User.builder()
-            .email(email)
-            .fullName("User Name")
-            .hashedPassword("password")
-            .bio("")
-            .build();
+        User.builder().email(email).fullName("User Name").hashedPassword("password").build();
     user.setId(1L);
 
     when(userRepository.save(any(User.class))).thenReturn(user);

@@ -458,6 +458,15 @@
       }
     },
     "profile": {
+      "resume": {
+        "label": "이력서"
+      },
+      "projects": {
+        "label": "프로젝트"
+      },
+      "posts": {
+        "label": "게시물"
+      },
       "edit": {
         "title": "프로필 편집",
         "description": "프로필 정보를 업데이트하세요",
@@ -480,6 +489,29 @@
               "placeholder": "한 줄로 자신을 소개하세요"
             }
           },
+          "image": {
+            "label": "프로필 사진",
+            "actions": {
+              "upload": "사진 업로드",
+              "change": "사진 변경",
+              "remove": "사진 삭제"
+            },
+            "help": {
+              "upload": "JPG, PNG 형식만 지원하며 최대 5MB까지 업로드할 수 있습니다.",
+              "public": "프로필 사진은 다른 사용자에게 공개됩니다."
+            },
+            "messages": {
+              "success": "프로필 사진이 성공적으로 업로드되었습니다."
+            },
+            "errors": {
+              "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
+              "maxSize": "파일 크기는 5MB 이하여야 합니다.",
+              "uploadFailed": "프로필 사진 업로드에 실패했습니다."
+            },
+            "name": {
+              "label": "이름"
+            }
+          },
           "errors": {
             "required_name": "이름은 필수 항목입니다.",
             "invalid_fields": "하나 이상의 필드에 유효하지 않은 입력이 있습니다."
@@ -487,6 +519,19 @@
           "actions": {
             "submit": {
               "label": "저장"
+            }
+          }
+        },
+        "messages": {
+          "success": "프로필이 성공적으로 업데이트되었습니다.",
+          "error": "프로필 업데이트에 실패했습니다."
+        },
+        "profile": {
+          "image": {
+            "errors": {
+              "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
+              "maxSize": "파일 크기는 5MB 이하여야 합니다.",
+              "uploadFailed": "프로필 사진 업로드에 실패했습니다."
             }
           }
         }
@@ -658,26 +703,6 @@
         }
       },
       "description": "계정 설정 관리",
-      "profile": {
-        "image": {
-          "label": "프로필 사진",
-          "helpText": "JPG, PNG 형식만 지원하며 최대 5MB까지 업로드할 수 있습니다.",
-          "actions": {
-            "select": "사진 선택",
-            "clearSelection": "선택 취소",
-            "remove": "사진 삭제",
-            "undoRemove": "삭제 취소"
-          },
-          "errors": {
-            "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
-            "maxSize": "파일 크기는 5MB 이하여야 합니다.",
-            "uploadFailed": "프로필 사진 업로드에 실패했습니다."
-          }
-        },
-        "name": {
-          "label": "이름"
-        }
-      },
       "actions": {
         "save": "저장",
         "cancel": "취소"
