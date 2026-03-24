@@ -67,7 +67,7 @@ class ProfileControllerTests {
     when(profileService.getProfileById(eq(user), eq(user.userId()))).thenReturn(response);
 
     mockMvc
-        .perform(get("/profiles/me", response.handle()))
+        .perform(get("/profiles/me"))
         .andExpect(status().isOk())
         .andDo(
             document(
@@ -180,7 +180,7 @@ class ProfileControllerTests {
   private static ResponseFieldsSnippet getProfileResponseFields() {
     return responseFields(
         fieldWithPath("userId").type(JsonFieldType.STRING).description("ID"),
-        fieldWithPath("handle").type(JsonFieldType.STRING).description("Handle"),
+        fieldWithPath("handle").type(JsonFieldType.STRING).description("Handle").optional(),
         fieldWithPath("name").type(JsonFieldType.STRING).description("Full Name"),
         fieldWithPath("email").type(JsonFieldType.STRING).description("E-mail"),
         fieldWithPath("bio").type(JsonFieldType.STRING).description("Bio"),

@@ -36,7 +36,7 @@ paths:
                     {
                       "mediaId" : 1,
                       "uploadUrl" : "https://example.com/upload",
-                      "expiresAt" : "-999999999-01-01T00:00:00"
+                      "expiresAt" : "1970-01-01T00:00:00"
                     }
   /profiles/me:
     get:
@@ -128,33 +128,11 @@ components:
         expiresAt:
           type: string
           description: Expiration Time
-    UploadMediaRequest:
-      title: UploadMediaRequest
-      required:
-      - fileName
-      - fileSize
-      - mediaContext
-      - mediaType
-      type: object
-      properties:
-        fileName:
-          type: string
-          description: File Name
-        fileSize:
-          type: number
-          description: File Size
-        mediaContext:
-          type: string
-          description: Meida Context
-        mediaType:
-          type: string
-          description: Media Type
     GetProfileResponse:
       title: GetProfileResponse
       required:
       - bio
       - email
-      - handle
       - isAuthenticatedUser
       - isFollowing
       - isOnboarded
@@ -186,6 +164,7 @@ components:
         handle:
           type: string
           description: Handle
+          nullable: true
         profileImageUrl:
           type: string
           description: Profile Image URL
@@ -278,3 +257,24 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    UploadMediaRequest:
+      title: UploadMediaRequest
+      required:
+      - fileName
+      - fileSize
+      - mediaContext
+      - mediaType
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: File Name
+        fileSize:
+          type: number
+          description: File Size
+        mediaContext:
+          type: string
+          description: Media Context
+        mediaType:
+          type: string
+          description: Media Type

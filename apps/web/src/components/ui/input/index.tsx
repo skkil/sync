@@ -45,6 +45,13 @@ function FileInput({
       return 'size';
     }
 
+    if (
+      accept &&
+      !accept.split(',').some((type) => file.type.match(type.trim()))
+    ) {
+      return 'type';
+    }
+
     return null;
   };
 
@@ -90,6 +97,7 @@ function FileInput({
       />
 
       <div
+        role="button"
         onClick={handleClick}
         className={cn(
           'hover:cursor-pointer',

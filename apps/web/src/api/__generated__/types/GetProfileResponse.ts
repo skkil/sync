@@ -19,8 +19,11 @@ export interface GetProfileResponse {
   name: string;
   /** Bio */
   bio: string;
-  /** Handle */
-  handle: string;
+  /**
+   * Handle
+   * @nullable
+   */
+  handle?: string | null;
   /** Profile Image URL */
   profileImageUrl: string;
   /** ID */

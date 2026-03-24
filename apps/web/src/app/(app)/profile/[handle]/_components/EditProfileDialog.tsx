@@ -50,7 +50,6 @@ const EditProfileFormSchema = (t: ReturnType<typeof useTranslations>) =>
     name: z.string().min(1, {
       error: t('form.errors.required_name'),
     }),
-    handle: z.string(),
     profession: z.string(),
     bio: z.string(),
     contacts: z.object({
@@ -82,7 +81,6 @@ export default function EditProfileDialog() {
     resolver: zodResolver(schema),
     defaultValues: {
       name: '',
-      handle: '',
       profession: '',
       bio: '',
       contacts: {
@@ -120,10 +118,9 @@ export default function EditProfileDialog() {
       return;
     }
 
-    const { name, handle, profession, bio, contacts } = profile.data;
+    const { name, profession, bio, contacts } = profile.data;
     form.reset({
       name,
-      handle,
       profession,
       bio,
       contacts: {
@@ -307,7 +304,10 @@ function ProfileImageField() {
   const { mutateAsync: uploadMedia, isPending: isUploadMediaPending } =
     useUploadMedia();
 
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{
+    file: File;
+    src: string;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFileError = (error: FileInputError) => {
@@ -324,7 +324,10 @@ function ProfileImageField() {
       return;
     }
 
-    setSelectedImage(file);
+    setSelectedImage({
+      file,
+      src: URL.createObjectURL(file),
+    });
     setError(null);
 
     const {
@@ -396,7 +399,7 @@ function ProfileImageField() {
           <AvatarImage
             src={
               selectedImage
-                ? URL.createObjectURL(selectedImage)
+                ? selectedImage.src
                 : profile.data.profileImageUrl || undefined
             }
           />

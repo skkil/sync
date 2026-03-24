@@ -10,7 +10,7 @@ export interface UploadMediaRequest {
   fileName: string;
   /** File Size */
   fileSize: number;
-  /** Meida Context */
+  /** Media Context */
   mediaContext: string;
   /** Media Type */
   mediaType: string;

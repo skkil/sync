@@ -68,8 +68,8 @@ export default function ProfileOverview({ handle }: ProfileOverviewProps) {
                     <EditProfileDialog />
                   ) : (
                     <>
-                      <FollowButton handle={profile.data.handle} />
-                      <Link href={`/messages?to=${profile.data.handle}`}>
+                      <FollowButton handle={handle} />
+                      <Link href={`/messages?to=${handle}`}>
                         <Button variant="outline">{t('header.message')}</Button>
                       </Link>
                     </>

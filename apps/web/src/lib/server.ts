@@ -63,21 +63,31 @@ const getUrl = (url: string) => {
   return url;
 };
 
-const getBody = <T>(c: Response | Request): Promise<T> => {
-  const contentType = c.headers.get('content-type');
-
-  if (contentType && contentType.includes('application/json')) {
-    return c.json();
-  }
-
-  return c.text() as Promise<T>;
-};
-
 export const api = async <T>(url: string, options: RequestInit): Promise<T> => {
   const response = await server(getUrl(url), options);
-  const data = await getBody<T>(response);
 
-  return { status: response.status, data, headers: response.headers } as T;
+  if (response.status === 204) {
+    return {
+      status: response.status,
+      data: undefined,
+      headers: response.headers,
+    } as T;
+  }
+
+  const contentType = response.headers.get('Content-Type');
+
+  let data;
+  if (contentType && contentType.includes('application/json')) {
+    data = await response.json();
+  } else {
+    data = await response.text();
+  }
+
+  return {
+    status: response.status,
+    data,
+    headers: response.headers,
+  } as T;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
