@@ -1,4 +1,4 @@
-package com.skkil.sync.provider.model.company;
+package com.skkil.sync.provider.company.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import jakarta.persistence.Column;

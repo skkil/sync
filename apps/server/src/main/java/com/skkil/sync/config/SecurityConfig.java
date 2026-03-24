@@ -53,6 +53,7 @@ public class SecurityConfig {
                     .requestMatchers("/users/**", "/profiles/me", "/media/**")
                     .authenticated()
                     .requestMatchers(
+                        "/jobs/**",
                         "/profiles/**",
                         "/auth/login",
                         "/auth/register",

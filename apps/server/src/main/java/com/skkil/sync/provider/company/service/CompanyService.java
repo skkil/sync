@@ -1,14 +1,14 @@
-package com.skkil.sync.provider.service.company;
+package com.skkil.sync.provider.company.service;
 
+import com.skkil.sync.provider.company.dto.request.CreateCompanyRequest;
+import com.skkil.sync.provider.company.dto.request.UpdateCompanyRequest;
+import com.skkil.sync.provider.company.dto.response.GetCompanyResponse;
+import com.skkil.sync.provider.company.model.Company;
 import com.skkil.sync.provider.constant.ProviderType;
-import com.skkil.sync.provider.dto.request.CreateCompanyRequest;
 import com.skkil.sync.provider.dto.request.CreateProviderRequest;
-import com.skkil.sync.provider.dto.request.UpdateCompanyRequest;
 import com.skkil.sync.provider.dto.request.UpdateProviderRequest;
-import com.skkil.sync.provider.dto.response.GetCompanyResponse;
 import com.skkil.sync.provider.dto.response.GetProviderResponse;
 import com.skkil.sync.provider.model.Provider;
-import com.skkil.sync.provider.model.company.Company;
 import com.skkil.sync.provider.service.ProviderStrategy;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

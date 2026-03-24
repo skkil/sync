@@ -2,6 +2,7 @@ package com.skkil.sync.provider.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.skkil.sync.provider.company.dto.request.UpdateCompanyRequest;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.project.dto.request.UpdateProjectRequest;
 

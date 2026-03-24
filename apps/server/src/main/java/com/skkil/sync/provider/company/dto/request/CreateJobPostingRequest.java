@@ -1,4 +1,4 @@
-package com.skkil.sync.provider.dto.request;
+package com.skkil.sync.provider.company.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
