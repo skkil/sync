@@ -1,4 +1,4 @@
-import NavigationBar from '@/components/layout/nav/NavigationBar';
+import TopNavigationBar from '@/components/layout/nav/top/TopNavigationBar';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -7,8 +7,11 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <>
-      <NavigationBar />
-      {children}
+      <div>
+        <TopNavigationBar />
+      </div>
+
+      <div className="pb-16 lg:pb-0">{children}</div>
     </>
   );
 }

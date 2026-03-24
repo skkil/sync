@@ -12,7 +12,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
@@ -20,7 +19,11 @@ import { ModalType } from '@/constants/modal';
 import { useModal } from '@/hooks/store';
 import { useSession } from '@/lib/auth/client';
 
-export default function UserAvatar() {
+interface UserAvatarProps {
+  align?: 'start' | 'end';
+}
+
+export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
   const router = useRouter();
   const { isPending, data: session } = useSession();
   const { openModal } = useModal();
@@ -43,6 +46,30 @@ export default function UserAvatar() {
     );
   }
 
+  const menu = [
+    {
+      icon: UserIcon,
+      label: t('user.profile'),
+      onClick: () => {
+        router.push(`/profile/${session.user.id}`);
+      },
+    },
+    {
+      icon: GearSixIcon,
+      label: t('user.settings'),
+      onClick: () => {
+        openModal(ModalType.SETTINGS);
+      },
+    },
+    {
+      icon: SignOutIcon,
+      label: t('user.sign-out'),
+      onClick: () => {
+        // TODO: need to implement sign out
+      },
+    },
+  ];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -54,37 +81,18 @@ export default function UserAvatar() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align={align}>
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => {
-              router.push(`/profile/${session.user.id}`);
-            }}
-          >
-            <UserIcon />
-            {t('user.profile')}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => {
-              openModal(ModalType.SETTINGS);
-            }}
-          >
-            <GearSixIcon />
-            {t('user.settings')}
-          </DropdownMenuItem>
+          {menu.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <DropdownMenuItem key={index} onClick={item.onClick}>
+                <Icon />
+                {item.label}
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onClick={() => {
-            // TODO: need to implement sign out
-          }}
-        >
-          <SignOutIcon />
-          {t('user.sign-out')}
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

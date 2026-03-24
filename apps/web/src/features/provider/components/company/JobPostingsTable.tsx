@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { DataTable } from '@/components/ui/data-table';
 
-import { useGetJobPostingsQuery } from '../../api/company/get-job-postings';
+import { useGetJobPostingsByCompanyQuery } from '../../api/company/get-job-postings';
 import JobPostingModal from './JobPostingModal';
 import { JobPosting, columns } from './JobPostingsTableColumns';
 
@@ -14,7 +14,7 @@ interface JobPostingsTableProps {
 export default function JobPostingsTable({ companyId }: JobPostingsTableProps) {
   const t = useTranslations('pages.company.job-postings.table');
 
-  const { data: jobPostings } = useGetJobPostingsQuery(companyId);
+  const { data: jobPostings } = useGetJobPostingsByCompanyQuery(companyId);
 
   const [open, setOpen] = useState(false);
   const [selectedJobPosting, setSelectedJobPosting] =
@@ -24,7 +24,7 @@ export default function JobPostingsTable({ companyId }: JobPostingsTableProps) {
     <>
       <DataTable
         columns={columns}
-        data={jobPostings || []}
+        data={jobPostings?.content || []}
         t={t}
         onRowClick={(row) => {
           setSelectedJobPosting(row);
