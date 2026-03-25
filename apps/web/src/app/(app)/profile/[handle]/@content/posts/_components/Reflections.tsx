@@ -13,6 +13,8 @@ import { Spinner } from '@/components/ui/spinner';
 
 import ReflectionCard from './ReflectionCard';
 
+const REFLECTIONS_PAGE_SIZE = '10';
+
 export default function Reflections() {
   const t = useTranslations('pages.profile.posts');
   const { handle } = useParams();
@@ -32,7 +34,7 @@ export default function Reflections() {
     isError,
   } = useGetUserReflectionsInfinite(
     userId || '',
-    { cursor: '', size: '2' },
+    { cursor: '', size: REFLECTIONS_PAGE_SIZE },
     {
       query: {
         getNextPageParam: (lastPage) => {
