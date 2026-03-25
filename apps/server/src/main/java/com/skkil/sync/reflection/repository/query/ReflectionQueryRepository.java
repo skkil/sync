@@ -2,8 +2,10 @@ package com.skkil.sync.reflection.repository.query;
 
 import static com.skkil.sync.jooq.tables.Experiences.EXPERIENCES;
 import static com.skkil.sync.jooq.tables.ProjectExperiences.PROJECT_EXPERIENCES;
+import static com.skkil.sync.jooq.tables.Providers.PROVIDERS;
 import static com.skkil.sync.jooq.tables.Reflections.REFLECTIONS;
 import static com.skkil.sync.jooq.tables.Users.USERS;
+import static org.jooq.impl.DSL.noCondition;
 
 import com.skkil.sync.common.util.pagination.model.Cursor;
 import com.skkil.sync.reflection.dto.data.ReflectionDto;
@@ -24,76 +26,39 @@ public class ReflectionQueryRepository {
   }
 
   public List<ReflectionDto> getReflections(Cursor cursor, int size) {
-    Condition cursorCondition = buildCursorCondition(cursor);
-
-    return dsl.select(
-            REFLECTIONS.ID,
-            REFLECTIONS.AUTHOR_ID,
-            USERS.FULL_NAME,
-            REFLECTIONS.CONTENT,
-            REFLECTIONS.AUTHOR_ID,
-            REFLECTIONS.PROJECT_EXPERIENCE_ID,
-            REFLECTIONS.CREATED_AT,
-            REFLECTIONS.UPDATED_AT)
-        .from(REFLECTIONS)
-        .join(USERS)
-        .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
-        .join(PROJECT_EXPERIENCES)
-        .on(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(PROJECT_EXPERIENCES.ID))
-        .join(EXPERIENCES)
-        .on(PROJECT_EXPERIENCES.ID.eq(EXPERIENCES.ID))
-        .where(cursorCondition)
-        .orderBy(REFLECTIONS.CREATED_AT.desc(), REFLECTIONS.ID.desc())
-        .limit(size)
-        .fetchInto(ReflectionDto.class);
+    return getReflections(buildCursorCondition(cursor), size);
   }
 
   public List<ReflectionDto> getReflectionsByUser(Long userId, Cursor cursor, int size) {
-    Condition cursorCondition = buildCursorCondition(cursor);
-
-    return dsl.select(
-            REFLECTIONS.ID,
-            REFLECTIONS.AUTHOR_ID,
-            USERS.FULL_NAME,
-            REFLECTIONS.CONTENT,
-            REFLECTIONS.AUTHOR_ID,
-            REFLECTIONS.PROJECT_EXPERIENCE_ID,
-            REFLECTIONS.CREATED_AT,
-            REFLECTIONS.UPDATED_AT)
-        .from(REFLECTIONS)
-        .join(USERS)
-        .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
-        .join(PROJECT_EXPERIENCES)
-        .on(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(PROJECT_EXPERIENCES.ID))
-        .join(EXPERIENCES)
-        .on(PROJECT_EXPERIENCES.ID.eq(EXPERIENCES.ID))
-        .where(cursorCondition.and(REFLECTIONS.AUTHOR_ID.eq(userId)))
-        .orderBy(REFLECTIONS.CREATED_AT.desc(), REFLECTIONS.ID.desc())
-        .limit(size)
-        .fetchInto(ReflectionDto.class);
+    return getReflections(buildCursorCondition(cursor).and(REFLECTIONS.AUTHOR_ID.eq(userId)), size);
   }
 
   public List<ReflectionDto> getReflectionsByExperience(
       Long experienceId, Cursor cursor, int size) {
-    Condition cursorCondition = buildCursorCondition(cursor);
+    return getReflections(
+        buildCursorCondition(cursor).and(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(experienceId)), size);
+  }
 
+  private List<ReflectionDto> getReflections(Condition condition, int size) {
     return dsl.select(
             REFLECTIONS.ID,
             REFLECTIONS.AUTHOR_ID,
             USERS.FULL_NAME,
             REFLECTIONS.CONTENT,
-            REFLECTIONS.AUTHOR_ID,
-            REFLECTIONS.PROJECT_EXPERIENCE_ID,
+            PROVIDERS.ID,
+            PROVIDERS.NAME,
             REFLECTIONS.CREATED_AT,
             REFLECTIONS.UPDATED_AT)
         .from(REFLECTIONS)
         .join(USERS)
         .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
-        .join(PROJECT_EXPERIENCES)
+        .leftJoin(PROJECT_EXPERIENCES)
         .on(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(PROJECT_EXPERIENCES.ID))
-        .join(EXPERIENCES)
+        .leftJoin(EXPERIENCES)
         .on(PROJECT_EXPERIENCES.ID.eq(EXPERIENCES.ID))
-        .where(cursorCondition.and(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(PROJECT_EXPERIENCES.ID)))
+        .leftJoin(PROVIDERS)
+        .on(EXPERIENCES.PROVIDER_ID.eq(PROVIDERS.ID))
+        .where(condition)
         .orderBy(REFLECTIONS.CREATED_AT.desc(), REFLECTIONS.ID.desc())
         .limit(size)
         .fetchInto(ReflectionDto.class);
@@ -101,7 +66,7 @@ public class ReflectionQueryRepository {
 
   private Condition buildCursorCondition(Cursor cursor) {
     if (cursor == null) {
-      return null;
+      return noCondition();
     }
 
     LocalDateTime createdAt = LocalDateTime.ofInstant(cursor.createdAt(), ZoneOffset.UTC);

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record ReflectionDto(
     Long id,
     Long authorId,
-    Long authorName,
+    String authorName,
     String content,
     Long projectId,
     String projectName,

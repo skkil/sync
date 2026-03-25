@@ -10,11 +10,13 @@ import com.skkil.sync.reflection.mapper.ReflectionMapper;
 import com.skkil.sync.reflection.repository.query.ReflectionQueryRepository;
 import java.time.ZoneOffset;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class ReflectionQueryService {
 
   private final ReflectionQueryRepository reflectionQueryRepository;
@@ -35,6 +37,7 @@ public class ReflectionQueryService {
     List<ReflectionDto> reflections =
         reflectionQueryRepository.getReflections(
             cursorConverter.decode(pagination.cursor()), pagination.size() + 1);
+    log.debug("Fetched {} reflections", reflections.size());
 
     return new GetReflectionsResponse(
         mapToCursorPaginationResponse(reflections, pagination.cursor(), pagination.size()));
@@ -47,6 +50,7 @@ public class ReflectionQueryService {
     List<ReflectionDto> reflections =
         reflectionQueryRepository.getReflectionsByUser(
             userId, cursorConverter.decode(pagination.cursor()), pagination.size() + 1);
+    log.debug("Fetched {} reflections for user {}", reflections.size(), userId);
 
     return new GetReflectionsResponse(
         mapToCursorPaginationResponse(reflections, pagination.cursor(), pagination.size()));
@@ -59,6 +63,7 @@ public class ReflectionQueryService {
     List<ReflectionDto> reflections =
         reflectionQueryRepository.getReflectionsByExperience(
             experienceId, cursorConverter.decode(pagination.cursor()), pagination.size() + 1);
+    log.debug("Fetched {} reflections for experience {}", reflections.size(), experienceId);
 
     return new GetReflectionsResponse(
         mapToCursorPaginationResponse(reflections, pagination.cursor(), pagination.size()));
