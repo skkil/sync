@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface Tab {
@@ -45,7 +44,7 @@ export default function ProfileTabs({
         {right && <div className="ml-auto">{right}</div>}
       </div>
 
-      <Card className="min-h-96 overflow-auto">
+      <div>
         {tabs.map((tab) =>
           tab.id === activeTab ? (
             <TabsContent key={tab.id} value={tab.id} className="px-5">
@@ -53,7 +52,7 @@ export default function ProfileTabs({
             </TabsContent>
           ) : null,
         )}
-      </Card>
+      </div>
     </Tabs>
   );
 }

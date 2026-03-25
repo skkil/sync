@@ -13,6 +13,10 @@ export default defineConfig({
       client: 'react-query',
       prettier: true,
       override: {
+        query: {
+          useInfinite: true,
+          useInfiniteQueryParam: 'cursor',
+        },
         mutator: {
           path: './src/lib/server.ts',
           name: 'api',

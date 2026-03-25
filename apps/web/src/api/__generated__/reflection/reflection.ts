@@ -4,16 +4,20 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
+  DefinedUseInfiniteQueryResult,
   DefinedUseQueryResult,
+  InfiniteData,
   MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -83,6 +87,17 @@ export const getProjectExperienceReflections = async (
   );
 };
 
+export const getGetProjectExperienceReflectionsInfiniteQueryKey = (
+  experienceId: string,
+  params?: GetProjectExperienceReflectionsParams,
+) => {
+  return [
+    'infinite',
+    `/experiences/project/${experienceId}/reflections`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
 export const getGetProjectExperienceReflectionsQueryKey = (
   experienceId: string,
   params?: GetProjectExperienceReflectionsParams,
@@ -92,6 +107,203 @@ export const getGetProjectExperienceReflectionsQueryKey = (
     ...(params ? [params] : []),
   ] as const;
 };
+
+export const getGetProjectExperienceReflectionsInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+    GetProjectExperienceReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  experienceId: string,
+  params: GetProjectExperienceReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetProjectExperienceReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetProjectExperienceReflectionsInfiniteQueryKey(experienceId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+    QueryKey,
+    GetProjectExperienceReflectionsParams['cursor']
+  > = ({ signal, pageParam }) =>
+    getProjectExperienceReflections(
+      experienceId,
+      { ...params, cursor: pageParam || params?.['cursor'] },
+      { signal, ...requestOptions },
+    );
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!experienceId,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+    TError,
+    TData,
+    QueryKey,
+    GetProjectExperienceReflectionsParams['cursor']
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProjectExperienceReflectionsInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProjectExperienceReflections>>
+>;
+export type GetProjectExperienceReflectionsInfiniteQueryError =
+  ErrorType<unknown>;
+
+export function useGetProjectExperienceReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+    GetProjectExperienceReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  experienceId: string,
+  params: GetProjectExperienceReflectionsParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetProjectExperienceReflectionsParams['cursor']
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectExperienceReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+    GetProjectExperienceReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  experienceId: string,
+  params: GetProjectExperienceReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetProjectExperienceReflectionsParams['cursor']
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectExperienceReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+    GetProjectExperienceReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  experienceId: string,
+  params: GetProjectExperienceReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetProjectExperienceReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Reflections
+ */
+
+export function useGetProjectExperienceReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+    GetProjectExperienceReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  experienceId: string,
+  params: GetProjectExperienceReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProjectExperienceReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetProjectExperienceReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetProjectExperienceReflectionsInfiniteQueryOptions(
+    experienceId,
+    params,
+    options,
+  );
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 export const getGetProjectExperienceReflectionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getProjectExperienceReflections>>,
@@ -295,9 +507,195 @@ export const getReflections = async (
   });
 };
 
+export const getGetReflectionsInfiniteQueryKey = (
+  params?: GetReflectionsParams,
+) => {
+  return ['infinite', `/reflections`, ...(params ? [params] : [])] as const;
+};
+
 export const getGetReflectionsQueryKey = (params?: GetReflectionsParams) => {
   return [`/reflections`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetReflectionsInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflections>>,
+    GetReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  params: GetReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetReflectionsInfiniteQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getReflections>>,
+    QueryKey,
+    GetReflectionsParams['cursor']
+  > = ({ signal, pageParam }) =>
+    getReflections(
+      { ...params, cursor: pageParam || params?.['cursor'] },
+      { signal, ...requestOptions },
+    );
+
+  return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getReflections>>,
+    TError,
+    TData,
+    QueryKey,
+    GetReflectionsParams['cursor']
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetReflectionsInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getReflections>>
+>;
+export type GetReflectionsInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflections>>,
+    GetReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  params: GetReflectionsParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsParams['cursor']
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflections>>,
+          TError,
+          Awaited<ReturnType<typeof getReflections>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflections>>,
+    GetReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  params: GetReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsParams['cursor']
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflections>>,
+          TError,
+          Awaited<ReturnType<typeof getReflections>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflections>>,
+    GetReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  params: GetReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Reflections
+ */
+
+export function useGetReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflections>>,
+    GetReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  params: GetReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetReflectionsInfiniteQueryOptions(params, options);
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 export const getGetReflectionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getReflections>>,
@@ -765,12 +1163,219 @@ export const getUserReflections = async (
   );
 };
 
+export const getGetUserReflectionsInfiniteQueryKey = (
+  userId: string,
+  params?: GetUserReflectionsParams,
+) => {
+  return [
+    'infinite',
+    `/users/${userId}/reflections`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
 export const getGetUserReflectionsQueryKey = (
   userId: string,
   params?: GetUserReflectionsParams,
 ) => {
   return [`/users/${userId}/reflections`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetUserReflectionsInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getUserReflections>>,
+    GetUserReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params: GetUserReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getUserReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetUserReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetUserReflectionsInfiniteQueryKey(userId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getUserReflections>>,
+    QueryKey,
+    GetUserReflectionsParams['cursor']
+  > = ({ signal, pageParam }) =>
+    getUserReflections(
+      userId,
+      { ...params, cursor: pageParam || params?.['cursor'] },
+      { signal, ...requestOptions },
+    );
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!userId,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getUserReflections>>,
+    TError,
+    TData,
+    QueryKey,
+    GetUserReflectionsParams['cursor']
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetUserReflectionsInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getUserReflections>>
+>;
+export type GetUserReflectionsInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetUserReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getUserReflections>>,
+    GetUserReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params: GetUserReflectionsParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getUserReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetUserReflectionsParams['cursor']
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserReflections>>,
+          TError,
+          Awaited<ReturnType<typeof getUserReflections>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUserReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getUserReflections>>,
+    GetUserReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params: GetUserReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getUserReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetUserReflectionsParams['cursor']
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserReflections>>,
+          TError,
+          Awaited<ReturnType<typeof getUserReflections>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUserReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getUserReflections>>,
+    GetUserReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params: GetUserReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getUserReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetUserReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Reflections
+ */
+
+export function useGetUserReflectionsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getUserReflections>>,
+    GetUserReflectionsParams['cursor']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params: GetUserReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getUserReflections>>,
+        TError,
+        TData,
+        QueryKey,
+        GetUserReflectionsParams['cursor']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetUserReflectionsInfiniteQueryOptions(
+    userId,
+    params,
+    options,
+  );
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 export const getGetUserReflectionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getUserReflections>>,

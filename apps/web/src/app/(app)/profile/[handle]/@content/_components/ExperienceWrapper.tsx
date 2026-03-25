@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  BookIcon,
   DotsThreeIcon,
   EyeClosedIcon,
   EyeIcon,
@@ -51,7 +50,6 @@ import { useSession } from '@/lib/auth/client';
 import { Experience, ExperienceVisibility } from '@/types/experience';
 
 import ExperienceForm, { ExperienceFormValues } from './ExperienceForm';
-import Reflections from './Reflections';
 
 interface ExperienceWrapperProps {
   userId: string;
@@ -68,8 +66,6 @@ export default function ExperienceWrapper({
 
   const { data: session } = useSession();
 
-  const [showReflections, setShowReflections] = useState(false);
-
   const { mutate: updateExperience } = useUpdateExperienceMutation(
     session?.user.id || '',
   );
@@ -78,82 +74,64 @@ export default function ExperienceWrapper({
 
   return (
     <div className="flex justify-between items-center">
-      {showReflections ? (
-        <Reflections
-          experience={experience}
-          isOwner={isOwner}
-          onClose={() => {
-            setShowReflections(false);
-          }}
-        />
-      ) : (
-        <>
-          <div>{children}</div>
+      <>
+        <div>{children}</div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              onClick={() => setShowReflections((prev) => !prev)}
-            >
-              <BookIcon />
-            </Button>
+        <div className="flex items-center gap-2">
+          {isOwner && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">
+                  <DotsThreeIcon />
+                </Button>
+              </DropdownMenuTrigger>
 
-            {isOwner && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost">
-                    <DotsThreeIcon />
-                  </Button>
-                </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <UpdateExperienceButton experience={experience} />
 
-                <DropdownMenuContent>
-                  <UpdateExperienceButton experience={experience} />
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <EyeIcon />
+                    {t('menu.visibility.title')}
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuGroup>
+                        <DropdownMenuLabel>
+                          {t('menu.visibility.title')}
+                        </DropdownMenuLabel>
+                        <DropdownMenuRadioGroup
+                          value={experience.visibility}
+                          onValueChange={(visibility) => {
+                            updateExperience({
+                              experienceId: experience.id,
+                              data: {
+                                type: experience.type,
+                                visibility: visibility as ExperienceVisibility,
+                              },
+                            });
+                          }}
+                        >
+                          <DropdownMenuRadioItem value="PUBLIC">
+                            <EyeIcon />
+                            {t('menu.visibility.options.PUBLIC')}
+                          </DropdownMenuRadioItem>
+                          <DropdownMenuRadioItem value="PRIVATE">
+                            <EyeClosedIcon />
+                            {t('menu.visibility.options.PRIVATE')}
+                          </DropdownMenuRadioItem>
+                        </DropdownMenuRadioGroup>
+                      </DropdownMenuGroup>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
 
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <EyeIcon />
-                      {t('menu.visibility.title')}
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuGroup>
-                          <DropdownMenuLabel>
-                            {t('menu.visibility.title')}
-                          </DropdownMenuLabel>
-                          <DropdownMenuRadioGroup
-                            value={experience.visibility}
-                            onValueChange={(visibility) => {
-                              updateExperience({
-                                experienceId: experience.id,
-                                data: {
-                                  type: experience.type,
-                                  visibility:
-                                    visibility as ExperienceVisibility,
-                                },
-                              });
-                            }}
-                          >
-                            <DropdownMenuRadioItem value="PUBLIC">
-                              <EyeIcon />
-                              {t('menu.visibility.options.PUBLIC')}
-                            </DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="PRIVATE">
-                              <EyeClosedIcon />
-                              {t('menu.visibility.options.PRIVATE')}
-                            </DropdownMenuRadioItem>
-                          </DropdownMenuRadioGroup>
-                        </DropdownMenuGroup>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-
-                  <DeleteExperienceButton experience={experience} />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </>
-      )}
+                <DeleteExperienceButton experience={experience} />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+      </>
     </div>
   );
 }
