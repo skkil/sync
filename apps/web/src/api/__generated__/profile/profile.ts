@@ -4,16 +4,20 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
+  DefinedUseInfiniteQueryResult,
   DefinedUseQueryResult,
+  InfiniteData,
   MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -54,9 +58,151 @@ export const getAuthenticatedUser = async (
   });
 };
 
+export const getGetAuthenticatedUserInfiniteQueryKey = () => {
+  return ['infinite', `/profiles/me`] as const;
+};
+
 export const getGetAuthenticatedUserQueryKey = () => {
   return [`/profiles/me`] as const;
 };
+
+export const getGetAuthenticatedUserInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getAuthenticatedUser>>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: Partial<
+    UseInfiniteQueryOptions<
+      Awaited<ReturnType<typeof getAuthenticatedUser>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof api>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetAuthenticatedUserInfiniteQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAuthenticatedUser>>
+  > = ({ signal }) => getAuthenticatedUser({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getAuthenticatedUser>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAuthenticatedUserInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAuthenticatedUser>>
+>;
+export type GetAuthenticatedUserInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetAuthenticatedUserInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getAuthenticatedUser>>>,
+  TError = ErrorType<unknown>,
+>(
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getAuthenticatedUser>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAuthenticatedUser>>,
+          TError,
+          Awaited<ReturnType<typeof getAuthenticatedUser>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAuthenticatedUserInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getAuthenticatedUser>>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getAuthenticatedUser>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAuthenticatedUser>>,
+          TError,
+          Awaited<ReturnType<typeof getAuthenticatedUser>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAuthenticatedUserInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getAuthenticatedUser>>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getAuthenticatedUser>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Authenticated User Profile
+ */
+
+export function useGetAuthenticatedUserInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getAuthenticatedUser>>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getAuthenticatedUser>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAuthenticatedUserInfiniteQueryOptions(options);
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 export const getGetAuthenticatedUserQueryOptions = <
   TData = Awaited<ReturnType<typeof getAuthenticatedUser>>,
@@ -321,9 +467,166 @@ export const getProfileByHandle = async (
   });
 };
 
+export const getGetProfileByHandleInfiniteQueryKey = (handle: string) => {
+  return ['infinite', `/profiles/${handle}`] as const;
+};
+
 export const getGetProfileByHandleQueryKey = (handle: string) => {
   return [`/profiles/${handle}`] as const;
 };
+
+export const getGetProfileByHandleInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getProfileByHandle>>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetProfileByHandleInfiniteQueryKey(handle);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProfileByHandle>>
+  > = ({ signal }) => getProfileByHandle(handle, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!handle,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getProfileByHandle>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProfileByHandleInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProfileByHandle>>
+>;
+export type GetProfileByHandleInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetProfileByHandleInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProfileByHandle>>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProfileByHandle>>,
+          TError,
+          Awaited<ReturnType<typeof getProfileByHandle>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProfileByHandleInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProfileByHandle>>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProfileByHandle>>,
+          TError,
+          Awaited<ReturnType<typeof getProfileByHandle>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProfileByHandleInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProfileByHandle>>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Profile By Handle
+ */
+
+export function useGetProfileByHandleInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProfileByHandle>>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProfileByHandle>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetProfileByHandleInfiniteQueryOptions(
+    handle,
+    options,
+  );
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 export const getGetProfileByHandleQueryOptions = <
   TData = Awaited<ReturnType<typeof getProfileByHandle>>,

@@ -5,9 +5,20 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from './CreateReflectionRequest';
+export * from './CreateReflectionResponse';
 export * from './GetProfileResponse';
 export * from './GetProfileResponseContacts';
+export * from './GetProjectExperienceReflectionsParams';
+export * from './GetReflectionsParams';
+export * from './GetReflectionsResponse';
+export * from './GetReflectionsResponseReflections';
+export * from './GetReflectionsResponseReflectionsContentItem';
+export * from './GetReflectionsResponseReflectionsContentItemAuthor';
+export * from './GetReflectionsResponseReflectionsContentItemProject';
+export * from './GetUserReflectionsParams';
 export * from './UpdateProfileRequest';
 export * from './UpdateProfileRequestContacts';
+export * from './UpdateReflectionRequest';
 export * from './UploadMediaRequest';
 export * from './UploadMediaResponse';

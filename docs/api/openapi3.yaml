@@ -7,6 +7,45 @@ servers:
 - url: ""
 tags: []
 paths:
+  /experiences/project/{experienceId}/reflections:
+    get:
+      tags:
+      - reflection
+      summary: Get Reflections
+      description: Get Reflections
+      operationId: GetProjectExperienceReflections
+      parameters:
+      - name: experienceId
+        in: path
+        description: Project Experience ID
+        required: true
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        description: Pagination Cursor
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Long)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetReflectionsResponse"
+              examples:
+                GetProjectExperienceReflections:
+                  value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
+                    id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
+                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
+                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
   /media:
     post:
       tags:
@@ -109,6 +148,148 @@ paths:
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
                     ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
                     :false,\"role\":\"USER\",\"contacts\":null}"
+  /reflections:
+    get:
+      tags:
+      - reflection
+      summary: Get Reflections
+      description: Get Reflections
+      operationId: GetReflections
+      parameters:
+      - name: cursor
+        in: query
+        description: Pagination Cursor
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Long)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetReflectionsResponse"
+              examples:
+                GetReflections:
+                  value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
+                    id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
+                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
+                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
+    post:
+      tags:
+      - reflection
+      summary: Create Reflection
+      description: Create Reflection
+      operationId: CreateReflection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReflectionRequest"
+            examples:
+              CreateReflection:
+                value: "{\"experienceId\":1,\"content\":\"This is a reflection content.\"\
+                  }"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateReflectionResponse"
+              examples:
+                CreateReflection:
+                  value: |-
+                    {
+                      "id" : 1
+                    }
+  /reflections/{reflectionId}:
+    delete:
+      tags:
+      - reflection
+      summary: Delete Reflection
+      description: Delete Reflection
+      operationId: DeleteReflection
+      parameters:
+      - name: reflectionId
+        in: path
+        description: Reflection ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+    patch:
+      tags:
+      - reflection
+      summary: Update Reflection
+      description: Update Reflection
+      operationId: UpdateReflection
+      parameters:
+      - name: reflectionId
+        in: path
+        description: Reflection ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateReflectionRequest"
+            examples:
+              UpdateReflection:
+                value: "{\"experienceId\":1,\"content\":\"This is a reflection content.\"\
+                  }"
+      responses:
+        "204":
+          description: "204"
+  /users/{userId}/reflections:
+    get:
+      tags:
+      - reflection
+      summary: Get Reflections
+      description: Get Reflections
+      operationId: GetUserReflections
+      parameters:
+      - name: userId
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        description: Pagination Cursor
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Long)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetReflectionsResponse"
+              examples:
+                GetUserReflections:
+                  value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
+                    id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
+                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
+                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
 components:
   schemas:
     UploadMediaResponse:
@@ -128,6 +309,91 @@ components:
         expiresAt:
           type: string
           description: Expiration Time
+    CreateReflectionRequest:
+      title: CreateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        experienceId:
+          type: number
+          description: Experience ID
+          nullable: true
+        content:
+          type: string
+          description: Content
+    GetReflectionsResponse:
+      title: GetReflectionsResponse
+      type: object
+      properties:
+        reflections:
+          required:
+          - content
+          - hasNext
+          type: object
+          properties:
+            nextCursor:
+              type: string
+              description: Next Cursor
+              nullable: true
+            hasNext:
+              type: boolean
+              description: Has Next
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - content
+                - createdAt
+                - id
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                    description: Creation Timestamp
+                  author:
+                    required:
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Author Name
+                      id:
+                        type: number
+                        description: Author User ID
+                  project:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Project Name
+                        nullable: true
+                      id:
+                        type: number
+                        description: Project ID
+                        nullable: true
+                  id:
+                    type: number
+                    description: Reflection ID
+                  content:
+                    type: string
+                    description: Reflection Content
+    UpdateReflectionRequest:
+      title: UpdateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        experienceId:
+          type: number
+          description: Experience ID
+          nullable: true
+        content:
+          type: string
+          description: Content
     GetProfileResponse:
       title: GetProfileResponse
       required:
@@ -278,3 +544,12 @@ components:
         mediaType:
           type: string
           description: Media Type
+    CreateReflectionResponse:
+      title: CreateReflectionResponse
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: number
+          description: Reflection ID

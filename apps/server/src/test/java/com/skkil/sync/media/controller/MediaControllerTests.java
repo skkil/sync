@@ -17,16 +17,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.common.config.TestSecurityConfig;
 import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.common.security.WithAuthenticatedUserSecurityContextFactory;
+import com.skkil.sync.common.util.time.DateTimeTestUtils;
 import com.skkil.sync.config.SecurityConfig;
-import com.skkil.sync.config.TestSecurityConfig;
 import com.skkil.sync.media.constant.MediaContext;
 import com.skkil.sync.media.dto.request.UploadMediaRequest;
 import com.skkil.sync.media.dto.response.UploadMediaResponse;
 import com.skkil.sync.media.service.MediaService;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -106,7 +105,7 @@ class MediaControllerTests {
     return UploadMediaResponse.builder()
         .mediaId(1L)
         .uploadUrl("https://example.com/upload")
-        .expiresAt(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC))
+        .expiresAt(DateTimeTestUtils.defaultTestLocalDateTime())
         .build();
   }
 

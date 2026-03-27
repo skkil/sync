@@ -20,10 +20,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.common.config.TestSecurityConfig;
 import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.common.security.WithAuthenticatedUserSecurityContextFactory;
 import com.skkil.sync.config.SecurityConfig;
-import com.skkil.sync.config.TestSecurityConfig;
 import com.skkil.sync.user.constant.Role;
 import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
