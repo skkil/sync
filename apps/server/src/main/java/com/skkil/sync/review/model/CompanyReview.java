@@ -1,7 +1,7 @@
 package com.skkil.sync.review.model;
 
+import com.skkil.sync.provider.company.model.Company;
 import com.skkil.sync.provider.constant.ProviderType;
-import com.skkil.sync.provider.model.company.Company;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

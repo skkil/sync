@@ -1,7 +1,20 @@
 {
   "pages": {
     "home": {
-      "title": "sync"
+      "title": "sync",
+      "left": {
+        "jobs": "채용 공고"
+      }
+    },
+    "jobs": {
+      "postings": {
+        "not-found": "채용 공고를 찾을 수 없습니다.",
+        "loading": "채용 공고를 불러오는 중...",
+        "error": "채용 공고를 불러오는 중 오류가 발생했습니다."
+      },
+      "bookmark": {
+        "label": "저장한 채용 공고"
+      }
     },
     "messages": {
       "conversations": {
@@ -305,6 +318,7 @@
         "title": "채용 공고",
         "table": {
           "empty": "이 회사에는 현재 채용 공고가 없습니다.",
+          "error": "채용 공고를 불러오는 중 오류가 발생했습니다.",
           "job-title": "직책",
           "location": "근무 지역",
           "posted-date": "게시 날짜"
@@ -727,6 +741,26 @@
     }
   },
   "components": {
+    "navigation": {
+      "search": {
+        "placeholder": "사람, 기관 또는 프로젝트 검색..."
+      },
+      "menu": {
+        "jobs": "채용 공고"
+      },
+      "login": "로그인",
+      "user": {
+        "profile": "내 프로필",
+        "settings": "설정",
+        "sign-out": "로그아웃"
+      }
+    },
+    "footer": {
+      "about": "소개",
+      "contact": "문의하기",
+      "terms": "이용 약관",
+      "privacy": "개인정보 처리방침"
+    },
     "editor": {
       "toolbar": {
         "bold": {
@@ -754,17 +788,6 @@
           "description": "관리자가 아닌 일반 사용자는 이 페이지를 이렇게 보게 됩니다.",
           "view-as-admin": "관리자로 보기"
         }
-      }
-    },
-    "navigation": {
-      "search": {
-        "placeholder": "사람, 기관 또는 프로젝트 검색..."
-      },
-      "login": "로그인",
-      "user": {
-        "profile": "내 프로필",
-        "settings": "설정",
-        "sign-out": "로그아웃"
       }
     },
     "select-providers": {

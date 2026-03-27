@@ -1,4 +1,4 @@
-import Logo from '@/components/ui/logo';
+import TopNavigationBar from '@/components/layout/nav/top/TopNavigationBar';
 
 interface AuthLayoutProps {
   children?: React.ReactNode;
@@ -6,12 +6,12 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="absolute top-4 left-4">
-        <Logo />
+    <div className="w-full min-h-screen flex flex-col">
+      <div>
+        <TopNavigationBar />
       </div>
 
-      {children}
+      <div className="grow flex items-center justify-center">{children}</div>
     </div>
   );
 }
