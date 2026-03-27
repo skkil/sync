@@ -1,22 +1,16 @@
 import { betterAuth } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
 import { nextCookies } from 'better-auth/next-js';
-import ky from 'ky';
 
-import { env } from '../env';
-
-export interface GetAuthenticatedUserResponse {
-  userId: string;
-  fullName: string;
-  email: string;
-  profileImageUrl: string | null;
-  isOnboarded: boolean;
-  role: 'USER' | 'ADMIN';
-}
+import { getAuthenticatedUser } from '@/api/__generated__/profile/profile';
 
 export const auth = betterAuth({
   user: {
     additionalFields: {
+      handle: {
+        type: 'string',
+        input: false,
+      },
       isOnboarded: {
         type: 'boolean',
         input: false,
@@ -42,25 +36,27 @@ export const auth = betterAuth({
                 return null;
               }
 
-              const response = await ky
-                .get<GetAuthenticatedUserResponse>(
-                  `${env.NEXT_PUBLIC_BACKEND_URL}/users/me`,
-                  {
-                    headers: {
-                      Cookie: `session=${sessionCookie}`,
-                    },
-                  },
-                )
-                .then((res) => res.json())
+              const response = await getAuthenticatedUser()
+                .then((res) => res.data)
                 .catch(() => null);
 
               if (response === null) {
+                await ctx.setSignedCookie(
+                  ctx.context.authCookies.sessionToken.name,
+                  '',
+                  ctx.context.secret,
+                  {
+                    maxAge: -1,
+                  },
+                );
+
                 return null;
               }
 
               const {
                 userId,
-                fullName,
+                name,
+                handle,
                 email,
                 profileImageUrl,
                 isOnboarded,
@@ -69,7 +65,8 @@ export const auth = betterAuth({
 
               const user = await ctx.context.internalAdapter.createUser({
                 id: userId,
-                name: fullName,
+                name,
+                handle,
                 email,
                 image: profileImageUrl,
                 isOnboarded,

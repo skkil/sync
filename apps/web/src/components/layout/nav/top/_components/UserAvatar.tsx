@@ -51,7 +51,7 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
       icon: UserIcon,
       label: t('user.profile'),
       onClick: () => {
-        router.push(`/profile/${session.user.id}`);
+        router.push(`/@${session.user.handle}`);
       },
     },
     {

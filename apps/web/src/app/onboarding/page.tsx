@@ -4,6 +4,10 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 
+import {
+  getGetAuthenticatedUserQueryKey,
+  useUpdateProfile,
+} from '@/api/__generated__/profile/profile';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -14,7 +18,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
-import { useUpdateProfileMutation } from '@/features/profile/api/update-profile';
 import { useSession } from '@/lib/auth/client';
 
 import { ChooseHandle } from './_components/ChooseHandle';
@@ -51,7 +54,11 @@ export default function Onboarding() {
   const t = useTranslations('pages.onboarding');
 
   const router = useRouter();
-  const { data: session, isPending: isSessionPending } = useSession();
+  const {
+    data: session,
+    isPending: isSessionPending,
+    refetch: refetchSession,
+  } = useSession();
 
   const contentRef = useRef<OnboardingStepContentRef | null>(null);
 
@@ -61,7 +68,20 @@ export default function Onboarding() {
     isValid: true,
   });
 
-  const { mutate: updateProfile } = useUpdateProfileMutation();
+  const { mutate: updateProfile } = useUpdateProfile({
+    mutation: {
+      onSuccess: async (_data, _variables, _onMutateResult, context) =>
+        await refetchSession()
+          .then(() => {
+            context.client.invalidateQueries({
+              queryKey: getGetAuthenticatedUserQueryKey(),
+            });
+          })
+          .then(() => {
+            router.push('/');
+          }),
+    },
+  });
 
   const handleStateChange = useCallback(
     ({ isPending, isValid }: { isPending: boolean; isValid: boolean }) => {
@@ -71,8 +91,14 @@ export default function Onboarding() {
   );
 
   useEffect(() => {
-    if (!isSessionPending && !session) {
+    if (isSessionPending) {
+      return;
+    }
+
+    if (!session) {
       router.push('/auth/login');
+    } else if (session && session.user.isOnboarded) {
+      router.push('/');
     }
   }, [session, isSessionPending, router]);
 
@@ -114,16 +140,11 @@ export default function Onboarding() {
   };
 
   const finishedButtonClickHandler = () => {
-    updateProfile(
-      {
+    updateProfile({
+      data: {
         isOnboarded: true,
       },
-      {
-        onSuccess: () => {
-          router.push('/');
-        },
-      },
-    );
+    });
   };
 
   const step = steps[stepIndex];

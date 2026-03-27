@@ -1,11 +1,14 @@
 package com.skkil.sync.user.controller;
 
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.common.util.validator.ValidUsername;
+import com.skkil.sync.user.constant.Handle;
 import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.service.ProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,12 +26,20 @@ public class ProfileController {
     this.profileService = profileService;
   }
 
-  @GetMapping("/profiles/{userId}")
+  @GetMapping("/profiles/me")
   @ResponseStatus(HttpStatus.OK)
-  public GetProfileResponse getProfile(
-      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long userId) {
-    Long requesterId = user == null ? null : user.userId();
-    return profileService.getProfile(requesterId, userId);
+  public GetProfileResponse getAuthenticatedUser(@AuthenticationPrincipal AuthenticatedUser user) {
+    Assert.notNull(user, "Authenticated user must not be null");
+    return profileService.getProfileById(user, user.userId());
+  }
+
+  @GetMapping("/profiles/{handle}")
+  @ResponseStatus(HttpStatus.OK)
+  public GetProfileResponse getProfileByHandle(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable @ValidUsername(min = Handle.MIN_LENGTH, max = Handle.MAX_LENGTH)
+          String handle) {
+    return profileService.getProfileByHandle(user, handle);
   }
 
   @PatchMapping("/profiles/me")

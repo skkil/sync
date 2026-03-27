@@ -3,8 +3,8 @@ package com.skkil.sync.user.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.skkil.sync.common.config.TestcontainersConfig;
 import com.skkil.sync.config.JpaConfig;
-import com.skkil.sync.config.TestcontainersConfig;
 import com.skkil.sync.user.constant.OAuth2Provider;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserOAuth2Account;

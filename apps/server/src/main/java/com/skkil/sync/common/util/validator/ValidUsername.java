@@ -7,7 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ValidUsernameValidator.class)
 public @interface ValidUsername {
@@ -17,4 +17,8 @@ public @interface ValidUsername {
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};
+
+  int min() default 0;
+
+  int max() default Integer.MAX_VALUE;
 }

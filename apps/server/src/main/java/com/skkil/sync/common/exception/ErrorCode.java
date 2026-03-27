@@ -1,6 +1,7 @@
 package com.skkil.sync.common.exception;
 
 public enum ErrorCode {
+  BAD_REQUEST,
   OAUTH2_ACCOUNT_CANNOT_BE_DELETED,
   OAUTH2_ACCOUNT_CANNOT_BE_LINKED,
   USER_NOT_FOUND,

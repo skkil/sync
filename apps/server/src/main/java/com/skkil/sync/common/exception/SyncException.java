@@ -9,6 +9,10 @@ public abstract class SyncException extends RuntimeException implements ErrorRes
     super(message);
   }
 
+  public SyncException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
   public abstract ErrorCode getErrorCode();
 
   @Override

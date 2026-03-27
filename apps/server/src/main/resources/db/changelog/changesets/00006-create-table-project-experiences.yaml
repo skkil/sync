@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00006-create-table-project-experiences
+      author: hyoungjoojin
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: experiences
+            - not:
+                tableExists:
+                  tableName: project_experiences
+      changes:
+        - createTable:
+            tableName: project_experiences
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+        - addForeignKeyConstraint:
+            baseTableName: project_experiences
+            baseColumnNames: id
+            referencedTableName: experiences
+            referencedColumnNames: id
+            constraintName: fk_project_experiences_experience_id
+            onDelete: CASCADE

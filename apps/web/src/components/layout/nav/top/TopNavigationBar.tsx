@@ -86,7 +86,9 @@ function TopNavigationBarDesktop({
 
   return (
     <nav className="w-full flex items-center justify-between gap-2 bg-background p-3 px-4 md:px-8 border-b mb-4">
-      <Logo />
+      <Link href="/">
+        <Logo />
+      </Link>
 
       <div className="flex items-center justify-end grow gap-4">
         <SearchBar />
