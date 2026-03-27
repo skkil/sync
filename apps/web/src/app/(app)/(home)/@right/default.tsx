@@ -1,3 +1,3 @@
-export default function HomeRightSidebar() {
+export default function Default() {
   return null;
 }

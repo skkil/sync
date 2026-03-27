@@ -7,6 +7,81 @@ servers:
 - url: ""
 tags: []
 paths:
+  /companies/{companyId}/jobs:
+    get:
+      tags:
+      - jobs
+      summary: Get Job Postings By Company
+      description: Get Job Postings By Company
+      operationId: GetJobPostingsByCompany
+      parameters:
+      - name: companyId
+        in: path
+        description: Company ID
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page (Integer)
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Integer)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetJobPostingsResponse"
+              examples:
+                GetJobPostingsByCompany:
+                  value: "{\"postings\":{\"content\":[{\"id\":\"1\",\"company\":{\"\
+                    id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"Software Engineer\"\
+                    ,\"jobDescription\":\"Job Description\",\"location\":\"Location\"\
+                    ,\"createdAt\":\"1970-01-01T00:00:00\",\"updatedAt\":\"1970-01-01T00:00:00\"\
+                    }],\"hasNext\":true,\"hasPrevious\":false}}"
+    post:
+      tags:
+      - jobs
+      summary: Create Job Posting
+      description: Create Job Posting
+      operationId: CreateJobPosting
+      parameters:
+      - name: companyId
+        in: path
+        description: Company ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJobPostingRequest"
+            examples:
+              CreateJobPosting:
+                value: "{\"jobTitle\":\"Job Title\",\"jobDescription\":\"Job Description\"\
+                  ,\"location\":\"Location\"}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateJobPostingResponse"
+              examples:
+                CreateJobPosting:
+                  value: |-
+                    {
+                      "id" : "1"
+                    }
   /experiences/project/{experienceId}/reflections:
     get:
       tags:
@@ -46,6 +121,40 @@ paths:
                     id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
                     },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
                     }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
+  /jobs:
+    get:
+      tags:
+      - jobs
+      summary: Get Job Postings
+      description: Get Job Postings
+      operationId: GetJobPostings
+      parameters:
+      - name: page
+        in: query
+        description: Page (Integer)
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Integer)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetJobPostingsResponse"
+              examples:
+                GetJobPostings:
+                  value: "{\"postings\":{\"content\":[{\"id\":\"1\",\"company\":{\"\
+                    id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"Software Engineer\"\
+                    ,\"jobDescription\":\"Job Description\",\"location\":\"Location\"\
+                    ,\"createdAt\":\"1970-01-01T00:00:00\",\"updatedAt\":\"1970-01-01T00:00:00\"\
+                    }],\"hasNext\":true,\"hasPrevious\":false}}"
   /media:
     post:
       tags:
@@ -309,6 +418,23 @@ components:
         expiresAt:
           type: string
           description: Expiration Time
+    CreateJobPostingRequest:
+      title: CreateJobPostingRequest
+      required:
+      - jobDescription
+      - jobTitle
+      type: object
+      properties:
+        jobTitle:
+          type: string
+          description: Job Title
+        location:
+          type: string
+          description: Location
+          nullable: true
+        jobDescription:
+          type: string
+          description: Job Description
     CreateReflectionRequest:
       title: CreateReflectionRequest
       required:
@@ -322,6 +448,68 @@ components:
         content:
           type: string
           description: Content
+    GetJobPostingsResponse:
+      title: GetJobPostingsResponse
+      type: object
+      properties:
+        postings:
+          required:
+          - content
+          - hasNext
+          - hasPrevious
+          type: object
+          properties:
+            hasPrevious:
+              type: boolean
+              description: Has Previous
+            hasNext:
+              type: boolean
+              description: Has Next
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - company
+                - createdAt
+                - id
+                - jobDescription
+                - jobTitle
+                - location
+                - updatedAt
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                    description: Creation Timestamp
+                  jobTitle:
+                    type: string
+                    description: Job Title
+                  company:
+                    required:
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Company Name
+                      id:
+                        type: string
+                        description: Company ID
+                    description: Company
+                  location:
+                    type: string
+                    description: Location
+                  jobDescription:
+                    type: string
+                    description: Job Description
+                  id:
+                    type: string
+                    description: Job Posting ID
+                  updatedAt:
+                    type: string
+                    description: Update Timestamp
     GetReflectionsResponse:
       title: GetReflectionsResponse
       type: object
@@ -381,6 +569,15 @@ components:
                   content:
                     type: string
                     description: Reflection Content
+    CreateJobPostingResponse:
+      title: CreateJobPostingResponse
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: Job Posting ID
     UpdateReflectionRequest:
       title: UpdateReflectionRequest
       required:

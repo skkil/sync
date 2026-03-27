@@ -1,5 +1,7 @@
 package com.skkil.sync.provider.company.service;
 
+import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
+import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
 import com.skkil.sync.provider.company.dto.request.CreateJobPostingRequest;
 import com.skkil.sync.provider.company.dto.response.CreateJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingsResponse;
@@ -52,21 +54,31 @@ public class JobPostingService {
   }
 
   @Transactional(readOnly = true)
-  public GetJobPostingsResponse getJobPostings(Integer page, Integer size) {
+  public GetJobPostingsResponse getJobPostings(PaginationRequest pagination) {
+    Integer page = pagination.page();
+    Integer size = pagination.size();
+
     var postings =
         jobPostingRepository
             .findJobPostingsWithCompany(PageRequest.of(page, size))
             .map(companyMapper::toJobPostingResponse);
 
     log.debug("Retrieved {} job postings", postings.getNumberOfElements());
-    return new GetJobPostingsResponse(postings);
+    return new GetJobPostingsResponse(
+        PaginationResponse.<GetJobPostingsResponse.JobPosting>builder()
+            .content(postings.getContent())
+            .hasNext(postings.hasNext())
+            .hasPrevious(postings.hasPrevious())
+            .build());
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#companyId, 'PROVIDER', 'READ')")
   public GetJobPostingsResponse getJobPostingsByCompany(
-      Long companyId, Integer page, Integer size) {
+      Long companyId, PaginationRequest pagination) {
     Company company = companyRepository.getReferenceById(companyId);
+    Integer page = pagination.page();
+    Integer size = pagination.size();
 
     var postings =
         jobPostingRepository
@@ -75,6 +87,11 @@ public class JobPostingService {
 
     log.debug(
         "Retrieved {} job postings for company {}", postings.getNumberOfElements(), companyId);
-    return new GetJobPostingsResponse(postings);
+    return new GetJobPostingsResponse(
+        PaginationResponse.<GetJobPostingsResponse.JobPosting>builder()
+            .content(postings.getContent())
+            .hasNext(postings.hasNext())
+            .hasPrevious(postings.hasPrevious())
+            .build());
   }
 }

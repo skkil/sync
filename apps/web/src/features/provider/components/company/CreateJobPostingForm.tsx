@@ -8,6 +8,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
 
+import { useCreateJobPosting } from '@/api/__generated__/jobs/jobs';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -27,8 +28,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
-import { useCreateJobPostingMutation } from '../../api/company/create-job-posting';
-
 interface CreateJobFormProps {
   companyId: string;
 }
@@ -43,13 +42,12 @@ const createJobFormSchema = (t: (key: string) => string) =>
 type CreateJobFormValues = z.infer<ReturnType<typeof createJobFormSchema>>;
 
 export default function CreateJobPostingForm({
-  companyId: providerId,
+  companyId,
 }: CreateJobFormProps) {
   const t = useTranslations('pages.company.job-postings.create-posting.form');
 
   const schema = useMemo(() => createJobFormSchema(t), [t]);
-  const { mutate: createJob, isPending } =
-    useCreateJobPostingMutation(providerId);
+  const { mutate: createJob, isPending } = useCreateJobPosting();
 
   const form = useForm<CreateJobFormValues>({
     resolver: zodResolver(schema),
@@ -63,16 +61,22 @@ export default function CreateJobPostingForm({
   const [open, setOpen] = useState(false);
 
   const formSubmitHandler = (values: CreateJobFormValues) => {
-    createJob(values, {
-      onSuccess: () => {
-        toast.success(t('messages.success'));
-        form.reset();
-        setOpen(false);
+    createJob(
+      {
+        companyId,
+        data: values,
       },
-      onError: () => {
-        toast.error(t('messages.error'));
+      {
+        onSuccess: () => {
+          toast.success(t('messages.success'));
+          form.reset();
+          setOpen(false);
+        },
+        onError: () => {
+          toast.error(t('messages.error'));
+        },
       },
-    });
+    );
   };
 
   return (

@@ -5,8 +5,16 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from './CreateJobPostingRequest';
+export * from './CreateJobPostingResponse';
 export * from './CreateReflectionRequest';
 export * from './CreateReflectionResponse';
+export * from './GetJobPostingsByCompanyParams';
+export * from './GetJobPostingsParams';
+export * from './GetJobPostingsResponse';
+export * from './GetJobPostingsResponsePostings';
+export * from './GetJobPostingsResponsePostingsContentItem';
+export * from './GetJobPostingsResponsePostingsContentItemCompany';
 export * from './GetProfileResponse';
 export * from './GetProfileResponseContacts';
 export * from './GetProjectExperienceReflectionsParams';

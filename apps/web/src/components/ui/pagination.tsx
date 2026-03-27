@@ -68,13 +68,21 @@ function PaginationLink({
 function PaginationPrevious({
   className,
   text = '',
+  disabled = false,
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & {
+  text?: string;
+  disabled?: boolean;
+}) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
       size="default"
-      className={cn('pl-2!', className)}
+      className={cn(
+        'pl-2!',
+        disabled && 'pointer-events-none opacity-50',
+        className,
+      )}
       {...props}
     >
       <CaretLeftIcon data-icon="inline-start" />
@@ -86,13 +94,21 @@ function PaginationPrevious({
 function PaginationNext({
   className,
   text = '',
+  disabled = false,
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & {
+  text?: string;
+  disabled?: boolean;
+}) {
   return (
     <PaginationLink
       aria-label="Go to next page"
       size="default"
-      className={cn('pr-2!', className)}
+      className={cn(
+        'pr-2!',
+        disabled && 'pointer-events-none opacity-50',
+        className,
+      )}
       {...props}
     >
       <span className="hidden sm:block">{text}</span>

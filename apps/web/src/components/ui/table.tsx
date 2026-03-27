@@ -91,6 +91,24 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   );
 }
 
+function TableCellSkeleton({
+  className,
+  ...props
+}: React.ComponentProps<'td'>) {
+  return (
+    <td
+      data-slot="table-cell-skeleton"
+      className={cn(
+        'p-3 align-middle whitespace-nowrap border-l border-border first:border-l-0 [&:has([role=checkbox])]:pr-0',
+        className,
+      )}
+      {...props}
+    >
+      <div className="h-2.5 w-full rounded-md bg-muted" />
+    </td>
+  );
+}
+
 function TableCaption({
   className,
   ...props
@@ -112,5 +130,6 @@ export {
   TableHead,
   TableRow,
   TableCell,
+  TableCellSkeleton,
   TableCaption,
 };

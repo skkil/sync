@@ -1,3 +1,5 @@
+'use client';
+
 import { BriefcaseIcon, ListIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';

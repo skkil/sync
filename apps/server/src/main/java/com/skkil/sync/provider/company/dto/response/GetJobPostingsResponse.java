@@ -1,11 +1,11 @@
 package com.skkil.sync.provider.company.dto.response;
 
+import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
 import java.time.LocalDateTime;
 import lombok.Builder;
-import org.springframework.data.domain.Page;
 
 @Builder
-public record GetJobPostingsResponse(Page<JobPosting> postings) {
+public record GetJobPostingsResponse(PaginationResponse<JobPosting> postings) {
 
   public static record JobPosting(
       String id,

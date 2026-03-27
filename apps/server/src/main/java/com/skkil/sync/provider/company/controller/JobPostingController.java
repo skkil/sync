@@ -1,5 +1,6 @@
 package com.skkil.sync.provider.company.controller;
 
+import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
 import com.skkil.sync.provider.company.dto.request.CreateJobPostingRequest;
 import com.skkil.sync.provider.company.dto.response.CreateJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingsResponse;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,18 +32,14 @@ public class JobPostingController {
 
   @GetMapping("/jobs")
   @ResponseStatus(HttpStatus.OK)
-  public GetJobPostingsResponse getJobPostings(
-      @RequestParam(required = false, defaultValue = "0") Integer page,
-      @RequestParam(required = false, defaultValue = "50") Integer size) {
-    return jobPostingService.getJobPostings(page, size);
+  public GetJobPostingsResponse getJobPostings(@Validated PaginationRequest pagination) {
+    return jobPostingService.getJobPostings(pagination);
   }
 
   @GetMapping("/companies/{companyId}/jobs")
   @ResponseStatus(HttpStatus.OK)
   public GetJobPostingsResponse getJobPostingsByCompany(
-      @PathVariable Long companyId,
-      @RequestParam(required = false, defaultValue = "0") Integer page,
-      @RequestParam(required = false, defaultValue = "50") Integer size) {
-    return jobPostingService.getJobPostingsByCompany(companyId, page, size);
+      @PathVariable Long companyId, @Validated PaginationRequest pagination) {
+    return jobPostingService.getJobPostingsByCompany(companyId, pagination);
   }
 }

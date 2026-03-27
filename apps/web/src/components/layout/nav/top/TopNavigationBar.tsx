@@ -93,25 +93,23 @@ function TopNavigationBarDesktop({
       <div className="flex items-center justify-end grow gap-4">
         <SearchBar />
 
-        <div className="items-center gap-2">
-          {tabs.map((tab) => {
-            if (tab.authenticated && !isAuthenticated) {
-              return null;
-            }
+        {tabs.map((tab) => {
+          if (tab.authenticated && !isAuthenticated) {
+            return null;
+          }
 
-            return (
-              <Link
-                key={tab.id}
-                href={tab.href}
-                className={cn(tab.highlight() ? '' : 'text-foreground/80')}
-              >
-                <Button variant="ghost" size="icon">
-                  {tab.icon}
-                </Button>
-              </Link>
-            );
-          })}
-        </div>
+          return (
+            <Link
+              key={tab.id}
+              href={tab.href}
+              className={cn(tab.highlight() ? '' : 'text-foreground/80')}
+            >
+              <Button variant="ghost" size="icon">
+                {tab.icon}
+              </Button>
+            </Link>
+          );
+        })}
 
         <UserAvatar />
       </div>
@@ -121,7 +119,7 @@ function TopNavigationBarDesktop({
 
 function TopNavigationBarMobile() {
   return (
-    <nav className="h-15 w-full flex items-center justify-between px-8">
+    <nav className="h-16 w-full flex items-center justify-between px-8">
       <div className="flex items-center mr-4">
         <Logo />
       </div>
