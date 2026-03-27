@@ -34,6 +34,19 @@ spring:
               - profile
               - email
 
+  ai:
+    model:
+      chat: ${AI_PROVIDER}
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      init:
+        pull-model-strategy: when_missing
+      chat:
+        options:
+          model: ${OLLAMA_MODEL}
+          format: json
+          temperature: 0
+
   cloud:
     aws:
       s3:

@@ -1,0 +1,8 @@
+services:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "$OLLAMA_PORT:11434"
+    post_start:
+      - command: ollama pull $OLLAMA_MODEL
+        user: root

@@ -3,6 +3,7 @@
 ## 빌드 및 실행 방법
 
 - Requirements
+  - [direnv](https://direnv.net)
   - Docker
   - Java 25
   - pnpm
