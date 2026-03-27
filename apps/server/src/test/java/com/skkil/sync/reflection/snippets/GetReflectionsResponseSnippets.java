@@ -30,6 +30,7 @@ public class GetReflectionsResponseSnippets {
         CursorPaginationResponse.<GetReflectionsResponse.Reflection>builder()
             .content(List.of(reflection))
             .hasNext(true)
+            .nextCursor("next-cursor")
             .build());
   }
 
@@ -61,7 +62,6 @@ public class GetReflectionsResponseSnippets {
                 .description("Project Name")
                 .optional());
 
-    System.out.println(fields.getFieldDescriptors());
     return responseFields(fields.getFieldDescriptors());
   }
 }

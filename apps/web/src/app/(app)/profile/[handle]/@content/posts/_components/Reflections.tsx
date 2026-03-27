@@ -53,6 +53,12 @@ export default function Reflections() {
   });
 
   useEffect(() => {
+    if (isError) {
+      toast.error(t('list.error'));
+    }
+  }, [isError, t]);
+
+  useEffect(() => {
     if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
@@ -64,7 +70,9 @@ export default function Reflections() {
   if (isProfilePending || isPending) {
     return (
       <div className="space-y-4">
-        {Array(3).map((_, i) => (
+        {Array.from({
+          length: 3,
+        }).map((_, i) => (
           <ReflectionSkeleton key={i} />
         ))}
       </div>
@@ -72,8 +80,6 @@ export default function Reflections() {
   }
 
   if (isError) {
-    toast.error(t('list.error'));
-
     return (
       <div className="text-center py-8">
         <p className="text-sm text-destructive">{t('list.error')}</p>

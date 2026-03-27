@@ -23,13 +23,13 @@ paths:
           type: string
       - name: cursor
         in: query
-        description: Cursor for pagination (optional)
-        required: true
+        description: Pagination Cursor
+        required: false
         schema:
           type: string
       - name: size
         in: query
-        description: "Number of items per page (required, minimum 1)"
+        description: Page Size (Long)
         required: true
         schema:
           type: string
@@ -45,7 +45,7 @@ paths:
                   value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
                     id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
                     },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }],\"hasNext\":true,\"nextCursor\":null}}"
+                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
   /media:
     post:
       tags:
@@ -158,13 +158,13 @@ paths:
       parameters:
       - name: cursor
         in: query
-        description: Cursor for pagination (optional)
-        required: true
+        description: Pagination Cursor
+        required: false
         schema:
           type: string
       - name: size
         in: query
-        description: "Number of items per page (required, minimum 1)"
+        description: Page Size (Long)
         required: true
         schema:
           type: string
@@ -180,7 +180,7 @@ paths:
                   value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
                     id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
                     },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }],\"hasNext\":true,\"nextCursor\":null}}"
+                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
     post:
       tags:
       - reflection
@@ -267,13 +267,13 @@ paths:
           type: string
       - name: cursor
         in: query
-        description: Cursor for pagination (optional)
-        required: true
+        description: Pagination Cursor
+        required: false
         schema:
           type: string
       - name: size
         in: query
-        description: "Number of items per page (required, minimum 1)"
+        description: Page Size (Long)
         required: true
         schema:
           type: string
@@ -289,7 +289,7 @@ paths:
                   value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
                     id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
                     },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }],\"hasNext\":true,\"nextCursor\":null}}"
+                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
 components:
   schemas:
     UploadMediaResponse:

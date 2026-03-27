@@ -34,6 +34,7 @@ public class ReflectionPermissionEvaluator implements CustomPermissionEvaluator 
     }
 
     return switch (permission) {
+      case EDIT -> canEdit(user, reflection);
       case DELETE -> canDelete(user, reflection);
 
       default -> {
@@ -41,6 +42,24 @@ public class ReflectionPermissionEvaluator implements CustomPermissionEvaluator 
         yield false;
       }
     };
+  }
+
+  private boolean canEdit(AuthenticatedUser user, Reflection reflection) {
+    if (user == null) {
+      log.debug("Unauthenticated user cannot edit reflection");
+      return false;
+    }
+
+    boolean isOwner = user.userId().equals(reflection.getAuthor().getId());
+    if (!isOwner) {
+      log.debug(
+          "User {} is not the owner of reflection {}, cannot edit",
+          user.userId(),
+          reflection.getId());
+      return false;
+    }
+
+    return true;
   }
 
   private boolean canDelete(AuthenticatedUser user, Reflection reflection) {

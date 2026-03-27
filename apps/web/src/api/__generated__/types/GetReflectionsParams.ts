@@ -7,11 +7,11 @@
 
 export type GetReflectionsParams = {
   /**
-   * Cursor for pagination (optional)
+   * Pagination Cursor
    */
-  cursor: string;
+  cursor?: string;
   /**
-   * Number of items per page (required, minimum 1)
+   * Page Size (Long)
    */
   size: string;
 };

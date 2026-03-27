@@ -9,11 +9,11 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
 public class CreateReflectionResponseSnippets {
 
-  public static CreateReflectionResponse getCreateReflectionRequest() {
+  public static CreateReflectionResponse getCreateReflectionResponse() {
     return new CreateReflectionResponse(1L);
   }
 
-  public static ResponseFieldsSnippet getCreateReflectionRequestFields() {
+  public static ResponseFieldsSnippet getCreateReflectionResponseFields() {
     return responseFields(
         fieldWithPath("id").type(JsonFieldType.NUMBER).description("Reflection ID"));
   }

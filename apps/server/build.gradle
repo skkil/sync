@@ -160,10 +160,11 @@ tasks.withType(JavaCompile) {
 }
 
 tasks.named('compileJava') {
-	dependsOn('jooqCodegen')
+	mustRunAfter 'jooqCodegen'
 }
 
 tasks.named('build') {
+	dependsOn('jooqCodegen')
 	dependsOn('spotlessApply')
 	dependsOn('openapi3')
 
@@ -270,11 +271,12 @@ tasks.named('update') {
 }
 
 tasks.named('jooqCodegen') {
-	dependsOn 'spotlessApply'
 	dependsOn 'update'
+	mustRunAfter 'spotlessApply'
 
 	inputs.dir 'src/main/resources/db/changelog'
 	outputs.dir 'build/generated/jooq'
+	outputs.cacheIf { true }
 
 	doFirst {
 		jooq {

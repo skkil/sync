@@ -24,7 +24,7 @@ public class CursorPaginationRequestSnippets {
 
   public static QueryParametersSnippet getCursorPaginationRequestParameters() {
     return queryParameters(
-        parameterWithName("cursor").description("Cursor for pagination (optional)"),
-        parameterWithName("size").description("Number of items per page (required, minimum 1)"));
+        parameterWithName("cursor").description("Pagination Cursor").optional(),
+        parameterWithName("size").description("Page Size (Long)"));
   }
 }

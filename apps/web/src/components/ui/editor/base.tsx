@@ -18,10 +18,18 @@ import {
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip';
 
+function parseContent(content: string) {
+  try {
+    return content ? JSON.parse(content) : '';
+  } catch {
+    return '';
+  }
+}
+
 function BaseViewer({ content }: { content: string }) {
   const editor = useEditor({
     extensions: [StarterKit],
-    content: content ? JSON.parse(content) : '',
+    content: parseContent(content),
     editable: false,
     immediatelyRender: true,
   });
@@ -44,16 +52,18 @@ const BaseEditor = forwardRef<BaseEditorRef, BaseEditorProps>(
 
     const editor = useEditor({
       extensions: [StarterKit],
-      content,
+      content: parseContent(content),
       immediatelyRender: true,
     });
 
     useImperativeHandle(ref, () => ({
       save: () => {
-        return JSON.stringify(editor.getJSON());
+        return JSON.stringify(editor ? editor.getJSON() : '');
       },
       clear: () => {
-        editor.commands.clearContent();
+        if (editor) {
+          editor.commands.clearContent();
+        }
       },
     }));
 

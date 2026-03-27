@@ -65,7 +65,7 @@ class ReflectionControllerTests {
     AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
     CreateReflectionRequest request = CreateReflectionRequestSnippets.getCreateReflectionRequest();
     CreateReflectionResponse response =
-        CreateReflectionResponseSnippets.getCreateReflectionRequest();
+        CreateReflectionResponseSnippets.getCreateReflectionResponse();
 
     when(reflectionService.createReflection(eq(user.userId()), eq(request))).thenReturn(response);
 
@@ -89,7 +89,7 @@ class ReflectionControllerTests {
                 preprocessResponse(prettyPrint()),
                 Function.identity(),
                 CreateReflectionRequestSnippets.getCreateReflectionRequestFields(),
-                CreateReflectionResponseSnippets.getCreateReflectionRequestFields()));
+                CreateReflectionResponseSnippets.getCreateReflectionResponseFields()));
   }
 
   @Test

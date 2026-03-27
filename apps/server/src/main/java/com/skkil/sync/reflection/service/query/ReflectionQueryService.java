@@ -40,7 +40,7 @@ public class ReflectionQueryService {
     log.debug("Fetched {} reflections", reflections.size());
 
     return new GetReflectionsResponse(
-        mapToCursorPaginationResponse(reflections, pagination.cursor(), pagination.size()));
+        mapToCursorPaginationResponse(reflections, pagination.size()));
   }
 
   @Transactional(readOnly = true)
@@ -53,7 +53,7 @@ public class ReflectionQueryService {
     log.debug("Fetched {} reflections for user {}", reflections.size(), userId);
 
     return new GetReflectionsResponse(
-        mapToCursorPaginationResponse(reflections, pagination.cursor(), pagination.size()));
+        mapToCursorPaginationResponse(reflections, pagination.size()));
   }
 
   @Transactional(readOnly = true)
@@ -66,15 +66,15 @@ public class ReflectionQueryService {
     log.debug("Fetched {} reflections for experience {}", reflections.size(), experienceId);
 
     return new GetReflectionsResponse(
-        mapToCursorPaginationResponse(reflections, pagination.cursor(), pagination.size()));
+        mapToCursorPaginationResponse(reflections, pagination.size()));
   }
 
   private CursorPaginationResponse<GetReflectionsResponse.Reflection> mapToCursorPaginationResponse(
-      List<ReflectionDto> reflections, String cursor, int size) {
+      List<ReflectionDto> reflections, int size) {
     boolean hasNext = reflections.size() > size;
 
     Cursor next = getNextCursor(reflections.subList(0, Math.min(size, reflections.size())));
-    String nextCursor = next == null ? cursor : cursorConverter.encode(next);
+    String nextCursor = next == null ? null : cursorConverter.encode(next);
 
     var content =
         reflections.stream().limit(size).map(reflectionMapper::toReflectionResponse).toList();
