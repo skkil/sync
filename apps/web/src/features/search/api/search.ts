@@ -7,6 +7,9 @@ import { url } from '@/util/server';
 export enum SearchType {
   USER = 'USER',
   SCHOOL = 'SCHOOL',
+  COMPANY = 'COMPANY',
+  CONTEST = 'CONTEST',
+  PROJECT = 'PROJECT',
 }
 
 interface SearchParams {
@@ -24,6 +27,9 @@ interface SearchResponse {
   count: {
     userCount: number;
     schoolCount: number;
+    companyCount: number;
+    contestCount: number;
+    projectCount: number;
   };
 }
 

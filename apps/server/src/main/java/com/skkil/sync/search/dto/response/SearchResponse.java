@@ -9,5 +9,6 @@ public record SearchResponse(Page<Result> results, Count count) {
   public static record Result(Long id, String name) {}
 
   @Builder
-  public static record Count(long userCount, long schoolCount) {}
+  public static record Count(
+      long userCount, long schoolCount, long companyCount, long contestCount, long projectCount) {}
 }

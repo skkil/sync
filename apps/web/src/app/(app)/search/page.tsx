@@ -1,6 +1,12 @@
 'use client';
 
-import { BuildingsIcon, UserIcon } from '@phosphor-icons/react';
+import {
+  BuildingOfficeIcon,
+  BuildingsIcon,
+  LightbulbIcon,
+  TrophyIcon,
+  UserIcon,
+} from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -20,7 +26,7 @@ import {
 import { SearchType, useSearchQuery } from '@/features/search/api/search';
 import { url } from '@/util/server';
 
-type SearchCategory = 'user' | 'school';
+type SearchCategory = 'user' | 'school' | 'company' | 'contest' | 'project';
 
 const SearchCategories = (
   t: ReturnType<typeof useTranslations>,
@@ -44,6 +50,27 @@ const SearchCategories = (
     urlPrefix: 'school',
     label: t('filters.schools'),
     icon: <BuildingsIcon />,
+  },
+  {
+    id: 'company',
+    type: SearchType.COMPANY,
+    urlPrefix: 'company',
+    label: t('filters.companies'),
+    icon: <BuildingOfficeIcon />,
+  },
+  {
+    id: 'contest',
+    type: SearchType.CONTEST,
+    urlPrefix: 'contest',
+    label: t('filters.contests'),
+    icon: <TrophyIcon />,
+  },
+  {
+    id: 'project',
+    type: SearchType.PROJECT,
+    urlPrefix: 'project',
+    label: t('filters.projects'),
+    icon: <LightbulbIcon />,
   },
 ];
 
@@ -219,13 +246,25 @@ function getSearchCategory(category: string | null): SearchCategory {
       return 'user';
     case 'school':
       return 'school';
+    case 'company':
+      return 'company';
+    case 'contest':
+      return 'contest';
+    case 'project':
+      return 'project';
     default:
       return 'user';
   }
 }
 
 function getSearchCount(
-  count: { userCount: number; schoolCount: number },
+  count: {
+    userCount: number;
+    schoolCount: number;
+    companyCount: number;
+    contestCount: number;
+    projectCount: number;
+  },
   category: SearchCategory,
 ) {
   switch (category) {
@@ -233,6 +272,12 @@ function getSearchCount(
       return count.userCount;
     case 'school':
       return count.schoolCount;
+    case 'company':
+      return count.companyCount;
+    case 'contest':
+      return count.contestCount;
+    case 'project':
+      return count.projectCount;
     default:
       return 0;
   }
