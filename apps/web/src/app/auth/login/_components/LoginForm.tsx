@@ -19,7 +19,11 @@ import { Input } from '@/components/ui/input';
 import { useLoginMutation } from '@/features/auth/api/login';
 import { useSession } from '@/lib/auth/client';
 
-export default function LoginForm() {
+interface LoginFormProps {
+  isVerified: boolean;
+}
+
+export default function LoginForm({ isVerified }: LoginFormProps) {
   const t = useTranslations('pages.login.form');
 
   const router = useRouter();
@@ -70,6 +74,13 @@ export default function LoginForm() {
 
   return (
     <div>
+      {isVerified && (
+        <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3">
+          <p className="text-sm text-green-700">
+            {t('messages.verified-login-required')}
+          </p>
+        </div>
+      )}
       <form onSubmit={form.handleSubmit(onFormSubmit)}>
         <FieldGroup>
           <Controller

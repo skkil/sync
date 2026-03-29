@@ -51,7 +51,7 @@ public class EmailVerificationFilter extends OncePerRequestFilter {
         && authentication.isAuthenticated()
         && authentication.getPrincipal() instanceof AuthenticatedUser user) {
 
-      if (!user.isEmailVerified()) {
+      if (!user.emailVerified()) {
         log.warn(
             "User {} attempted to access {} without email verification", user.userId(), requestUri);
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);

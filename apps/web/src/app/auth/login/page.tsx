@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import {
   Card,
@@ -12,8 +12,16 @@ import { Separator } from '@/components/ui/separator';
 import OAuthProviders from '../_components/OAuthProviders';
 import LoginForm from './_components/LoginForm';
 
-export default function Login() {
-  const t = useTranslations('pages.login');
+interface LoginPageProps {
+  searchParams: Promise<{
+    verified?: string;
+  }>;
+}
+
+export default async function Login({ searchParams }: LoginPageProps) {
+  const t = await getTranslations('pages.login');
+  const { verified } = await searchParams;
+  const isVerified = verified === 'true';
 
   return (
     <Card className="w-full max-w-md">
@@ -23,7 +31,7 @@ export default function Login() {
       </CardHeader>
 
       <CardContent>
-        <LoginForm />
+        <LoginForm isVerified={isVerified} />
         <Separator className="my-3" />
         <OAuthProviders />
       </CardContent>

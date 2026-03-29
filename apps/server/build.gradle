@@ -86,6 +86,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	errorprone 'com.uber.nullaway:nullaway:0.12.12'
 	errorprone 'com.google.errorprone:error_prone_core:2.42.0'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 tasks.withType(JavaCompile) {

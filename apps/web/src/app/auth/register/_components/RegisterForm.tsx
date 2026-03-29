@@ -24,7 +24,7 @@ const MIN_PASSWORD_LENGTH = 8;
 export default function RegisterForm() {
   const t = useTranslations('pages.register.form');
 
-  const { mutateAsync: register, isPending } = useRegisterMutation();
+  const { mutate: register, isPending } = useRegisterMutation();
   const router = useRouter();
 
   const RegisterFormSchema = z
@@ -76,24 +76,28 @@ export default function RegisterForm() {
       return;
     }
 
-    try {
-      await register({
+    register(
+      {
         email: values.email,
         password: values.password,
-      });
+      },
+      {
+        onSuccess: () => {
+          router.push('/auth/verify-email');
+        },
+        onError: (error) => {
+          console.error('Registration error:', error);
 
-      sessionStorage.setItem('pendingEmail', values.email);
-      router.push('/auth/verify-email');
-    } catch (error) {
-      console.error('Registration error:', error);
-      if (error instanceof SyncError) {
-        const { code } = error;
+          if (error instanceof SyncError) {
+            const { code } = error;
 
-        if (code === ErrorCode.USER_ALREADY_EXISTS) {
-          toast.error(t('errors.user-already-exists'));
-        }
-      }
-    }
+            if (code === ErrorCode.USER_ALREADY_EXISTS) {
+              toast.error(t('errors.user-already-exists'));
+            }
+          }
+        },
+      },
+    );
   };
 
   return (

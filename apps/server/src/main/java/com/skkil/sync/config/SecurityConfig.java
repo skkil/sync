@@ -30,76 +30,74 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
-  private final EmailVerificationFilter emailVerificationFilter;
+    private final EmailVerificationFilter emailVerificationFilter;
 
-  public SecurityConfig(EmailVerificationFilter emailVerificationFilter) {
-    this.emailVerificationFilter = emailVerificationFilter;
-  }
+    public SecurityConfig(EmailVerificationFilter emailVerificationFilter) {
+        this.emailVerificationFilter = emailVerificationFilter;
+    }
 
-  @Bean
-  @Order(2)
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.securityMatcher("/**")
-        .csrf(
-            csrf ->
-                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                    .ignoringRequestMatchers("/auth/register", "/auth/verify-email"))
-        .formLogin(formLogin -> formLogin.disable())
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-        .authorizeHttpRequests(
-            requests ->
-                requests
-                    .requestMatchers("/admin/**")
-                    .hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.GET, "/experiences/**")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/providers/**")
-                    .authenticated()
-                    .requestMatchers("/users/**", "/profiles/me", "/media/**")
-                    .authenticated()
-                    .requestMatchers(
-                        "/profiles/**",
-                        "/auth/login",
-                        "/auth/register",
-                        "/auth/verify-email",
-                        "/providers/**",
-                        "/search/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
-        .addFilterAfter(emailVerificationFilter, UsernamePasswordAuthenticationFilter.class)
-        .exceptionHandling(
-            exception ->
-                exception.authenticationEntryPoint(
-                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+    @Bean
+    @Order(2)
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/**")
+                .csrf(
+                        csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                                .ignoringRequestMatchers("/auth/register", "/auth/verify-email",
+                                        "/auth/resend-verification-code"))
+                .formLogin(formLogin -> formLogin.disable())
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .authorizeHttpRequests(
+                        requests -> requests
+                                .requestMatchers("/admin/**")
+                                .hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/experiences/**")
+                                .permitAll()
+                                .requestMatchers(HttpMethod.POST, "/providers/**")
+                                .authenticated()
+                                .requestMatchers("/users/**", "/profiles/me", "/media/**")
+                                .authenticated()
+                                .requestMatchers(
+                                        "/profiles/**",
+                                        "/auth/login",
+                                        "/auth/register",
+                                        "/auth/verify-email",
+                                        "/auth/pending-email",
+                                        "/auth/resend-verification-code",
+                                        "/providers/**",
+                                        "/search/**")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated())
+                .addFilterAfter(emailVerificationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(
+                        exception -> exception.authenticationEntryPoint(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  @Bean
-  AuthenticationManager authenticationManager(
-      UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-    DaoAuthenticationProvider authenticationProvider =
-        new DaoAuthenticationProvider(userDetailsService);
-    authenticationProvider.setPasswordEncoder(passwordEncoder);
+    @Bean
+    AuthenticationManager authenticationManager(
+            UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
 
-    return new ProviderManager(authenticationProvider);
-  }
+        return new ProviderManager(authenticationProvider);
+    }
 
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
-  }
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+    }
 
-  @Bean
-  MethodSecurityExpressionHandler methodSecurityExpressionHandler(
-      GlobalPermissionEvaluator globalPermissionEvaluator) {
-    DefaultMethodSecurityExpressionHandler expressionHandler =
-        new DefaultMethodSecurityExpressionHandler();
-    expressionHandler.setPermissionEvaluator(globalPermissionEvaluator);
+    @Bean
+    MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+            GlobalPermissionEvaluator globalPermissionEvaluator) {
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+        expressionHandler.setPermissionEvaluator(globalPermissionEvaluator);
 
-    return expressionHandler;
-  }
+        return expressionHandler;
+    }
 }

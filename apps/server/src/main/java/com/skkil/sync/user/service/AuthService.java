@@ -38,7 +38,7 @@ public class AuthService {
   @Transactional(readOnly = true)
   public Authentication authenticate(LoginRequest request) {
     AuthenticatedUser principal = userService.loadUserByUsername(request.email());
-    if (!principal.isEmailVerified()) {
+    if (!principal.emailVerified()) {
       log.debug("Authentication failed, user email is not verified");
       throw new BadCredentialsException("");
     }

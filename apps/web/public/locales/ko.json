@@ -229,6 +229,9 @@
           "forgot_password": {
             "label": "비밀번호를 잊으셨나요?"
           }
+        },
+        "messages": {
+          "verified-login-required": "인증한 이메일로 로그인하세요."
         }
       }
     },
@@ -266,6 +269,24 @@
             "label": "이미 계정이 있으신가요? 로그인하기"
           }
         }
+      }
+    },
+    "verify-email": {
+      "errors": {
+        "not-found-email": "인증할 이메일 정보가 없습니다. 다시 회원가입을 진행해주세요.",
+        "invalid-code-len": "6자리 코드를 입력해주세요.",
+        "failed-verification": "인증에 실패했습니다. 코드를 다시 확인해주세요.",
+        "failed-resend": "인증코드 재전송에 실패했습니다."
+      },
+      "email-verified": {
+        "title": "이메일 인증",
+        "description": "이제 sync를 사용할 준비가 끝났습니다.",
+        "sentToEmail": "가입하신 이메일로 전송된 코드를 입력해주세요.",
+        "pending": "처리 중...",
+        "submit": "인증하기",
+        "re-register": "다시 회원가입하기",
+        "resend": "인증코드 재전송",
+        "resending": "재전송 중..."
       }
     },
     "onboarding": {

@@ -65,8 +65,4 @@ public record AuthenticatedUser(
   public boolean isAdmin() {
     return role == Role.ADMIN;
   }
-
-  public boolean isEmailVerified() {
-    return emailVerified;
-  }
 }

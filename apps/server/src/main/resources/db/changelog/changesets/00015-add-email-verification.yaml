@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 00015-add-email-verification-columns-and-table
-      author: copilot
+      author: jieunseo
       changes:
         - addColumn:
             tableName: users
@@ -10,12 +10,6 @@ databaseChangeLog:
                   name: email_verified
                   type: BOOLEAN
                   defaultValueBoolean: false
-                  constraints:
-                    nullable: false
-              - column:
-                  name: enabled
-                  type: BOOLEAN
-                  defaultValueBoolean: true
                   constraints:
                     nullable: false
 
@@ -37,32 +31,18 @@ databaseChangeLog:
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
               - column:
-                  name: user_id
-                  type: BIGINT
-                  constraints:
-                    nullable: false
-                    foreignKeyName: fk_email_verification_tokens_user
-                    references: users(id)
-              - column:
-                  name: token
+                  name: email
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
                     unique: true
               - column:
+                  name: token
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
                   name: expires_at
                   type: TIMESTAMP
                   constraints:
                     nullable: false
-              - column:
-                  name: verified_at
-                  type: TIMESTAMP
-              - column:
-                  name: used
-                  type: BOOLEAN
-                  defaultValueBoolean: false
-                  constraints:
-                    nullable: false
-              - column:
-                  name: deleted_at
-                  type: TIMESTAMP

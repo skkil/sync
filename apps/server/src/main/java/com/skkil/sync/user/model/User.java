@@ -45,9 +45,6 @@ public class User extends BaseEntity {
   @Column(nullable = false)
   private boolean emailVerified;
 
-  @Column(nullable = false)
-  private boolean enabled;
-
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "profile_image_id")
   @Setter
@@ -103,7 +100,6 @@ public class User extends BaseEntity {
     this.fullName = fullName;
     this.bio = bio;
     this.emailVerified = false;
-    this.enabled = true;
   }
 
   public void onboard() {

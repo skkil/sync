@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -11,32 +12,48 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
 import { server } from '@/lib/server';
 
 export default function VerifyEmailPage() {
+  const t = useTranslations('pages.verify-email');
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [isFetchingEmail, setIsFetchingEmail] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    const pendingEmail = sessionStorage.getItem('pendingEmail');
+    const fetchPendingEmail = async () => {
+      setIsFetchingEmail(true);
+      setErrorMessage('');
 
-    if (!pendingEmail) {
-      setErrorMessage(
-        '인증할 이메일 정보가 없습니다. 다시 회원가입을 진행해주세요.',
-      );
-      return;
-    }
+      try {
+        const response = await server
+          .get('auth/pending-email')
+          .json<{ email: string }>();
+        setEmail(response.email);
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error ? err.message : t('errors.not-found-email');
+        setErrorMessage(message);
+      } finally {
+        setIsFetchingEmail(false);
+      }
+    };
 
-    setEmail(pendingEmail);
+    void fetchPendingEmail();
   }, []);
 
-  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-    setCode(value);
+  const handleCodeChange = (value: string) => {
+    const numericValue = value.replace(/\D/g, '').slice(0, 6);
+    setCode(numericValue);
     setErrorMessage('');
   };
 
@@ -44,30 +61,25 @@ export default function VerifyEmailPage() {
     e.preventDefault();
 
     if (!email) {
-      setErrorMessage(
-        '인증할 이메일 정보가 없습니다. 다시 회원가입을 진행해주세요.',
-      );
+      setErrorMessage(t('errors.not-found-email'));
       return;
     }
 
     if (code.length !== 6) {
-      setErrorMessage('6자리 코드를 입력해주세요.');
+      setErrorMessage(t('errors.invalid-code-len'));
       return;
     }
 
     setIsLoading(true);
     try {
       await server.post('auth/verify-email', {
-        json: { email, code },
+        json: { code },
       });
 
-      sessionStorage.removeItem('pendingEmail');
-      router.push('/');
+      router.replace('/auth/login?verified=true');
     } catch (err: unknown) {
       const message =
-        err instanceof Error
-          ? err.message
-          : '인증에 실패했습니다. 코드를 다시 확인해주세요.';
+        err instanceof Error ? err.message : t('errors.failed-verification');
       setErrorMessage(message);
       setCode('');
     } finally {
@@ -75,35 +87,56 @@ export default function VerifyEmailPage() {
     }
   };
 
+  const handleResendCode = async () => {
+    if (isResending) {
+      return;
+    }
+
+    setIsResending(true);
+    setErrorMessage('');
+
+    try {
+      await server.post('auth/resend-verification-code');
+
+      setCode('');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : t('errors.failed-resend');
+
+      setErrorMessage(message);
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>이메일 인증</CardTitle>
-        <CardDescription>
-          {email
-            ? `${email}로 전송된 6자리 코드를 입력해주세요.`
-            : '이메일로 받으신 6자리 코드를 입력해주세요.'}
-        </CardDescription>
+        <CardTitle>{t('email-verified.title')}</CardTitle>
+        <CardDescription>{t('email-verified.sentToEmail')}</CardDescription>
       </CardHeader>
 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="code" className="text-sm font-medium">
-              인증 코드
-            </label>
-            <Input
+            <label htmlFor="code" className="text-sm font-medium"></label>
+            <InputOTP
               id="code"
-              type="text"
-              inputMode="numeric"
-              placeholder="000000"
+              maxLength={6}
               value={code}
               onChange={handleCodeChange}
-              maxLength={6}
-              className="text-center text-2xl tracking-widest"
-              autoComplete="off"
-              disabled={isLoading}
-            />
+              disabled={isLoading || isResending || isFetchingEmail}
+              containerClassName="justify-center"
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
           </div>
 
           {errorMessage && (
@@ -115,9 +148,29 @@ export default function VerifyEmailPage() {
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading || code.length !== 6 || !email}
+            disabled={
+              isLoading ||
+              isResending ||
+              isFetchingEmail ||
+              code.length !== 6 ||
+              !email
+            }
           >
-            {isLoading ? '처리 중...' : '인증하기'}
+            {isLoading
+              ? t('email-verified.pending')
+              : t('email-verified.submit')}
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleResendCode}
+            disabled={isLoading || isResending || isFetchingEmail || !email}
+          >
+            {isResending
+              ? t('email-verified.resending')
+              : t('email-verified.resend')}
           </Button>
 
           <Button
@@ -126,7 +179,7 @@ export default function VerifyEmailPage() {
             className="w-full"
             onClick={() => router.push('/auth/register')}
           >
-            다시 회원가입
+            {t('email-verified.re-register')}
           </Button>
         </form>
       </CardContent>
