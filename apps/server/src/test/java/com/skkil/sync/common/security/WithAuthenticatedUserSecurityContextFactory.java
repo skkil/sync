@@ -25,4 +25,13 @@ public class WithAuthenticatedUserSecurityContextFactory
 
     return context;
   }
+
+  public static AuthenticatedUser getAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUser)) {
+      return null;
+    }
+
+    return (AuthenticatedUser) authentication.getPrincipal();
+  }
 }

@@ -28,7 +28,7 @@ export default async function Contest({ params }: ContestProps) {
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout />,
+      content: <ProviderAbout id={id} />,
     },
     {
       id: 'occurrences',
@@ -64,7 +64,7 @@ export default async function Contest({ params }: ContestProps) {
 
             <Card className="min-h-96 overflow-auto">
               {tabs.map((tab) => (
-                <TabsContent key={tab.id} value={tab.id}>
+                <TabsContent key={tab.id} value={tab.id} className="px-5">
                   {tab.content}
                 </TabsContent>
               ))}

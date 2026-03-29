@@ -1,7 +1,20 @@
 {
   "pages": {
     "home": {
-      "title": "sync"
+      "title": "sync",
+      "left": {
+        "jobs": "채용 공고"
+      }
+    },
+    "jobs": {
+      "postings": {
+        "not-found": "채용 공고를 찾을 수 없습니다.",
+        "loading": "채용 공고를 불러오는 중...",
+        "error": "채용 공고를 불러오는 중 오류가 발생했습니다."
+      },
+      "bookmark": {
+        "label": "저장한 채용 공고"
+      }
     },
     "messages": {
       "conversations": {
@@ -51,6 +64,10 @@
         "contest": {
           "title": "대회",
           "description": "대회 및 공모전 페이지"
+        },
+        "project": {
+          "title": "프로젝트",
+          "description": "개인 및 팀 프로젝트"
         }
       }
     },
@@ -132,6 +149,65 @@
         "required_description": "설명은 필수 항목입니다."
       }
     },
+    "project": {
+      "about": {
+        "label": "소개"
+      },
+      "team-building": {
+        "label": "팀 빌딩",
+        "list": {
+          "title": "제목",
+          "empty": "팀 빌딩 공고가 없습니다."
+        }
+      },
+      "admin": {
+        "about": {
+          "label": "소개"
+        },
+        "team-building": {
+          "label": "팀 빌딩",
+          "form": {
+            "label": "새로운 팀 빌딩 공고 작성하기",
+            "title": "팀 빌딩 공고 작성",
+            "form-description": "팀 빌딩 공고에 대한 정보를 입력하세요",
+            "post-title": {
+              "label": "제목",
+              "placeholder": "팀 빌딩 공고 제목을 입력하세요"
+            },
+            "content": {
+              "label": "설명",
+              "placeholder": "팀 빌딩 공고에 대한 자세한 설명을 입력하세요"
+            },
+            "submit": {
+              "label": "공고 작성"
+            },
+            "errors": {
+              "required-title": "제목은 필수 항목입니다."
+            }
+          }
+        }
+      }
+    },
+    "create-project": {
+      "title": "만들고자 하는 프로젝트에 대해 알려주세요",
+      "form": {
+        "name": {
+          "label": "이름",
+          "placeholder": "프로젝트 이름을 입력하세요"
+        },
+        "description": {
+          "label": "설명",
+          "placeholder": "프로젝트에 대한 간단한 설명을 입력하세요"
+        },
+        "submit": {
+          "label": "프로젝트 만들기"
+        }
+      },
+      "errors": {
+        "required_name": "이름은 필수 항목입니다.",
+        "required_description": "설명은 필수 항목입니다."
+      }
+    },
     "provider": {
       "review": {
         "button": "리뷰 작성",
@@ -171,7 +247,55 @@
         "about": "소개",
         "people": "관련 인물",
         "reviews": "리뷰",
+        "jobs": "채용 공고",
         "occurrences": "회차"
+      },
+      "about": {
+        "loading": "불러오는 중...",
+        "fallbacks": {
+          "longDescription": "상세 소개가 아직 입력되지 않았습니다.",
+          "website": "등록된 웹사이트가 없습니다.",
+          "industry": "입력된 업계 정보가 없습니다.",
+          "size": "입력된 규모 정보가 없습니다.",
+          "location": "입력된 위치 정보가 없습니다.",
+          "subcategory": "입력된 세부 분야 정보가 없습니다.",
+          "schoolType": "입력된 학교 구분 정보가 없습니다."
+        },
+        "base-info": "기본 정보",
+        "actions": {
+          "edit": "소개 수정"
+        },
+        "edit-dialog": {
+          "title": "소개 수정",
+          "description": "소개 탭에 표시할 정보를 입력하세요.",
+          "actions": {
+            "cancel": "취소",
+            "save": "저장"
+          },
+          "fields": {
+            "longDescription": "상세 소개",
+            "website": "웹사이트",
+            "industry": "업계",
+            "size": "규모",
+            "location": "위치",
+            "subcategory": "세부 분야"
+          }
+        },
+        "fields": {
+          "website": "웹사이트",
+          "industry": "업계",
+          "size": "규모",
+          "schoolType": "학교 구분",
+          "headquarters": "본사",
+          "location": "위치",
+          "subcategory": "세부 분야"
+        },
+        "school-type": {
+          "types": {
+            "UNIVERSITY": "대학교",
+            "HIGH_SCHOOL": "고등학교"
+          }
+        }
       },
       "admin": {
         "viewing-as-member": {
@@ -184,9 +308,55 @@
     "provider-admin": {
       "sections": {
         "about": "소개",
-        "settings": "설정"
+        "settings": "설정",
+        "job-postings": "채용 공고"
       },
       "view-as-member": "일반 사용자로 보기"
+    },
+    "company": {
+      "job-postings": {
+        "title": "채용 공고",
+        "table": {
+          "empty": "이 회사에는 현재 채용 공고가 없습니다.",
+          "error": "채용 공고를 불러오는 중 오류가 발생했습니다.",
+          "job-title": "직책",
+          "location": "근무 지역",
+          "posted-date": "게시 날짜"
+        },
+        "modal": {
+          "posted-on": "게시 날짜"
+        },
+        "create-posting": {
+          "form": {
+            "label": "채용 공고 만들기",
+            "title": "채용 공고 만들기",
+            "description": "이 회사에 대한 새로운 채용 공고를 작성하세요",
+            "job-title": {
+              "label": "직책",
+              "placeholder": "예: 소프트웨어 엔지니어"
+            },
+            "job-description": {
+              "label": "직무 설명",
+              "placeholder": "이 직책에 대한 자세한 설명을 입력하세요"
+            },
+            "location": {
+              "label": "근무 지역",
+              "placeholder": "예: 서울시 강남구"
+            },
+            "submit": {
+              "label": "채용 공고 제출"
+            },
+            "messages": {
+              "success": "채용 공고가 성공적으로 생성되었습니다.",
+              "error": "채용 공고 생성에 실패했습니다."
+            },
+            "errors": {
+              "required-job-title": "직책은 필수 항목입니다.",
+              "required-job-description": "직무 설명은 필수 항목입니다."
+            }
+          }
+        }
+      }
     },
     "search": {
       "results": {
@@ -198,7 +368,8 @@
         "people": "사람",
         "schools": "학교",
         "companies": "회사",
-        "contests": "대회"
+        "contests": "대회",
+        "projects": "프로젝트"
       }
     },
     "login": {
@@ -322,6 +493,29 @@
       }
     },
     "profile": {
+      "resume": {
+        "label": "이력서"
+      },
+      "projects": {
+        "label": "프로젝트"
+      },
+      "posts": {
+        "label": "게시물",
+        "write": {
+          "label": "게시물 작성",
+          "title": "게시물 작성",
+          "description": "게시물에 대한 제목과 내용을 입력하세요",
+          "actions": {
+            "cancel": "취소",
+            "submit": "게시물 작성"
+          }
+        },
+        "list": {
+          "end": "게시물이 더 이상 없습니다.",
+          "empty": "게시물이 없습니다.",
+          "error": "게시물을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도하세요."
+        }
+      },
       "edit": {
         "title": "프로필 편집",
         "description": "프로필 정보를 업데이트하세요",
@@ -344,6 +538,29 @@
               "placeholder": "한 줄로 자신을 소개하세요"
             }
           },
+          "image": {
+            "label": "프로필 사진",
+            "actions": {
+              "upload": "사진 업로드",
+              "change": "사진 변경",
+              "remove": "사진 삭제"
+            },
+            "help": {
+              "upload": "JPG, PNG 형식만 지원하며 최대 5MB까지 업로드할 수 있습니다.",
+              "public": "프로필 사진은 다른 사용자에게 공개됩니다."
+            },
+            "messages": {
+              "success": "프로필 사진이 성공적으로 업로드되었습니다."
+            },
+            "errors": {
+              "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
+              "maxSize": "파일 크기는 5MB 이하여야 합니다.",
+              "uploadFailed": "프로필 사진 업로드에 실패했습니다."
+            },
+            "name": {
+              "label": "이름"
+            }
+          },
           "errors": {
             "required_name": "이름은 필수 항목입니다.",
             "invalid_fields": "하나 이상의 필드에 유효하지 않은 입력이 있습니다."
@@ -351,6 +568,19 @@
           "actions": {
             "submit": {
               "label": "저장"
+            }
+          }
+        },
+        "messages": {
+          "success": "프로필이 성공적으로 업데이트되었습니다.",
+          "error": "프로필 업데이트에 실패했습니다."
+        },
+        "profile": {
+          "image": {
+            "errors": {
+              "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
+              "maxSize": "파일 크기는 5MB 이하여야 합니다.",
+              "uploadFailed": "프로필 사진 업로드에 실패했습니다."
             }
           }
         }
@@ -522,26 +752,6 @@
         }
       },
       "description": "계정 설정 관리",
-      "profile": {
-        "image": {
-          "label": "프로필 사진",
-          "helpText": "JPG, PNG 형식만 지원하며 최대 5MB까지 업로드할 수 있습니다.",
-          "actions": {
-            "select": "사진 선택",
-            "clearSelection": "선택 취소",
-            "remove": "사진 삭제",
-            "undoRemove": "삭제 취소"
-          },
-          "errors": {
-            "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
-            "maxSize": "파일 크기는 5MB 이하여야 합니다.",
-            "uploadFailed": "프로필 사진 업로드에 실패했습니다."
-          }
-        },
-        "name": {
-          "label": "이름"
-        }
-      },
       "actions": {
         "save": "저장",
         "cancel": "취소"
@@ -556,11 +766,49 @@
       "search": {
         "placeholder": "사람, 기관 또는 프로젝트 검색..."
       },
+      "menu": {
+        "jobs": "채용 공고"
+      },
       "login": "로그인",
       "user": {
         "profile": "내 프로필",
         "settings": "설정",
         "sign-out": "로그아웃"
+      }
+    },
+    "footer": {
+      "about": "소개",
+      "contact": "문의하기",
+      "terms": "이용 약관",
+      "privacy": "개인정보 처리방침"
+    },
+    "editor": {
+      "toolbar": {
+        "bold": {
+          "tooltip": "굵기 적용"
+        },
+        "italic": {
+          "tooltip": "기울임 적용"
+        },
+        "underline": {
+          "tooltip": "밑줄 적용"
+        },
+        "strikethrough": {
+          "tooltip": "취소선 적용"
+        },
+        "code": {
+          "tooltip": "코드 블록"
+        }
+      }
+    },
+    "provider": {
+      "maintainer": {
+        "view-as-public": "일반 사용자로 보기",
+        "viewing-as-public": {
+          "title": "현재 {name}를 일반 사용자로 보고 있습니다.",
+          "description": "관리자가 아닌 일반 사용자는 이 페이지를 이렇게 보게 됩니다.",
+          "view-as-admin": "관리자로 보기"
+        }
       }
     },
     "select-providers": {

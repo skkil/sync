@@ -2,7 +2,9 @@ package com.skkil.sync.provider.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.skkil.sync.provider.company.dto.response.GetCompanyResponse;
 import com.skkil.sync.provider.constant.ProviderType;
+import com.skkil.sync.provider.project.dto.response.GetProjectResponse;
 import java.time.LocalDateTime;
 
 @JsonTypeInfo(
@@ -14,10 +16,10 @@ import java.time.LocalDateTime;
   @JsonSubTypes.Type(value = GetCompanyResponse.class, name = ProviderType.Constants.COMPANY),
   @JsonSubTypes.Type(value = GetSchoolResponse.class, name = ProviderType.Constants.SCHOOL),
   @JsonSubTypes.Type(value = GetLabResponse.class, name = ProviderType.Constants.LAB),
-  @JsonSubTypes.Type(value = GetContestResponse.class, name = ProviderType.Constants.CONTEST)
+  @JsonSubTypes.Type(value = GetContestResponse.class, name = ProviderType.Constants.CONTEST),
+  @JsonSubTypes.Type(value = GetProjectResponse.class, name = ProviderType.Constants.PROJECT)
 })
-public sealed interface GetProviderResponse
-    permits GetCompanyResponse, GetSchoolResponse, GetLabResponse, GetContestResponse {
+public interface GetProviderResponse {
 
   Long id();
 

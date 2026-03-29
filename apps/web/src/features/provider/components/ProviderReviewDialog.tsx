@@ -90,6 +90,13 @@ export default function ProviderReviewDialog({
     });
   };
 
+  if (
+    providerType !== ProviderType.SCHOOL &&
+    providerType !== ProviderType.LAB
+  ) {
+    return null;
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

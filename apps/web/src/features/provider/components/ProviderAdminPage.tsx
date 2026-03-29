@@ -50,20 +50,19 @@ export default async function ProviderAdminPage({
     redirect(providerPath);
   }
 
-  const baseTabs: Tab[] = [
+  const tabs = [
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout />,
+      content: <ProviderAbout id={id} showEditButton />,
     },
+    ...additionalTabs,
     {
       id: 'settings',
       title: t('sections.settings'),
       content: <div></div>,
     },
   ];
-
-  const tabs = [...baseTabs, ...additionalTabs];
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -80,6 +79,8 @@ function getProviderPath(providerType: ProviderType, id: string) {
       return `/school/${id}`;
     case ProviderType.COMPANY:
       return `/company/${id}`;
+    case ProviderType.PROJECT:
+      return `/project/${id}`;
     default:
       console.warn('Unknown provider type:', providerType);
       return '/';

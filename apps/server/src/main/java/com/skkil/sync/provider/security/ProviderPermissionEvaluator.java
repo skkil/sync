@@ -3,6 +3,7 @@ package com.skkil.sync.provider.security;
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.common.security.CustomPermissionEvaluator;
 import com.skkil.sync.common.security.PermissionOperation;
+import com.skkil.sync.common.security.enums.PermissionEvaluatorType;
 import com.skkil.sync.provider.exception.ProviderNotFoundException;
 import com.skkil.sync.provider.model.Provider;
 import com.skkil.sync.provider.repository.MaintainerRepository;
@@ -25,8 +26,8 @@ public class ProviderPermissionEvaluator implements CustomPermissionEvaluator {
   }
 
   @Override
-  public String type() {
-    return "PROVIDER";
+  public PermissionEvaluatorType type() {
+    return PermissionEvaluatorType.PROVIDER;
   }
 
   @Override

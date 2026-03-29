@@ -5,13 +5,16 @@ import { forwardRef, useEffect, useImperativeHandle } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import z from 'zod';
 
+import {
+  getGetAuthenticatedUserQueryKey,
+  useUpdateProfile,
+} from '@/api/__generated__/profile/profile';
 import { FieldError } from '@/components/ui/field';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
-import { useUpdateProfileMutation } from '@/features/profile/api/update-profile';
 import { useGetHandleAvailabilityQuery } from '@/features/user/api/get-handle-availability';
 import {
   MAXIMUM_HANDLE_LENGTH,
@@ -63,7 +66,15 @@ export const ChooseHandle = forwardRef<
     isFetching: isGetHandleAvailabilityPending,
   } = useGetHandleAvailabilityQuery(debouncedHandle);
 
-  const { mutate: updateProfile } = useUpdateProfileMutation();
+  const { mutate: updateProfile } = useUpdateProfile({
+    mutation: {
+      onSuccess: (_data, _variables, _onMutateResult, context) => {
+        context.client.invalidateQueries({
+          queryKey: getGetAuthenticatedUserQueryKey(),
+        });
+      },
+    },
+  });
 
   useEffect(() => {
     if (handleAvailability) {
@@ -97,7 +108,9 @@ export const ChooseHandle = forwardRef<
     submit: (onSuccess) => {
       updateProfile(
         {
-          handle,
+          data: {
+            handle,
+          },
         },
         {
           onSuccess: () => {

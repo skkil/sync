@@ -1,6 +1,7 @@
 package com.skkil.sync.common.exception;
 
 public enum ErrorCode {
+  BAD_REQUEST,
   OAUTH2_ACCOUNT_CANNOT_BE_DELETED,
   OAUTH2_ACCOUNT_CANNOT_BE_LINKED,
   USER_NOT_FOUND,
@@ -9,6 +10,7 @@ public enum ErrorCode {
   PROVIDER_NOT_FOUND,
   PROVIDER_NOT_VERIFIED,
   EXPERIENCE_NOT_FOUND,
+  REFLECTION_NOT_FOUND,
   MEDIA_NOT_FOUND,
   MESSAGE_TO_SELF
 }

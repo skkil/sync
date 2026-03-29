@@ -56,7 +56,7 @@ export default async function School({ params, searchParams }: SchoolProps) {
     {
       id: 'about',
       title: t('sections.about'),
-      content: <ProviderAbout />,
+      content: <ProviderAbout id={id} />,
     },
     {
       id: 'people',
@@ -115,7 +115,7 @@ export default async function School({ params, searchParams }: SchoolProps) {
 
             <Card className="min-h-96 overflow-auto">
               {tabs.map((tab) => (
-                <TabsContent key={tab.id} value={tab.id}>
+                <TabsContent key={tab.id} value={tab.id} className="px-5">
                   {tab.content}
                 </TabsContent>
               ))}

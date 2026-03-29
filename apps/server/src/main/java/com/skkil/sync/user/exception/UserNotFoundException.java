@@ -11,6 +11,10 @@ public class UserNotFoundException extends SyncException {
     super(String.format("User with id %d not found.", userId));
   }
 
+  public UserNotFoundException(String handle) {
+    super(String.format("User with handle '%s' not found.", handle));
+  }
+
   @Override
   public HttpStatusCode getStatusCode() {
     return HttpStatus.NOT_FOUND;

@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00014-create-table-projects
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: projects
+      changes:
+        - createTable:
+            tableName: projects
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+        - addForeignKeyConstraint:
+            baseTableName: projects
+            baseColumnNames: id
+            referencedTableName: providers
+            referencedColumnNames: id
+            constraintName: fk_projects_providers
+            onDelete: CASCADE

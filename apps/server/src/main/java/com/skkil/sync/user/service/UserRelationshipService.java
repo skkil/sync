@@ -85,6 +85,11 @@ public class UserRelationshipService {
       return false;
     }
 
+    if (followerId.equals(followeeId)) {
+      log.debug("Follower ID and followee ID are the same: {}", followerId);
+      return false;
+    }
+
     boolean result =
         userFollowRelationshipRepository.existsByFollowerAndFollowee(followerId, followeeId);
     log.debug("User {} is {}following user {}", followerId, result ? "" : "not ", followeeId);

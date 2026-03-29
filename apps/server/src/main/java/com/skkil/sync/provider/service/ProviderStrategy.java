@@ -6,7 +6,7 @@ import com.skkil.sync.provider.dto.request.UpdateProviderRequest;
 import com.skkil.sync.provider.dto.response.GetProviderResponse;
 import com.skkil.sync.provider.model.Provider;
 
-interface ProviderStrategy {
+public interface ProviderStrategy {
 
   ProviderType getProviderType();
 

@@ -1,3 +1,5 @@
+const CSRF_COOKIE_NAME = 'XSRF-TOKEN';
+
 export function isServer() {
   return typeof window === 'undefined';
 }
@@ -27,4 +29,40 @@ export function url(
   ).toString();
 
   return `${base}${queryString.length === 0 ? '' : '?'}${queryString}`;
+}
+
+export async function getCookies() {
+  if (isServer()) {
+    try {
+      const { cookies } = await import('next/headers');
+      const cookieStore = await cookies();
+      const allCookies = cookieStore.getAll();
+
+      return allCookies
+        .map((cookie) => `${cookie.name}=${cookie.value}`)
+        .join('; ');
+    } catch {
+      return undefined;
+    }
+  }
+
+  return undefined;
+}
+
+export async function getCsrfToken(): Promise<string | undefined> {
+  if (isServer()) {
+    try {
+      const { cookies } = await import('next/headers');
+      const cookieStore = await cookies();
+      return cookieStore.get(CSRF_COOKIE_NAME)?.value;
+    } catch {
+      return undefined;
+    }
+  } else {
+    const value = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith(`${CSRF_COOKIE_NAME}=`))
+      ?.split('=')[1];
+    return value ? decodeURIComponent(value) : undefined;
+  }
 }

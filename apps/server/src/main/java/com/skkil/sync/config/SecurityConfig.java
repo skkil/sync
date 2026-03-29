@@ -31,6 +31,47 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 public class SecurityConfig {
 
     private final EmailVerificationFilter emailVerificationFilter;
+  @Bean
+  @Order(2)
+  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.securityMatcher("/**")
+        .csrf(
+            csrf ->
+                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+        .formLogin(formLogin -> formLogin.disable())
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+        .authorizeHttpRequests(
+            requests ->
+                requests
+                    .requestMatchers("/admin/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/experiences/**",
+                        "/companies/**",
+                        "/reflections/**",
+                        "/users/**")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/providers/**")
+                    .authenticated()
+                    .requestMatchers("/users/**", "/profiles/me", "/media/**")
+                    .authenticated()
+                    .requestMatchers(
+                        "/jobs/**",
+                        "/profiles/**",
+                        "/auth/login",
+                        "/auth/register",
+                        "/providers/**",
+                        "/search/**")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
+        .exceptionHandling(
+            exception ->
+                exception.authenticationEntryPoint(
+                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 
     public SecurityConfig(EmailVerificationFilter emailVerificationFilter) {
         this.emailVerificationFilter = emailVerificationFilter;
