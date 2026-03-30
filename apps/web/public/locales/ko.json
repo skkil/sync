@@ -308,13 +308,16 @@
     "provider-admin": {
       "sections": {
         "about": "소개",
-        "settings": "설정",
-        "job-postings": "채용 공고"
+        "settings": "설정"
       },
       "view-as-member": "일반 사용자로 보기"
     },
     "company": {
+      "about": {
+        "label": "소개"
+      },
       "job-postings": {
+        "label": "채용 공고",
         "title": "채용 공고",
         "table": {
           "empty": "이 회사에는 현재 채용 공고가 없습니다.",
@@ -323,8 +326,14 @@
           "location": "근무 지역",
           "posted-date": "게시 날짜"
         },
-        "modal": {
-          "posted-on": "게시 날짜"
+        "posting": {
+          "view-all": "모든 채용 공고 보기",
+          "loading": "채용 공고를 불러오는 중...",
+          "empty": {
+            "title": "채용 공고가 없습니다."
+          },
+          "posted-on": "게시 날짜",
+          "save-to-my-applications": "내 지원 내역에 저장"
         },
         "create-posting": {
           "form": {
@@ -474,6 +483,20 @@
     "profile": {
       "resume": {
         "label": "이력서"
+      },
+      "applications": {
+        "label": "내 지원 내역",
+        "not-found": "지원 내역이 없습니다.",
+        "loading": "지원 내역을 불러오는 중...",
+        "error": "지원 내역을 불러오는 중 오류가 발생했습니다.",
+        "details": {
+          "back-to-applications": "지원 내역으로 돌아가기",
+          "job-title": "직책",
+          "company": "회사",
+          "status": "상태",
+          "applied-date": "지원 날짜",
+          "notes": "메모"
+        }
       },
       "projects": {
         "label": "프로젝트"

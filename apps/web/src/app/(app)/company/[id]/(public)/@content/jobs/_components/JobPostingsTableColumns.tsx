@@ -17,7 +17,7 @@ export const columns: ColumnDef<JobPosting>[] = [
     header: ({ column, table }) => (
       <DataTableColumnHeader
         icon={<SuitcaseSimpleIcon />}
-        title={table.options.meta?.t('job-title') || ''}
+        title={table.options.meta?.t('table.job-title') || ''}
         column={column}
       />
     ),
@@ -27,7 +27,7 @@ export const columns: ColumnDef<JobPosting>[] = [
     header: ({ column, table }) => (
       <DataTableColumnHeader
         icon={<MapPinIcon />}
-        title={table.options.meta?.t('location') || ''}
+        title={table.options.meta?.t('table.location') || ''}
         column={column}
       />
     ),

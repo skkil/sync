@@ -4,6 +4,7 @@ import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
 import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
 import com.skkil.sync.provider.company.dto.request.CreateJobPostingRequest;
 import com.skkil.sync.provider.company.dto.response.CreateJobPostingResponse;
+import com.skkil.sync.provider.company.dto.response.GetJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingsResponse;
 import com.skkil.sync.provider.company.mapper.CompanyMapper;
 import com.skkil.sync.provider.company.model.Company;
@@ -54,6 +55,14 @@ public class JobPostingService {
   }
 
   @Transactional(readOnly = true)
+  public GetJobPostingResponse getJobPosting(Long companyId, Long postingId) {
+    JobPosting jobPosting =
+        jobPostingRepository.findByIdAndCompanyId(postingId, companyId).orElseThrow();
+
+    return companyMapper.toGetJobPostingResponse(jobPosting);
+  }
+
+  @Transactional(readOnly = true)
   public GetJobPostingsResponse getJobPostings(PaginationRequest pagination) {
     Integer page = pagination.page();
     Integer size = pagination.size();
@@ -61,7 +70,7 @@ public class JobPostingService {
     var postings =
         jobPostingRepository
             .findJobPostingsWithCompany(PageRequest.of(page, size))
-            .map(companyMapper::toJobPostingResponse);
+            .map(companyMapper::toGetJobPostingsResponseJobPosting);
 
     log.debug("Retrieved {} job postings", postings.getNumberOfElements());
     return new GetJobPostingsResponse(
@@ -83,7 +92,7 @@ public class JobPostingService {
     var postings =
         jobPostingRepository
             .findByCompany(company, PageRequest.of(page, size))
-            .map(companyMapper::toJobPostingResponse);
+            .map(companyMapper::toGetJobPostingsResponseJobPosting);
 
     log.debug(
         "Retrieved {} job postings for company {}", postings.getNumberOfElements(), companyId);
