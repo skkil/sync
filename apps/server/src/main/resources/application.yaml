@@ -38,9 +38,7 @@ spring:
     model:
       chat: ${AI_PROVIDER}
     ollama:
-      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
-      init:
-        pull-model-strategy: when_missing
+      base-url: ${OLLAMA_URL:http://localhost:11434}
       chat:
         options:
           model: ${OLLAMA_MODEL}

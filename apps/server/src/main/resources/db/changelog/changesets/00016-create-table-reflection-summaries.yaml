@@ -16,7 +16,6 @@ databaseChangeLog:
               - column:
                   name: id
                   type: BIGINT
-                  autoIncrement: true
                   constraints:
                     primaryKey: true
               - column:

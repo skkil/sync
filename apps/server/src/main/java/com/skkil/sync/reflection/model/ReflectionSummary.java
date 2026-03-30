@@ -23,7 +23,7 @@ public class ReflectionSummary {
   @JoinColumn(name = "id")
   private Reflection reflection;
 
-  @Column(name = "summary", columnDefinition = "TEXT", nullable = false)
+  @Column(name = "summary", columnDefinition = "TEXT")
   private String summary;
 
   protected ReflectionSummary() {}
