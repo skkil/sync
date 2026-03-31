@@ -37,10 +37,10 @@ export default function ViewProviderAsMaintainerButton({
   const { data: provider } = useGetProviderQuery(id);
 
   useEffect(() => {
-    if (!viewAsMember) {
+    if (!viewAsMember && provider?.isMaintainer) {
       router.push(href);
     }
-  }, [viewAsMember, router, href]);
+  }, [viewAsMember, router, href, provider]);
 
   if (!provider) {
     return null;

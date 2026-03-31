@@ -3,6 +3,7 @@ package com.skkil.sync.provider.company.controller;
 import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
 import com.skkil.sync.provider.company.dto.request.CreateJobPostingRequest;
 import com.skkil.sync.provider.company.dto.response.CreateJobPostingResponse;
+import com.skkil.sync.provider.company.dto.response.GetJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingsResponse;
 import com.skkil.sync.provider.company.service.JobPostingService;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,13 @@ public class JobPostingController {
   public CreateJobPostingResponse createJobPosting(
       @PathVariable Long companyId, @RequestBody @Validated CreateJobPostingRequest request) {
     return jobPostingService.createJobPosting(companyId, request);
+  }
+
+  @GetMapping("/companies/{companyId}/jobs/{postingId}")
+  @ResponseStatus(HttpStatus.OK)
+  public GetJobPostingResponse getJobPosting(
+      @PathVariable Long companyId, @PathVariable Long postingId) {
+    return jobPostingService.getJobPosting(companyId, postingId);
   }
 
   @GetMapping("/jobs")

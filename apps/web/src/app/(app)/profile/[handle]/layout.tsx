@@ -4,6 +4,8 @@ import ProfileOverview from './_components/ProfileOverview';
 import ProfileTabs from './_components/ProfileTabs';
 
 interface ProfileLayoutProps {
+  left: React.ReactNode;
+  right: React.ReactNode;
   content: React.ReactNode;
   params: Promise<{
     handle: string;
@@ -11,6 +13,8 @@ interface ProfileLayoutProps {
 }
 
 export default async function ProfileLayout({
+  left,
+  right,
   content,
   params,
 }: ProfileLayoutProps) {
@@ -42,11 +46,14 @@ export default async function ProfileLayout({
 
   return (
     <div className="flex mx-auto max-w-7xl gap-4">
-      <div className="mx-auto w-full max-w-3xl">
-        <ProfileOverview handle={handle} />
+      <div className="hidden lg:block w-1/5">{left}</div>
 
+      <div className="grow">
+        <ProfileOverview handle={handle} />
         <ProfileTabs tabs={tabs}>{content}</ProfileTabs>
       </div>
+
+      <div className="hidden lg:block w-1/5">{right}</div>
     </div>
   );
 }
