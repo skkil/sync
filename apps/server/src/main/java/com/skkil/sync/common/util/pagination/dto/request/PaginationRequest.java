@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 public record PaginationRequest(Integer page, @NotNull @Min(1) Integer size) {
 
   public Pageable toPageable() {
-    return Pageable.ofSize(size).withPage(page);
+    int pageIndex = page != null ? page : 0;
+    return Pageable.ofSize(size).withPage(pageIndex);
   }
 }

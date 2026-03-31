@@ -30,7 +30,7 @@ export default function CompanyAdminOverview({
     return null;
   }
 
-  if (company.type !== ProviderType.COMPANY) {
+  if (company.type !== ProviderType.COMPANY || !company.isMaintainer) {
     notFound();
   }
 

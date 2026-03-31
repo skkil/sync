@@ -8,11 +8,14 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Builder;
 import lombok.Getter;
 
 @Entity
-@Table(name = "job_applications")
+@Table(
+    name = "job_applications",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"job_posting_id", "applicant_id"})})
 @Getter
 public class JobApplication extends BaseEntity {
 

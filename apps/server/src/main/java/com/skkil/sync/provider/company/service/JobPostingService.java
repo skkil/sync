@@ -6,6 +6,7 @@ import com.skkil.sync.provider.company.dto.request.CreateJobPostingRequest;
 import com.skkil.sync.provider.company.dto.response.CreateJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingsResponse;
+import com.skkil.sync.provider.company.exception.JobPostingNotFoundException;
 import com.skkil.sync.provider.company.mapper.CompanyMapper;
 import com.skkil.sync.provider.company.model.Company;
 import com.skkil.sync.provider.company.model.JobPosting;
@@ -57,7 +58,9 @@ public class JobPostingService {
   @Transactional(readOnly = true)
   public GetJobPostingResponse getJobPosting(Long companyId, Long postingId) {
     JobPosting jobPosting =
-        jobPostingRepository.findByIdAndCompanyId(postingId, companyId).orElseThrow();
+        jobPostingRepository
+            .findByIdAndCompanyId(postingId, companyId)
+            .orElseThrow(() -> new JobPostingNotFoundException(postingId));
 
     return companyMapper.toGetJobPostingResponse(jobPosting);
   }

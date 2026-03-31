@@ -35,7 +35,7 @@ public class JobApplicationController {
   @GetMapping("/applications/me")
   @ResponseStatus(HttpStatus.OK)
   public GetJobApplicationsResponse getMyJobApplications(
-      @AuthenticationPrincipal AuthenticatedUser user, PaginationRequest pagination) {
+      @AuthenticationPrincipal AuthenticatedUser user, @Validated PaginationRequest pagination) {
     return jobApplicationService.getJobApplications(user.userId(), pagination);
   }
 }

@@ -48,3 +48,7 @@ databaseChangeLog:
             referencedTableName: users
             referencedColumnNames: id
             onDelete: CASCADE
+        - addUniqueConstraint:
+            constraintName: uk_job_applications_job_posting_applicant
+            tableName: job_applications
+            columnNames: job_posting_id, applicant_id
