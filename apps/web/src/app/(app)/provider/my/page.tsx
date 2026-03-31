@@ -133,7 +133,6 @@ function ProviderCard({
                   )}
                 </span>
               </div>
-              <div className="flex flex-shrink-0 gap-2"></div>
             </div>
           </div>
         </div>

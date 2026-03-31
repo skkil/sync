@@ -2,6 +2,7 @@
 
 import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { useGetJobPostings } from '@/api/__generated__/jobs/jobs';
@@ -63,22 +64,24 @@ export default function JobPostings() {
         <>
           <div className="flex flex-col gap-4">
             {postings.content.map((posting) => (
-              <div
+              <Link
                 key={posting.id}
-                className="p-4 flex gap-4 items-center hover:bg-muted rounded-lg border bg-card transition-colors"
+                href={`/company/${posting.company.id}/jobs/${posting.id}?m=true`}
               >
-                <div className="flex items-center gap-2">
-                  <Avatar>
-                    <AvatarFallback>
-                      {posting.company.name?.charAt(0).toUpperCase() || 'C'}
-                    </AvatarFallback>
-                  </Avatar>
+                <div className="p-4 flex gap-4 items-center hover:bg-muted rounded-lg border bg-card transition-colors">
+                  <div className="flex items-center gap-2">
+                    <Avatar>
+                      <AvatarFallback>
+                        {posting.company.name?.charAt(0).toUpperCase() || 'C'}
+                      </AvatarFallback>
+                    </Avatar>
 
-                  <span>{posting.company.name}</span>
+                    <span>{posting.company.name}</span>
+                  </div>
+
+                  <div>{posting.jobTitle}</div>
                 </div>
-
-                <div>{posting.jobTitle}</div>
-              </div>
+              </Link>
             ))}
           </div>
 

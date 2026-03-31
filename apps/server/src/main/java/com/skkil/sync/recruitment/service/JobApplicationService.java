@@ -1,0 +1,80 @@
+package com.skkil.sync.recruitment.service;
+
+import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
+import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
+import com.skkil.sync.provider.company.model.JobPosting;
+import com.skkil.sync.provider.company.service.domain.JobPostingDomainService;
+import com.skkil.sync.recruitment.dto.request.CreateJobApplicationRequest;
+import com.skkil.sync.recruitment.dto.response.CreateJobApplicationResponse;
+import com.skkil.sync.recruitment.dto.response.GetJobApplicationsResponse;
+import com.skkil.sync.recruitment.model.JobApplication;
+import com.skkil.sync.recruitment.repository.JobApplicationRepository;
+import com.skkil.sync.user.model.User;
+import com.skkil.sync.user.service.domain.UserDomainService;
+import java.util.Optional;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class JobApplicationService {
+
+  private final UserDomainService userDomainService;
+  private final JobPostingDomainService jobPostingDomainService;
+  private final JobApplicationRepository jobApplicationRepository;
+
+  public JobApplicationService(
+      UserDomainService userDomainService,
+      JobPostingDomainService jobPostingDomainService,
+      JobApplicationRepository jobApplicationRepository) {
+    this.userDomainService = userDomainService;
+    this.jobPostingDomainService = jobPostingDomainService;
+    this.jobApplicationRepository = jobApplicationRepository;
+  }
+
+  @Transactional
+  public CreateJobApplicationResponse createJobApplication(
+      Long userId, CreateJobApplicationRequest request) {
+    User applicant = userDomainService.getUserReference(userId);
+    JobPosting jobPosting =
+        jobPostingDomainService.findByIdAndCompanyId(
+            Long.valueOf(request.jobPostingId()), Long.valueOf(request.companyId()));
+
+    Optional<JobApplication> existingApplication =
+        jobApplicationRepository.findByApplicantAndJobPosting(applicant, jobPosting);
+
+    if (existingApplication.isPresent()) {
+      return new CreateJobApplicationResponse(existingApplication.get().getId());
+    }
+
+    JobApplication application =
+        JobApplication.builder().applicant(applicant).jobPosting(jobPosting).build();
+
+    application = jobApplicationRepository.save(application);
+    return new CreateJobApplicationResponse(application.getId());
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("#userId == principal.userId")
+  public GetJobApplicationsResponse getJobApplications(Long userId, PaginationRequest pagination) {
+    User applicant = userDomainService.getUserReference(userId);
+
+    var applications =
+        jobApplicationRepository
+            .findByApplicant(applicant, pagination.toPageable())
+            .map(
+                ja ->
+                    new GetJobApplicationsResponse.Application(
+                        ja.getId(),
+                        new GetJobApplicationsResponse.Company(
+                            ja.getJobPosting().getCompany().getId(),
+                            ja.getJobPosting().getCompany().getName())));
+
+    return new GetJobApplicationsResponse(
+        PaginationResponse.<GetJobApplicationsResponse.Application>builder()
+            .content(applications.toList())
+            .hasNext(applications.hasNext())
+            .hasPrevious(applications.hasPrevious())
+            .build());
+  }
+}

@@ -22,10 +22,12 @@ import com.skkil.sync.common.util.pagination.snippets.PaginationRequestSnippets;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.provider.company.dto.request.CreateJobPostingRequest;
 import com.skkil.sync.provider.company.dto.response.CreateJobPostingResponse;
+import com.skkil.sync.provider.company.dto.response.GetJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingsResponse;
 import com.skkil.sync.provider.company.service.JobPostingService;
 import com.skkil.sync.provider.company.snippets.CreateJobPostingRequestSnippets;
 import com.skkil.sync.provider.company.snippets.CreateJobPostingResponseSnippets;
+import com.skkil.sync.provider.company.snippets.GetJobPostingResponseSnippets;
 import com.skkil.sync.provider.company.snippets.GetJobPostingsResponseSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
@@ -87,6 +89,35 @@ public class JobPostingControllerTests {
                 pathParameters(parameterWithName("companyId").description("Company ID")),
                 CreateJobPostingRequestSnippets.getCreateJobPostingRequestFields(),
                 CreateJobPostingResponseSnippets.getCreateJobPostingResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getJobPosting] API 문서화 테스트")
+  void getJobPosting() throws Exception {
+    Long companyId = 1L;
+    Long postingId = 1L;
+    GetJobPostingResponse response = GetJobPostingResponseSnippets.getGetJobPostingResponse();
+
+    when(jobPostingService.getJobPosting(eq(companyId), eq(postingId))).thenReturn(response);
+
+    mockMvc
+        .perform(get("/companies/{companyId}/jobs/{postingId}", companyId, postingId))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetJobPosting",
+                ResourceSnippetParameters.builder()
+                    .tag("jobs")
+                    .summary("Get Job Posting")
+                    .description("Get Job Posting")
+                    .responseSchema(schema(GetJobPostingResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(
+                    parameterWithName("companyId").description("Company ID"),
+                    parameterWithName("postingId").description("Job Posting ID")),
+                GetJobPostingResponseSnippets.getJobPostingResponseFields()));
   }
 
   @Test
