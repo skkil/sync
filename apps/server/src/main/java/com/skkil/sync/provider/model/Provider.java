@@ -2,6 +2,7 @@ package com.skkil.sync.provider.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.provider.constant.ProviderType;
+import com.skkil.sync.provider.enums.ProviderVerificationStatus;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,9 +48,12 @@ public abstract class Provider extends BaseEntity {
   @Setter
   protected User createdBy;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "verification_status", length = 50, nullable = false)
+  protected ProviderVerificationStatus verificationStatus = ProviderVerificationStatus.UNVERIFIED;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "verified_by")
-  @Setter
   protected User verifiedBy;
 
   protected Provider() {}
@@ -69,5 +73,10 @@ public abstract class Provider extends BaseEntity {
 
   public boolean isVerified() {
     return verifiedBy != null;
+  }
+
+  public void verify(User verifier) {
+    this.verifiedBy = verifier;
+    this.verificationStatus = ProviderVerificationStatus.VERIFIED;
   }
 }

@@ -1,6 +1,11 @@
 'use client';
 
-import { GearSixIcon, SignOutIcon, UserIcon } from '@phosphor-icons/react';
+import {
+  GearSixIcon,
+  SignOutIcon,
+  UserGearIcon,
+  UserIcon,
+} from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -49,6 +54,7 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
   const menu = [
     {
       icon: UserIcon,
+      isAdmin: false,
       label: t('user.profile'),
       onClick: () => {
         router.push(`/@${session.user.handle}`);
@@ -56,13 +62,23 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
     },
     {
       icon: GearSixIcon,
+      isAdmin: false,
       label: t('user.settings'),
       onClick: () => {
         openModal(ModalType.SETTINGS);
       },
     },
     {
+      icon: UserGearIcon,
+      isAdmin: true,
+      label: t('user.admin'),
+      onClick: () => {
+        router.push('/admin');
+      },
+    },
+    {
       icon: SignOutIcon,
+      isAdmin: false,
       label: t('user.sign-out'),
       onClick: () => {
         // TODO: need to implement sign out
@@ -85,6 +101,11 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
         <DropdownMenuGroup>
           {menu.map((item, index) => {
             const Icon = item.icon;
+
+            if (item.isAdmin && session.user.role !== 'ADMIN') {
+              return null;
+            }
+
             return (
               <DropdownMenuItem key={index} onClick={item.onClick}>
                 <Icon />

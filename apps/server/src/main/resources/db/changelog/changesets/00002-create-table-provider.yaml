@@ -43,6 +43,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: verification_status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
                   name: verified_by
                   type: BIGINT
               - column:

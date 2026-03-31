@@ -4,6 +4,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 
 import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.restdocs.request.QueryParametersSnippet;
 import org.springframework.util.MultiValueMap;
@@ -18,8 +19,9 @@ public class CursorPaginationRequestSnippets {
   }
 
   public static MultiValueMap<String, String> getCursorPaginationRequestQueryParams() {
+
     return MultiValueMap.fromSingleValue(
-        Map.of("cursor", DEFAULT_CURSOR, "size", String.valueOf(DEFAULT_SIZE)));
+        new HashMap<>(Map.of("cursor", DEFAULT_CURSOR, "size", String.valueOf(DEFAULT_SIZE))));
   }
 
   public static QueryParametersSnippet getCursorPaginationRequestParameters() {
