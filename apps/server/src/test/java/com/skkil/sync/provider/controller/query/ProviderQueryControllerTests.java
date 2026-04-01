@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.MultiValueMap;
 
 @WebMvcTest(ProviderQueryController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = true)
 @AutoConfigureRestDocs
 @ExtendWith(RestDocumentationExtension.class)
 @Import({SecurityConfig.class, TestSecurityConfig.class})
