@@ -13,7 +13,7 @@ export default async function ProjectTeamBuilding({
   const { id } = await params;
 
   return (
-    <div>
+    <div className="space-y-4">
       <div className="flex justify-end">
         <CreateTeamBuildingPostForm projectId={id} />
       </div>

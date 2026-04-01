@@ -380,6 +380,45 @@ paths:
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
                     ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
                     :false,\"role\":\"USER\",\"contacts\":null}"
+  /projects/{projectId}/team-building:
+    get:
+      tags:
+      - team-building
+      summary: Get Team Building Posts By Project
+      description: Get Team Building Posts By Project
+      operationId: GetTeamBuildingPostsByProject
+      parameters:
+      - name: projectId
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        description: Pagination Cursor
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Long)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTeamBuildingPostsResponse"
+              examples:
+                GetTeamBuildingPostsByProject:
+                  value: "{\"posts\":{\"content\":[{\"id\":\"1\",\"project\":{\"id\"\
+                    :\"1\",\"name\":\"Project Name\",\"description\":\"Project Description\"\
+                    },\"title\":\"Post Title\",\"content\":\"Post Content\"}],\"hasNext\"\
+                    :true,\"nextCursor\":\"next-cursor\"}}"
   /providers/my:
     get:
       tags:
@@ -561,6 +600,39 @@ paths:
                     :\"provider-id\",\"name\":\"Provider Name\",\"isVerified\":true,\"\
                     isMaintainer\":true}],\"hasNext\":true,\"nextCursor\":\"next-cursor\"\
                     }}"
+  /team-building:
+    get:
+      tags:
+      - team-building
+      summary: Get Team Building Posts
+      description: Get Team Building Posts
+      operationId: GetTeamBuildingPosts
+      parameters:
+      - name: cursor
+        in: query
+        description: Pagination Cursor
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Long)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTeamBuildingPostsResponse"
+              examples:
+                GetTeamBuildingPosts:
+                  value: "{\"posts\":{\"content\":[{\"id\":\"1\",\"project\":{\"id\"\
+                    :\"1\",\"name\":\"Project Name\",\"description\":\"Project Description\"\
+                    },\"title\":\"Post Title\",\"content\":\"Post Content\"}],\"hasNext\"\
+                    :true,\"nextCursor\":\"next-cursor\"}}"
   /users/{userId}/reflections:
     get:
       tags:
@@ -681,6 +753,60 @@ components:
                   updatedAt:
                     type: string
                     description: Update Timestamp
+    GetTeamBuildingPostsResponse:
+      title: GetTeamBuildingPostsResponse
+      type: object
+      properties:
+        posts:
+          required:
+          - content
+          - hasNext
+          type: object
+          properties:
+            nextCursor:
+              type: string
+              description: Next Cursor
+              nullable: true
+            hasNext:
+              type: boolean
+              description: Has Next
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - content
+                - id
+                - project
+                - title
+                type: object
+                properties:
+                  project:
+                    required:
+                    - description
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Project Name
+                      description:
+                        type: string
+                        description: Project Description
+                      id:
+                        type: string
+                        description: Project ID
+                    description: Project
+                  id:
+                    type: string
+                    description: Post ID
+                  title:
+                    type: string
+                    description: Post Title
+                  content:
+                    type: string
+                    description: Post Content
     CreateJobPostingResponse:
       title: CreateJobPostingResponse
       required:

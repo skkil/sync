@@ -49,7 +49,9 @@ public class SecurityConfig {
                         "/experiences/**",
                         "/companies/**",
                         "/reflections/**",
-                        "/users/**")
+                        "/users/**",
+                        "/team-building/**",
+                        "/projects/**")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
