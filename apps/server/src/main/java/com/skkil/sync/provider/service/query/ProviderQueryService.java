@@ -10,6 +10,7 @@ import com.skkil.sync.provider.dto.query.ProviderQuery;
 import com.skkil.sync.provider.dto.response.GetProvidersResponse;
 import com.skkil.sync.provider.enums.ProviderVerificationStatus;
 import com.skkil.sync.provider.repository.query.ProviderQueryRepository;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,8 +118,8 @@ public class ProviderQueryService {
     ProviderDto lastProvider = providers.get(providers.size() - 1);
     return Cursor.builder()
         .score(0L)
-        .createdAt(lastProvider.createdAt())
-        .updatedAt(lastProvider.updatedAt())
+        .createdAt(lastProvider.createdAt().toInstant(ZoneOffset.UTC))
+        .updatedAt(lastProvider.updatedAt().toInstant(ZoneOffset.UTC))
         .id(lastProvider.id())
         .build();
   }

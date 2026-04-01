@@ -8,7 +8,7 @@ import static org.jooq.impl.DSL.noCondition;
 import com.skkil.sync.provider.dto.data.ProviderDto;
 import com.skkil.sync.provider.dto.query.ProviderQuery;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -60,14 +60,20 @@ public class ProviderQueryRepository {
                   .or(PROVIDERS.DESCRIPTION.containsIgnoreCase(query.query())));
     }
 
-    if (query.createdAfter() != null) {
+    if (query.createdAfter() != null && query.afterId() != null) {
+      LocalDateTime createdAt = LocalDateTime.ofInstant(query.createdAfter(), ZoneOffset.UTC);
+      condition =
+          condition.and(
+              PROVIDERS
+                  .CREATED_AT
+                  .gt(createdAt)
+                  .or(PROVIDERS.CREATED_AT.eq(createdAt).and(PROVIDERS.ID.gt(query.afterId()))));
+    } else if (query.createdAfter() != null) {
       condition =
           condition.and(
               PROVIDERS.CREATED_AT.gt(
-                  LocalDateTime.ofInstant(query.createdAfter(), ZoneId.systemDefault())));
-    }
-
-    if (query.afterId() != null) {
+                  LocalDateTime.ofInstant(query.createdAfter(), ZoneOffset.UTC)));
+    } else if (query.afterId() != null) {
       condition = condition.and(PROVIDERS.ID.gt(query.afterId()));
     }
 

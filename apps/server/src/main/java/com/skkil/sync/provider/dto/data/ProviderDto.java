@@ -1,7 +1,7 @@
 package com.skkil.sync.provider.dto.data;
 
 import com.skkil.sync.provider.constant.ProviderType;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record ProviderDto(
     ProviderType type,
@@ -9,5 +9,5 @@ public record ProviderDto(
     String name,
     Long verifiedByUserId,
     boolean isMaintainer,
-    Instant createdAt,
-    Instant updatedAt) {}
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt) {}
