@@ -7,6 +7,39 @@ servers:
 - url: ""
 tags: []
 paths:
+  /admin/providers/unverified:
+    get:
+      tags:
+      - providers
+      summary: Get Unverified Providers
+      description: Get Unverified Providers
+      operationId: GetUnverifiedProviders
+      parameters:
+      - name: cursor
+        in: query
+        description: Pagination Cursor
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Long)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProvidersResponse"
+              examples:
+                GetUnverifiedProviders:
+                  value: "{\"providers\":{\"content\":[{\"type\":\"COMPANY\",\"id\"\
+                    :\"provider-id\",\"name\":\"Provider Name\",\"isVerified\":true,\"\
+                    isMaintainer\":true}],\"hasNext\":true,\"nextCursor\":\"next-cursor\"\
+                    }}"
   /applications:
     post:
       tags:
@@ -347,6 +380,39 @@ paths:
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
                     ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
                     :false,\"role\":\"USER\",\"contacts\":null}"
+  /providers/my:
+    get:
+      tags:
+      - providers
+      summary: Get My Providers
+      description: Get My Providers
+      operationId: GetMyProviders
+      parameters:
+      - name: cursor
+        in: query
+        description: Pagination Cursor
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Long)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProvidersResponse"
+              examples:
+                GetMyProviders:
+                  value: "{\"providers\":{\"content\":[{\"type\":\"COMPANY\",\"id\"\
+                    :\"provider-id\",\"name\":\"Provider Name\",\"isVerified\":true,\"\
+                    isMaintainer\":true}],\"hasNext\":true,\"nextCursor\":\"next-cursor\"\
+                    }}"
   /reflections:
     get:
       tags:
@@ -450,6 +516,51 @@ paths:
       responses:
         "204":
           description: "204"
+  /search/providers:
+    get:
+      tags:
+      - providers
+      summary: Search Providers
+      description: Search Providers
+      operationId: SearchProviders
+      parameters:
+      - name: cursor
+        in: query
+        description: Pagination Cursor
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Long)
+        required: true
+        schema:
+          type: string
+      - name: query
+        in: query
+        description: Search Query
+        required: false
+        schema:
+          type: string
+      - name: types
+        in: query
+        description: Provider Types List
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProvidersResponse"
+              examples:
+                SearchProviders:
+                  value: "{\"providers\":{\"content\":[{\"type\":\"COMPANY\",\"id\"\
+                    :\"provider-id\",\"name\":\"Provider Name\",\"isVerified\":true,\"\
+                    isMaintainer\":true}],\"hasNext\":true,\"nextCursor\":\"next-cursor\"\
+                    }}"
   /users/{userId}/reflections:
     get:
       tags:
@@ -662,6 +773,50 @@ components:
         updatedAt:
           type: string
           description: Update Timestamp
+    GetProvidersResponse:
+      title: GetProvidersResponse
+      type: object
+      properties:
+        providers:
+          required:
+          - content
+          - hasNext
+          type: object
+          properties:
+            nextCursor:
+              type: string
+              description: Next Cursor
+              nullable: true
+            hasNext:
+              type: boolean
+              description: Has Next
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - id
+                - isMaintainer
+                - isVerified
+                - name
+                - type
+                type: object
+                properties:
+                  isMaintainer:
+                    type: boolean
+                    description: Maintainer Status
+                  isVerified:
+                    type: boolean
+                    description: Verification Status
+                  name:
+                    type: string
+                    description: Provider Name
+                  id:
+                    type: string
+                    description: Provider ID
+                  type:
+                    type: string
+                    description: Provider Type
     GetProfileResponse:
       title: GetProfileResponse
       required:

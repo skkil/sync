@@ -1,8 +1,9 @@
-import { useDebounce } from '@uidotdev/usehooks';
+import { useDebounce, useIntersectionObserver } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useSearchProvidersInfinite } from '@/api/__generated__/providers/providers';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -20,7 +21,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { ProviderType } from '@/types/provider';
 
-import { useGetProvidersQuery } from '../api/get-providers';
+const DEFAULT_PROVIDER_PAGE_SIZE = 10;
 
 interface SelectProvidersProps {
   defaultValue?: { type: ProviderType; id: string; name: string };
@@ -48,13 +49,38 @@ export default function SelectProviders({
     defaultValue ? { id: defaultValue.id, name: defaultValue.name } : null,
   );
 
-  const { data: providers, isPending: isGetProvidersPending } =
-    useGetProvidersQuery({
-      query: debouncedQuery,
-      types,
-      cursor: '',
-      size: 10,
-    });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useSearchProvidersInfinite(
+      {
+        query: debouncedQuery,
+        types: types.join(','),
+        size: DEFAULT_PROVIDER_PAGE_SIZE.toString(),
+      },
+      {
+        query: {
+          enabled: debouncedQuery.length > 0,
+          getNextPageParam: (lastPage) => {
+            const providers = lastPage.data.providers;
+            return providers?.hasNext ? providers.nextCursor : undefined;
+          },
+        },
+      },
+    );
+
+  const [ref, entry] = useIntersectionObserver({
+    threshold: 0.2,
+    root: null,
+    rootMargin: '100px',
+  });
+
+  useEffect(() => {
+    if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const providers =
+    data?.pages.flatMap((page) => page.data.providers?.content ?? []) ?? [];
 
   return (
     <Popover>
@@ -76,7 +102,7 @@ export default function SelectProviders({
             onValueChange={(content) => setQuery(content)}
           />
           <CommandList>
-            {isGetProvidersPending ? (
+            {isFetchingNextPage ? (
               <div className="flex items-center justify-center py-4">
                 <Spinner />
               </div>
@@ -102,27 +128,35 @@ export default function SelectProviders({
                   )}
                 </CommandEmpty>
                 <CommandGroup>
-                  {providers &&
-                    providers.content.map((provider) => (
-                      <CommandItem
-                        key={provider.id}
-                        value={provider.id}
-                        onSelect={() => {
-                          onChange({
-                            type: provider.type,
-                            id: provider.id,
-                            name: provider.name,
-                          });
-                          setSelectedProvider({
-                            id: provider.id,
-                            name: provider.name,
-                          });
-                        }}
-                      >
-                        {provider.name}
-                      </CommandItem>
-                    ))}
+                  {providers.map((provider) => (
+                    <CommandItem
+                      key={provider.id}
+                      value={provider.id}
+                      onSelect={() => {
+                        onChange({
+                          type: provider.type as ProviderType,
+                          id: provider.id,
+                          name: provider.name,
+                        });
+                        setSelectedProvider({
+                          id: provider.id,
+                          name: provider.name,
+                        });
+                      }}
+                    >
+                      {provider.name}
+                    </CommandItem>
+                  ))}
                 </CommandGroup>
+                {hasNextPage && (
+                  <div ref={ref} className="py-2">
+                    {isFetchingNextPage && (
+                      <div className="flex items-center justify-center">
+                        <Spinner />
+                      </div>
+                    )}
+                  </div>
+                )}
               </>
             )}
           </CommandList>

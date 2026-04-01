@@ -1,7 +1,6 @@
 package com.skkil.sync.common.security;
 
 import com.skkil.sync.auth.AuthenticatedUser;
-import com.skkil.sync.user.constant.Role;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -14,7 +13,12 @@ public class WithAuthenticatedUserSecurityContextFactory
   @Override
   public SecurityContext createSecurityContext(WithAuthenticatedUser annotation) {
     AuthenticatedUser authenticatedUser =
-        new AuthenticatedUser(1L, "User Name", "email@email.com", "password", Role.USER);
+        new AuthenticatedUser(
+            annotation.id(),
+            annotation.name(),
+            annotation.email(),
+            annotation.password(),
+            annotation.role());
 
     Authentication authentication =
         UsernamePasswordAuthenticationToken.authenticated(

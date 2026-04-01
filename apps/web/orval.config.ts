@@ -44,6 +44,21 @@ export default defineConfig({
               useInfinite: true,
             },
           },
+          SearchProviders: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          GetMyProviders: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          GetUnverifiedProviders: {
+            query: {
+              useInfinite: true,
+            },
+          },
         },
       },
     },

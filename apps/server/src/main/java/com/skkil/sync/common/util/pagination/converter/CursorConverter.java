@@ -17,6 +17,10 @@ public class CursorConverter {
   }
 
   public String encode(Cursor cursor) {
+    if (cursor == null) {
+      return null;
+    }
+
     try {
       String json = objectMapper.writeValueAsString(cursor);
       return Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));

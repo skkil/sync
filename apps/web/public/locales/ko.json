@@ -4,6 +4,9 @@
       "title": "sync",
       "left": {
         "jobs": "채용 공고"
+      },
+      "right": {
+        "my-providers": "내가 관리하는 페이지"
       }
     },
     "jobs": {
@@ -43,6 +46,19 @@
         "settings": {
           "title": "대화 설정",
           "block": "차단"
+        }
+      }
+    },
+    "my-providers": {
+      "title": "내가 관리하는 페이지",
+      "description": "내가 관리하는 페이지를 한 곳에서 확인하세요",
+      "empty": "아직 관리하는 페이지가 없습니다.",
+      "loading": "내가 관리하는 페이지를 불러오는 중...",
+      "load-more": "더 불러오기",
+      "error": "페이지를 불러오는 중 오류가 발생했습니다.",
+      "provider": {
+        "unverified": {
+          "tooltip": "이 기관은 아직 검증되지 않았습니다."
         }
       }
     },
@@ -721,6 +737,9 @@
       "unverified-providers": {
         "title": "검증되지 않은 기관",
         "description": "기관을 검토하고 검증하세요",
+        "no-providers": "검증되지 않은 기관이 없습니다.",
+        "loading": "검증되지 않은 기관을 불러오는 중...",
+        "load-more": "더 불러오기",
         "actions": {
           "verify": "검증"
         }
@@ -775,6 +794,7 @@
       "user": {
         "profile": "내 프로필",
         "settings": "설정",
+        "admin": "관리자 페이지",
         "sign-out": "로그아웃"
       }
     },
