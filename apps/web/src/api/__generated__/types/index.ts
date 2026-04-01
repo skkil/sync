@@ -39,6 +39,8 @@ export * from './GetReflectionsResponseReflectionsContentItemAuthor';
 export * from './GetReflectionsResponseReflectionsContentItemProject';
 export * from './GetUnverifiedProvidersParams';
 export * from './GetUserReflectionsParams';
+export * from './LoginRequest';
+export * from './RegisterRequest';
 export * from './SearchProvidersParams';
 export * from './UpdateProfileRequest';
 export * from './UpdateProfileRequestContacts';

@@ -97,6 +97,54 @@ paths:
                   value: "{\"applications\":{\"content\":[{\"id\":1,\"company\":{\"\
                     id\":1,\"name\":\"Company\"}}],\"hasNext\":true,\"hasPrevious\"\
                     :false}}"
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: Login
+      description: Login
+      operationId: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+            examples:
+              Login:
+                value: "{\"email\":\"user@example.com\",\"password\":\"password123\"\
+                  }"
+      responses:
+        "204":
+          description: "204"
+  /auth/logout:
+    post:
+      tags:
+      - auth
+      summary: Logout
+      description: Logout
+      operationId: Logout
+      responses:
+        "204":
+          description: "204"
+  /auth/register:
+    post:
+      tags:
+      - auth
+      summary: Register
+      description: Register
+      operationId: Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+            examples:
+              Register:
+                value: "{\"email\":\"newuser@example.com\",\"password\":\"password123\"\
+                  }"
+      responses:
+        "204":
+          description: "204"
   /companies/{companyId}/jobs:
     get:
       tags:
@@ -817,6 +865,19 @@ components:
                   type:
                     type: string
                     description: Provider Type
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
     GetProfileResponse:
       title: GetProfileResponse
       required:
@@ -911,6 +972,19 @@ components:
         mediaType:
           type: string
           description: Media Type
+    RegisterRequest:
+      title: RegisterRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
     CreateJobPostingRequest:
       title: CreateJobPostingRequest
       required:

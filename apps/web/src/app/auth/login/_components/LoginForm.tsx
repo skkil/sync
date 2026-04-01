@@ -8,6 +8,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
+import { useLogin } from '@/api/__generated__/auth/auth';
 import { Button } from '@/components/ui/button';
 import {
   Field,
@@ -16,14 +17,13 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { useLoginMutation } from '@/features/auth/api/login';
 import { useSession } from '@/lib/auth/client';
 
 export default function LoginForm() {
   const t = useTranslations('pages.login.form');
 
   const router = useRouter();
-  const { mutate: login } = useLoginMutation();
+  const { mutate: login } = useLogin();
 
   const { refetch: refetchSession } = useSession();
 
@@ -53,8 +53,10 @@ export default function LoginForm() {
   const onFormSubmit = async (values: LoginFormValues) => {
     login(
       {
-        email: values.email,
-        password: values.password,
+        data: {
+          email: values.email,
+          password: values.password,
+        },
       },
       {
         onSuccess: () => {
