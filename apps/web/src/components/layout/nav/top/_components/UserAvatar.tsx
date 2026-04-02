@@ -85,11 +85,12 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
       isAdmin: false,
       label: t('user.sign-out'),
       onClick: async () => {
-        await logout(undefined)
-          .then(() => signOut())
-          .then(() => {
-            router.push('/');
-          });
+        try {
+          await logout();
+        } finally {
+          await signOut();
+          router.push('/');
+        }
       },
     },
   ];
