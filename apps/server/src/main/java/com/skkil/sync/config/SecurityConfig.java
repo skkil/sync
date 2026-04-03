@@ -37,6 +37,13 @@ public class SecurityConfig {
                 csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
         .formLogin(formLogin -> formLogin.disable())
+        .logout(
+            logout ->
+                logout
+                    .logoutUrl("/auth/logout")
+                    .logoutSuccessHandler(
+                        (request, response, authentication) ->
+                            response.setStatus(HttpStatus.NO_CONTENT.value())))
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         .authorizeHttpRequests(

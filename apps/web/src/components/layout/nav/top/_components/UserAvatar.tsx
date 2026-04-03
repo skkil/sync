@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { useLogout } from '@/api/__generated__/auth/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,7 +23,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { ModalType } from '@/constants/modal';
 import { useModal } from '@/hooks/store';
-import { useSession } from '@/lib/auth/client';
+import { signOut, useSession } from '@/lib/auth/client';
 
 interface UserAvatarProps {
   align?: 'start' | 'end';
@@ -30,6 +31,9 @@ interface UserAvatarProps {
 
 export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
   const router = useRouter();
+
+  const { mutateAsync: logout } = useLogout();
+
   const { isPending, data: session } = useSession();
   const { openModal } = useModal();
 
@@ -80,8 +84,13 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
       icon: SignOutIcon,
       isAdmin: false,
       label: t('user.sign-out'),
-      onClick: () => {
-        // TODO: need to implement sign out
+      onClick: async () => {
+        try {
+          await logout();
+        } finally {
+          await signOut();
+          router.push('/');
+        }
       },
     },
   ];
