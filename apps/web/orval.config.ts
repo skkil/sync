@@ -59,6 +59,16 @@ export default defineConfig({
               useInfinite: true,
             },
           },
+          GetTeamBuildingPosts: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          GetTeamBuildingPostsByProject: {
+            query: {
+              useInfinite: true,
+            },
+          },
         },
       },
     },

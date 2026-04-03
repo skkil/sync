@@ -3,7 +3,8 @@
     "home": {
       "title": "sync",
       "left": {
-        "jobs": "채용 공고"
+        "jobs": "채용 공고",
+        "team-building": "팀원 모집"
       },
       "right": {
         "my-providers": "내가 관리하는 페이지"
@@ -18,6 +19,10 @@
       "bookmark": {
         "label": "저장한 채용 공고"
       }
+    },
+    "team-building": {
+      "title": "팀 빌딩 공고",
+      "description": "프로젝트에 함께할 팀원을 모집하세요"
     },
     "messages": {
       "conversations": {
@@ -173,7 +178,9 @@
         "label": "팀 빌딩",
         "list": {
           "title": "제목",
-          "empty": "팀 빌딩 공고가 없습니다."
+          "empty": "팀 빌딩 공고가 없습니다.",
+          "load-more": "더 불러오기",
+          "loading": "팀 빌딩 공고를 불러오는 중..."
         }
       },
       "admin": {
@@ -788,7 +795,9 @@
         "placeholder": "사람, 기관 또는 프로젝트 검색..."
       },
       "menu": {
-        "jobs": "채용 공고"
+        "jobs": "채용 공고",
+        "team-building": "팀원 모집",
+        "my-providers": "내가 관리하는 페이지"
       },
       "login": "로그인",
       "user": {

@@ -1,28 +1,11 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 
-import { DataTable, DataTableColumnHeader } from '@/components/ui/data-table';
-import useGetProjectTeamBuildingPostsQuery from '@/features/provider/api/project/get-project-team-building-posts';
+import { useGetTeamBuildingPostsByProjectInfinite } from '@/api/__generated__/team-building/team-building';
+import { Button } from '@/components/ui/button';
 
-type TeamBuildingPost = {
-  id: string;
-  title: string;
-  content: string;
-};
-
-export const columns: ColumnDef<TeamBuildingPost>[] = [
-  {
-    accessorKey: 'title',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        title={table.options.meta?.t('title') || ''}
-        column={column}
-      />
-    ),
-  },
-];
+const TEAM_BUILDING_POSTS_PAGE_SIZE = '20';
 
 interface TeamBuildingPostsListProps {
   projectId: string;
@@ -33,7 +16,44 @@ export default function TeamBuildingPostList({
 }: TeamBuildingPostsListProps) {
   const t = useTranslations('pages.project.team-building.list');
 
-  const { data: posts } = useGetProjectTeamBuildingPostsQuery(projectId);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetTeamBuildingPostsByProjectInfinite(
+      projectId,
+      {
+        size: TEAM_BUILDING_POSTS_PAGE_SIZE,
+      },
+      {
+        query: {
+          getNextPageParam: (lastPage) => {
+            const posts = lastPage.data.posts;
+            return posts?.hasNext ? posts.nextCursor : undefined;
+          },
+        },
+      },
+    );
 
-  return <DataTable columns={columns} data={posts || []} t={t} />;
+  const posts =
+    data?.pages.flatMap((page) => page.data.posts?.content ?? []) ?? [];
+
+  if (data && posts.length === 0) {
+    return <div>{t('empty')}</div>;
+  }
+
+  return (
+    <div className="space-y-4">
+      {posts.map((post) => (
+        <div key={post.id} className="rounded-lg border p-4">
+          {post.title}
+        </div>
+      ))}
+
+      {hasNextPage && (
+        <div className="flex justify-center">
+          <Button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
+            {isFetchingNextPage ? t('loading') : t('load-more')}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
 }

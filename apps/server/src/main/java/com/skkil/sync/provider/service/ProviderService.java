@@ -50,6 +50,11 @@ public class ProviderService {
 
     User creator = new User(userId);
     provider.setCreatedBy(creator);
+
+    if (provider.getType() == ProviderType.PROJECT) {
+      provider.verify(creator);
+    }
+
     providerRepository.save(provider);
 
     Maintainer maintainer = Maintainer.builder().provider(provider).user(creator).build();
