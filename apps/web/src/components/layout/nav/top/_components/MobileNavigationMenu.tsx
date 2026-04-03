@@ -44,7 +44,7 @@ export default function MobileNavigationMenu() {
       ],
     },
     {
-      id: 'busineess',
+      id: 'business',
       tabs: [
         {
           icon: <UserGearIcon />,

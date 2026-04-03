@@ -51,7 +51,7 @@ public class ProviderService {
     User creator = new User(userId);
     provider.setCreatedBy(creator);
 
-    if (provider.getType().equals(ProviderType.PROJECT)) {
+    if (provider.getType() == ProviderType.PROJECT) {
       provider.verify(creator);
     }
 

@@ -35,6 +35,10 @@ export default function TeamBuildingPostList({
   const posts =
     data?.pages.flatMap((page) => page.data.posts?.content ?? []) ?? [];
 
+  if (data && posts.length === 0) {
+    return <div>{t('empty')}</div>;
+  }
+
   return (
     <div className="space-y-4">
       {posts.map((post) => (
