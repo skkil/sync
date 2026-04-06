@@ -777,6 +777,28 @@
               "cannot_be_deleted": "이 로그인 방법은 삭제할 수 없습니다. 다른 로그인 방법을 먼저 연결하세요."
             }
           }
+        },
+        "theme": {
+          "label": "테마",
+          "title": "테마 설정",
+          "description": "테마를 선택하여 앱의 모양을 개인화하세요",
+          "theme": {
+            "label": "테마",
+            "options": {
+              "light": {
+                "label": "라이트 모드",
+                "description": "밝은 테마로 앱을 사용합니다."
+              },
+              "dark": {
+                "label": "다크 모드",
+                "description": "어두운 테마로 앱을 사용합니다."
+              },
+              "system": {
+                "label": "시스템 설정 사용",
+                "description": "시스템 설정에 따라 테마가 자동으로 변경됩니다."
+              }
+            }
+          }
         }
       },
       "description": "계정 설정 관리",

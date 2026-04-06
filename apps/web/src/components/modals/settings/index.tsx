@@ -1,6 +1,11 @@
 'use client';
 
-import { SidebarIcon, UserIcon, XIcon } from '@phosphor-icons/react';
+import {
+  PaletteIcon,
+  SidebarIcon,
+  UserIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 
@@ -18,8 +23,9 @@ import { useModal } from '@/hooks/store';
 import { cn } from '@/lib/utils';
 
 import AccountSettingsComponent from './_components/AccountSettings';
+import ThemeSettingsComponen from './_components/ThemeSettings';
 
-type SettingsCategory = 'account';
+type SettingsCategory = 'account' | 'theme';
 
 interface Category {
   id: SettingsCategory;
@@ -32,6 +38,11 @@ const categories: Category[] = [
     id: 'account',
     icon: <UserIcon />,
     component: AccountSettingsComponent,
+  },
+  {
+    id: 'theme',
+    icon: <PaletteIcon />,
+    component: ThemeSettingsComponen,
   },
 ];
 

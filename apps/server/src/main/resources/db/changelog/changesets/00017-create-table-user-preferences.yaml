@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00017-create-table-user-preferences
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: user_preferences
+      changes:
+        - createTable:
+            tableName: user_preferences
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: theme
+                  type: VARCHAR(20)
+        - addForeignKeyConstraint:
+            baseTableName: user_preferences
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_preferences_id
+            onDelete: CASCADE
