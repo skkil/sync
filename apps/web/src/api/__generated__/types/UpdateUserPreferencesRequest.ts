@@ -6,6 +6,9 @@
  */
 
 export interface UpdateUserPreferencesRequest {
-  /** User theme preference */
-  theme: string;
+  /**
+   * User theme preference
+   * @nullable
+   */
+  theme?: string | null;
 }

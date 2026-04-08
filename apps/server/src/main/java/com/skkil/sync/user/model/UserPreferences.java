@@ -26,7 +26,7 @@ public class UserPreferences {
   private User user;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "theme", nullable = false)
+  @Column(name = "theme")
   private Theme theme = Theme.SYSTEM;
 
   public void setUser(User user) {

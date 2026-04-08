@@ -1120,15 +1120,6 @@ components:
         isOnboarded:
           type: boolean
           description: Is Onboarded
-    UpdateUserPreferencesRequest:
-      title: UpdateUserPreferencesRequest
-      required:
-      - theme
-      type: object
-      properties:
-        theme:
-          type: string
-          description: User theme preference
     RegisterRequest:
       title: RegisterRequest
       required:
@@ -1274,6 +1265,14 @@ components:
         jobPostingId:
           type: string
           description: Job Posting ID
+    UpdateUserPreferencesRequest:
+      title: UpdateUserPreferencesRequest
+      type: object
+      properties:
+        theme:
+          type: string
+          description: User theme preference
+          nullable: true
     UpdateReflectionRequest:
       title: UpdateReflectionRequest
       required:

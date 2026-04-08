@@ -17,7 +17,7 @@ const ThemeSettings = forwardRef<SettingsCategoryRef>(({}, ref) => {
   const { data: session } = useSession();
 
   const { setTheme } = useTheme();
-  const [selectedTheme, setSelectedTheme] = useState('');
+  const [selectedTheme, setSelectedTheme] = useState('system');
 
   const { mutate: updateUserPreferences } = useUpdateUserPreferences();
 

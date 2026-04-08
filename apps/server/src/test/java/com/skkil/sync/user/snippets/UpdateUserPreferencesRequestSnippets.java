@@ -16,6 +16,9 @@ public class UpdateUserPreferencesRequestSnippets {
 
   public static RequestFieldsSnippet getUpdateUserPreferencesRequestFields() {
     return requestFields(
-        fieldWithPath("theme").type(JsonFieldType.STRING).description("User theme preference"));
+        fieldWithPath("theme")
+            .type(JsonFieldType.STRING)
+            .description("User theme preference")
+            .optional());
   }
 }

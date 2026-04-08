@@ -71,7 +71,9 @@ export const auth = betterAuth({
 
               const {
                 data: { theme },
-              } = await getUserPreferences();
+              } = await getUserPreferences().catch(() => ({
+                data: { theme: 'system' },
+              }));
 
               const user = await ctx.context.internalAdapter.createUser({
                 id: userId,

@@ -23,7 +23,7 @@ import { useModal } from '@/hooks/store';
 import { cn } from '@/lib/utils';
 
 import AccountSettingsComponent from './_components/AccountSettings';
-import ThemeSettingsComponen from './_components/ThemeSettings';
+import ThemeSettingsComponent from './_components/ThemeSettings';
 
 type SettingsCategory = 'account' | 'theme';
 
@@ -42,7 +42,7 @@ const categories: Category[] = [
   {
     id: 'theme',
     icon: <PaletteIcon />,
-    component: ThemeSettingsComponen,
+    component: ThemeSettingsComponent,
   },
 ];
 
