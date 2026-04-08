@@ -518,7 +518,28 @@
           "company": "회사",
           "status": "상태",
           "applied-date": "지원 날짜",
-          "notes": "메모"
+          "notes": "메모",
+          "overview": {
+            "title": "지원 정보",
+            "job-title": "직책",
+            "company": "회사",
+            "location": "근무 지역",
+            "status": "상태"
+          },
+          "tabs": {
+            "job-description": {
+              "label": "채용 공고",
+              "title": "채용 공고 상세",
+              "job-title": "직책",
+              "location": "근무 지역",
+              "description": "직무 설명"
+            },
+            "notes": {
+              "label": "메모",
+              "title": "내 메모",
+              "empty": "아직 메모가 없습니다."
+            }
+          }
         }
       },
       "projects": {

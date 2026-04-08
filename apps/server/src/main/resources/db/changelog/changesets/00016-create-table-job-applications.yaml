@@ -34,6 +34,14 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: notes
+                  type: TEXT
         - addForeignKeyConstraint:
             constraintName: fk_job_applications_job_postings
             baseTableName: job_applications

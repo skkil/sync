@@ -19,10 +19,12 @@ import com.skkil.sync.common.util.pagination.snippets.PaginationRequestSnippets;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.recruitment.dto.request.CreateJobApplicationRequest;
 import com.skkil.sync.recruitment.dto.response.CreateJobApplicationResponse;
+import com.skkil.sync.recruitment.dto.response.GetJobApplicationResponse;
 import com.skkil.sync.recruitment.dto.response.GetJobApplicationsResponse;
 import com.skkil.sync.recruitment.service.JobApplicationService;
 import com.skkil.sync.recruitment.snippets.CreateJobApplicationRequestSnippets;
 import com.skkil.sync.recruitment.snippets.CreateJobApplicationResponseSnippets;
+import com.skkil.sync.recruitment.snippets.GetJobApplicationResponseSnippets;
 import com.skkil.sync.recruitment.snippets.GetJobApplicationsResponseSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
@@ -118,5 +120,32 @@ class JobApplicationControllerTests {
                 Function.identity(),
                 PaginationRequestSnippets.getPaginationRequestParameters(),
                 GetJobApplicationsResponseSnippets.getJobApplicationsResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getJobApplication] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void getJobApplication() throws Exception {
+    Long applicationId = 1L;
+    GetJobApplicationResponse response =
+        GetJobApplicationResponseSnippets.getGetJobApplicationResponse();
+
+    when(jobApplicationService.getJobApplication(eq(applicationId))).thenReturn(response);
+
+    mockMvc
+        .perform(get("/applications/{applicationId}", applicationId))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetJobApplication",
+                ResourceSnippetParameters.builder()
+                    .tag("applications")
+                    .summary("Get Job Application")
+                    .description("Get Job Application by ID")
+                    .responseSchema(schema(GetJobApplicationResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                GetJobApplicationResponseSnippets.getGetJobApplicationResponseFields()));
   }
 }
