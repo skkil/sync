@@ -62,7 +62,12 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
-                    .requestMatchers("/users/**", "/profiles/me", "/media/**", "/providers/my/**")
+                    .requestMatchers(
+                        "/users/**",
+                        "/profiles/me",
+                        "/media/**",
+                        "/providers/my/**",
+                        "/preferences/**")
                     .authenticated()
                     .requestMatchers(
                         "/jobs/**",

@@ -15,6 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<User> findByHandle(String handle);
 
+  @Query("SELECT u FROM User u LEFT JOIN FETCH u.preferences WHERE u.id = :id")
+  Optional<User> findByIdWithPreferences(Long id);
+
   @Query("SELECT u FROM User u LEFT JOIN FETCH u.oAuth2Accounts WHERE u.email = :email")
   Optional<User> findByEmailWithOAuthAccounts(String email);
 

@@ -357,6 +357,40 @@ paths:
                       "uploadUrl" : "https://example.com/upload",
                       "expiresAt" : "1970-01-01T00:00:00"
                     }
+  /preferences/me:
+    get:
+      tags:
+      - preferences
+      summary: Get User Preferences
+      description: Get User Preferences
+      operationId: GetUserPreferences
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserPreferencesResponse"
+              examples:
+                GetUserPreferences:
+                  value: "{\"theme\":\"dark\"}"
+    patch:
+      tags:
+      - preferences
+      summary: Update User Preferences
+      description: Update User Preferences
+      operationId: UpdateUserPreferences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserPreferencesRequest"
+            examples:
+              UpdateUserPreferences:
+                value: "{\"theme\":\"dark\"}"
+      responses:
+        "204":
+          description: "204"
   /profiles/me:
     get:
       tags:
@@ -1004,6 +1038,15 @@ components:
         email:
           type: string
           description: Email
+    GetUserPreferencesResponse:
+      title: GetUserPreferencesResponse
+      required:
+      - theme
+      type: object
+      properties:
+        theme:
+          type: string
+          description: User theme preference
     GetProfileResponse:
       title: GetProfileResponse
       required:
@@ -1077,6 +1120,19 @@ components:
         isOnboarded:
           type: boolean
           description: Is Onboarded
+    RegisterRequest:
+      title: RegisterRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
     UploadMediaRequest:
       title: UploadMediaRequest
       required:
@@ -1098,19 +1154,6 @@ components:
         mediaType:
           type: string
           description: Media Type
-    RegisterRequest:
-      title: RegisterRequest
-      required:
-      - email
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: Password
-        email:
-          type: string
-          description: Email
     CreateJobPostingRequest:
       title: CreateJobPostingRequest
       required:
@@ -1222,6 +1265,14 @@ components:
         jobPostingId:
           type: string
           description: Job Posting ID
+    UpdateUserPreferencesRequest:
+      title: UpdateUserPreferencesRequest
+      type: object
+      properties:
+        theme:
+          type: string
+          description: User theme preference
+          nullable: true
     UpdateReflectionRequest:
       title: UpdateReflectionRequest
       required:

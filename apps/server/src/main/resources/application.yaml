@@ -22,6 +22,10 @@ spring:
     jdbc:
       initialize-schema: always
 
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+
   security:
     oauth2:
       client:
