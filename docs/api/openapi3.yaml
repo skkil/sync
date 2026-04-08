@@ -253,6 +253,101 @@ paths:
                     },\"jobTitle\":\"Software Engineer\",\"jobDescription\":\"Job\
                     \ Description\",\"location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
                     ,\"updatedAt\":\"1970-01-01T00:00:00\"}"
+  /contests/{contestId}/occurrences:
+    get:
+      tags:
+      - contests
+      summary: Get Contest Occurrences by Contest
+      description: Get Contest Occurrences by Contest
+      operationId: GetContestOccurrencesByContest
+      parameters:
+      - name: contestId
+        in: path
+        description: Contest ID
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page (Integer)
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Integer)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetContestOccurrencesResponse"
+              examples:
+                GetContestOccurrencesByContest:
+                  value: "{\"occurrences\":{\"content\":[{\"id\":1,\"contest\":{\"\
+                    id\":1,\"name\":\"Contest Name\"},\"title\":\"Occurrence Title\"\
+                    ,\"description\":\"Occurrence Description\"}],\"hasNext\":true,\"\
+                    hasPrevious\":false}}"
+    post:
+      tags:
+      - contests
+      summary: Create Contest Occurrence
+      description: Create Contest Occurrence
+      operationId: CreateContestOccurrence
+      parameters:
+      - name: contestId
+        in: path
+        description: Contest ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContestOccurrenceRequest"
+            examples:
+              CreateContestOccurrence:
+                value: "{\"title\":\"Title\",\"description\":\"Description\"}"
+      responses:
+        "201":
+          description: "201"
+  /contests/{contestId}/occurrences/{occurrenceId}:
+    get:
+      tags:
+      - contests
+      summary: Get Contest Occurrence
+      description: Get Contest Occurrence
+      operationId: GetContestOccurrence
+      parameters:
+      - name: contestId
+        in: path
+        description: Contest ID
+        required: true
+        schema:
+          type: string
+      - name: occurrenceId
+        in: path
+        description: Contest Occurrence ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetContestOccurrenceResponse"
+              examples:
+                GetContestOccurrence:
+                  value: "{\"id\":1,\"contest\":{\"id\":1,\"name\":\"Contest Name\"\
+                    },\"title\":\"Occurrence Title\",\"description\":\"Occurrence\
+                    \ Description\"}"
   /experiences/project/{experienceId}/reflections:
     get:
       tags:
@@ -739,6 +834,19 @@ components:
         expiresAt:
           type: string
           description: Expiration Time
+    CreateContestOccurrenceRequest:
+      title: CreateContestOccurrenceRequest
+      required:
+      - title
+      type: object
+      properties:
+        description:
+          type: string
+          description: Contest Occurrence Description
+          nullable: true
+        title:
+          type: string
+          description: Contest Occurrence Title
     GetJobPostingsResponse:
       title: GetJobPostingsResponse
       type: object
@@ -1077,6 +1185,19 @@ components:
         isOnboarded:
           type: boolean
           description: Is Onboarded
+    RegisterRequest:
+      title: RegisterRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
     UploadMediaRequest:
       title: UploadMediaRequest
       required:
@@ -1098,19 +1219,54 @@ components:
         mediaType:
           type: string
           description: Media Type
-    RegisterRequest:
-      title: RegisterRequest
-      required:
-      - email
-      - password
+    GetContestOccurrencesResponse:
+      title: GetContestOccurrencesResponse
       type: object
       properties:
-        password:
-          type: string
-          description: Password
-        email:
-          type: string
-          description: Email
+        occurrences:
+          required:
+          - content
+          - hasNext
+          - hasPrevious
+          type: object
+          properties:
+            hasPrevious:
+              type: boolean
+              description: Has Previous
+            hasNext:
+              type: boolean
+              description: Has Next
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - id
+                - title
+                type: object
+                properties:
+                  contest:
+                    required:
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Contest Name
+                      id:
+                        type: number
+                        description: Contest ID
+                  description:
+                    type: string
+                    description: Occurrence Description
+                    nullable: true
+                  id:
+                    type: number
+                    description: Contest Occurrence ID
+                  title:
+                    type: string
+                    description: Occurrence Title
     CreateJobPostingRequest:
       title: CreateJobPostingRequest
       required:
@@ -1291,6 +1447,35 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    GetContestOccurrenceResponse:
+      title: GetContestOccurrenceResponse
+      required:
+      - id
+      - title
+      type: object
+      properties:
+        contest:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Contest Name
+            id:
+              type: number
+              description: Contest ID
+        description:
+          type: string
+          description: Occurrence Description
+          nullable: true
+        id:
+          type: number
+          description: Contest Occurrence ID
+        title:
+          type: string
+          description: Occurrence Title
     CreateReflectionResponse:
       title: CreateReflectionResponse
       required:

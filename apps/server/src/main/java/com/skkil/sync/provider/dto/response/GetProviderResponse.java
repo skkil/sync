@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.skkil.sync.provider.company.dto.response.GetCompanyResponse;
 import com.skkil.sync.provider.constant.ProviderType;
+import com.skkil.sync.provider.contest.dto.response.GetContestResponse;
 import com.skkil.sync.provider.project.dto.response.GetProjectResponse;
 import java.time.LocalDateTime;
 

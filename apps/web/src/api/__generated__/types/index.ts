@@ -5,12 +5,20 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from './CreateContestOccurrenceRequest';
 export * from './CreateJobApplicationRequest';
 export * from './CreateJobApplicationResponse';
 export * from './CreateJobPostingRequest';
 export * from './CreateJobPostingResponse';
 export * from './CreateReflectionRequest';
 export * from './CreateReflectionResponse';
+export * from './GetContestOccurrenceResponse';
+export * from './GetContestOccurrenceResponseContest';
+export * from './GetContestOccurrencesByContestParams';
+export * from './GetContestOccurrencesResponse';
+export * from './GetContestOccurrencesResponseOccurrences';
+export * from './GetContestOccurrencesResponseOccurrencesContentItem';
+export * from './GetContestOccurrencesResponseOccurrencesContentItemContest';
 export * from './GetJobApplicationsResponse';
 export * from './GetJobApplicationsResponseApplications';
 export * from './GetJobApplicationsResponseApplicationsContentItem';
