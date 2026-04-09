@@ -1,4 +1,4 @@
-package com.skkil.sync.provider.model;
+package com.skkil.sync.provider.contest.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import jakarta.persistence.Column;

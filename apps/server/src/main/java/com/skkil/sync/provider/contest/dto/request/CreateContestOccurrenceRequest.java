@@ -1,4 +1,4 @@
-package com.skkil.sync.provider.dto.request;
+package com.skkil.sync.provider.contest.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

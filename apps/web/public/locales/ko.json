@@ -146,6 +146,60 @@
         "required_school_type": "학교 유형은 필수 항목입니다."
       }
     },
+    "contest": {
+      "about": {
+        "label": "소개"
+      },
+      "occurrences": {
+        "label": "회차",
+        "title": "회차",
+        "table": {
+          "title": "제목",
+          "empty": "회차가 없습니다.",
+          "load-more": "더 불러오기",
+          "loading": "회차를 불러오는 중..."
+        },
+        "details": {
+          "back-to-occurrences": "회차 목록으로 돌아가기"
+        },
+        "create-occurrence": {
+          "label": "새 회차 만들기",
+          "title": "회차 만들기",
+          "description": "이 대회에 대한 새로운 회차를 작성하세요",
+          "form": {
+            "title": {
+              "label": "제목",
+              "placeholder": "회차 제목을 입력하세요"
+            },
+            "description": {
+              "label": "설명",
+              "placeholder": "회차에 대한 자세한 설명을 입력하세요"
+            },
+            "startDate": {
+              "label": "시작 날짜",
+              "placeholder": "회차 시작 날짜를 입력하세요"
+            },
+            "endDate": {
+              "label": "종료 날짜",
+              "placeholder": "회차 종료 날짜를 입력하세요"
+            },
+            "submit": {
+              "label": "회차 만들기"
+            },
+            "errors": {
+              "required-title": "제목은 필수 항목입니다.",
+              "required-startDate": "시작 날짜는 필수 항목입니다.",
+              "required-endDate": "종료 날짜는 필수 항목입니다.",
+              "invalid-date-range": "종료 날짜는 시작 날짜 이후여야 합니다."
+            }
+          },
+          "messages": {
+            "success": "회차가 성공적으로 생성되었습니다.",
+            "error": "회차 생성에 실패했습니다. 나중에 다시 시도하세요"
+          }
+        }
+      }
+    },
     "create-contest": {
       "title": "만들고자 하는 대회에 대해 알려주세요",
       "form": {
@@ -270,8 +324,7 @@
         "about": "소개",
         "people": "관련 인물",
         "reviews": "리뷰",
-        "jobs": "채용 공고",
-        "occurrences": "회차"
+        "jobs": "채용 공고"
       },
       "about": {
         "loading": "불러오는 중...",

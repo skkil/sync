@@ -58,7 +58,8 @@ public class SecurityConfig {
                         "/reflections/**",
                         "/users/**",
                         "/team-building/**",
-                        "/projects/**")
+                        "/projects/**",
+                        "/contests/**")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
