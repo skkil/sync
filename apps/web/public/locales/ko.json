@@ -524,7 +524,8 @@
             "job-title": "직책",
             "company": "회사",
             "location": "근무 지역",
-            "status": "상태"
+            "status": "상태",
+            "error": "지원 정보를 불러오는 중 오류가 발생했습니다."
           },
           "tabs": {
             "job-description": {

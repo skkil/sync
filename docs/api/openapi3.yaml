@@ -107,7 +107,7 @@ paths:
       parameters:
       - name: applicationId
         in: path
-        description: ""
+        description: Application ID
         required: true
         schema:
           type: string

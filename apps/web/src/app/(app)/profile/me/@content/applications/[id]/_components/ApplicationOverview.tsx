@@ -10,7 +10,11 @@ export default function ApplicationOverview({
 }: {
   applicationId: string;
 }) {
-  const { data: application, isLoading } = useGetJobApplication(applicationId);
+  const {
+    data: application,
+    isLoading,
+    isError,
+  } = useGetJobApplication(applicationId);
   const t = useTranslations('pages.profile.applications.details.overview');
 
   if (isLoading) {
@@ -25,6 +29,19 @@ export default function ApplicationOverview({
             <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
             <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
           </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('title')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-destructive">{t('error')}</p>
         </CardContent>
       </Card>
     );

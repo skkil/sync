@@ -4,6 +4,8 @@ import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.docume
 import static com.epages.restdocs.apispec.Schema.schema;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -146,6 +148,7 @@ class JobApplicationControllerTests {
                 null,
                 null,
                 Function.identity(),
+                pathParameters(parameterWithName("applicationId").description("Application ID")),
                 GetJobApplicationResponseSnippets.getGetJobApplicationResponseFields()));
   }
 }
