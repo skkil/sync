@@ -5,6 +5,7 @@ import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
 import com.skkil.sync.provider.contest.dto.request.CreateContestOccurrenceRequest;
 import com.skkil.sync.provider.contest.dto.response.GetContestOccurrenceResponse;
 import com.skkil.sync.provider.contest.dto.response.GetContestOccurrencesResponse;
+import com.skkil.sync.provider.contest.exception.ContestOccurrenceNotFoundException;
 import com.skkil.sync.provider.contest.model.Contest;
 import com.skkil.sync.provider.contest.model.ContestOccurrence;
 import com.skkil.sync.provider.contest.repository.ContestOccurrenceRepository;
@@ -45,17 +46,8 @@ public class ContestOccurrenceService {
   public GetContestOccurrenceResponse getContestOccurrence(Long contestId, Long occurrenceId) {
     ContestOccurrence occurrence =
         contestOccurrenceRepository
-            .findById(occurrenceId)
-            .orElseThrow(
-                () ->
-                    new IllegalArgumentException(
-                        "Contest occurrence not found with id: " + occurrenceId));
-
-    // Verify that the occurrence belongs to the specified contest
-    if (!occurrence.getContest().getId().equals(contestId)) {
-      throw new IllegalArgumentException(
-          "Contest occurrence " + occurrenceId + " does not belong to contest " + contestId);
-    }
+            .findByIdAndContestId(occurrenceId, contestId)
+            .orElseThrow(() -> new ContestOccurrenceNotFoundException(occurrenceId));
 
     Contest contest = occurrence.getContest();
     GetContestOccurrenceResponse.Contest contestDto =
@@ -66,6 +58,7 @@ public class ContestOccurrenceService {
   }
 
   @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#contestId, 'PROVIDER', 'READ')")
   public GetContestOccurrencesResponse getContestOccurrencesByContest(
       Long contestId, PaginationRequest pagination) {
     Contest contest = contestRepository.getReferenceById(contestId);

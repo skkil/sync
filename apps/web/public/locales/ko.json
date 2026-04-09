@@ -188,7 +188,6 @@
             },
             "errors": {
               "required-title": "제목은 필수 항목입니다.",
-              "required-description": "설명은 필수 항목입니다.",
               "required-startDate": "시작 날짜는 필수 항목입니다.",
               "required-endDate": "종료 날짜는 필수 항목입니다.",
               "invalid-date-range": "종료 날짜는 시작 날짜 이후여야 합니다."

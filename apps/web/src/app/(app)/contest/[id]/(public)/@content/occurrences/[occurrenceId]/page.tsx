@@ -21,12 +21,12 @@ export default async function ContestOccurrencePage({
 
   return (
     <div>
-      <Link href={`/contest/${id}/occurrences?m=true`}>
-        <Button variant="ghost" className="mb-3">
+      <Button variant="ghost" className="mb-3" asChild>
+        <Link href={`/contest/${id}/occurrences?m=true`}>
           <ArrowLeftIcon />
           {t('back-to-occurrences')}
-        </Button>
-      </Link>
+        </Link>
+      </Button>
 
       <ContestOccurrenceOverview contestId={id} occurrenceId={occurrenceId} />
     </div>

@@ -35,7 +35,7 @@ interface CreateContestOccurrenceFormProps {
 const createContestOccurrenceFormSchema = (t: (key: string) => string) =>
   z.object({
     title: z.string().min(1, t('form.errors.required-title')),
-    description: z.string().min(1, t('form.errors.required-description')),
+    description: z.string(),
   });
 
 type CreateContestOccurrenceFormValues = z.infer<
