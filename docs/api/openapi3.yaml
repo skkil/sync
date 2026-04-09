@@ -97,6 +97,33 @@ paths:
                   value: "{\"applications\":{\"content\":[{\"id\":1,\"company\":{\"\
                     id\":1,\"name\":\"Company\"}}],\"hasNext\":true,\"hasPrevious\"\
                     :false}}"
+  /applications/{applicationId}:
+    get:
+      tags:
+      - applications
+      summary: Get Job Application
+      description: Get Job Application by ID
+      operationId: GetJobApplication
+      parameters:
+      - name: applicationId
+        in: path
+        description: Application ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetJobApplicationResponse"
+              examples:
+                GetJobApplication:
+                  value: "{\"id\":1,\"status\":\"APPLIED\",\"company\":{\"id\":1,\"\
+                    name\":\"Company\"},\"jobDescription\":{\"title\":\"Job Title\"\
+                    ,\"description\":\"Job Description\",\"location\":\"Location\"\
+                    },\"notes\":\"Notes\"}"
   /auth/login:
     post:
       tags:
@@ -1243,6 +1270,55 @@ components:
                   content:
                     type: string
                     description: Reflection Content
+    GetJobApplicationResponse:
+      title: GetJobApplicationResponse
+      required:
+      - company
+      - id
+      - jobDescription
+      - status
+      type: object
+      properties:
+        notes:
+          type: string
+          description: Additional Notes
+          nullable: true
+        jobDescription:
+          required:
+          - description
+          - location
+          - title
+          type: object
+          properties:
+            description:
+              type: string
+              description: Job Description
+            location:
+              type: string
+              description: Job Location
+            title:
+              type: string
+              description: Job Title
+          description: Job Description Information
+        company:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Company Name
+            id:
+              type: number
+              description: Company ID
+          description: Company Information
+        id:
+          type: number
+          description: Application ID
+        status:
+          type: string
+          description: Application Status
     CreateJobApplicationResponse:
       title: CreateJobApplicationResponse
       required:

@@ -2,8 +2,12 @@ package com.skkil.sync.recruitment.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.provider.company.model.JobPosting;
+import com.skkil.sync.recruitment.enums.JobApplicationStatus;
 import com.skkil.sync.user.model.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -26,6 +30,13 @@ public class JobApplication extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "applicant_id", nullable = false)
   private User applicant;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status", nullable = false)
+  private JobApplicationStatus status = JobApplicationStatus.SAVED;
+
+  @Column(name = "notes", columnDefinition = "TEXT")
+  private String notes;
 
   protected JobApplication() {}
 

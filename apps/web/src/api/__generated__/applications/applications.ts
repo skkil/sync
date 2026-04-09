@@ -25,6 +25,7 @@ import type { ErrorType } from '../../../lib/server';
 import type {
   CreateJobApplicationRequest,
   CreateJobApplicationResponse,
+  GetJobApplicationResponse,
   GetJobApplicationsResponse,
   GetMyJobApplicationsParams,
 } from '../types';
@@ -318,6 +319,190 @@ export function useGetMyJobApplications<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetMyJobApplicationsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Get Job Application by ID
+ * @summary Get Job Application
+ */
+export type getJobApplicationResponse200 = {
+  data: GetJobApplicationResponse;
+  status: 200;
+};
+
+export type getJobApplicationResponseSuccess = getJobApplicationResponse200 & {
+  headers: Headers;
+};
+export type getJobApplicationResponse = getJobApplicationResponseSuccess;
+
+export const getGetJobApplicationUrl = (applicationId: string) => {
+  return `/applications/${applicationId}`;
+};
+
+export const getJobApplication = async (
+  applicationId: string,
+  options?: RequestInit,
+): Promise<getJobApplicationResponse> => {
+  return api<getJobApplicationResponse>(
+    getGetJobApplicationUrl(applicationId),
+    {
+      ...options,
+      method: 'GET',
+    },
+  );
+};
+
+export const getGetJobApplicationQueryKey = (applicationId: string) => {
+  return [`/applications/${applicationId}`] as const;
+};
+
+export const getGetJobApplicationQueryOptions = <
+  TData = Awaited<ReturnType<typeof getJobApplication>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplication>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetJobApplicationQueryKey(applicationId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getJobApplication>>
+  > = ({ signal }) =>
+    getJobApplication(applicationId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!applicationId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getJobApplication>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetJobApplicationQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getJobApplication>>
+>;
+export type GetJobApplicationQueryError = ErrorType<unknown>;
+
+export function useGetJobApplication<
+  TData = Awaited<ReturnType<typeof getJobApplication>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplication>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJobApplication>>,
+          TError,
+          Awaited<ReturnType<typeof getJobApplication>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetJobApplication<
+  TData = Awaited<ReturnType<typeof getJobApplication>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplication>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJobApplication>>,
+          TError,
+          Awaited<ReturnType<typeof getJobApplication>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetJobApplication<
+  TData = Awaited<ReturnType<typeof getJobApplication>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplication>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Job Application
+ */
+
+export function useGetJobApplication<
+  TData = Awaited<ReturnType<typeof getJobApplication>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplication>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetJobApplicationQueryOptions(applicationId, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

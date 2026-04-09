@@ -4,9 +4,12 @@ import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
 import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
 import com.skkil.sync.provider.company.model.JobPosting;
 import com.skkil.sync.provider.company.service.domain.JobPostingDomainService;
+import com.skkil.sync.recruitment.dto.data.JobApplicationDto;
 import com.skkil.sync.recruitment.dto.request.CreateJobApplicationRequest;
 import com.skkil.sync.recruitment.dto.response.CreateJobApplicationResponse;
+import com.skkil.sync.recruitment.dto.response.GetJobApplicationResponse;
 import com.skkil.sync.recruitment.dto.response.GetJobApplicationsResponse;
+import com.skkil.sync.recruitment.mapper.JobApplicationMapper;
 import com.skkil.sync.recruitment.model.JobApplication;
 import com.skkil.sync.recruitment.repository.JobApplicationRepository;
 import com.skkil.sync.user.model.User;
@@ -22,14 +25,17 @@ public class JobApplicationService {
   private final UserDomainService userDomainService;
   private final JobPostingDomainService jobPostingDomainService;
   private final JobApplicationRepository jobApplicationRepository;
+  private final JobApplicationMapper jobApplicationMapper;
 
   public JobApplicationService(
       UserDomainService userDomainService,
       JobPostingDomainService jobPostingDomainService,
-      JobApplicationRepository jobApplicationRepository) {
+      JobApplicationRepository jobApplicationRepository,
+      JobApplicationMapper jobApplicationMapper) {
     this.userDomainService = userDomainService;
     this.jobPostingDomainService = jobPostingDomainService;
     this.jobApplicationRepository = jobApplicationRepository;
+    this.jobApplicationMapper = jobApplicationMapper;
   }
 
   @Transactional
@@ -76,5 +82,12 @@ public class JobApplicationService {
             .hasNext(applications.hasNext())
             .hasPrevious(applications.hasPrevious())
             .build());
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#applicationId, 'JOB_APPLICATION', 'READ')")
+  public GetJobApplicationResponse getJobApplication(Long applicationId) {
+    JobApplicationDto application = jobApplicationRepository.findApplicationById(applicationId);
+    return jobApplicationMapper.toGetJobApplicationResponse(application);
   }
 }
