@@ -84,6 +84,9 @@ public class User extends BaseEntity {
       orphanRemoval = true)
   private List<UserOAuth2Account> oAuth2Accounts = new ArrayList<>();
 
+  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  private UserPreferences preferences;
+
   protected User() {}
 
   public User(Long id) {
@@ -143,5 +146,9 @@ public class User extends BaseEntity {
     }
 
     return true;
+  }
+
+  public void setPreferences(UserPreferences preferences) {
+    this.preferences = preferences;
   }
 }

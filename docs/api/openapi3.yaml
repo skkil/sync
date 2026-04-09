@@ -97,6 +97,33 @@ paths:
                   value: "{\"applications\":{\"content\":[{\"id\":1,\"company\":{\"\
                     id\":1,\"name\":\"Company\"}}],\"hasNext\":true,\"hasPrevious\"\
                     :false}}"
+  /applications/{applicationId}:
+    get:
+      tags:
+      - applications
+      summary: Get Job Application
+      description: Get Job Application by ID
+      operationId: GetJobApplication
+      parameters:
+      - name: applicationId
+        in: path
+        description: Application ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetJobApplicationResponse"
+              examples:
+                GetJobApplication:
+                  value: "{\"id\":1,\"status\":\"APPLIED\",\"company\":{\"id\":1,\"\
+                    name\":\"Company\"},\"jobDescription\":{\"title\":\"Job Title\"\
+                    ,\"description\":\"Job Description\",\"location\":\"Location\"\
+                    },\"notes\":\"Notes\"}"
   /auth/login:
     post:
       tags:
@@ -452,6 +479,40 @@ paths:
                       "uploadUrl" : "https://example.com/upload",
                       "expiresAt" : "1970-01-01T00:00:00"
                     }
+  /preferences/me:
+    get:
+      tags:
+      - preferences
+      summary: Get User Preferences
+      description: Get User Preferences
+      operationId: GetUserPreferences
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserPreferencesResponse"
+              examples:
+                GetUserPreferences:
+                  value: "{\"theme\":\"dark\"}"
+    patch:
+      tags:
+      - preferences
+      summary: Update User Preferences
+      description: Update User Preferences
+      operationId: UpdateUserPreferences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserPreferencesRequest"
+            examples:
+              UpdateUserPreferences:
+                value: "{\"theme\":\"dark\"}"
+      responses:
+        "204":
+          description: "204"
   /profiles/me:
     get:
       tags:
@@ -972,6 +1033,135 @@ components:
         id:
           type: string
           description: Job Posting ID
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
+    UploadMediaRequest:
+      title: UploadMediaRequest
+      required:
+      - fileName
+      - fileSize
+      - mediaContext
+      - mediaType
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: File Name
+        fileSize:
+          type: number
+          description: File Size
+        mediaContext:
+          type: string
+          description: Media Context
+        mediaType:
+          type: string
+          description: Media Type
+    CreateJobApplicationResponse:
+      title: CreateJobApplicationResponse
+      required:
+      - applicationId
+      type: object
+      properties:
+        applicationId:
+          type: number
+          description: Job Application ID
+    CreateJobApplicationRequest:
+      title: CreateJobApplicationRequest
+      required:
+      - companyId
+      - jobPostingId
+      type: object
+      properties:
+        companyId:
+          type: string
+          description: Company ID
+        jobPostingId:
+          type: string
+          description: Job Posting ID
+    UpdateUserPreferencesRequest:
+      title: UpdateUserPreferencesRequest
+      type: object
+      properties:
+        theme:
+          type: string
+          description: User theme preference
+          nullable: true
+    UpdateProfileRequest:
+      title: UpdateProfileRequest
+      type: object
+      properties:
+        profession:
+          type: string
+          description: Profession
+          nullable: true
+        profileImageId:
+          type: number
+          description: Profile Image ID
+          nullable: true
+        name:
+          type: string
+          description: Full Name
+          nullable: true
+        bio:
+          type: string
+          description: Bio
+          nullable: true
+        handle:
+          type: string
+          description: Handle
+          nullable: true
+        removeProfileImage:
+          type: boolean
+          description: Remove Profile Image
+          nullable: true
+        contacts:
+          type: object
+          properties:
+            twitter:
+              type: string
+              description: Twitter Username
+              nullable: true
+            github:
+              type: string
+              description: GitHub Username
+              nullable: true
+            custom:
+              type: string
+              description: Custom Contact
+              nullable: true
+            instagram:
+              type: string
+              description: Instagram Username
+              nullable: true
+            linkedin:
+              type: string
+              description: LinkedIn Username
+              nullable: true
+          description: Contacts
+        isOnboarded:
+          type: boolean
+          description: Is Onboarded
+          nullable: true
+    CreateReflectionResponse:
+      title: CreateReflectionResponse
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: number
+          description: Reflection ID
     GetJobApplicationsResponse:
       title: GetJobApplicationsResponse
       type: object
@@ -1099,19 +1289,15 @@ components:
                   type:
                     type: string
                     description: Provider Type
-    LoginRequest:
-      title: LoginRequest
+    GetUserPreferencesResponse:
+      title: GetUserPreferencesResponse
       required:
-      - email
-      - password
+      - theme
       type: object
       properties:
-        password:
+        theme:
           type: string
-          description: Password
-        email:
-          type: string
-          description: Email
+          description: User theme preference
     GetProfileResponse:
       title: GetProfileResponse
       required:
@@ -1198,27 +1384,6 @@ components:
         email:
           type: string
           description: Email
-    UploadMediaRequest:
-      title: UploadMediaRequest
-      required:
-      - fileName
-      - fileSize
-      - mediaContext
-      - mediaType
-      type: object
-      properties:
-        fileName:
-          type: string
-          description: File Name
-        fileSize:
-          type: number
-          description: File Size
-        mediaContext:
-          type: string
-          description: Media Context
-        mediaType:
-          type: string
-          description: Media Type
     GetContestOccurrencesResponse:
       title: GetContestOccurrencesResponse
       type: object
@@ -1356,28 +1521,55 @@ components:
                   content:
                     type: string
                     description: Reflection Content
-    CreateJobApplicationResponse:
-      title: CreateJobApplicationResponse
+    GetJobApplicationResponse:
+      title: GetJobApplicationResponse
       required:
-      - applicationId
+      - company
+      - id
+      - jobDescription
+      - status
       type: object
       properties:
-        applicationId:
+        notes:
+          type: string
+          description: Additional Notes
+          nullable: true
+        jobDescription:
+          required:
+          - description
+          - location
+          - title
+          type: object
+          properties:
+            description:
+              type: string
+              description: Job Description
+            location:
+              type: string
+              description: Job Location
+            title:
+              type: string
+              description: Job Title
+          description: Job Description Information
+        company:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Company Name
+            id:
+              type: number
+              description: Company ID
+          description: Company Information
+        id:
           type: number
-          description: Job Application ID
-    CreateJobApplicationRequest:
-      title: CreateJobApplicationRequest
-      required:
-      - companyId
-      - jobPostingId
-      type: object
-      properties:
-        companyId:
+          description: Application ID
+        status:
           type: string
-          description: Company ID
-        jobPostingId:
-          type: string
-          description: Job Posting ID
+          description: Application Status
     UpdateReflectionRequest:
       title: UpdateReflectionRequest
       required:
@@ -1391,62 +1583,6 @@ components:
         content:
           type: string
           description: Content
-    UpdateProfileRequest:
-      title: UpdateProfileRequest
-      type: object
-      properties:
-        profession:
-          type: string
-          description: Profession
-          nullable: true
-        profileImageId:
-          type: number
-          description: Profile Image ID
-          nullable: true
-        name:
-          type: string
-          description: Full Name
-          nullable: true
-        bio:
-          type: string
-          description: Bio
-          nullable: true
-        handle:
-          type: string
-          description: Handle
-          nullable: true
-        removeProfileImage:
-          type: boolean
-          description: Remove Profile Image
-          nullable: true
-        contacts:
-          type: object
-          properties:
-            twitter:
-              type: string
-              description: Twitter Username
-              nullable: true
-            github:
-              type: string
-              description: GitHub Username
-              nullable: true
-            custom:
-              type: string
-              description: Custom Contact
-              nullable: true
-            instagram:
-              type: string
-              description: Instagram Username
-              nullable: true
-            linkedin:
-              type: string
-              description: LinkedIn Username
-              nullable: true
-          description: Contacts
-        isOnboarded:
-          type: boolean
-          description: Is Onboarded
-          nullable: true
     GetContestOccurrenceResponse:
       title: GetContestOccurrenceResponse
       required:
@@ -1476,12 +1612,3 @@ components:
         title:
           type: string
           description: Occurrence Title
-    CreateReflectionResponse:
-      title: CreateReflectionResponse
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: number
-          description: Reflection ID

@@ -4,6 +4,7 @@ import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.common.security.CustomPermissionEvaluator;
 import com.skkil.sync.common.security.PermissionOperation;
 import com.skkil.sync.common.security.enums.PermissionEvaluatorType;
+import com.skkil.sync.recruitment.exception.JobApplicationNotFoundException;
 import com.skkil.sync.recruitment.model.JobApplication;
 import com.skkil.sync.recruitment.repository.JobApplicationRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class JobApplicationPermissionEvaluator implements CustomPermissionEvalua
     JobApplication application = jobApplicationRepository.findById(targetId).orElse(null);
     if (application == null) {
       log.debug("Job application with id {} not found", targetId);
-      return false;
+      throw new JobApplicationNotFoundException(targetId);
     }
 
     return application.getApplicant().getId().equals(user.userId());
