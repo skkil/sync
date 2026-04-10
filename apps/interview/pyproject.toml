@@ -1,0 +1,19 @@
+[project]
+name = "interview"
+version = "0.1.0"
+description = "skkil/sync interview"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "chatterbox-tts>=0.1.7",
+    "dependency-injector>=4.49.0",
+    "fastapi>=0.135.3",
+    "openai-whisper>=20250625",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.13.1",
+    "python-dotenv>=1.2.2",
+    "soundfile>=0.13.1",
+    "uvicorn>=0.44.0",
+    "websockets>=16.0",
+]
+
