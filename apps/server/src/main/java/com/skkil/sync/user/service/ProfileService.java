@@ -1,9 +1,8 @@
 package com.skkil.sync.user.service;
 
 import com.skkil.sync.auth.AuthenticatedUser;
-import com.skkil.sync.media.constant.MediaStatus;
 import com.skkil.sync.media.model.Media;
-import com.skkil.sync.media.service.MediaService;
+import com.skkil.sync.media.service.domain.MediaDomainService;
 import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.exception.UserNotFoundException;
@@ -24,13 +23,13 @@ public class ProfileService {
 
   private final UserRelationshipService userRelationshipService;
   private final UserRepository userRepository;
-  private final MediaService mediaService;
+  private final MediaDomainService mediaService;
   private final ProfileMapper profileMapper;
 
   public ProfileService(
       UserRelationshipService userRelationshipService,
       UserRepository userRepository,
-      MediaService mediaService,
+      MediaDomainService mediaService,
       ProfileMapper profileMapper) {
     this.userRelationshipService = userRelationshipService;
     this.userRepository = userRepository;
@@ -66,7 +65,7 @@ public class ProfileService {
           "User {} has profile image with media ID {}, generating URL",
           userId,
           user.getProfileImage().getId());
-      profileImageUrl = mediaService.getMediaUrl(user.getProfileImage().getId()).toExternalForm();
+      profileImageUrl = mediaService.generatePublicGetUrl(user.getProfileImage()).toExternalForm();
     }
 
     boolean isFollowing = userRelationshipService.isFollowing(requesterId, userId);
@@ -117,29 +116,18 @@ public class ProfileService {
     }
 
     if (Boolean.TRUE.equals(request.removeProfileImage()) && user.getProfileImage() != null) {
-      user.getProfileImage().setStatus(MediaStatus.DELETED);
+      user.getProfileImage().markAsDeleted();
       user.setProfileImage(null);
     }
 
     if (request.profileImageId() != null) {
       if (user.getProfileImage() != null) {
-        user.getProfileImage().setStatus(MediaStatus.DELETED);
+        user.getProfileImage().markAsDeleted();
       }
 
-      Media profileImage = mediaService.getMedia(request.profileImageId());
-
-      if (!profileImage.getStatus().equals(MediaStatus.PENDING)) {
-        throw new IllegalArgumentException(
-            "Media is not in a valid state to be used as profile image.");
-      }
-
-      if (!userId.equals(profileImage.getUploader().getId())) {
-        throw new IllegalArgumentException(
-            "User does not own the media they are trying to set as profile image.");
-      }
-
-      profileImage.setStatus(MediaStatus.UPLOADED);
+      Media profileImage = mediaService.getUnlinkedMedia(userId, request.profileImageId());
       user.setProfileImage(profileImage);
+      profileImage.markAsUploaded();
     }
 
     if (request.isOnboarded() != null) {

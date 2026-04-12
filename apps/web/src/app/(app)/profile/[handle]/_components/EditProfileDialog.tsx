@@ -13,6 +13,7 @@ import {
   useGetAuthenticatedUser,
   useUpdateProfile,
 } from '@/api/__generated__/profile/profile';
+import { uploadFileToS3 } from '@/api/s3';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -337,19 +338,15 @@ function ProfileImageField() {
         fileName: file.name,
         fileSize: file.size,
         mediaType: file.type,
-        mediaContext: 'profile-image',
       },
     });
 
-    const response = await fetch(uploadUrl, {
-      method: 'PUT',
-      body: file,
-      headers: {
-        'Content-Type': file.type,
-      },
-    }).catch(() => null);
+    const uploadResult = await uploadFileToS3({
+      file,
+      uploadUrl,
+    });
 
-    if (!response || !response.ok) {
+    if (!uploadResult || !uploadResult.ok) {
       toast.error(t('errors.uploadFailed'));
       setSelectedImage(null);
       return;

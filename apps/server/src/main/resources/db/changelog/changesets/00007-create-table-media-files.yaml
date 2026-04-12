@@ -35,11 +35,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: media_context
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: false
-              - column:
                   name: media_type
                   type: VARCHAR(255)
                   constraints:

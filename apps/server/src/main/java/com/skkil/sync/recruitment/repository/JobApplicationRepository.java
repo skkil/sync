@@ -23,4 +23,12 @@ public interface JobApplicationRepository
 
   public Optional<JobApplication> findByApplicantAndJobPosting(
       User applicant, JobPosting jobPosting);
+
+  @Query(
+      """
+      SELECT a FROM JobApplication a
+      LEFT JOIN FETCH a.files
+      WHERE a.id = :id
+      """)
+  public Optional<JobApplication> findWithFilesById(Long id);
 }

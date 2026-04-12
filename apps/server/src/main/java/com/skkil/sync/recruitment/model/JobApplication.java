@@ -4,6 +4,7 @@ import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.provider.company.model.JobPosting;
 import com.skkil.sync.recruitment.enums.JobApplicationStatus;
 import com.skkil.sync.user.model.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,8 +12,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -38,11 +42,19 @@ public class JobApplication extends BaseEntity {
   @Column(name = "notes", columnDefinition = "TEXT")
   private String notes;
 
+  @OneToMany(mappedBy = "jobApplication", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<JobApplicationFile> files = new ArrayList<>();
+
   protected JobApplication() {}
 
   @Builder
   public JobApplication(User applicant, JobPosting jobPosting) {
     this.applicant = applicant;
     this.jobPosting = jobPosting;
+  }
+
+  public void addFile(JobApplicationFile file) {
+    file.setJobApplication(this);
+    files.add(file);
   }
 }
