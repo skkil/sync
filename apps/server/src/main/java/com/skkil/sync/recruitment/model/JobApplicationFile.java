@@ -21,7 +21,7 @@ public class JobApplicationFile extends BaseEntity {
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "media_id", nullable = false)
-  Media file;
+  private Media file;
 
   public void setJobApplication(JobApplication jobApplication) {
     this.jobApplication = jobApplication;

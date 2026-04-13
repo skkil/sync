@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 
 import {
   getGetJobApplicationFilesQueryKey,
-  getJobApplicationFiles,
   useGetJobApplicationFiles,
   useUploadJobApplicationFile,
 } from '@/api/__generated__/applications/applications';
@@ -50,12 +49,12 @@ export default function ApplicationFilesTab() {
       },
     });
 
-    const response = await uploadFileToS3({
+    const { success: uploadSuccess } = await uploadFileToS3({
       file,
       uploadUrl,
     });
 
-    if (!response.ok) {
+    if (!uploadSuccess) {
       toast.error(t('errors.upload-failed'));
       return;
     }
@@ -72,26 +71,8 @@ export default function ApplicationFilesTab() {
           toast.success(t('upload-success'));
 
           const queryKey = getGetJobApplicationFilesQueryKey(applicationId);
-
-          context.client.setQueryData<
-            Awaited<ReturnType<typeof getJobApplicationFiles>>
-          >(queryKey, (old) => {
-            if (!old) {
-              return old;
-            }
-
-            return {
-              ...old,
-              data: {
-                ...old.data,
-                files: [
-                  ...old.data.files,
-                  {
-                    url: URL.createObjectURL(file),
-                  },
-                ],
-              },
-            };
+          context.client.invalidateQueries({
+            queryKey,
           });
         },
       },
@@ -114,11 +95,11 @@ export default function ApplicationFilesTab() {
 
       {files.length === 0 ? (
         <div>
-          <span>{'empty'}</span>
+          <span>{t('empty')}</span>
         </div>
       ) : (
-        files.map((file, index) => (
-          <div key={index}>
+        files.map((file) => (
+          <div key={file.url}>
             <iframe src={file.url} className="w-full" />
           </div>
         ))

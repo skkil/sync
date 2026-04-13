@@ -27,7 +27,8 @@ public interface JobApplicationRepository
   @Query(
       """
       SELECT a FROM JobApplication a
-      LEFT JOIN FETCH a.files
+      LEFT JOIN FETCH a.files f
+      LEFT JOIN FETCH f.file
       WHERE a.id = :id
       """)
   public Optional<JobApplication> findWithFilesById(Long id);

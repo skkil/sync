@@ -341,12 +341,12 @@ function ProfileImageField() {
       },
     });
 
-    const uploadResult = await uploadFileToS3({
+    const { success: uploadSuccess } = await uploadFileToS3({
       file,
       uploadUrl,
     });
 
-    if (!uploadResult || !uploadResult.ok) {
+    if (!uploadSuccess) {
       toast.error(t('errors.uploadFailed'));
       setSelectedImage(null);
       return;

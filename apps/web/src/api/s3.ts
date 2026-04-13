@@ -1,17 +1,27 @@
-export type UploadFileResponse = Response;
+import ky from 'ky';
 
-export function uploadFileToS3({
+interface S3UploadResponse {
+  success: boolean;
+}
+
+export async function uploadFileToS3({
   uploadUrl,
   file,
 }: {
   uploadUrl: string;
   file: File;
-}): Promise<UploadFileResponse> {
-  return fetch(uploadUrl, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': file.type,
-    },
-    body: file,
-  });
+}): Promise<S3UploadResponse> {
+  return ky
+    .put<void>(uploadUrl, {
+      headers: {
+        'Content-Type': file.type,
+      },
+      body: file,
+    })
+    .then(() => ({
+      success: true,
+    }))
+    .catch(() => ({
+      success: false,
+    }));
 }
