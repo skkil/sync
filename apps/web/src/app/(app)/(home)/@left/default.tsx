@@ -1,4 +1,8 @@
-import { BriefcaseIcon, UsersThreeIcon } from '@phosphor-icons/react/dist/ssr';
+import {
+  BriefcaseIcon,
+  LightbulbIcon,
+  UsersThreeIcon,
+} from '@phosphor-icons/react/dist/ssr';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
@@ -11,6 +15,13 @@ export default async function HomeLeftSidebar() {
   return (
     <div className="flex flex-col gap-6 mt-6">
       <div className="flex flex-col gap-4">
+        <Link href="/trending-projects">
+          <div className="flex w-full items-center gap-2 mx-2">
+            <LightbulbIcon />
+            {t('trending-projects')}
+          </div>
+        </Link>
+
         <Link href="/jobs">
           <div className="flex w-full items-center gap-2 mx-2">
             <BriefcaseIcon />

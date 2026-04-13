@@ -3,6 +3,7 @@
     "home": {
       "title": "sync",
       "left": {
+        "trending-projects": "인기 프로젝트",
         "jobs": "채용 공고",
         "team-building": "팀원 모집"
       },
@@ -284,6 +285,11 @@
         "required_name": "이름은 필수 항목입니다.",
         "required_description": "설명은 필수 항목입니다."
       }
+    },
+    "trending-projects": {
+      "loading": "인기 프로젝트를 불러오는 중...",
+      "empty": "프로젝트가 없습니다.",
+      "load-more": "더 불러오기"
     },
     "provider": {
       "review": {
