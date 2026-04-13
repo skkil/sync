@@ -1,4 +1,4 @@
-package com.skkil.sync.media.constant;
+package com.skkil.sync.media.enums;
 
 public enum MediaStatus {
   PENDING,

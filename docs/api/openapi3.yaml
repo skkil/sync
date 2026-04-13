@@ -124,6 +124,54 @@ paths:
                     name\":\"Company\"},\"jobDescription\":{\"title\":\"Job Title\"\
                     ,\"description\":\"Job Description\",\"location\":\"Location\"\
                     },\"notes\":\"Notes\"}"
+  /applications/{applicationId}/files:
+    get:
+      tags:
+      - applications
+      summary: Get Job Application Files
+      description: Get all files for a job application
+      operationId: GetJobApplicationFiles
+      parameters:
+      - name: applicationId
+        in: path
+        description: Job Application ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetJobApplicationFilesResponse"
+              examples:
+                GetJobApplicationFiles:
+                  value: "{\"files\":[{\"url\":\"https://example.com/file1.pdf\"}]}"
+    post:
+      tags:
+      - applications
+      summary: Upload Job Application File
+      description: Upload a file to a job application
+      operationId: UploadJobApplicationFile
+      parameters:
+      - name: applicationId
+        in: path
+        description: Job Application ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadJobApplicationFileRequest"
+            examples:
+              UploadJobApplicationFile:
+                value: "{\"fileId\":1}"
+      responses:
+        "204":
+          description: "204"
   /auth/login:
     post:
       tags:
@@ -462,8 +510,8 @@ paths:
               $ref: "#/components/schemas/UploadMediaRequest"
             examples:
               UploadMedia:
-                value: "{\"mediaType\":\"image/jpeg\",\"mediaContext\":\"profile-image\"\
-                  ,\"fileName\":\"test.jpg\",\"fileSize\":100}"
+                value: "{\"mediaType\":\"image/jpeg\",\"fileName\":\"test.jpg\",\"\
+                  fileSize\":100}"
       responses:
         "201":
           description: "201"
@@ -1046,27 +1094,15 @@ components:
         email:
           type: string
           description: Email
-    UploadMediaRequest:
-      title: UploadMediaRequest
+    UploadJobApplicationFileRequest:
+      title: UploadJobApplicationFileRequest
       required:
-      - fileName
-      - fileSize
-      - mediaContext
-      - mediaType
+      - fileId
       type: object
       properties:
-        fileName:
-          type: string
-          description: File Name
-        fileSize:
+        fileId:
           type: number
-          description: File Size
-        mediaContext:
-          type: string
-          description: Media Context
-        mediaType:
-          type: string
-          description: Media Type
+          description: File ID
     CreateJobApplicationResponse:
       title: CreateJobApplicationResponse
       required:
@@ -1097,6 +1133,23 @@ components:
           type: string
           description: User theme preference
           nullable: true
+    UploadMediaRequest:
+      title: UploadMediaRequest
+      required:
+      - fileName
+      - fileSize
+      - mediaType
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: File Name
+        fileSize:
+          type: number
+          description: File Size
+        mediaType:
+          type: string
+          description: Media Type
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -1289,6 +1342,23 @@ components:
                   type:
                     type: string
                     description: Provider Type
+    GetJobApplicationFilesResponse:
+      title: GetJobApplicationFilesResponse
+      required:
+      - files
+      type: object
+      properties:
+        files:
+          type: array
+          description: List of job application files
+          items:
+            required:
+            - url
+            type: object
+            properties:
+              url:
+                type: string
+                description: File URL
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:
