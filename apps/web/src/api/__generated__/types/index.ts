@@ -44,6 +44,8 @@ export * from './GetMyProvidersParams';
 export * from './GetProfileResponse';
 export * from './GetProfileResponseContacts';
 export * from './GetProjectExperienceReflectionsParams';
+export * from './GetProjectExperiencesResponse';
+export * from './GetProjectExperiencesResponseExperiencesItem';
 export * from './GetProjectsResponse';
 export * from './GetProjectsResponseProjects';
 export * from './GetProjectsResponseProjectsNodesItem';

@@ -666,6 +666,31 @@ paths:
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
                     ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
                     :false,\"role\":\"USER\",\"contacts\":null}"
+  /profiles/{userId}/experiences/projects:
+    get:
+      tags:
+      - experiences
+      summary: Get Project Experiences
+      description: Get project experiences for a user profile
+      operationId: GetProjectExperiences
+      parameters:
+      - name: userId
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectExperiencesResponse"
+              examples:
+                GetProjectExperiences:
+                  value: "{\"experiences\":[{\"id\":1,\"projectId\":100,\"projectName\"\
+                    :\"Sample Project Name\"}]}"
   /projects/trending:
     get:
       tags:
@@ -1195,6 +1220,31 @@ components:
         id:
           type: string
           description: Job Posting ID
+    GetProjectExperiencesResponse:
+      title: GetProjectExperiencesResponse
+      required:
+      - experiences
+      type: object
+      properties:
+        experiences:
+          type: array
+          description: List of project experiences
+          items:
+            required:
+            - id
+            - projectId
+            - projectName
+            type: object
+            properties:
+              id:
+                type: number
+                description: Experience ID
+              projectName:
+                type: string
+                description: Project Name
+              projectId:
+                type: number
+                description: Project ID
     GetProvidersResponse:
       title: GetProvidersResponse
       type: object
