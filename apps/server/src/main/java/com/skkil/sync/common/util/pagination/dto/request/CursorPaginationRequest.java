@@ -1,6 +1,28 @@
 package com.skkil.sync.common.util.pagination.dto.request;
 
+import com.skkil.sync.common.util.pagination.constants.PaginationDefaultValues;
+import com.skkil.sync.common.util.pagination.exception.InvalidPaginationParametersException;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 
-public record CursorPaginationRequest(String cursor, @NotNull @Min(1) Integer size) {}
+public record CursorPaginationRequest(
+    @Min(1) @Max(PaginationDefaultValues.MAXIMUM_PAGE_SIZE) Integer first,
+    String after,
+    @Min(1) @Max(PaginationDefaultValues.MAXIMUM_PAGE_SIZE) Integer last,
+    String before) {
+
+  public CursorPaginationRequest {
+    if (first != null && last != null) {
+      throw new InvalidPaginationParametersException(
+          "Cannot specify both 'first' and 'last' parameters.");
+    }
+
+    if (first == null && last == null) {
+      first = PaginationDefaultValues.DEFAULT_PAGE_SIZE;
+    }
+  }
+
+  public boolean isForward() {
+    return first != null;
+  }
+}

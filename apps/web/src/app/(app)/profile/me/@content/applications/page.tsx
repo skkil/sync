@@ -27,8 +27,8 @@ export default function MyApplications() {
   });
 
   const applications = data?.data?.applications;
-  const hasPrevious = applications?.hasPrevious ?? false;
-  const hasNext = applications?.hasNext ?? false;
+  const hasPrevious = applications?.pageInfo.hasPreviousPage ?? false;
+  const hasNext = applications?.pageInfo.hasNextPage ?? false;
   const showPagination = applications && (hasPrevious || hasNext);
 
   return (

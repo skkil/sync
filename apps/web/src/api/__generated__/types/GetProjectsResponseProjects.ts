@@ -4,16 +4,12 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetProjectsResponseProjectsContentItem } from './GetProjectsResponseProjectsContentItem';
+import type { GetProjectsResponseProjectsNodesItem } from './GetProjectsResponseProjectsNodesItem';
+import type { GetProjectsResponseProjectsPageInfo } from './GetProjectsResponseProjectsPageInfo';
 
 export type GetProjectsResponseProjects = {
-  /**
-   * Next Cursor
-   * @nullable
-   */
-  nextCursor?: string | null;
-  /** Has Next */
-  hasNext: boolean;
-  /** Content */
-  content: GetProjectsResponseProjectsContentItem[];
+  /** Nodes */
+  nodes: GetProjectsResponseProjectsNodesItem[];
+  /** Page Info */
+  pageInfo: GetProjectsResponseProjectsPageInfo;
 };

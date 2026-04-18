@@ -4,16 +4,12 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetTeamBuildingPostsResponsePostsContentItem } from './GetTeamBuildingPostsResponsePostsContentItem';
+import type { GetTeamBuildingPostsResponsePostsNodesItem } from './GetTeamBuildingPostsResponsePostsNodesItem';
+import type { GetTeamBuildingPostsResponsePostsPageInfo } from './GetTeamBuildingPostsResponsePostsPageInfo';
 
 export type GetTeamBuildingPostsResponsePosts = {
-  /**
-   * Next Cursor
-   * @nullable
-   */
-  nextCursor?: string | null;
-  /** Has Next */
-  hasNext: boolean;
-  /** Content */
-  content: GetTeamBuildingPostsResponsePostsContentItem[];
+  /** Nodes */
+  nodes: GetTeamBuildingPostsResponsePostsNodesItem[];
+  /** Page Info */
+  pageInfo: GetTeamBuildingPostsResponsePostsPageInfo;
 };

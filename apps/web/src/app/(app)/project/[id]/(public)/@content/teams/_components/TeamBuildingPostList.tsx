@@ -20,20 +20,22 @@ export default function TeamBuildingPostList({
     useGetTeamBuildingPostsByProjectInfinite(
       projectId,
       {
-        size: TEAM_BUILDING_POSTS_PAGE_SIZE,
+        first: TEAM_BUILDING_POSTS_PAGE_SIZE,
       },
       {
         query: {
           getNextPageParam: (lastPage) => {
             const posts = lastPage.data.posts;
-            return posts?.hasNext ? posts.nextCursor : undefined;
+            return posts?.pageInfo.hasNextPage
+              ? posts.pageInfo.endCursor
+              : undefined;
           },
         },
       },
     );
 
   const posts =
-    data?.pages.flatMap((page) => page.data.posts?.content ?? []) ?? [];
+    data?.pages.flatMap((page) => page.data.posts?.nodes ?? []) ?? [];
 
   if (data && posts.length === 0) {
     return <div>{t('empty')}</div>;
@@ -42,8 +44,8 @@ export default function TeamBuildingPostList({
   return (
     <div className="space-y-4">
       {posts.map((post) => (
-        <div key={post.id} className="rounded-lg border p-4">
-          {post.title}
+        <div key={post.content.id} className="rounded-lg border p-4">
+          {post.content.title}
         </div>
       ))}
 

@@ -4,16 +4,12 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetReflectionsResponseReflectionsContentItem } from './GetReflectionsResponseReflectionsContentItem';
+import type { GetReflectionsResponseReflectionsNodesItem } from './GetReflectionsResponseReflectionsNodesItem';
+import type { GetReflectionsResponseReflectionsPageInfo } from './GetReflectionsResponseReflectionsPageInfo';
 
 export type GetReflectionsResponseReflections = {
-  /**
-   * Next Cursor
-   * @nullable
-   */
-  nextCursor?: string | null;
-  /** Has Next */
-  hasNext: boolean;
-  /** Content */
-  content: GetReflectionsResponseReflectionsContentItem[];
+  /** Nodes */
+  nodes: GetReflectionsResponseReflectionsNodesItem[];
+  /** Page Info */
+  pageInfo: GetReflectionsResponseReflectionsPageInfo;
 };

@@ -22,7 +22,6 @@ import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.common.security.WithAuthenticatedUserSecurityContextFactory;
 import com.skkil.sync.common.util.time.DateTimeTestUtils;
 import com.skkil.sync.config.SecurityConfig;
-import com.skkil.sync.media.constant.MediaContext;
 import com.skkil.sync.media.dto.request.UploadMediaRequest;
 import com.skkil.sync.media.dto.response.UploadMediaResponse;
 import com.skkil.sync.media.service.MediaService;
@@ -95,7 +94,6 @@ class MediaControllerTests {
   private UploadMediaRequest createUploadMediaRequest() {
     return UploadMediaRequest.builder()
         .mediaType("image/jpeg")
-        .mediaContext(MediaContext.PROFILE_IMAGE)
         .fileName("test.jpg")
         .fileSize(100L)
         .build();
@@ -112,7 +110,6 @@ class MediaControllerTests {
   private RequestFieldsSnippet uploadMediaRequestFields() {
     return requestFields(
         fieldWithPath("mediaType").type(JsonFieldType.STRING).description("Media Type"),
-        fieldWithPath("mediaContext").type(JsonFieldType.STRING).description("Media Context"),
         fieldWithPath("fileName").type(JsonFieldType.STRING).description("File Name"),
         fieldWithPath("fileSize").type(JsonFieldType.NUMBER).description("File Size"));
   }

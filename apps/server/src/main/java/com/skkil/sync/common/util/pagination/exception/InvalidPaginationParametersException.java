@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatusCode;
 
 public class InvalidPaginationParametersException extends SyncException {
 
-  public InvalidPaginationParametersException(String message, Throwable cause) {
-    super(message, cause);
+  public InvalidPaginationParametersException(String message) {
+    super(message);
   }
 
   @Override

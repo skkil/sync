@@ -1,12 +1,12 @@
 import { format } from 'date-fns';
 
-import type { GetReflectionsResponseReflectionsContentItem } from '@/api/__generated__/types';
+import type { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__generated__/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { BaseViewer } from '@/components/ui/editor';
 
 interface ReflectionCardProps {
-  reflection: GetReflectionsResponseReflectionsContentItem;
+  reflection: GetReflectionsResponseReflectionsNodesItemContent;
 }
 
 export default function ReflectionCard({ reflection }: ReflectionCardProps) {

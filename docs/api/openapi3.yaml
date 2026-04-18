@@ -15,16 +15,30 @@ paths:
       description: Get Unverified Providers
       operationId: GetUnverifiedProviders
       parameters:
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       responses:
@@ -36,10 +50,11 @@ paths:
                 $ref: "#/components/schemas/GetProvidersResponse"
               examples:
                 GetUnverifiedProviders:
-                  value: "{\"providers\":{\"content\":[{\"type\":\"COMPANY\",\"id\"\
-                    :\"provider-id\",\"name\":\"Provider Name\",\"isVerified\":true,\"\
-                    isMaintainer\":true}],\"hasNext\":true,\"nextCursor\":\"next-cursor\"\
-                    }}"
+                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
+                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
   /applications:
     post:
       tags:
@@ -94,9 +109,9 @@ paths:
                 $ref: "#/components/schemas/GetJobApplicationsResponse"
               examples:
                 GetMyJobApplications:
-                  value: "{\"applications\":{\"content\":[{\"id\":1,\"company\":{\"\
-                    id\":1,\"name\":\"Company\"}}],\"hasNext\":true,\"hasPrevious\"\
-                    :false}}"
+                  value: "{\"applications\":{\"pageInfo\":{\"page\":1,\"size\":1,\"\
+                    hasNextPage\":true,\"hasPreviousPage\":true},\"content\":[{\"\
+                    id\":1,\"company\":{\"id\":1,\"name\":\"Company\"}}]}}"
   /applications/{applicationId}:
     get:
       tags:
@@ -124,6 +139,54 @@ paths:
                     name\":\"Company\"},\"jobDescription\":{\"title\":\"Job Title\"\
                     ,\"description\":\"Job Description\",\"location\":\"Location\"\
                     },\"notes\":\"Notes\"}"
+  /applications/{applicationId}/files:
+    get:
+      tags:
+      - applications
+      summary: Get Job Application Files
+      description: Get all files for a job application
+      operationId: GetJobApplicationFiles
+      parameters:
+      - name: applicationId
+        in: path
+        description: Job Application ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetJobApplicationFilesResponse"
+              examples:
+                GetJobApplicationFiles:
+                  value: "{\"files\":[{\"url\":\"https://example.com/file1.pdf\"}]}"
+    post:
+      tags:
+      - applications
+      summary: Upload Job Application File
+      description: Upload a file to a job application
+      operationId: UploadJobApplicationFile
+      parameters:
+      - name: applicationId
+        in: path
+        description: Job Application ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadJobApplicationFileRequest"
+            examples:
+              UploadJobApplicationFile:
+                value: "{\"fileId\":1}"
+      responses:
+        "204":
+          description: "204"
   /auth/login:
     post:
       tags:
@@ -207,11 +270,12 @@ paths:
                 $ref: "#/components/schemas/GetJobPostingsResponse"
               examples:
                 GetJobPostingsByCompany:
-                  value: "{\"postings\":{\"content\":[{\"id\":\"1\",\"company\":{\"\
-                    id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"Software Engineer\"\
-                    ,\"jobDescription\":\"Job Description\",\"location\":\"Location\"\
-                    ,\"createdAt\":\"1970-01-01T00:00:00\",\"updatedAt\":\"1970-01-01T00:00:00\"\
-                    }],\"hasNext\":true,\"hasPrevious\":false}}"
+                  value: "{\"postings\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
+                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":\"1\",\"\
+                    company\":{\"id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"\
+                    Software Engineer\",\"jobDescription\":\"Job Description\",\"\
+                    location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
+                    ,\"updatedAt\":\"1970-01-01T00:00:00\"}]}}"
     post:
       tags:
       - jobs
@@ -315,10 +379,11 @@ paths:
                 $ref: "#/components/schemas/GetContestOccurrencesResponse"
               examples:
                 GetContestOccurrencesByContest:
-                  value: "{\"occurrences\":{\"content\":[{\"id\":1,\"contest\":{\"\
-                    id\":1,\"name\":\"Contest Name\"},\"title\":\"Occurrence Title\"\
-                    ,\"description\":\"Occurrence Description\"}],\"hasNext\":true,\"\
-                    hasPrevious\":false}}"
+                  value: "{\"occurrences\":{\"pageInfo\":{\"page\":1,\"size\":1,\"\
+                    hasNextPage\":true,\"hasPreviousPage\":true},\"content\":[{\"\
+                    id\":1,\"contest\":{\"id\":1,\"name\":\"Contest Name\"},\"title\"\
+                    :\"Occurrence Title\",\"description\":\"Occurrence Description\"\
+                    }]}}"
     post:
       tags:
       - contests
@@ -389,16 +454,30 @@ paths:
         required: true
         schema:
           type: string
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       responses:
@@ -410,10 +489,12 @@ paths:
                 $ref: "#/components/schemas/GetReflectionsResponse"
               examples:
                 GetProjectExperienceReflections:
-                  value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
-                    id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
-                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
+                  value: "{\"reflections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
+                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
+                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
   /jobs:
     get:
       tags:
@@ -443,11 +524,12 @@ paths:
                 $ref: "#/components/schemas/GetJobPostingsResponse"
               examples:
                 GetJobPostings:
-                  value: "{\"postings\":{\"content\":[{\"id\":\"1\",\"company\":{\"\
-                    id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"Software Engineer\"\
-                    ,\"jobDescription\":\"Job Description\",\"location\":\"Location\"\
-                    ,\"createdAt\":\"1970-01-01T00:00:00\",\"updatedAt\":\"1970-01-01T00:00:00\"\
-                    }],\"hasNext\":true,\"hasPrevious\":false}}"
+                  value: "{\"postings\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
+                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":\"1\",\"\
+                    company\":{\"id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"\
+                    Software Engineer\",\"jobDescription\":\"Job Description\",\"\
+                    location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
+                    ,\"updatedAt\":\"1970-01-01T00:00:00\"}]}}"
   /media:
     post:
       tags:
@@ -462,8 +544,8 @@ paths:
               $ref: "#/components/schemas/UploadMediaRequest"
             examples:
               UploadMedia:
-                value: "{\"mediaType\":\"image/jpeg\",\"mediaContext\":\"profile-image\"\
-                  ,\"fileName\":\"test.jpg\",\"fileSize\":100}"
+                value: "{\"mediaType\":\"image/jpeg\",\"fileName\":\"test.jpg\",\"\
+                  fileSize\":100}"
       responses:
         "201":
           description: "201"
@@ -592,16 +674,30 @@ paths:
       description: Get Trending Projects
       operationId: GetTrendingProjects
       parameters:
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       responses:
@@ -613,9 +709,11 @@ paths:
                 $ref: "#/components/schemas/GetProjectsResponse"
               examples:
                 GetTrendingProjects:
-                  value: "{\"projects\":{\"content\":[{\"id\":1,\"name\":\"Project\
-                    \ Name\",\"description\":\"Project Description\"}],\"hasNext\"\
-                    :true,\"nextCursor\":\"next-cursor\"}}"
+                  value: "{\"projects\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"id\":1,\"name\":\"Project Name\",\"description\"\
+                    :\"Project Description\"}}]}}"
   /projects/{projectId}/team-building:
     get:
       tags:
@@ -630,16 +728,30 @@ paths:
         required: true
         schema:
           type: string
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       responses:
@@ -651,10 +763,12 @@ paths:
                 $ref: "#/components/schemas/GetTeamBuildingPostsResponse"
               examples:
                 GetTeamBuildingPostsByProject:
-                  value: "{\"posts\":{\"content\":[{\"id\":\"1\",\"project\":{\"id\"\
-                    :\"1\",\"name\":\"Project Name\",\"description\":\"Project Description\"\
-                    },\"title\":\"Post Title\",\"content\":\"Post Content\"}],\"hasNext\"\
-                    :true,\"nextCursor\":\"next-cursor\"}}"
+                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
+                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
+                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
+                    :{\"id\":\"1\",\"project\":{\"id\":\"1\",\"name\":\"Project Name\"\
+                    ,\"description\":\"Project Description\"},\"title\":\"Post Title\"\
+                    ,\"content\":\"Post Content\"}}]}}"
   /providers/my:
     get:
       tags:
@@ -663,16 +777,30 @@ paths:
       description: Get My Providers
       operationId: GetMyProviders
       parameters:
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       responses:
@@ -684,10 +812,11 @@ paths:
                 $ref: "#/components/schemas/GetProvidersResponse"
               examples:
                 GetMyProviders:
-                  value: "{\"providers\":{\"content\":[{\"type\":\"COMPANY\",\"id\"\
-                    :\"provider-id\",\"name\":\"Provider Name\",\"isVerified\":true,\"\
-                    isMaintainer\":true}],\"hasNext\":true,\"nextCursor\":\"next-cursor\"\
-                    }}"
+                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
+                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
   /reflections:
     get:
       tags:
@@ -696,16 +825,30 @@ paths:
       description: Get Reflections
       operationId: GetReflections
       parameters:
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       responses:
@@ -717,10 +860,12 @@ paths:
                 $ref: "#/components/schemas/GetReflectionsResponse"
               examples:
                 GetReflections:
-                  value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
-                    id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
-                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
+                  value: "{\"reflections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
+                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
+                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
     post:
       tags:
       - reflection
@@ -799,16 +944,30 @@ paths:
       description: Search Providers
       operationId: SearchProviders
       parameters:
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       - name: query
@@ -832,10 +991,11 @@ paths:
                 $ref: "#/components/schemas/GetProvidersResponse"
               examples:
                 SearchProviders:
-                  value: "{\"providers\":{\"content\":[{\"type\":\"COMPANY\",\"id\"\
-                    :\"provider-id\",\"name\":\"Provider Name\",\"isVerified\":true,\"\
-                    isMaintainer\":true}],\"hasNext\":true,\"nextCursor\":\"next-cursor\"\
-                    }}"
+                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
+                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
   /team-building:
     get:
       tags:
@@ -844,16 +1004,30 @@ paths:
       description: Get Team Building Posts
       operationId: GetTeamBuildingPosts
       parameters:
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       responses:
@@ -865,10 +1039,12 @@ paths:
                 $ref: "#/components/schemas/GetTeamBuildingPostsResponse"
               examples:
                 GetTeamBuildingPosts:
-                  value: "{\"posts\":{\"content\":[{\"id\":\"1\",\"project\":{\"id\"\
-                    :\"1\",\"name\":\"Project Name\",\"description\":\"Project Description\"\
-                    },\"title\":\"Post Title\",\"content\":\"Post Content\"}],\"hasNext\"\
-                    :true,\"nextCursor\":\"next-cursor\"}}"
+                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
+                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
+                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
+                    :{\"id\":\"1\",\"project\":{\"id\":\"1\",\"name\":\"Project Name\"\
+                    ,\"description\":\"Project Description\"},\"title\":\"Post Title\"\
+                    ,\"content\":\"Post Content\"}}]}}"
   /users/{userId}/reflections:
     get:
       tags:
@@ -883,16 +1059,30 @@ paths:
         required: true
         schema:
           type: string
-      - name: cursor
+      - name: first
         in: query
-        description: Pagination Cursor
+        description: Number of items to return from the beginning of the list
         required: false
         schema:
           type: string
-      - name: size
+      - name: after
         in: query
-        description: Page Size (Long)
-        required: true
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
         schema:
           type: string
       responses:
@@ -904,10 +1094,12 @@ paths:
                 $ref: "#/components/schemas/GetReflectionsResponse"
               examples:
                 GetUserReflections:
-                  value: "{\"reflections\":{\"content\":[{\"id\":1,\"author\":{\"\
-                    id\":1,\"name\":\"User\"},\"project\":{\"id\":1,\"name\":\"Project\"\
-                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }],\"hasNext\":true,\"nextCursor\":\"next-cursor\"}}"
+                  value: "{\"reflections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
+                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
+                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
 components:
   schemas:
     UploadMediaResponse:
@@ -940,43 +1132,45 @@ components:
         title:
           type: string
           description: Contest Occurrence Title
-    GetJobPostingsResponse:
-      title: GetJobPostingsResponse
+    GetJobApplicationsResponse:
+      title: GetJobApplicationsResponse
       type: object
       properties:
-        postings:
+        applications:
           required:
           - content
-          - hasNext
-          - hasPrevious
+          - pageInfo
           type: object
           properties:
-            hasPrevious:
-              type: boolean
-              description: Has Previous
-            hasNext:
-              type: boolean
-              description: Has Next
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - page
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                page:
+                  type: number
+                  description: Page Number
+              description: Page Info
             content:
               type: array
               description: Content
               items:
                 required:
-                - company
-                - createdAt
                 - id
-                - jobDescription
-                - jobTitle
-                - location
-                - updatedAt
                 type: object
                 properties:
-                  createdAt:
-                    type: string
-                    description: Creation Timestamp
-                  jobTitle:
-                    type: string
-                    description: Job Title
                   company:
                     required:
                     - id
@@ -987,50 +1181,115 @@ components:
                         type: string
                         description: Company Name
                       id:
-                        type: string
+                        type: number
                         description: Company ID
-                    description: Company
-                  location:
-                    type: string
-                    description: Location
-                  jobDescription:
-                    type: string
-                    description: Job Description
                   id:
-                    type: string
-                    description: Job Posting ID
-                  updatedAt:
-                    type: string
-                    description: Update Timestamp
-    GetTeamBuildingPostsResponse:
-      title: GetTeamBuildingPostsResponse
+                    type: number
+                    description: Application ID
+    CreateJobPostingResponse:
+      title: CreateJobPostingResponse
+      required:
+      - id
       type: object
       properties:
-        posts:
+        id:
+          type: string
+          description: Job Posting ID
+    GetProvidersResponse:
+      title: GetProvidersResponse
+      type: object
+      properties:
+        providers:
           required:
-          - content
-          - hasNext
+          - nodes
+          - pageInfo
           type: object
           properties:
-            nextCursor:
-              type: string
-              description: Next Cursor
-              nullable: true
-            hasNext:
-              type: boolean
-              description: Has Next
-            content:
+            nodes:
               type: array
-              description: Content
+              description: Nodes
               items:
                 required:
                 - content
-                - id
-                - project
-                - title
+                - cursor
                 type: object
                 properties:
-                  project:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - id
+                    - isMaintainer
+                    - isVerified
+                    - name
+                    - type
+                    type: object
+                    properties:
+                      isMaintainer:
+                        type: boolean
+                        description: Maintainer Status
+                      isVerified:
+                        type: boolean
+                        description: Verification Status
+                      name:
+                        type: string
+                        description: Provider Name
+                      id:
+                        type: string
+                        description: Provider ID
+                      type:
+                        type: string
+                        description: Provider Type
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
+    GetProjectsResponse:
+      title: GetProjectsResponse
+      type: object
+      properties:
+        projects:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
                     required:
                     - description
                     - id
@@ -1044,27 +1303,34 @@ components:
                         type: string
                         description: Project Description
                       id:
-                        type: string
+                        type: number
                         description: Project ID
-                    description: Project
-                  id:
-                    type: string
-                    description: Post ID
-                  title:
-                    type: string
-                    description: Post Title
-                  content:
-                    type: string
-                    description: Post Content
-    CreateJobPostingResponse:
-      title: CreateJobPostingResponse
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: string
-          description: Job Posting ID
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     LoginRequest:
       title: LoginRequest
       required:
@@ -1078,27 +1344,15 @@ components:
         email:
           type: string
           description: Email
-    UploadMediaRequest:
-      title: UploadMediaRequest
+    UploadJobApplicationFileRequest:
+      title: UploadJobApplicationFileRequest
       required:
-      - fileName
-      - fileSize
-      - mediaContext
-      - mediaType
+      - fileId
       type: object
       properties:
-        fileName:
-          type: string
-          description: File Name
-        fileSize:
+        fileId:
           type: number
-          description: File Size
-        mediaContext:
-          type: string
-          description: Media Context
-        mediaType:
-          type: string
-          description: Media Type
+          description: File ID
     CreateJobApplicationResponse:
       title: CreateJobApplicationResponse
       required:
@@ -1121,6 +1375,68 @@ components:
         jobPostingId:
           type: string
           description: Job Posting ID
+    GetContestOccurrencesResponse:
+      title: GetContestOccurrencesResponse
+      type: object
+      properties:
+        occurrences:
+          required:
+          - content
+          - pageInfo
+          type: object
+          properties:
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - page
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                page:
+                  type: number
+                  description: Page Number
+              description: Page Info
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - id
+                - title
+                type: object
+                properties:
+                  contest:
+                    required:
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Contest Name
+                      id:
+                        type: number
+                        description: Contest ID
+                  description:
+                    type: string
+                    description: Occurrence Description
+                    nullable: true
+                  id:
+                    type: number
+                    description: Contest Occurrence ID
+                  title:
+                    type: string
+                    description: Occurrence Title
     UpdateUserPreferencesRequest:
       title: UpdateUserPreferencesRequest
       type: object
@@ -1129,6 +1445,23 @@ components:
           type: string
           description: User theme preference
           nullable: true
+    UploadMediaRequest:
+      title: UploadMediaRequest
+      required:
+      - fileName
+      - fileSize
+      - mediaType
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: File Name
+        fileSize:
+          type: number
+          description: File Size
+        mediaType:
+          type: string
+          description: Media Type
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -1194,46 +1527,6 @@ components:
         id:
           type: number
           description: Reflection ID
-    GetJobApplicationsResponse:
-      title: GetJobApplicationsResponse
-      type: object
-      properties:
-        applications:
-          required:
-          - content
-          - hasNext
-          - hasPrevious
-          type: object
-          properties:
-            hasPrevious:
-              type: boolean
-              description: Has Previous
-            hasNext:
-              type: boolean
-              description: Has Next
-            content:
-              type: array
-              description: Content
-              items:
-                required:
-                - id
-                type: object
-                properties:
-                  company:
-                    required:
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Company Name
-                      id:
-                        type: number
-                        description: Company ID
-                  id:
-                    type: number
-                    description: Application ID
     GetJobPostingResponse:
       title: GetJobPostingResponse
       required:
@@ -1277,50 +1570,99 @@ components:
         updatedAt:
           type: string
           description: Update Timestamp
-    GetProvidersResponse:
-      title: GetProvidersResponse
+    GetJobApplicationFilesResponse:
+      title: GetJobApplicationFilesResponse
+      required:
+      - files
       type: object
       properties:
-        providers:
+        files:
+          type: array
+          description: List of job application files
+          items:
+            required:
+            - url
+            type: object
+            properties:
+              url:
+                type: string
+                description: File URL
+    GetJobPostingsResponse:
+      title: GetJobPostingsResponse
+      type: object
+      properties:
+        postings:
           required:
           - content
-          - hasNext
+          - pageInfo
           type: object
           properties:
-            nextCursor:
-              type: string
-              description: Next Cursor
-              nullable: true
-            hasNext:
-              type: boolean
-              description: Has Next
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - page
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                page:
+                  type: number
+                  description: Page Number
+              description: Page Info
             content:
               type: array
               description: Content
               items:
                 required:
+                - company
+                - createdAt
                 - id
-                - isMaintainer
-                - isVerified
-                - name
-                - type
+                - jobDescription
+                - jobTitle
+                - location
+                - updatedAt
                 type: object
                 properties:
-                  isMaintainer:
-                    type: boolean
-                    description: Maintainer Status
-                  isVerified:
-                    type: boolean
-                    description: Verification Status
-                  name:
+                  createdAt:
                     type: string
-                    description: Provider Name
+                    description: Creation Timestamp
+                  jobTitle:
+                    type: string
+                    description: Job Title
+                  company:
+                    required:
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Company Name
+                      id:
+                        type: string
+                        description: Company ID
+                    description: Company
+                  location:
+                    type: string
+                    description: Location
+                  jobDescription:
+                    type: string
+                    description: Job Description
                   id:
                     type: string
-                    description: Provider ID
-                  type:
+                    description: Job Posting ID
+                  updatedAt:
                     type: string
-                    description: Provider Type
+                    description: Update Timestamp
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:
@@ -1416,54 +1758,93 @@ components:
         email:
           type: string
           description: Email
-    GetContestOccurrencesResponse:
-      title: GetContestOccurrencesResponse
+    GetReflectionsResponse:
+      title: GetReflectionsResponse
       type: object
       properties:
-        occurrences:
+        reflections:
           required:
-          - content
-          - hasNext
-          - hasPrevious
+          - nodes
+          - pageInfo
           type: object
           properties:
-            hasPrevious:
-              type: boolean
-              description: Has Previous
-            hasNext:
-              type: boolean
-              description: Has Next
-            content:
+            nodes:
               type: array
-              description: Content
+              description: Nodes
               items:
                 required:
-                - id
-                - title
+                - content
+                - cursor
                 type: object
                 properties:
-                  contest:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
                     required:
+                    - content
+                    - createdAt
                     - id
-                    - name
                     type: object
                     properties:
-                      name:
+                      createdAt:
                         type: string
-                        description: Contest Name
+                        description: Creation Timestamp
+                      author:
+                        required:
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          id:
+                            type: number
+                            description: Author User ID
+                      project:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Project Name
+                            nullable: true
+                          id:
+                            type: number
+                            description: Project ID
+                            nullable: true
                       id:
                         type: number
-                        description: Contest ID
-                  description:
-                    type: string
-                    description: Occurrence Description
-                    nullable: true
-                  id:
-                    type: number
-                    description: Contest Occurrence ID
-                  title:
-                    type: string
-                    description: Occurrence Title
+                        description: Reflection ID
+                      content:
+                        type: string
+                        description: Reflection Content
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     CreateJobPostingRequest:
       title: CreateJobPostingRequest
       required:
@@ -1494,101 +1875,88 @@ components:
         content:
           type: string
           description: Content
-    GetReflectionsResponse:
-      title: GetReflectionsResponse
+    GetTeamBuildingPostsResponse:
+      title: GetTeamBuildingPostsResponse
       type: object
       properties:
-        reflections:
+        posts:
           required:
-          - content
-          - hasNext
+          - nodes
+          - pageInfo
           type: object
           properties:
-            nextCursor:
-              type: string
-              description: Next Cursor
-              nullable: true
-            hasNext:
-              type: boolean
-              description: Has Next
-            content:
+            nodes:
               type: array
-              description: Content
+              description: Nodes
               items:
                 required:
                 - content
-                - createdAt
-                - id
+                - cursor
                 type: object
                 properties:
-                  createdAt:
+                  cursor:
                     type: string
-                    description: Creation Timestamp
-                  author:
-                    required:
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Author Name
-                      id:
-                        type: number
-                        description: Author User ID
-                  project:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Project Name
-                        nullable: true
-                      id:
-                        type: number
-                        description: Project ID
-                        nullable: true
-                  id:
-                    type: number
-                    description: Reflection ID
+                    description: Node Cursor
                   content:
-                    type: string
-                    description: Reflection Content
-    GetProjectsResponse:
-      title: GetProjectsResponse
-      type: object
-      properties:
-        projects:
-          required:
-          - content
-          - hasNext
-          type: object
-          properties:
-            nextCursor:
-              type: string
-              description: Next Cursor
-              nullable: true
-            hasNext:
-              type: boolean
-              description: Has Next
-            content:
-              type: array
-              description: Content
-              items:
-                required:
-                - description
-                - id
-                - name
-                type: object
-                properties:
-                  name:
-                    type: string
-                    description: Project Name
-                  description:
-                    type: string
-                    description: Project Description
-                  id:
-                    type: number
-                    description: Project ID
+                    required:
+                    - content
+                    - id
+                    - project
+                    - title
+                    type: object
+                    properties:
+                      project:
+                        required:
+                        - description
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Project Name
+                          description:
+                            type: string
+                            description: Project Description
+                          id:
+                            type: string
+                            description: Project ID
+                        description: Project
+                      id:
+                        type: string
+                        description: Post ID
+                      title:
+                        type: string
+                        description: Post Title
+                      content:
+                        type: string
+                        description: Post Content
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     GetJobApplicationResponse:
       title: GetJobApplicationResponse
       required:

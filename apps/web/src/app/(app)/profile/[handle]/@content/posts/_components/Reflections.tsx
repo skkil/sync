@@ -34,12 +34,17 @@ export default function Reflections() {
     isError,
   } = useGetUserReflectionsInfinite(
     userId || '',
-    { cursor: '', size: REFLECTIONS_PAGE_SIZE },
+    {
+      first: REFLECTIONS_PAGE_SIZE,
+      after: '',
+    },
     {
       query: {
         getNextPageParam: (lastPage) => {
           const reflections = lastPage.data.reflections;
-          return reflections?.hasNext ? reflections.nextCursor : undefined;
+          return reflections?.pageInfo.hasNextPage
+            ? reflections.pageInfo.endCursor
+            : undefined;
         },
         enabled: !!userId,
       },
@@ -65,7 +70,7 @@ export default function Reflections() {
   }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const reflections =
-    data?.pages.flatMap((page) => page.data.reflections?.content ?? []) ?? [];
+    data?.pages.flatMap((page) => page.data.reflections?.nodes ?? []) ?? [];
 
   if (isProfilePending || isPending) {
     return (
@@ -99,7 +104,10 @@ export default function Reflections() {
     <div>
       <div className="space-y-4">
         {reflections.map((reflection) => (
-          <ReflectionCard key={reflection.id} reflection={reflection} />
+          <ReflectionCard
+            key={reflection.content.id}
+            reflection={reflection.content}
+          />
         ))}
       </div>
 

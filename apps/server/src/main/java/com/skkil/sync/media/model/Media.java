@@ -1,8 +1,7 @@
 package com.skkil.sync.media.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
-import com.skkil.sync.media.constant.MediaContext;
-import com.skkil.sync.media.constant.MediaStatus;
+import com.skkil.sync.media.enums.MediaStatus;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,10 +27,6 @@ public class Media extends BaseEntity {
   @Column(name = "status", nullable = false)
   private MediaStatus status;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "media_context", nullable = false)
-  private MediaContext mediaContext;
-
   @Column(name = "media_type", nullable = false)
   private String mediaType;
 
@@ -51,24 +46,21 @@ public class Media extends BaseEntity {
 
   @Builder
   public Media(
-      User uploader,
-      String mediaType,
-      MediaContext mediaContext,
-      String bucket,
-      String key,
-      String fileName,
-      Long fileSize) {
+      User uploader, String mediaType, String bucket, String key, String fileName, Long fileSize) {
     this.uploader = uploader;
     this.status = MediaStatus.PENDING;
     this.mediaType = mediaType;
-    this.mediaContext = mediaContext;
     this.bucket = bucket;
     this.key = key;
     this.fileName = fileName;
     this.fileSize = fileSize;
   }
 
-  public void setStatus(MediaStatus status) {
-    this.status = status;
+  public void markAsUploaded() {
+    this.status = MediaStatus.UPLOADED;
+  }
+
+  public void markAsDeleted() {
+    this.status = MediaStatus.DELETED;
   }
 }

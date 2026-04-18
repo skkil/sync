@@ -43,7 +43,7 @@ export type getTrendingProjectsResponseSuccess =
 export type getTrendingProjectsResponse = getTrendingProjectsResponseSuccess;
 
 export const getGetTrendingProjectsUrl = (
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
 ) => {
   const normalizedParams = new URLSearchParams();
 
@@ -61,7 +61,7 @@ export const getGetTrendingProjectsUrl = (
 };
 
 export const getTrendingProjects = async (
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: RequestInit,
 ): Promise<getTrendingProjectsResponse> => {
   return api<getTrendingProjectsResponse>(getGetTrendingProjectsUrl(params), {
@@ -89,11 +89,11 @@ export const getGetTrendingProjectsQueryKey = (
 export const getGetTrendingProjectsInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['cursor']
+    GetTrendingProjectsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -101,7 +101,7 @@ export const getGetTrendingProjectsInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        GetTrendingProjectsParams['cursor']
+        GetTrendingProjectsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -115,10 +115,10 @@ export const getGetTrendingProjectsInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getTrendingProjects>>,
     QueryKey,
-    GetTrendingProjectsParams['cursor']
+    GetTrendingProjectsParams['after']
   > = ({ signal, pageParam }) =>
     getTrendingProjects(
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -127,7 +127,7 @@ export const getGetTrendingProjectsInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    GetTrendingProjectsParams['cursor']
+    GetTrendingProjectsParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -139,11 +139,11 @@ export type GetTrendingProjectsInfiniteQueryError = ErrorType<unknown>;
 export function useGetTrendingProjectsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['cursor']
+    GetTrendingProjectsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params: undefined | GetTrendingProjectsParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -151,7 +151,7 @@ export function useGetTrendingProjectsInfinite<
         TError,
         TData,
         QueryKey,
-        GetTrendingProjectsParams['cursor']
+        GetTrendingProjectsParams['after']
       >
     > &
       Pick<
@@ -172,11 +172,11 @@ export function useGetTrendingProjectsInfinite<
 export function useGetTrendingProjectsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['cursor']
+    GetTrendingProjectsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -184,7 +184,7 @@ export function useGetTrendingProjectsInfinite<
         TError,
         TData,
         QueryKey,
-        GetTrendingProjectsParams['cursor']
+        GetTrendingProjectsParams['after']
       >
     > &
       Pick<
@@ -205,11 +205,11 @@ export function useGetTrendingProjectsInfinite<
 export function useGetTrendingProjectsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['cursor']
+    GetTrendingProjectsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -217,7 +217,7 @@ export function useGetTrendingProjectsInfinite<
         TError,
         TData,
         QueryKey,
-        GetTrendingProjectsParams['cursor']
+        GetTrendingProjectsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -233,11 +233,11 @@ export function useGetTrendingProjectsInfinite<
 export function useGetTrendingProjectsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['cursor']
+    GetTrendingProjectsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -245,7 +245,7 @@ export function useGetTrendingProjectsInfinite<
         TError,
         TData,
         QueryKey,
-        GetTrendingProjectsParams['cursor']
+        GetTrendingProjectsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -273,7 +273,7 @@ export const getGetTrendingProjectsQueryOptions = <
   TData = Awaited<ReturnType<typeof getTrendingProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -311,7 +311,7 @@ export function useGetTrendingProjects<
   TData = Awaited<ReturnType<typeof getTrendingProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params: undefined | GetTrendingProjectsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -338,7 +338,7 @@ export function useGetTrendingProjects<
   TData = Awaited<ReturnType<typeof getTrendingProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -365,7 +365,7 @@ export function useGetTrendingProjects<
   TData = Awaited<ReturnType<typeof getTrendingProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -388,7 +388,7 @@ export function useGetTrendingProjects<
   TData = Awaited<ReturnType<typeof getTrendingProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTrendingProjectsParams,
+  params?: GetTrendingProjectsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

@@ -4,7 +4,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.epages.restdocs.apispec.FieldDescriptors;
-import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
 import com.skkil.sync.common.util.pagination.snippets.CursorPaginationResponseSnippets;
 import com.skkil.sync.provider.project.dto.response.GetProjectsResponse;
 import java.util.List;
@@ -17,8 +16,7 @@ public class GetProjectsResponseSnippets {
     GetProjectsResponse.Project project =
         new GetProjectsResponse.Project(1L, "Project Name", "Project Description");
 
-    return new GetProjectsResponse(
-        new CursorPaginationResponse<>(List.of(project), true, "next-cursor"));
+    return new GetProjectsResponse(CursorPaginationResponseSnippets.of(List.of(project)));
   }
 
   public static ResponseFieldsSnippet getProjectsResponseFields() {
@@ -27,7 +25,7 @@ public class GetProjectsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "projects.content[]",
+            "projects.nodes[].content",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Project ID"),
             fieldWithPath(".name").type(JsonFieldType.STRING).description("Project Name"),
             fieldWithPath(".description")

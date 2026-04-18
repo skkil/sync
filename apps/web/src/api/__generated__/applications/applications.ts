@@ -25,9 +25,11 @@ import type { ErrorType } from '../../../lib/server';
 import type {
   CreateJobApplicationRequest,
   CreateJobApplicationResponse,
+  GetJobApplicationFilesResponse,
   GetJobApplicationResponse,
   GetJobApplicationsResponse,
   GetMyJobApplicationsParams,
+  UploadJobApplicationFileRequest,
 } from '../types';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -511,3 +513,302 @@ export function useGetJobApplication<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Get all files for a job application
+ * @summary Get Job Application Files
+ */
+export type getJobApplicationFilesResponse200 = {
+  data: GetJobApplicationFilesResponse;
+  status: 200;
+};
+
+export type getJobApplicationFilesResponseSuccess =
+  getJobApplicationFilesResponse200 & {
+    headers: Headers;
+  };
+export type getJobApplicationFilesResponse =
+  getJobApplicationFilesResponseSuccess;
+
+export const getGetJobApplicationFilesUrl = (applicationId: string) => {
+  return `/applications/${applicationId}/files`;
+};
+
+export const getJobApplicationFiles = async (
+  applicationId: string,
+  options?: RequestInit,
+): Promise<getJobApplicationFilesResponse> => {
+  return api<getJobApplicationFilesResponse>(
+    getGetJobApplicationFilesUrl(applicationId),
+    {
+      ...options,
+      method: 'GET',
+    },
+  );
+};
+
+export const getGetJobApplicationFilesQueryKey = (applicationId: string) => {
+  return [`/applications/${applicationId}/files`] as const;
+};
+
+export const getGetJobApplicationFilesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getJobApplicationFiles>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplicationFiles>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetJobApplicationFilesQueryKey(applicationId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getJobApplicationFiles>>
+  > = ({ signal }) =>
+    getJobApplicationFiles(applicationId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!applicationId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getJobApplicationFiles>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetJobApplicationFilesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getJobApplicationFiles>>
+>;
+export type GetJobApplicationFilesQueryError = ErrorType<unknown>;
+
+export function useGetJobApplicationFiles<
+  TData = Awaited<ReturnType<typeof getJobApplicationFiles>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplicationFiles>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJobApplicationFiles>>,
+          TError,
+          Awaited<ReturnType<typeof getJobApplicationFiles>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetJobApplicationFiles<
+  TData = Awaited<ReturnType<typeof getJobApplicationFiles>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplicationFiles>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJobApplicationFiles>>,
+          TError,
+          Awaited<ReturnType<typeof getJobApplicationFiles>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetJobApplicationFiles<
+  TData = Awaited<ReturnType<typeof getJobApplicationFiles>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplicationFiles>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Job Application Files
+ */
+
+export function useGetJobApplicationFiles<
+  TData = Awaited<ReturnType<typeof getJobApplicationFiles>>,
+  TError = ErrorType<unknown>,
+>(
+  applicationId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getJobApplicationFiles>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetJobApplicationFilesQueryOptions(
+    applicationId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Upload a file to a job application
+ * @summary Upload Job Application File
+ */
+export type uploadJobApplicationFileResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type uploadJobApplicationFileResponseSuccess =
+  uploadJobApplicationFileResponse204 & {
+    headers: Headers;
+  };
+export type uploadJobApplicationFileResponse =
+  uploadJobApplicationFileResponseSuccess;
+
+export const getUploadJobApplicationFileUrl = (applicationId: string) => {
+  return `/applications/${applicationId}/files`;
+};
+
+export const uploadJobApplicationFile = async (
+  applicationId: string,
+  uploadJobApplicationFileRequest: UploadJobApplicationFileRequest,
+  options?: RequestInit,
+): Promise<uploadJobApplicationFileResponse> => {
+  return api<uploadJobApplicationFileResponse>(
+    getUploadJobApplicationFileUrl(applicationId),
+    {
+      ...options,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...options?.headers },
+      body: JSON.stringify(uploadJobApplicationFileRequest),
+    },
+  );
+};
+
+export const getUploadJobApplicationFileMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof uploadJobApplicationFile>>,
+    TError,
+    { applicationId: string; data: UploadJobApplicationFileRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof uploadJobApplicationFile>>,
+  TError,
+  { applicationId: string; data: UploadJobApplicationFileRequest },
+  TContext
+> => {
+  const mutationKey = ['uploadJobApplicationFile'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof uploadJobApplicationFile>>,
+    { applicationId: string; data: UploadJobApplicationFileRequest }
+  > = (props) => {
+    const { applicationId, data } = props ?? {};
+
+    return uploadJobApplicationFile(applicationId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UploadJobApplicationFileMutationResult = NonNullable<
+  Awaited<ReturnType<typeof uploadJobApplicationFile>>
+>;
+export type UploadJobApplicationFileMutationBody =
+  UploadJobApplicationFileRequest;
+export type UploadJobApplicationFileMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Upload Job Application File
+ */
+export const useUploadJobApplicationFile = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof uploadJobApplicationFile>>,
+      TError,
+      { applicationId: string; data: UploadJobApplicationFileRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof uploadJobApplicationFile>>,
+  TError,
+  { applicationId: string; data: UploadJobApplicationFileRequest },
+  TContext
+> => {
+  return useMutation(
+    getUploadJobApplicationFileMutationOptions(options),
+    queryClient,
+  );
+};

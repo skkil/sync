@@ -4,7 +4,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.epages.restdocs.apispec.FieldDescriptors;
-import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
 import com.skkil.sync.common.util.pagination.snippets.CursorPaginationResponseSnippets;
 import com.skkil.sync.provider.project.dto.response.GetTeamBuildingPostsResponse;
 import java.util.List;
@@ -20,8 +19,7 @@ public class GetTeamBuildingPostsResponseSnippets {
     GetTeamBuildingPostsResponse.Post post =
         new GetTeamBuildingPostsResponse.Post("1", project, "Post Title", "Post Content");
 
-    return new GetTeamBuildingPostsResponse(
-        new CursorPaginationResponse<>(List.of(post), true, "next-cursor"));
+    return new GetTeamBuildingPostsResponse(CursorPaginationResponseSnippets.of(List.of(post)));
   }
 
   public static ResponseFieldsSnippet getTeamBuildingPostsResponseFields() {
@@ -30,7 +28,7 @@ public class GetTeamBuildingPostsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "posts.content[]",
+            "posts.nodes[].content",
             fieldWithPath(".id").type(JsonFieldType.STRING).description("Post ID"),
             fieldWithPath(".title").type(JsonFieldType.STRING).description("Post Title"),
             fieldWithPath(".content").type(JsonFieldType.STRING).description("Post Content"),
@@ -38,7 +36,7 @@ public class GetTeamBuildingPostsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "posts.content[].project",
+            "posts.nodes[].content.project",
             fieldWithPath(".id").type(JsonFieldType.STRING).description("Project ID"),
             fieldWithPath(".name").type(JsonFieldType.STRING).description("Project Name"),
             fieldWithPath(".description")

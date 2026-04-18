@@ -1,8 +1,8 @@
 package com.skkil.sync.recruitment.dto.response;
 
-import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
+import com.skkil.sync.common.util.pagination.dto.response.OffsetPaginationResponse;
 
-public record GetJobApplicationsResponse(PaginationResponse<Application> applications) {
+public record GetJobApplicationsResponse(OffsetPaginationResponse<Application> applications) {
 
   public static record Application(Long id, Company company) {}
 

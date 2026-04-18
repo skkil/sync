@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 import { useGetMyProvidersInfinite } from '@/api/__generated__/providers/providers';
-import type { GetProvidersResponseProvidersContentItem } from '@/api/__generated__/types';
+import type { GetProvidersResponseProvidersNodesItemContent } from '@/api/__generated__/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,19 +27,21 @@ export default function MyProviders() {
     isPending,
     error,
   } = useGetMyProvidersInfinite(
-    { size: PAGE_SIZE.toString() },
+    { first: PAGE_SIZE.toString() },
     {
       query: {
         getNextPageParam: (lastPage) => {
           const providers = lastPage.data.providers;
-          return providers?.hasNext ? providers.nextCursor : undefined;
+          return providers?.pageInfo.hasNextPage
+            ? providers.pageInfo.endCursor
+            : undefined;
         },
       },
     },
   );
 
   const providers =
-    data?.pages.flatMap((page) => page.data.providers?.content ?? []) ?? [];
+    data?.pages.flatMap((page) => page.data.providers?.nodes ?? []) ?? [];
 
   if (error) {
     return (
@@ -68,7 +70,10 @@ export default function MyProviders() {
         ) : providers.length > 0 ? (
           <div className="space-y-3">
             {providers.map((provider) => (
-              <ProviderCard key={provider.id} provider={provider} />
+              <ProviderCard
+                key={provider.content.id}
+                provider={provider.content}
+              />
             ))}
           </div>
         ) : (
@@ -97,7 +102,7 @@ export default function MyProviders() {
 function ProviderCard({
   provider,
 }: {
-  provider: GetProvidersResponseProvidersContentItem;
+  provider: GetProvidersResponseProvidersNodesItemContent;
 }) {
   const t = useTranslations('pages.my-providers');
 

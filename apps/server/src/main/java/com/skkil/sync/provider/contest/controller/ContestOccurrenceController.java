@@ -1,7 +1,7 @@
 package com.skkil.sync.provider.contest.controller;
 
 import com.skkil.sync.auth.AuthenticatedUser;
-import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
 import com.skkil.sync.provider.contest.dto.request.CreateContestOccurrenceRequest;
 import com.skkil.sync.provider.contest.dto.response.GetContestOccurrenceResponse;
 import com.skkil.sync.provider.contest.dto.response.GetContestOccurrencesResponse;
@@ -42,7 +42,7 @@ public class ContestOccurrenceController {
 
   @GetMapping("/contests/{contestId}/occurrences")
   public GetContestOccurrencesResponse getContestOccurrencesByContest(
-      @PathVariable Long contestId, @Validated PaginationRequest pagination) {
+      @PathVariable Long contestId, @Validated OffsetPaginationRequest pagination) {
     return contestOccurrenceService.getContestOccurrencesByContest(contestId, pagination);
   }
 }
