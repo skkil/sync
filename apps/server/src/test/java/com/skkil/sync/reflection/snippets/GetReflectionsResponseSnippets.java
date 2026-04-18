@@ -4,7 +4,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.epages.restdocs.apispec.FieldDescriptors;
-import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
 import com.skkil.sync.common.util.pagination.snippets.CursorPaginationResponseSnippets;
 import com.skkil.sync.common.util.time.DateTimeTestUtils;
 import com.skkil.sync.reflection.dto.response.GetReflectionsResponse;
@@ -26,12 +25,7 @@ public class GetReflectionsResponseSnippets {
             "Reflection Content",
             DateTimeTestUtils.defaultTestLocalDateTime());
 
-    return new GetReflectionsResponse(
-        CursorPaginationResponse.<GetReflectionsResponse.Reflection>builder()
-            .content(List.of(reflection))
-            .hasNext(true)
-            .nextCursor("next-cursor")
-            .build());
+    return new GetReflectionsResponse(CursorPaginationResponseSnippets.of(List.of(reflection)));
   }
 
   public static ResponseFieldsSnippet getReflectionsResponseFields() {
@@ -40,7 +34,7 @@ public class GetReflectionsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "reflections.content[]",
+            "reflections.nodes[].content",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Reflection ID"),
             fieldWithPath(".content").type(JsonFieldType.STRING).description("Reflection Content"),
             fieldWithPath(".createdAt")
@@ -49,13 +43,13 @@ public class GetReflectionsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "reflections.content[].author",
+            "reflections.nodes[].content.author",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Author User ID"),
             fieldWithPath(".name").type(JsonFieldType.STRING).description("Author Name"));
 
     fields =
         fields.andWithPrefix(
-            "reflections.content[].project",
+            "reflections.nodes[].content.project",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Project ID").optional(),
             fieldWithPath(".name")
                 .type(JsonFieldType.STRING)

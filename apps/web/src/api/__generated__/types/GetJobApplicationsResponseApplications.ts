@@ -5,12 +5,11 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetJobApplicationsResponseApplicationsContentItem } from './GetJobApplicationsResponseApplicationsContentItem';
+import type { GetJobApplicationsResponseApplicationsPageInfo } from './GetJobApplicationsResponseApplicationsPageInfo';
 
 export type GetJobApplicationsResponseApplications = {
-  /** Has Previous */
-  hasPrevious: boolean;
-  /** Has Next */
-  hasNext: boolean;
+  /** Page Info */
+  pageInfo: GetJobApplicationsResponseApplicationsPageInfo;
   /** Content */
   content: GetJobApplicationsResponseApplicationsContentItem[];
 };

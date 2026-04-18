@@ -1,6 +1,6 @@
 package com.skkil.sync.provider.company.controller;
 
-import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
 import com.skkil.sync.provider.company.dto.request.CreateJobPostingRequest;
 import com.skkil.sync.provider.company.dto.response.CreateJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingResponse;
@@ -40,14 +40,14 @@ public class JobPostingController {
 
   @GetMapping("/jobs")
   @ResponseStatus(HttpStatus.OK)
-  public GetJobPostingsResponse getJobPostings(@Validated PaginationRequest pagination) {
+  public GetJobPostingsResponse getJobPostings(@Validated OffsetPaginationRequest pagination) {
     return jobPostingService.getJobPostings(pagination);
   }
 
   @GetMapping("/companies/{companyId}/jobs")
   @ResponseStatus(HttpStatus.OK)
   public GetJobPostingsResponse getJobPostingsByCompany(
-      @PathVariable Long companyId, @Validated PaginationRequest pagination) {
+      @PathVariable Long companyId, @Validated OffsetPaginationRequest pagination) {
     return jobPostingService.getJobPostingsByCompany(companyId, pagination);
   }
 }

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 import { useGetTeamBuildingPostsInfinite } from '@/api/__generated__/team-building/team-building';
-import { GetTeamBuildingPostsResponsePostsContentItem } from '@/api/__generated__/types';
+import { GetTeamBuildingPostsResponsePostsNodesItem } from '@/api/__generated__/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
@@ -20,12 +20,17 @@ const TEAM_BUILDING_PAGE_SIZE = '50';
 export default function TeamBuildingPage() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
     useGetTeamBuildingPostsInfinite(
-      { cursor: '', size: TEAM_BUILDING_PAGE_SIZE },
+      {
+        first: TEAM_BUILDING_PAGE_SIZE,
+        after: '',
+      },
       {
         query: {
           getNextPageParam: (lastPage) => {
             const posts = lastPage.data.posts;
-            return posts?.hasNext ? posts.nextCursor : undefined;
+            return posts?.pageInfo.hasNextPage
+              ? posts.pageInfo.endCursor
+              : undefined;
           },
         },
       },
@@ -44,7 +49,7 @@ export default function TeamBuildingPage() {
   }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const posts =
-    data?.pages.flatMap((page) => page.data.posts?.content ?? []) ?? [];
+    data?.pages.flatMap((page) => page.data.posts?.nodes ?? []) ?? [];
 
   if (isPending) {
     return (
@@ -60,7 +65,7 @@ export default function TeamBuildingPage() {
     <div>
       <div className="space-y-4">
         {posts.map((post) => (
-          <TeamBuildingPostCard key={post.id} post={post} />
+          <TeamBuildingPostCard key={post.content.id} post={post} />
         ))}
       </div>
 
@@ -78,8 +83,10 @@ export default function TeamBuildingPage() {
 function TeamBuildingPostCard({
   post,
 }: {
-  post: GetTeamBuildingPostsResponsePostsContentItem;
+  post: GetTeamBuildingPostsResponsePostsNodesItem;
 }) {
+  const { title, project } = post.content;
+
   return (
     <div className="flex items-center gap-4 p-2 rounded-md hover:bg-muted">
       <Avatar>
@@ -91,20 +98,18 @@ function TeamBuildingPostCard({
           <Tooltip>
             <TooltipTrigger>
               <Link
-                href={`/projects/${post.project.id}`}
+                href={`/projects/${project.id}`}
                 className="text-sm font-medium text-muted-foreground"
               >
-                {post.project.name}
+                {project.name}
               </Link>
             </TooltipTrigger>
 
-            <TooltipContent align="start">
-              {post.project.description}
-            </TooltipContent>
+            <TooltipContent align="start">{project.description}</TooltipContent>
           </Tooltip>
         </div>
 
-        <h3>{post.title}</h3>
+        <h3>{title}</h3>
       </div>
     </div>
   );

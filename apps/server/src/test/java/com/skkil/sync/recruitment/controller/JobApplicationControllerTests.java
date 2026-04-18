@@ -16,8 +16,8 @@ import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.common.config.TestSecurityConfig;
 import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.common.security.WithAuthenticatedUserSecurityContextFactory;
-import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
-import com.skkil.sync.common.util.pagination.snippets.PaginationRequestSnippets;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
+import com.skkil.sync.common.util.pagination.snippets.OffsetPaginationRequestSnippets;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.recruitment.dto.request.CreateJobApplicationRequest;
 import com.skkil.sync.recruitment.dto.response.CreateJobApplicationResponse;
@@ -97,7 +97,7 @@ class JobApplicationControllerTests {
   @WithAuthenticatedUser
   void getMyJobApplications() throws Exception {
     AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
-    PaginationRequest pagination = PaginationRequestSnippets.getPaginationRequest();
+    OffsetPaginationRequest pagination = OffsetPaginationRequestSnippets.getPaginationRequest();
     GetJobApplicationsResponse response =
         GetJobApplicationsResponseSnippets.getGetJobApplicationsResponse();
 
@@ -107,7 +107,7 @@ class JobApplicationControllerTests {
     mockMvc
         .perform(
             get("/applications/me")
-                .queryParams(PaginationRequestSnippets.getPaginationRequestQueryParams()))
+                .queryParams(OffsetPaginationRequestSnippets.getPaginationRequestQueryParams()))
         .andExpect(status().isOk())
         .andDo(
             document(
@@ -120,7 +120,7 @@ class JobApplicationControllerTests {
                 null,
                 null,
                 Function.identity(),
-                PaginationRequestSnippets.getPaginationRequestParameters(),
+                OffsetPaginationRequestSnippets.getPaginationRequestParameters(),
                 GetJobApplicationsResponseSnippets.getJobApplicationsResponseFields()));
   }
 

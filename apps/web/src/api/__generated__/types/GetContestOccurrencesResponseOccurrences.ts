@@ -5,12 +5,11 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetContestOccurrencesResponseOccurrencesContentItem } from './GetContestOccurrencesResponseOccurrencesContentItem';
+import type { GetContestOccurrencesResponseOccurrencesPageInfo } from './GetContestOccurrencesResponseOccurrencesPageInfo';
 
 export type GetContestOccurrencesResponseOccurrences = {
-  /** Has Previous */
-  hasPrevious: boolean;
-  /** Has Next */
-  hasNext: boolean;
+  /** Page Info */
+  pageInfo: GetContestOccurrencesResponseOccurrencesPageInfo;
   /** Content */
   content: GetContestOccurrencesResponseOccurrencesContentItem[];
 };

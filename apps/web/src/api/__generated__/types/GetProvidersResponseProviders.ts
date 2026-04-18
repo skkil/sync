@@ -4,16 +4,12 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetProvidersResponseProvidersContentItem } from './GetProvidersResponseProvidersContentItem';
+import type { GetProvidersResponseProvidersNodesItem } from './GetProvidersResponseProvidersNodesItem';
+import type { GetProvidersResponseProvidersPageInfo } from './GetProvidersResponseProvidersPageInfo';
 
 export type GetProvidersResponseProviders = {
-  /**
-   * Next Cursor
-   * @nullable
-   */
-  nextCursor?: string | null;
-  /** Has Next */
-  hasNext: boolean;
-  /** Content */
-  content: GetProvidersResponseProvidersContentItem[];
+  /** Nodes */
+  nodes: GetProvidersResponseProvidersNodesItem[];
+  /** Page Info */
+  pageInfo: GetProvidersResponseProvidersPageInfo;
 };

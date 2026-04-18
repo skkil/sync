@@ -33,8 +33,8 @@ export default function JobPostings() {
   });
 
   const postings = data?.data?.postings;
-  const hasPrevious = postings?.hasPrevious ?? false;
-  const hasNext = postings?.hasNext ?? false;
+  const hasPrevious = postings?.pageInfo.hasPreviousPage ?? false;
+  const hasNext = postings?.pageInfo.hasNextPage ?? false;
   const showPagination = postings && (hasPrevious || hasNext);
 
   return (

@@ -4,8 +4,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.epages.restdocs.apispec.FieldDescriptors;
-import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
-import com.skkil.sync.common.util.pagination.snippets.PaginationResponseSnippets;
+import com.skkil.sync.common.util.pagination.snippets.OffsetPaginationResponseSnippets;
 import com.skkil.sync.common.util.time.DateTimeTestUtils;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingsResponse;
 import java.util.List;
@@ -26,16 +25,12 @@ public class GetJobPostingsResponseSnippets {
             DateTimeTestUtils.defaultTestLocalDateTime(),
             DateTimeTestUtils.defaultTestLocalDateTime());
 
-    return new GetJobPostingsResponse(
-        PaginationResponse.<GetJobPostingsResponse.JobPosting>builder()
-            .content(List.of(jobPosting))
-            .hasNext(true)
-            .hasPrevious(false)
-            .build());
+    return new GetJobPostingsResponse(OffsetPaginationResponseSnippets.of(List.of(jobPosting)));
   }
 
   public static ResponseFieldsSnippet getJobPostingsResponseFields() {
-    FieldDescriptors fields = PaginationResponseSnippets.getPaginationResponseFields("postings");
+    FieldDescriptors fields =
+        OffsetPaginationResponseSnippets.getPaginationResponseFields("postings");
 
     fields =
         fields.andWithPrefix(

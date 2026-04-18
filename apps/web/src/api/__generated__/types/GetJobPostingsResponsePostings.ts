@@ -5,12 +5,11 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetJobPostingsResponsePostingsContentItem } from './GetJobPostingsResponsePostingsContentItem';
+import type { GetJobPostingsResponsePostingsPageInfo } from './GetJobPostingsResponsePostingsPageInfo';
 
 export type GetJobPostingsResponsePostings = {
-  /** Has Previous */
-  hasPrevious: boolean;
-  /** Has Next */
-  hasNext: boolean;
+  /** Page Info */
+  pageInfo: GetJobPostingsResponsePostingsPageInfo;
   /** Content */
   content: GetJobPostingsResponsePostingsContentItem[];
 };

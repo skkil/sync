@@ -1,7 +1,7 @@
 package com.skkil.sync.recruitment.controller;
 
 import com.skkil.sync.auth.AuthenticatedUser;
-import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
 import com.skkil.sync.recruitment.dto.request.CreateJobApplicationRequest;
 import com.skkil.sync.recruitment.dto.response.CreateJobApplicationResponse;
 import com.skkil.sync.recruitment.dto.response.GetJobApplicationResponse;
@@ -37,7 +37,8 @@ public class JobApplicationController {
   @GetMapping("/applications/me")
   @ResponseStatus(HttpStatus.OK)
   public GetJobApplicationsResponse getMyJobApplications(
-      @AuthenticationPrincipal AuthenticatedUser user, @Validated PaginationRequest pagination) {
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @Validated OffsetPaginationRequest pagination) {
     return jobApplicationService.getJobApplications(user.userId(), pagination);
   }
 

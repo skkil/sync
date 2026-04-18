@@ -58,8 +58,8 @@ export default function JobPostings({ id }: JobPostingsProps) {
           onRowClick={handleRowClick}
           currentPage={page}
           onPageChange={setPage}
-          hasPreviousPage={postings?.hasPrevious}
-          hasNextPage={postings?.hasNext}
+          hasPreviousPage={postings?.pageInfo.hasPreviousPage}
+          hasNextPage={postings?.pageInfo.hasNextPage}
           isLoading={isLoading}
         />
       )}

@@ -49,7 +49,7 @@ export type getTeamBuildingPostsByProjectResponse =
 
 export const getGetTeamBuildingPostsByProjectUrl = (
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
 ) => {
   const normalizedParams = new URLSearchParams();
 
@@ -68,7 +68,7 @@ export const getGetTeamBuildingPostsByProjectUrl = (
 
 export const getTeamBuildingPostsByProject = async (
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: RequestInit,
 ): Promise<getTeamBuildingPostsByProjectResponse> => {
   return api<getTeamBuildingPostsByProjectResponse>(
@@ -104,12 +104,12 @@ export const getGetTeamBuildingPostsByProjectQueryKey = (
 export const getGetTeamBuildingPostsByProjectInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPostsByProject>>,
-    GetTeamBuildingPostsByProjectParams['cursor']
+    GetTeamBuildingPostsByProjectParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -117,7 +117,7 @@ export const getGetTeamBuildingPostsByProjectInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsByProjectParams['cursor']
+        GetTeamBuildingPostsByProjectParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -132,11 +132,11 @@ export const getGetTeamBuildingPostsByProjectInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getTeamBuildingPostsByProject>>,
     QueryKey,
-    GetTeamBuildingPostsByProjectParams['cursor']
+    GetTeamBuildingPostsByProjectParams['after']
   > = ({ signal, pageParam }) =>
     getTeamBuildingPostsByProject(
       projectId,
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -150,7 +150,7 @@ export const getGetTeamBuildingPostsByProjectInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    GetTeamBuildingPostsByProjectParams['cursor']
+    GetTeamBuildingPostsByProjectParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -163,12 +163,12 @@ export type GetTeamBuildingPostsByProjectInfiniteQueryError =
 export function useGetTeamBuildingPostsByProjectInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPostsByProject>>,
-    GetTeamBuildingPostsByProjectParams['cursor']
+    GetTeamBuildingPostsByProjectParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params: undefined | GetTeamBuildingPostsByProjectParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -176,7 +176,7 @@ export function useGetTeamBuildingPostsByProjectInfinite<
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsByProjectParams['cursor']
+        GetTeamBuildingPostsByProjectParams['after']
       >
     > &
       Pick<
@@ -197,12 +197,12 @@ export function useGetTeamBuildingPostsByProjectInfinite<
 export function useGetTeamBuildingPostsByProjectInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPostsByProject>>,
-    GetTeamBuildingPostsByProjectParams['cursor']
+    GetTeamBuildingPostsByProjectParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -210,7 +210,7 @@ export function useGetTeamBuildingPostsByProjectInfinite<
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsByProjectParams['cursor']
+        GetTeamBuildingPostsByProjectParams['after']
       >
     > &
       Pick<
@@ -231,12 +231,12 @@ export function useGetTeamBuildingPostsByProjectInfinite<
 export function useGetTeamBuildingPostsByProjectInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPostsByProject>>,
-    GetTeamBuildingPostsByProjectParams['cursor']
+    GetTeamBuildingPostsByProjectParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -244,7 +244,7 @@ export function useGetTeamBuildingPostsByProjectInfinite<
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsByProjectParams['cursor']
+        GetTeamBuildingPostsByProjectParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -260,12 +260,12 @@ export function useGetTeamBuildingPostsByProjectInfinite<
 export function useGetTeamBuildingPostsByProjectInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPostsByProject>>,
-    GetTeamBuildingPostsByProjectParams['cursor']
+    GetTeamBuildingPostsByProjectParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -273,7 +273,7 @@ export function useGetTeamBuildingPostsByProjectInfinite<
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsByProjectParams['cursor']
+        GetTeamBuildingPostsByProjectParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -303,7 +303,7 @@ export const getGetTeamBuildingPostsByProjectQueryOptions = <
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -351,7 +351,7 @@ export function useGetTeamBuildingPostsByProject<
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params: undefined | GetTeamBuildingPostsByProjectParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -379,7 +379,7 @@ export function useGetTeamBuildingPostsByProject<
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -407,7 +407,7 @@ export function useGetTeamBuildingPostsByProject<
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -431,7 +431,7 @@ export function useGetTeamBuildingPostsByProject<
   TError = ErrorType<unknown>,
 >(
   projectId: string,
-  params: GetTeamBuildingPostsByProjectParams,
+  params?: GetTeamBuildingPostsByProjectParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -476,7 +476,7 @@ export type getTeamBuildingPostsResponseSuccess =
 export type getTeamBuildingPostsResponse = getTeamBuildingPostsResponseSuccess;
 
 export const getGetTeamBuildingPostsUrl = (
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
 ) => {
   const normalizedParams = new URLSearchParams();
 
@@ -494,7 +494,7 @@ export const getGetTeamBuildingPostsUrl = (
 };
 
 export const getTeamBuildingPosts = async (
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: RequestInit,
 ): Promise<getTeamBuildingPostsResponse> => {
   return api<getTeamBuildingPostsResponse>(getGetTeamBuildingPostsUrl(params), {
@@ -518,11 +518,11 @@ export const getGetTeamBuildingPostsQueryKey = (
 export const getGetTeamBuildingPostsInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPosts>>,
-    GetTeamBuildingPostsParams['cursor']
+    GetTeamBuildingPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -530,7 +530,7 @@ export const getGetTeamBuildingPostsInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsParams['cursor']
+        GetTeamBuildingPostsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -544,10 +544,10 @@ export const getGetTeamBuildingPostsInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getTeamBuildingPosts>>,
     QueryKey,
-    GetTeamBuildingPostsParams['cursor']
+    GetTeamBuildingPostsParams['after']
   > = ({ signal, pageParam }) =>
     getTeamBuildingPosts(
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -556,7 +556,7 @@ export const getGetTeamBuildingPostsInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    GetTeamBuildingPostsParams['cursor']
+    GetTeamBuildingPostsParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -568,11 +568,11 @@ export type GetTeamBuildingPostsInfiniteQueryError = ErrorType<unknown>;
 export function useGetTeamBuildingPostsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPosts>>,
-    GetTeamBuildingPostsParams['cursor']
+    GetTeamBuildingPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params: undefined | GetTeamBuildingPostsParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -580,7 +580,7 @@ export function useGetTeamBuildingPostsInfinite<
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsParams['cursor']
+        GetTeamBuildingPostsParams['after']
       >
     > &
       Pick<
@@ -601,11 +601,11 @@ export function useGetTeamBuildingPostsInfinite<
 export function useGetTeamBuildingPostsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPosts>>,
-    GetTeamBuildingPostsParams['cursor']
+    GetTeamBuildingPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -613,7 +613,7 @@ export function useGetTeamBuildingPostsInfinite<
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsParams['cursor']
+        GetTeamBuildingPostsParams['after']
       >
     > &
       Pick<
@@ -634,11 +634,11 @@ export function useGetTeamBuildingPostsInfinite<
 export function useGetTeamBuildingPostsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPosts>>,
-    GetTeamBuildingPostsParams['cursor']
+    GetTeamBuildingPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -646,7 +646,7 @@ export function useGetTeamBuildingPostsInfinite<
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsParams['cursor']
+        GetTeamBuildingPostsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -662,11 +662,11 @@ export function useGetTeamBuildingPostsInfinite<
 export function useGetTeamBuildingPostsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getTeamBuildingPosts>>,
-    GetTeamBuildingPostsParams['cursor']
+    GetTeamBuildingPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -674,7 +674,7 @@ export function useGetTeamBuildingPostsInfinite<
         TError,
         TData,
         QueryKey,
-        GetTeamBuildingPostsParams['cursor']
+        GetTeamBuildingPostsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -702,7 +702,7 @@ export const getGetTeamBuildingPostsQueryOptions = <
   TData = Awaited<ReturnType<typeof getTeamBuildingPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -740,7 +740,7 @@ export function useGetTeamBuildingPosts<
   TData = Awaited<ReturnType<typeof getTeamBuildingPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params: undefined | GetTeamBuildingPostsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -767,7 +767,7 @@ export function useGetTeamBuildingPosts<
   TData = Awaited<ReturnType<typeof getTeamBuildingPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -794,7 +794,7 @@ export function useGetTeamBuildingPosts<
   TData = Awaited<ReturnType<typeof getTeamBuildingPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -817,7 +817,7 @@ export function useGetTeamBuildingPosts<
   TData = Awaited<ReturnType<typeof getTeamBuildingPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetTeamBuildingPostsParams,
+  params?: GetTeamBuildingPostsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
