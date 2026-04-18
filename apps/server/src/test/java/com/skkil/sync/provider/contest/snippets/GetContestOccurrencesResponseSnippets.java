@@ -4,8 +4,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.epages.restdocs.apispec.FieldDescriptors;
-import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
-import com.skkil.sync.common.util.pagination.snippets.PaginationResponseSnippets;
+import com.skkil.sync.common.util.pagination.snippets.OffsetPaginationResponseSnippets;
 import com.skkil.sync.provider.contest.dto.response.GetContestOccurrencesResponse;
 import java.util.List;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -22,15 +21,12 @@ public class GetContestOccurrencesResponseSnippets {
             1L, contest, "Occurrence Title", "Occurrence Description");
 
     return new GetContestOccurrencesResponse(
-        PaginationResponse.<GetContestOccurrencesResponse.ContestOccurrence>builder()
-            .content(List.of(occurrence))
-            .hasNext(true)
-            .hasPrevious(false)
-            .build());
+        OffsetPaginationResponseSnippets.of(List.of(occurrence)));
   }
 
   public static ResponseFieldsSnippet getGetContestOccurrencesResponseFields() {
-    FieldDescriptors fields = PaginationResponseSnippets.getPaginationResponseFields("occurrences");
+    FieldDescriptors fields =
+        OffsetPaginationResponseSnippets.getPaginationResponseFields("occurrences");
 
     fields =
         fields.andWithPrefix(

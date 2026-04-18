@@ -56,7 +56,7 @@ export type getProjectExperienceReflectionsResponse =
 
 export const getGetProjectExperienceReflectionsUrl = (
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
 ) => {
   const normalizedParams = new URLSearchParams();
 
@@ -75,7 +75,7 @@ export const getGetProjectExperienceReflectionsUrl = (
 
 export const getProjectExperienceReflections = async (
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: RequestInit,
 ): Promise<getProjectExperienceReflectionsResponse> => {
   return api<getProjectExperienceReflectionsResponse>(
@@ -111,12 +111,12 @@ export const getGetProjectExperienceReflectionsQueryKey = (
 export const getGetProjectExperienceReflectionsInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof getProjectExperienceReflections>>,
-    GetProjectExperienceReflectionsParams['cursor']
+    GetProjectExperienceReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -124,7 +124,7 @@ export const getGetProjectExperienceReflectionsInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        GetProjectExperienceReflectionsParams['cursor']
+        GetProjectExperienceReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -139,11 +139,11 @@ export const getGetProjectExperienceReflectionsInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getProjectExperienceReflections>>,
     QueryKey,
-    GetProjectExperienceReflectionsParams['cursor']
+    GetProjectExperienceReflectionsParams['after']
   > = ({ signal, pageParam }) =>
     getProjectExperienceReflections(
       experienceId,
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -157,7 +157,7 @@ export const getGetProjectExperienceReflectionsInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    GetProjectExperienceReflectionsParams['cursor']
+    GetProjectExperienceReflectionsParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -170,12 +170,12 @@ export type GetProjectExperienceReflectionsInfiniteQueryError =
 export function useGetProjectExperienceReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getProjectExperienceReflections>>,
-    GetProjectExperienceReflectionsParams['cursor']
+    GetProjectExperienceReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params: undefined | GetProjectExperienceReflectionsParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -183,7 +183,7 @@ export function useGetProjectExperienceReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetProjectExperienceReflectionsParams['cursor']
+        GetProjectExperienceReflectionsParams['after']
       >
     > &
       Pick<
@@ -204,12 +204,12 @@ export function useGetProjectExperienceReflectionsInfinite<
 export function useGetProjectExperienceReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getProjectExperienceReflections>>,
-    GetProjectExperienceReflectionsParams['cursor']
+    GetProjectExperienceReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -217,7 +217,7 @@ export function useGetProjectExperienceReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetProjectExperienceReflectionsParams['cursor']
+        GetProjectExperienceReflectionsParams['after']
       >
     > &
       Pick<
@@ -238,12 +238,12 @@ export function useGetProjectExperienceReflectionsInfinite<
 export function useGetProjectExperienceReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getProjectExperienceReflections>>,
-    GetProjectExperienceReflectionsParams['cursor']
+    GetProjectExperienceReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -251,7 +251,7 @@ export function useGetProjectExperienceReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetProjectExperienceReflectionsParams['cursor']
+        GetProjectExperienceReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -267,12 +267,12 @@ export function useGetProjectExperienceReflectionsInfinite<
 export function useGetProjectExperienceReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getProjectExperienceReflections>>,
-    GetProjectExperienceReflectionsParams['cursor']
+    GetProjectExperienceReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -280,7 +280,7 @@ export function useGetProjectExperienceReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetProjectExperienceReflectionsParams['cursor']
+        GetProjectExperienceReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -310,7 +310,7 @@ export const getGetProjectExperienceReflectionsQueryOptions = <
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -358,7 +358,7 @@ export function useGetProjectExperienceReflections<
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params: undefined | GetProjectExperienceReflectionsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -386,7 +386,7 @@ export function useGetProjectExperienceReflections<
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -414,7 +414,7 @@ export function useGetProjectExperienceReflections<
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -438,7 +438,7 @@ export function useGetProjectExperienceReflections<
   TError = ErrorType<unknown>,
 >(
   experienceId: string,
-  params: GetProjectExperienceReflectionsParams,
+  params?: GetProjectExperienceReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -481,7 +481,7 @@ export type getReflectionsResponseSuccess = getReflectionsResponse200 & {
 };
 export type getReflectionsResponse = getReflectionsResponseSuccess;
 
-export const getGetReflectionsUrl = (params: GetReflectionsParams) => {
+export const getGetReflectionsUrl = (params?: GetReflectionsParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -498,7 +498,7 @@ export const getGetReflectionsUrl = (params: GetReflectionsParams) => {
 };
 
 export const getReflections = async (
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: RequestInit,
 ): Promise<getReflectionsResponse> => {
   return api<getReflectionsResponse>(getGetReflectionsUrl(params), {
@@ -520,11 +520,11 @@ export const getGetReflectionsQueryKey = (params?: GetReflectionsParams) => {
 export const getGetReflectionsInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof getReflections>>,
-    GetReflectionsParams['cursor']
+    GetReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -532,7 +532,7 @@ export const getGetReflectionsInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        GetReflectionsParams['cursor']
+        GetReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -546,10 +546,10 @@ export const getGetReflectionsInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getReflections>>,
     QueryKey,
-    GetReflectionsParams['cursor']
+    GetReflectionsParams['after']
   > = ({ signal, pageParam }) =>
     getReflections(
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -558,7 +558,7 @@ export const getGetReflectionsInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    GetReflectionsParams['cursor']
+    GetReflectionsParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -570,11 +570,11 @@ export type GetReflectionsInfiniteQueryError = ErrorType<unknown>;
 export function useGetReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getReflections>>,
-    GetReflectionsParams['cursor']
+    GetReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params: undefined | GetReflectionsParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -582,7 +582,7 @@ export function useGetReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetReflectionsParams['cursor']
+        GetReflectionsParams['after']
       >
     > &
       Pick<
@@ -603,11 +603,11 @@ export function useGetReflectionsInfinite<
 export function useGetReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getReflections>>,
-    GetReflectionsParams['cursor']
+    GetReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -615,7 +615,7 @@ export function useGetReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetReflectionsParams['cursor']
+        GetReflectionsParams['after']
       >
     > &
       Pick<
@@ -636,11 +636,11 @@ export function useGetReflectionsInfinite<
 export function useGetReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getReflections>>,
-    GetReflectionsParams['cursor']
+    GetReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -648,7 +648,7 @@ export function useGetReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetReflectionsParams['cursor']
+        GetReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -664,11 +664,11 @@ export function useGetReflectionsInfinite<
 export function useGetReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getReflections>>,
-    GetReflectionsParams['cursor']
+    GetReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -676,7 +676,7 @@ export function useGetReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetReflectionsParams['cursor']
+        GetReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -701,7 +701,7 @@ export const getGetReflectionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getReflections>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getReflections>>, TError, TData>
@@ -733,7 +733,7 @@ export function useGetReflections<
   TData = Awaited<ReturnType<typeof getReflections>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params: undefined | GetReflectionsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getReflections>>, TError, TData>
@@ -756,7 +756,7 @@ export function useGetReflections<
   TData = Awaited<ReturnType<typeof getReflections>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getReflections>>, TError, TData>
@@ -779,7 +779,7 @@ export function useGetReflections<
   TData = Awaited<ReturnType<typeof getReflections>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getReflections>>, TError, TData>
@@ -798,7 +798,7 @@ export function useGetReflections<
   TData = Awaited<ReturnType<typeof getReflections>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetReflectionsParams,
+  params?: GetReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getReflections>>, TError, TData>
@@ -1132,7 +1132,7 @@ export type getUserReflectionsResponse = getUserReflectionsResponseSuccess;
 
 export const getGetUserReflectionsUrl = (
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
 ) => {
   const normalizedParams = new URLSearchParams();
 
@@ -1151,7 +1151,7 @@ export const getGetUserReflectionsUrl = (
 
 export const getUserReflections = async (
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: RequestInit,
 ): Promise<getUserReflectionsResponse> => {
   return api<getUserReflectionsResponse>(
@@ -1184,12 +1184,12 @@ export const getGetUserReflectionsQueryKey = (
 export const getGetUserReflectionsInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUserReflections>>,
-    GetUserReflectionsParams['cursor']
+    GetUserReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -1197,7 +1197,7 @@ export const getGetUserReflectionsInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        GetUserReflectionsParams['cursor']
+        GetUserReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -1212,11 +1212,11 @@ export const getGetUserReflectionsInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getUserReflections>>,
     QueryKey,
-    GetUserReflectionsParams['cursor']
+    GetUserReflectionsParams['after']
   > = ({ signal, pageParam }) =>
     getUserReflections(
       userId,
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -1230,7 +1230,7 @@ export const getGetUserReflectionsInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    GetUserReflectionsParams['cursor']
+    GetUserReflectionsParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -1242,12 +1242,12 @@ export type GetUserReflectionsInfiniteQueryError = ErrorType<unknown>;
 export function useGetUserReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUserReflections>>,
-    GetUserReflectionsParams['cursor']
+    GetUserReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params: undefined | GetUserReflectionsParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -1255,7 +1255,7 @@ export function useGetUserReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetUserReflectionsParams['cursor']
+        GetUserReflectionsParams['after']
       >
     > &
       Pick<
@@ -1276,12 +1276,12 @@ export function useGetUserReflectionsInfinite<
 export function useGetUserReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUserReflections>>,
-    GetUserReflectionsParams['cursor']
+    GetUserReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -1289,7 +1289,7 @@ export function useGetUserReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetUserReflectionsParams['cursor']
+        GetUserReflectionsParams['after']
       >
     > &
       Pick<
@@ -1310,12 +1310,12 @@ export function useGetUserReflectionsInfinite<
 export function useGetUserReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUserReflections>>,
-    GetUserReflectionsParams['cursor']
+    GetUserReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -1323,7 +1323,7 @@ export function useGetUserReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetUserReflectionsParams['cursor']
+        GetUserReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -1339,12 +1339,12 @@ export function useGetUserReflectionsInfinite<
 export function useGetUserReflectionsInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUserReflections>>,
-    GetUserReflectionsParams['cursor']
+    GetUserReflectionsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -1352,7 +1352,7 @@ export function useGetUserReflectionsInfinite<
         TError,
         TData,
         QueryKey,
-        GetUserReflectionsParams['cursor']
+        GetUserReflectionsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -1382,7 +1382,7 @@ export const getGetUserReflectionsQueryOptions = <
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1426,7 +1426,7 @@ export function useGetUserReflections<
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params: undefined | GetUserReflectionsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1454,7 +1454,7 @@ export function useGetUserReflections<
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1482,7 +1482,7 @@ export function useGetUserReflections<
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1506,7 +1506,7 @@ export function useGetUserReflections<
   TError = ErrorType<unknown>,
 >(
   userId: string,
-  params: GetUserReflectionsParams,
+  params?: GetUserReflectionsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

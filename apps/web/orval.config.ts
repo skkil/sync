@@ -15,7 +15,7 @@ export default defineConfig({
       override: {
         query: {
           useInfinite: false,
-          useInfiniteQueryParam: 'cursor',
+          useInfiniteQueryParam: 'after',
         },
         mutator: {
           path: './src/lib/server.ts',

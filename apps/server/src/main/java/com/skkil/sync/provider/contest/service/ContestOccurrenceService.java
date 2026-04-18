@@ -1,7 +1,7 @@
 package com.skkil.sync.provider.contest.service;
 
-import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
-import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
+import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.provider.contest.dto.request.CreateContestOccurrenceRequest;
 import com.skkil.sync.provider.contest.dto.response.GetContestOccurrenceResponse;
 import com.skkil.sync.provider.contest.dto.response.GetContestOccurrencesResponse;
@@ -19,12 +19,15 @@ public class ContestOccurrenceService {
 
   private final ContestRepository contestRepository;
   private final ContestOccurrenceRepository contestOccurrenceRepository;
+  private final PaginationService paginationService;
 
   public ContestOccurrenceService(
       ContestRepository contestRepository,
-      ContestOccurrenceRepository contestOccurrenceRepository) {
+      ContestOccurrenceRepository contestOccurrenceRepository,
+      PaginationService paginationService) {
     this.contestRepository = contestRepository;
     this.contestOccurrenceRepository = contestOccurrenceRepository;
+    this.paginationService = paginationService;
   }
 
   @Transactional
@@ -60,12 +63,14 @@ public class ContestOccurrenceService {
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#contestId, 'PROVIDER', 'READ')")
   public GetContestOccurrencesResponse getContestOccurrencesByContest(
-      Long contestId, PaginationRequest pagination) {
+      Long contestId, OffsetPaginationRequest pagination) {
     Contest contest = contestRepository.getReferenceById(contestId);
 
     var occurrences =
-        contestOccurrenceRepository
-            .findByContest(contest, pagination.toPageable())
+        paginationService
+            .paginate(
+                pageable -> contestOccurrenceRepository.findByContest(contest, pageable),
+                pagination)
             .map(
                 occurrence -> {
                   Contest occurrenceContest = occurrence.getContest();
@@ -80,11 +85,6 @@ public class ContestOccurrenceService {
                       occurrence.getDescription());
                 });
 
-    return new GetContestOccurrencesResponse(
-        PaginationResponse.<GetContestOccurrencesResponse.ContestOccurrence>builder()
-            .content(occurrences.toList())
-            .hasNext(occurrences.hasNext())
-            .hasPrevious(occurrences.hasPrevious())
-            .build());
+    return new GetContestOccurrencesResponse(occurrences);
   }
 }

@@ -21,12 +21,14 @@ export default function UnverifiedProviders() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
     useGetUnverifiedProvidersInfinite(
-      { size: PAGE_SIZE.toString() },
+      { first: PAGE_SIZE.toString() },
       {
         query: {
           getNextPageParam: (lastPage) => {
             const providers = lastPage.data.providers;
-            return providers?.hasNext ? providers.nextCursor : undefined;
+            return providers?.pageInfo.hasNextPage
+              ? providers?.pageInfo.endCursor
+              : undefined;
           },
         },
       },
@@ -35,7 +37,7 @@ export default function UnverifiedProviders() {
   const { mutate: verifyProvider } = useVerifyProviderMutation();
 
   const providers =
-    data?.pages.flatMap((page) => page.data.providers?.content ?? []) ?? [];
+    data?.pages.flatMap((page) => page.data.providers?.nodes ?? []) ?? [];
 
   return (
     <Card>
@@ -49,15 +51,15 @@ export default function UnverifiedProviders() {
           {providers.length > 0 ? (
             providers.map((provider) => (
               <div
-                key={provider.id}
+                key={provider.content.id}
                 className="flex items-center justify-between py-1"
               >
-                {provider.name}
+                {provider.content.name}
 
                 <div>
                   <Button
                     onClick={() => {
-                      verifyProvider(provider.id);
+                      verifyProvider(provider.content.id);
                     }}
                   >
                     {t('actions.verify')}

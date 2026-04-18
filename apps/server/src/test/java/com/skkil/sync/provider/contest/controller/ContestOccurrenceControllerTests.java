@@ -19,8 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.skkil.sync.common.config.TestSecurityConfig;
 import com.skkil.sync.common.security.WithAuthenticatedUser;
-import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
-import com.skkil.sync.common.util.pagination.snippets.PaginationRequestSnippets;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
+import com.skkil.sync.common.util.pagination.snippets.OffsetPaginationRequestSnippets;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.provider.contest.dto.request.CreateContestOccurrenceRequest;
 import com.skkil.sync.provider.contest.dto.response.GetContestOccurrenceResponse;
@@ -94,7 +94,7 @@ class ContestOccurrenceControllerTests {
   @WithAuthenticatedUser
   void getContestOccurrencesByContest() throws Exception {
     Long contestId = 1L;
-    PaginationRequest pagination = PaginationRequestSnippets.getPaginationRequest();
+    OffsetPaginationRequest pagination = OffsetPaginationRequestSnippets.getPaginationRequest();
     GetContestOccurrencesResponse response =
         GetContestOccurrencesResponseSnippets.getGetContestOccurrencesResponse();
 
@@ -104,7 +104,7 @@ class ContestOccurrenceControllerTests {
     mockMvc
         .perform(
             get("/contests/{contestId}/occurrences", contestId)
-                .queryParams(PaginationRequestSnippets.getPaginationRequestQueryParams()))
+                .queryParams(OffsetPaginationRequestSnippets.getPaginationRequestQueryParams()))
         .andExpect(status().isOk())
         .andDo(
             document(
@@ -118,7 +118,7 @@ class ContestOccurrenceControllerTests {
                 null,
                 Function.identity(),
                 pathParameters(parameterWithName("contestId").description("Contest ID")),
-                PaginationRequestSnippets.getPaginationRequestParameters(),
+                OffsetPaginationRequestSnippets.getPaginationRequestParameters(),
                 GetContestOccurrencesResponseSnippets.getGetContestOccurrencesResponseFields()));
   }
 

@@ -76,8 +76,8 @@ export default function ContestOccurrencesTable({
           onRowClick={handleRowClick}
           currentPage={page}
           onPageChange={setPage}
-          hasPreviousPage={occurrences?.hasPrevious}
-          hasNextPage={occurrences?.hasNext}
+          hasPreviousPage={occurrences?.pageInfo.hasPreviousPage}
+          hasNextPage={occurrences?.pageInfo.hasNextPage}
           isLoading={isLoading}
         />
       )}

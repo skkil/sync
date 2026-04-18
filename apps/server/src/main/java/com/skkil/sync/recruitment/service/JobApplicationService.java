@@ -1,7 +1,7 @@
 package com.skkil.sync.recruitment.service;
 
-import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
-import com.skkil.sync.common.util.pagination.dto.response.PaginationResponse;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
+import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.provider.company.model.JobPosting;
 import com.skkil.sync.provider.company.service.domain.JobPostingDomainService;
 import com.skkil.sync.recruitment.dto.data.JobApplicationDto;
@@ -26,16 +26,19 @@ public class JobApplicationService {
   private final JobPostingDomainService jobPostingDomainService;
   private final JobApplicationRepository jobApplicationRepository;
   private final JobApplicationMapper jobApplicationMapper;
+  private final PaginationService paginationService;
 
   public JobApplicationService(
       UserDomainService userDomainService,
       JobPostingDomainService jobPostingDomainService,
       JobApplicationRepository jobApplicationRepository,
-      JobApplicationMapper jobApplicationMapper) {
+      JobApplicationMapper jobApplicationMapper,
+      PaginationService paginationService) {
     this.userDomainService = userDomainService;
     this.jobPostingDomainService = jobPostingDomainService;
     this.jobApplicationRepository = jobApplicationRepository;
     this.jobApplicationMapper = jobApplicationMapper;
+    this.paginationService = paginationService;
   }
 
   @Transactional
@@ -62,12 +65,15 @@ public class JobApplicationService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("#userId == principal.userId")
-  public GetJobApplicationsResponse getJobApplications(Long userId, PaginationRequest pagination) {
+  public GetJobApplicationsResponse getJobApplications(
+      Long userId, OffsetPaginationRequest pagination) {
     User applicant = userDomainService.getUserReference(userId);
 
     var applications =
-        jobApplicationRepository
-            .findByApplicant(applicant, pagination.toPageable())
+        paginationService
+            .paginate(
+                (pageable) -> jobApplicationRepository.findByApplicant(applicant, pageable),
+                pagination)
             .map(
                 ja ->
                     new GetJobApplicationsResponse.Application(
@@ -76,12 +82,7 @@ public class JobApplicationService {
                             ja.getJobPosting().getCompany().getId(),
                             ja.getJobPosting().getCompany().getName())));
 
-    return new GetJobApplicationsResponse(
-        PaginationResponse.<GetJobApplicationsResponse.Application>builder()
-            .content(applications.toList())
-            .hasNext(applications.hasNext())
-            .hasPrevious(applications.hasPrevious())
-            .build());
+    return new GetJobApplicationsResponse(applications);
   }
 
   @Transactional(readOnly = true)

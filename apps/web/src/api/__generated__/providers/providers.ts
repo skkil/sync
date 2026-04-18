@@ -49,7 +49,7 @@ export type getUnverifiedProvidersResponse =
   getUnverifiedProvidersResponseSuccess;
 
 export const getGetUnverifiedProvidersUrl = (
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
 ) => {
   const normalizedParams = new URLSearchParams();
 
@@ -67,7 +67,7 @@ export const getGetUnverifiedProvidersUrl = (
 };
 
 export const getUnverifiedProviders = async (
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: RequestInit,
 ): Promise<getUnverifiedProvidersResponse> => {
   return api<getUnverifiedProvidersResponse>(
@@ -98,11 +98,11 @@ export const getGetUnverifiedProvidersQueryKey = (
 export const getGetUnverifiedProvidersInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUnverifiedProviders>>,
-    GetUnverifiedProvidersParams['cursor']
+    GetUnverifiedProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -110,7 +110,7 @@ export const getGetUnverifiedProvidersInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        GetUnverifiedProvidersParams['cursor']
+        GetUnverifiedProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -124,10 +124,10 @@ export const getGetUnverifiedProvidersInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getUnverifiedProviders>>,
     QueryKey,
-    GetUnverifiedProvidersParams['cursor']
+    GetUnverifiedProvidersParams['after']
   > = ({ signal, pageParam }) =>
     getUnverifiedProviders(
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -136,7 +136,7 @@ export const getGetUnverifiedProvidersInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    GetUnverifiedProvidersParams['cursor']
+    GetUnverifiedProvidersParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -148,11 +148,11 @@ export type GetUnverifiedProvidersInfiniteQueryError = ErrorType<unknown>;
 export function useGetUnverifiedProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUnverifiedProviders>>,
-    GetUnverifiedProvidersParams['cursor']
+    GetUnverifiedProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params: undefined | GetUnverifiedProvidersParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -160,7 +160,7 @@ export function useGetUnverifiedProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        GetUnverifiedProvidersParams['cursor']
+        GetUnverifiedProvidersParams['after']
       >
     > &
       Pick<
@@ -181,11 +181,11 @@ export function useGetUnverifiedProvidersInfinite<
 export function useGetUnverifiedProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUnverifiedProviders>>,
-    GetUnverifiedProvidersParams['cursor']
+    GetUnverifiedProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -193,7 +193,7 @@ export function useGetUnverifiedProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        GetUnverifiedProvidersParams['cursor']
+        GetUnverifiedProvidersParams['after']
       >
     > &
       Pick<
@@ -214,11 +214,11 @@ export function useGetUnverifiedProvidersInfinite<
 export function useGetUnverifiedProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUnverifiedProviders>>,
-    GetUnverifiedProvidersParams['cursor']
+    GetUnverifiedProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -226,7 +226,7 @@ export function useGetUnverifiedProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        GetUnverifiedProvidersParams['cursor']
+        GetUnverifiedProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -242,11 +242,11 @@ export function useGetUnverifiedProvidersInfinite<
 export function useGetUnverifiedProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getUnverifiedProviders>>,
-    GetUnverifiedProvidersParams['cursor']
+    GetUnverifiedProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -254,7 +254,7 @@ export function useGetUnverifiedProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        GetUnverifiedProvidersParams['cursor']
+        GetUnverifiedProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -282,7 +282,7 @@ export const getGetUnverifiedProvidersQueryOptions = <
   TData = Awaited<ReturnType<typeof getUnverifiedProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -320,7 +320,7 @@ export function useGetUnverifiedProviders<
   TData = Awaited<ReturnType<typeof getUnverifiedProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params: undefined | GetUnverifiedProvidersParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -347,7 +347,7 @@ export function useGetUnverifiedProviders<
   TData = Awaited<ReturnType<typeof getUnverifiedProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -374,7 +374,7 @@ export function useGetUnverifiedProviders<
   TData = Awaited<ReturnType<typeof getUnverifiedProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -397,7 +397,7 @@ export function useGetUnverifiedProviders<
   TData = Awaited<ReturnType<typeof getUnverifiedProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetUnverifiedProvidersParams,
+  params?: GetUnverifiedProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -436,7 +436,7 @@ export type getMyProvidersResponseSuccess = getMyProvidersResponse200 & {
 };
 export type getMyProvidersResponse = getMyProvidersResponseSuccess;
 
-export const getGetMyProvidersUrl = (params: GetMyProvidersParams) => {
+export const getGetMyProvidersUrl = (params?: GetMyProvidersParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -453,7 +453,7 @@ export const getGetMyProvidersUrl = (params: GetMyProvidersParams) => {
 };
 
 export const getMyProviders = async (
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: RequestInit,
 ): Promise<getMyProvidersResponse> => {
   return api<getMyProvidersResponse>(getGetMyProvidersUrl(params), {
@@ -475,11 +475,11 @@ export const getGetMyProvidersQueryKey = (params?: GetMyProvidersParams) => {
 export const getGetMyProvidersInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof getMyProviders>>,
-    GetMyProvidersParams['cursor']
+    GetMyProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -487,7 +487,7 @@ export const getGetMyProvidersInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        GetMyProvidersParams['cursor']
+        GetMyProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -501,10 +501,10 @@ export const getGetMyProvidersInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getMyProviders>>,
     QueryKey,
-    GetMyProvidersParams['cursor']
+    GetMyProvidersParams['after']
   > = ({ signal, pageParam }) =>
     getMyProviders(
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -513,7 +513,7 @@ export const getGetMyProvidersInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    GetMyProvidersParams['cursor']
+    GetMyProvidersParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -525,11 +525,11 @@ export type GetMyProvidersInfiniteQueryError = ErrorType<unknown>;
 export function useGetMyProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getMyProviders>>,
-    GetMyProvidersParams['cursor']
+    GetMyProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params: undefined | GetMyProvidersParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -537,7 +537,7 @@ export function useGetMyProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        GetMyProvidersParams['cursor']
+        GetMyProvidersParams['after']
       >
     > &
       Pick<
@@ -558,11 +558,11 @@ export function useGetMyProvidersInfinite<
 export function useGetMyProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getMyProviders>>,
-    GetMyProvidersParams['cursor']
+    GetMyProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -570,7 +570,7 @@ export function useGetMyProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        GetMyProvidersParams['cursor']
+        GetMyProvidersParams['after']
       >
     > &
       Pick<
@@ -591,11 +591,11 @@ export function useGetMyProvidersInfinite<
 export function useGetMyProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getMyProviders>>,
-    GetMyProvidersParams['cursor']
+    GetMyProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -603,7 +603,7 @@ export function useGetMyProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        GetMyProvidersParams['cursor']
+        GetMyProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -619,11 +619,11 @@ export function useGetMyProvidersInfinite<
 export function useGetMyProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof getMyProviders>>,
-    GetMyProvidersParams['cursor']
+    GetMyProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -631,7 +631,7 @@ export function useGetMyProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        GetMyProvidersParams['cursor']
+        GetMyProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -656,7 +656,7 @@ export const getGetMyProvidersQueryOptions = <
   TData = Awaited<ReturnType<typeof getMyProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getMyProviders>>, TError, TData>
@@ -688,7 +688,7 @@ export function useGetMyProviders<
   TData = Awaited<ReturnType<typeof getMyProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params: undefined | GetMyProvidersParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getMyProviders>>, TError, TData>
@@ -711,7 +711,7 @@ export function useGetMyProviders<
   TData = Awaited<ReturnType<typeof getMyProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getMyProviders>>, TError, TData>
@@ -734,7 +734,7 @@ export function useGetMyProviders<
   TData = Awaited<ReturnType<typeof getMyProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getMyProviders>>, TError, TData>
@@ -753,7 +753,7 @@ export function useGetMyProviders<
   TData = Awaited<ReturnType<typeof getMyProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: GetMyProvidersParams,
+  params?: GetMyProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getMyProviders>>, TError, TData>
@@ -788,7 +788,7 @@ export type searchProvidersResponseSuccess = searchProvidersResponse200 & {
 };
 export type searchProvidersResponse = searchProvidersResponseSuccess;
 
-export const getSearchProvidersUrl = (params: SearchProvidersParams) => {
+export const getSearchProvidersUrl = (params?: SearchProvidersParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -805,7 +805,7 @@ export const getSearchProvidersUrl = (params: SearchProvidersParams) => {
 };
 
 export const searchProviders = async (
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: RequestInit,
 ): Promise<searchProvidersResponse> => {
   return api<searchProvidersResponse>(getSearchProvidersUrl(params), {
@@ -831,11 +831,11 @@ export const getSearchProvidersQueryKey = (params?: SearchProvidersParams) => {
 export const getSearchProvidersInfiniteQueryOptions = <
   TData = InfiniteData<
     Awaited<ReturnType<typeof searchProviders>>,
-    SearchProvidersParams['cursor']
+    SearchProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -843,7 +843,7 @@ export const getSearchProvidersInfiniteQueryOptions = <
         TError,
         TData,
         QueryKey,
-        SearchProvidersParams['cursor']
+        SearchProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -857,10 +857,10 @@ export const getSearchProvidersInfiniteQueryOptions = <
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof searchProviders>>,
     QueryKey,
-    SearchProvidersParams['cursor']
+    SearchProvidersParams['after']
   > = ({ signal, pageParam }) =>
     searchProviders(
-      { ...params, cursor: pageParam || params?.['cursor'] },
+      { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
@@ -869,7 +869,7 @@ export const getSearchProvidersInfiniteQueryOptions = <
     TError,
     TData,
     QueryKey,
-    SearchProvidersParams['cursor']
+    SearchProvidersParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
@@ -881,11 +881,11 @@ export type SearchProvidersInfiniteQueryError = ErrorType<unknown>;
 export function useSearchProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof searchProviders>>,
-    SearchProvidersParams['cursor']
+    SearchProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params: undefined | SearchProvidersParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -893,7 +893,7 @@ export function useSearchProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        SearchProvidersParams['cursor']
+        SearchProvidersParams['after']
       >
     > &
       Pick<
@@ -914,11 +914,11 @@ export function useSearchProvidersInfinite<
 export function useSearchProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof searchProviders>>,
-    SearchProvidersParams['cursor']
+    SearchProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -926,7 +926,7 @@ export function useSearchProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        SearchProvidersParams['cursor']
+        SearchProvidersParams['after']
       >
     > &
       Pick<
@@ -947,11 +947,11 @@ export function useSearchProvidersInfinite<
 export function useSearchProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof searchProviders>>,
-    SearchProvidersParams['cursor']
+    SearchProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -959,7 +959,7 @@ export function useSearchProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        SearchProvidersParams['cursor']
+        SearchProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -975,11 +975,11 @@ export function useSearchProvidersInfinite<
 export function useSearchProvidersInfinite<
   TData = InfiniteData<
     Awaited<ReturnType<typeof searchProviders>>,
-    SearchProvidersParams['cursor']
+    SearchProvidersParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -987,7 +987,7 @@ export function useSearchProvidersInfinite<
         TError,
         TData,
         QueryKey,
-        SearchProvidersParams['cursor']
+        SearchProvidersParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -1012,7 +1012,7 @@ export const getSearchProvidersQueryOptions = <
   TData = Awaited<ReturnType<typeof searchProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1048,7 +1048,7 @@ export function useSearchProviders<
   TData = Awaited<ReturnType<typeof searchProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params: undefined | SearchProvidersParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1075,7 +1075,7 @@ export function useSearchProviders<
   TData = Awaited<ReturnType<typeof searchProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1102,7 +1102,7 @@ export function useSearchProviders<
   TData = Awaited<ReturnType<typeof searchProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1125,7 +1125,7 @@ export function useSearchProviders<
   TData = Awaited<ReturnType<typeof searchProviders>>,
   TError = ErrorType<unknown>,
 >(
-  params: SearchProvidersParams,
+  params?: SearchProvidersParams,
   options?: {
     query?: Partial<
       UseQueryOptions<

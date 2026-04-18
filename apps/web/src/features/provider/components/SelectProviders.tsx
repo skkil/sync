@@ -54,14 +54,16 @@ export default function SelectProviders({
       {
         query: debouncedQuery,
         types: types.join(','),
-        size: DEFAULT_PROVIDER_PAGE_SIZE.toString(),
+        first: DEFAULT_PROVIDER_PAGE_SIZE.toString(),
       },
       {
         query: {
           enabled: debouncedQuery.length > 0,
           getNextPageParam: (lastPage) => {
             const providers = lastPage.data.providers;
-            return providers?.hasNext ? providers.nextCursor : undefined;
+            return providers?.pageInfo.hasNextPage
+              ? providers.pageInfo.endCursor
+              : undefined;
           },
         },
       },
@@ -80,7 +82,7 @@ export default function SelectProviders({
   }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const providers =
-    data?.pages.flatMap((page) => page.data.providers?.content ?? []) ?? [];
+    data?.pages.flatMap((page) => page.data.providers?.nodes ?? []) ?? [];
 
   return (
     <Popover>
@@ -128,23 +130,23 @@ export default function SelectProviders({
                   )}
                 </CommandEmpty>
                 <CommandGroup>
-                  {providers.map((provider) => (
+                  {providers.map(({ content: { id, type, name } }) => (
                     <CommandItem
-                      key={provider.id}
-                      value={provider.id}
+                      key={id}
+                      value={id}
                       onSelect={() => {
                         onChange({
-                          type: provider.type as ProviderType,
-                          id: provider.id,
-                          name: provider.name,
+                          type: type as ProviderType,
+                          id,
+                          name,
                         });
                         setSelectedProvider({
-                          id: provider.id,
-                          name: provider.name,
+                          id,
+                          name,
                         });
                       }}
                     >
-                      {provider.name}
+                      {name}
                     </CommandItem>
                   ))}
                 </CommandGroup>
