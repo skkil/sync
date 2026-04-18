@@ -69,6 +69,11 @@ export default defineConfig({
               useInfinite: true,
             },
           },
+          GetTrendingProjects: {
+            query: {
+              useInfinite: true,
+            },
+          },
         },
       },
     },
