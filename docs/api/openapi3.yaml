@@ -1147,6 +1147,78 @@ components:
         id:
           type: string
           description: Job Posting ID
+    GetProvidersResponse:
+      title: GetProvidersResponse
+      type: object
+      properties:
+        providers:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - id
+                    - isMaintainer
+                    - isVerified
+                    - name
+                    - type
+                    type: object
+                    properties:
+                      isMaintainer:
+                        type: boolean
+                        description: Maintainer Status
+                      isVerified:
+                        type: boolean
+                        description: Verification Status
+                      name:
+                        type: string
+                        description: Provider Name
+                      id:
+                        type: string
+                        description: Provider ID
+                      type:
+                        type: string
+                        description: Provider Type
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     LoginRequest:
       title: LoginRequest
       required:
@@ -1334,88 +1406,6 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
-    GetTeamBuildingPostsResponse:
-      title: GetTeamBuildingPostsResponse
-      type: object
-      properties:
-        posts:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - content
-                    - id
-                    - project
-                    - title
-                    type: object
-                    properties:
-                      project:
-                        required:
-                        - description
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Project Name
-                          description:
-                            type: string
-                            description: Project Description
-                          id:
-                            type: string
-                            description: Project ID
-                        description: Project
-                      id:
-                        type: string
-                        description: Post ID
-                      title:
-                        type: string
-                        description: Post Title
-                      content:
-                        type: string
-                        description: Post Content
-                    description: Node Content
-            pageInfo:
-              required:
-              - endCursor
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              - startCursor
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                startCursor:
-                  type: string
-                  description: Start Cursor
-              description: Page Info
     CreateReflectionResponse:
       title: CreateReflectionResponse
       required:
@@ -1425,78 +1415,6 @@ components:
         id:
           type: number
           description: Reflection ID
-    GetProvidersResponse:
-      title: GetProvidersResponse
-      type: object
-      properties:
-        providers:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - id
-                    - isMaintainer
-                    - isVerified
-                    - name
-                    - type
-                    type: object
-                    properties:
-                      isMaintainer:
-                        type: boolean
-                        description: Maintainer Status
-                      isVerified:
-                        type: boolean
-                        description: Verification Status
-                      name:
-                        type: string
-                        description: Provider Name
-                      id:
-                        type: string
-                        description: Provider ID
-                      type:
-                        type: string
-                        description: Provider Type
-                    description: Node Content
-            pageInfo:
-              required:
-              - endCursor
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              - startCursor
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                startCursor:
-                  type: string
-                  description: Start Cursor
-              description: Page Info
     GetJobPostingResponse:
       title: GetJobPostingResponse
       required:
@@ -1728,98 +1646,6 @@ components:
         email:
           type: string
           description: Email
-    CreateJobPostingRequest:
-      title: CreateJobPostingRequest
-      required:
-      - jobDescription
-      - jobTitle
-      type: object
-      properties:
-        jobTitle:
-          type: string
-          description: Job Title
-        location:
-          type: string
-          description: Location
-          nullable: true
-        jobDescription:
-          type: string
-          description: Job Description
-    CreateReflectionRequest:
-      title: CreateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        experienceId:
-          type: number
-          description: Experience ID
-          nullable: true
-        content:
-          type: string
-          description: Content
-    GetJobApplicationResponse:
-      title: GetJobApplicationResponse
-      required:
-      - company
-      - id
-      - jobDescription
-      - status
-      type: object
-      properties:
-        notes:
-          type: string
-          description: Additional Notes
-          nullable: true
-        jobDescription:
-          required:
-          - description
-          - location
-          - title
-          type: object
-          properties:
-            description:
-              type: string
-              description: Job Description
-            location:
-              type: string
-              description: Job Location
-            title:
-              type: string
-              description: Job Title
-          description: Job Description Information
-        company:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Company Name
-            id:
-              type: number
-              description: Company ID
-          description: Company Information
-        id:
-          type: number
-          description: Application ID
-        status:
-          type: string
-          description: Application Status
-    UpdateReflectionRequest:
-      title: UpdateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        experienceId:
-          type: number
-          description: Experience ID
-          nullable: true
-        content:
-          type: string
-          description: Content
     GetReflectionsResponse:
       title: GetReflectionsResponse
       type: object
@@ -1884,11 +1710,9 @@ components:
                     description: Node Content
             pageInfo:
               required:
-              - endCursor
               - hasNextPage
               - hasPreviousPage
               - size
-              - startCursor
               type: object
               properties:
                 size:
@@ -1903,10 +1727,186 @@ components:
                 endCursor:
                   type: string
                   description: End Cursor
+                  nullable: true
                 startCursor:
                   type: string
                   description: Start Cursor
+                  nullable: true
               description: Page Info
+    CreateJobPostingRequest:
+      title: CreateJobPostingRequest
+      required:
+      - jobDescription
+      - jobTitle
+      type: object
+      properties:
+        jobTitle:
+          type: string
+          description: Job Title
+        location:
+          type: string
+          description: Location
+          nullable: true
+        jobDescription:
+          type: string
+          description: Job Description
+    CreateReflectionRequest:
+      title: CreateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        experienceId:
+          type: number
+          description: Experience ID
+          nullable: true
+        content:
+          type: string
+          description: Content
+    GetTeamBuildingPostsResponse:
+      title: GetTeamBuildingPostsResponse
+      type: object
+      properties:
+        posts:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - content
+                    - id
+                    - project
+                    - title
+                    type: object
+                    properties:
+                      project:
+                        required:
+                        - description
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Project Name
+                          description:
+                            type: string
+                            description: Project Description
+                          id:
+                            type: string
+                            description: Project ID
+                        description: Project
+                      id:
+                        type: string
+                        description: Post ID
+                      title:
+                        type: string
+                        description: Post Title
+                      content:
+                        type: string
+                        description: Post Content
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
+    GetJobApplicationResponse:
+      title: GetJobApplicationResponse
+      required:
+      - company
+      - id
+      - jobDescription
+      - status
+      type: object
+      properties:
+        notes:
+          type: string
+          description: Additional Notes
+          nullable: true
+        jobDescription:
+          required:
+          - description
+          - location
+          - title
+          type: object
+          properties:
+            description:
+              type: string
+              description: Job Description
+            location:
+              type: string
+              description: Job Location
+            title:
+              type: string
+              description: Job Title
+          description: Job Description Information
+        company:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Company Name
+            id:
+              type: number
+              description: Company ID
+          description: Company Information
+        id:
+          type: number
+          description: Application ID
+        status:
+          type: string
+          description: Application Status
+    UpdateReflectionRequest:
+      title: UpdateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        experienceId:
+          type: number
+          description: Experience ID
+          nullable: true
+        content:
+          type: string
+          description: Content
     GetContestOccurrenceResponse:
       title: GetContestOccurrenceResponse
       required:

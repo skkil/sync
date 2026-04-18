@@ -31,7 +31,7 @@ public class TeamBuildingPostQueryRepository {
             .from(TEAM_BUILDING_POSTS)
             .join(PROVIDERS)
             .on(TEAM_BUILDING_POSTS.PROJECT_ID.eq(PROVIDERS.ID))
-            .where(condition)
+            .where(condition.and(PROVIDERS.VERIFICATION_STATUS.eq("VERIFIED")))
             .orderBy(orderFields)
             .limit(size)
             .fetchInto(TeamBuildingPostDto.class);

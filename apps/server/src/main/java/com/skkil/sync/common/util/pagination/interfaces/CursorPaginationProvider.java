@@ -15,5 +15,7 @@ public interface CursorPaginationProvider<T, C extends Cursor> {
 
   List<OrderField<?>> getOrderFields();
 
+  List<OrderField<?>> getReversedOrderFields();
+
   C convert(T entity);
 }

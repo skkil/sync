@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 
-import { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__generated__/types';
+import type { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__generated__/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { BaseViewer } from '@/components/ui/editor';

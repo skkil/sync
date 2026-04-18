@@ -35,6 +35,11 @@ public class TeamBuildingPostCursorPaginationProvider
   }
 
   @Override
+  public List<OrderField<?>> getReversedOrderFields() {
+    return List.of(TEAM_BUILDING_POSTS.ID.desc());
+  }
+
+  @Override
   public TeamBuildingPostCursor convert(TeamBuildingPostDto entity) {
     return new TeamBuildingPostCursor(entity.id());
   }

@@ -11,6 +11,7 @@ import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetc
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationProvider;
 import com.skkil.sync.common.util.pagination.interfaces.OffsetPaginationDataFetcher;
 import com.skkil.sync.common.util.pagination.model.Cursor;
+import java.util.Collections;
 import java.util.List;
 import org.jooq.Condition;
 import org.jooq.OrderField;
@@ -58,24 +59,10 @@ public class PaginationService {
             ? noCondition()
             : isForward ? provider.getNextCondition(cursor) : provider.getPreviousCondition(cursor);
 
-    List<OrderField<?>> orderFields = provider.getOrderFields();
+    List<OrderField<?>> orderFields =
+        isForward ? provider.getOrderFields() : provider.getReversedOrderFields();
 
     List<T> results = fetcher.fetch(condition, orderFields, requestedSize + 1);
-
-    CursorPaginationResponse.PageInfo pageInfo =
-        CursorPaginationResponse.PageInfo.builder()
-            .size(Math.min(results.size(), requestedSize))
-            .hasNextPage(results.size() == requestedSize + 1)
-            .hasPreviousPage(cursor != null)
-            .startCursor(
-                !results.isEmpty()
-                    ? cursorConverter.encode(provider.convert(results.get(0)))
-                    : null)
-            .endCursor(
-                !results.isEmpty()
-                    ? cursorConverter.encode(provider.convert(results.get(results.size() - 1)))
-                    : null)
-            .build();
 
     List<CursorPaginationResponse.Node<T>> nodes =
         results.stream()
@@ -85,6 +72,23 @@ public class PaginationService {
                     new CursorPaginationResponse.Node<>(
                         cursorConverter.encode(provider.convert(result)), result))
             .toList();
+
+    if (!isForward) {
+      Collections.reverse(nodes);
+    }
+
+    boolean hasExtraItem = results.size() > requestedSize;
+    boolean hasNextPage = isForward ? hasExtraItem : cursor != null;
+    boolean hasPreviousPage = isForward ? cursor != null : hasExtraItem;
+
+    CursorPaginationResponse.PageInfo pageInfo =
+        CursorPaginationResponse.PageInfo.builder()
+            .size(Math.min(results.size(), requestedSize))
+            .hasNextPage(hasNextPage)
+            .hasPreviousPage(hasPreviousPage)
+            .startCursor(!nodes.isEmpty() ? nodes.get(0).cursor() : null)
+            .endCursor(!nodes.isEmpty() ? nodes.get(nodes.size() - 1).cursor() : null)
+            .build();
 
     return new CursorPaginationResponse<>(pageInfo, nodes);
   }

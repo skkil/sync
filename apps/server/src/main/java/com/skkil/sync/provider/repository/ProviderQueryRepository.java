@@ -61,7 +61,7 @@ public class ProviderQueryRepository {
             .leftJoin(MAINTAINERS)
             .on(PROVIDERS.ID.eq(MAINTAINERS.PROVIDER_ID).and(MAINTAINERS.USER_ID.eq(requesterId)))
             .where(condition)
-            .orderBy(PROVIDERS.CREATED_AT.asc(), PROVIDERS.ID.asc())
+            .orderBy(orderFields)
             .limit(size)
             .fetchInto(ProviderDto.class);
   }

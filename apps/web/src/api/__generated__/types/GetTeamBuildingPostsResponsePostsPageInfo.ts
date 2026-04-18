@@ -15,8 +15,14 @@ export type GetTeamBuildingPostsResponsePostsPageInfo = {
   hasNextPage: boolean;
   /** Has Previous Page */
   hasPreviousPage: boolean;
-  /** End Cursor */
-  endCursor: string;
-  /** Start Cursor */
-  startCursor: string;
+  /**
+   * End Cursor
+   * @nullable
+   */
+  endCursor?: string | null;
+  /**
+   * Start Cursor
+   * @nullable
+   */
+  startCursor?: string | null;
 };

@@ -35,6 +35,11 @@ public class ReflectionCursorPaginationProvider
   }
 
   @Override
+  public List<OrderField<?>> getReversedOrderFields() {
+    return List.of(REFLECTIONS.ID.desc());
+  }
+
+  @Override
   public ReflectionCursor convert(ReflectionDto entity) {
     return new ReflectionCursor(entity.id());
   }

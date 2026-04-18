@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 import { useGetTeamBuildingPostsInfinite } from '@/api/__generated__/team-building/team-building';
-import { GetTeamBuildingPostsResponsePostsNodesItem } from '@/api/__generated__/types';
+import type { GetTeamBuildingPostsResponsePostsNodesItem } from '@/api/__generated__/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';

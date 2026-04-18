@@ -27,7 +27,8 @@ public class CursorConverter {
       String json = objectMapper.writeValueAsString(cursor.getFields());
       return Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
     } catch (Exception e) {
-      throw new RuntimeException("Failed to encode cursor", e);
+      log.debug("Failed to encode cursor: {}", cursor, e);
+      throw new InvalidPaginationParametersException("Failed to encode cursor: " + cursor);
     }
   }
 

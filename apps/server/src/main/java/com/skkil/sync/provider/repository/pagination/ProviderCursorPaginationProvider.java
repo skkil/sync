@@ -21,17 +21,22 @@ public class ProviderCursorPaginationProvider
 
   @Override
   public Condition getNextCondition(ProviderCursor cursor) {
-    return PROVIDERS.ID.lt(cursor.id());
+    return PROVIDERS.ID.gt(cursor.id());
   }
 
   @Override
   public Condition getPreviousCondition(ProviderCursor cursor) {
-    return PROVIDERS.ID.gt(cursor.id());
+    return PROVIDERS.ID.lt(cursor.id());
   }
 
   @Override
   public List<OrderField<?>> getOrderFields() {
     return List.of(PROVIDERS.ID.asc());
+  }
+
+  @Override
+  public List<OrderField<?>> getReversedOrderFields() {
+    return List.of(PROVIDERS.ID.desc());
   }
 
   @Override

@@ -39,8 +39,12 @@ public class CursorPaginationResponseSnippets {
             .description("Has Previous Page"),
         fieldWithPath(".pageInfo.startCursor")
             .type(JsonFieldType.STRING)
-            .description("Start Cursor"),
-        fieldWithPath(".pageInfo.endCursor").type(JsonFieldType.STRING).description("End Cursor"),
+            .description("Start Cursor")
+            .optional(),
+        fieldWithPath(".pageInfo.endCursor")
+            .type(JsonFieldType.STRING)
+            .description("End Cursor")
+            .optional(),
         fieldWithPath(".nodes").type(JsonFieldType.ARRAY).description("Nodes"),
         fieldWithPath(".nodes[].cursor").type(JsonFieldType.STRING).description("Node Cursor"),
         fieldWithPath(".nodes[].content")
