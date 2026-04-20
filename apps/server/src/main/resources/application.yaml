@@ -61,6 +61,34 @@ app:
   slack:
     webhook-url: ${SLACK_WEBHOOK_URL:}
 
+management:
+  observations:
+    annotations:
+      enabled: true
+
+  logging:
+    export:
+      otlp:
+        enabled: ${ENABLE_TELEMETRY:false}
+
+  tracing:
+    export:
+      enabled: ${ENABLE_TELEMETRY:false}
+
+  otlp:
+    metrics:
+      export:
+        enabled: ${ENABLE_TELEMETRY:false}
+
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+          - prometheus
+
 server:
   servlet:
     session:

@@ -82,16 +82,22 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.security:spring-security-messaging'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
+	implementation "org.springframework.boot:spring-boot-starter-log4j2"
+	implementation "io.opentelemetry.instrumentation:opentelemetry-log4j-appender-2.17:2.26.1-alpha"
 	implementation platform("org.springframework.ai:spring-ai-bom:2.0.0-M3")
 	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
 	implementation 'org.bouncycastle:bcprov-jdk18on:1.82'
 	implementation platform('io.awspring.cloud:spring-cloud-aws-dependencies:4.0.0-RC1')
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 	implementation 'org.mapstruct:mapstruct:1.6.3'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 	runtimeOnly 'org.postgresql:postgresql'
+	runtimeOnly 'io.micrometer:micrometer-registry-otlp'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
@@ -113,6 +119,8 @@ dependencies {
 	testImplementation 'org.testcontainers:testcontainers-localstack'
 	testImplementation 'io.awspring.cloud:spring-cloud-aws-testcontainers'
 	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.20.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-opentelemetry-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	errorprone 'com.uber.nullaway:nullaway:0.12.12'
 	errorprone 'com.google.errorprone:error_prone_core:2.42.0'
@@ -122,6 +130,12 @@ dependencies {
 	liquibaseRuntime 'info.picocli:picocli:4.7.7'
 	liquibaseRuntime 'org.postgresql:postgresql'
 	liquibaseRuntime 'org.testcontainers:testcontainers-postgresql'
+
+	modules {
+		module("org.springframework.boot:spring-boot-starter-logging") {
+			replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
+		}
+	}
 }
 
 tasks.withType(JavaCompile) {
