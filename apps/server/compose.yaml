@@ -7,3 +7,12 @@ services:
       - "POSTGRES_USER=skkil"
     ports:
       - "5432:5432"
+
+  grafana-lgtm:
+    image: "grafana/otel-lgtm:0.25.0"
+    profiles:
+      - telemetry
+    ports:
+      - "3001:3000"
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
