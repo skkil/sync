@@ -85,6 +85,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
 	implementation "org.springframework.boot:spring-boot-starter-log4j2"
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation "io.opentelemetry.instrumentation:opentelemetry-log4j-appender-2.17:2.26.1-alpha"
 	implementation platform("org.springframework.ai:spring-ai-bom:2.0.0-M3")
 	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
@@ -121,6 +123,8 @@ dependencies {
 	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.20.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-opentelemetry-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-mail-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	errorprone 'com.uber.nullaway:nullaway:0.12.12'
 	errorprone 'com.google.errorprone:error_prone_core:2.42.0'

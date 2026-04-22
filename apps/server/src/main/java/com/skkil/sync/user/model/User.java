@@ -75,6 +75,9 @@ public class User extends BaseEntity {
   @Column(name = "is_onboarded", nullable = false)
   private Boolean isOnboarded = false;
 
+  @Column(name = "is_email_verified", nullable = false)
+  private Boolean isEmailVerified = false;
+
   @Column(name = "deleted_at", nullable = true)
   private Instant deletedAt;
 
@@ -110,6 +113,10 @@ public class User extends BaseEntity {
     }
 
     this.isOnboarded = true;
+  }
+
+  public void verifyEmail() {
+    this.isEmailVerified = true;
   }
 
   public void updateHandle(String handle) {
