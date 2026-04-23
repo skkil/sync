@@ -66,6 +66,10 @@ databaseChangeLog:
                   type: BOOLEAN
                   defaultValueBoolean: false
               - column:
+                  name: is_email_verified
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
                   name: deleted_at
                   type: TIMESTAMP
                   defaultValue: NULL
