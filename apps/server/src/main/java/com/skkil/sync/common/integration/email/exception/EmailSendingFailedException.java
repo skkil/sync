@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatusCode;
 public class EmailSendingFailedException extends SyncException {
 
   public EmailSendingFailedException(Throwable cause) {
-    super("Failed to send email: " + cause.getMessage(), cause);
+    super("Failed to send email", cause);
   }
 
   @Override
