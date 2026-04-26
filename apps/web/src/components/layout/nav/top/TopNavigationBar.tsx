@@ -47,33 +47,6 @@ function TopNavigationBarDesktop({
 }) {
   const tabs = [
     {
-      id: 'home',
-      href: '/',
-      icon: <HouseIcon />,
-      highlight: () => {
-        return path === '/' || path.startsWith('/jobs');
-      },
-      authenticated: false,
-    },
-    {
-      id: 'create',
-      href: '/provider/create',
-      icon: <PlusIcon />,
-      highlight: () => {
-        return path.startsWith('/provider/create');
-      },
-      authenticated: true,
-    },
-    {
-      id: 'network',
-      href: '/network',
-      icon: <UsersIcon />,
-      highlight: () => {
-        return path.startsWith('/network');
-      },
-      authenticated: true,
-    },
-    {
       id: 'messages',
       href: '/messages',
       icon: <ChatCircleDotsIcon />,

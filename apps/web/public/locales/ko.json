@@ -904,7 +904,7 @@
   "components": {
     "navigation": {
       "search": {
-        "placeholder": "사람, 기관 또는 프로젝트 검색..."
+        "placeholder": "검색..."
       },
       "menu": {
         "jobs": "채용 공고",
