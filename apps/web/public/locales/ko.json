@@ -1,14 +1,11 @@
 {
   "pages": {
     "home": {
-      "title": "sync",
-      "left": {
-        "trending-projects": "인기 프로젝트",
-        "jobs": "채용 공고",
-        "team-building": "팀원 모집"
-      },
-      "right": {
-        "my-providers": "내가 관리하는 페이지"
+      "post-editor": {
+        "placeholder": "오늘은 무엇을 배우셨나요?",
+        "post": {
+          "label": "게시물 작성"
+        }
       }
     },
     "jobs": {
