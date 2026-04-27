@@ -30,6 +30,12 @@ databaseChangeLog:
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
               - column:
+                  name: slug
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
                   name: author_id
                   type: BIGINT
                   constraints:
@@ -37,6 +43,9 @@ databaseChangeLog:
               - column:
                   name: project_experience_id
                   type: BIGINT
+              - column:
+                  name: title
+                  type: VARCHAR(255)
               - column:
                   name: content
                   type: TEXT

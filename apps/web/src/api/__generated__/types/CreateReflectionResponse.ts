@@ -6,6 +6,6 @@
  */
 
 export interface CreateReflectionResponse {
-  /** Reflection ID */
-  id: number;
+  /** Reflection Slug */
+  slug: string;
 }
