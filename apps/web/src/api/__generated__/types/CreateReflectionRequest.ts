@@ -7,10 +7,10 @@
 
 export interface CreateReflectionRequest {
   /**
-   * Experience ID
+   * Title
    * @nullable
    */
-  experienceId?: number | null;
+  title?: string | null;
   /** Content */
   content: string;
 }

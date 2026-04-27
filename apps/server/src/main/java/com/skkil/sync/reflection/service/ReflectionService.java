@@ -1,5 +1,6 @@
 package com.skkil.sync.reflection.service;
 
+import com.skkil.sync.common.util.text.Slugify;
 import com.skkil.sync.experience.constant.ExperienceType;
 import com.skkil.sync.experience.model.Experience;
 import com.skkil.sync.experience.model.ProjectExperience;
@@ -42,21 +43,24 @@ public class ReflectionService {
   public CreateReflectionResponse createReflection(Long authorId, CreateReflectionRequest request) {
     User author = userDomainService.getUserReference(authorId);
 
-    Reflection reflection = Reflection.builder().author(author).content(request.content()).build();
+    String slug =
+        request.title() == null
+            ? String.format("%s-%d", author.getHandle(), System.currentTimeMillis())
+            : Slugify.slugify(request.title());
 
-    if (request.experienceId() != null) {
-      Experience experience =
-          experienceDomainService.getExperience(
-              request.experienceId(), ExperienceType.PROJECT_EXPERIENCE);
-
-      reflection.updateExperience((ProjectExperience) experience);
-    }
+    Reflection reflection =
+        Reflection.builder()
+            .slug(slug)
+            .author(author)
+            .title(request.title())
+            .content(request.content())
+            .build();
 
     reflection = reflectionRepository.save(reflection);
     eventPublisher.publishEvent(
         new ReflectionCreatedEvent(reflection.getId(), reflection.getContent()));
 
-    return new CreateReflectionResponse(reflection.getId());
+    return new CreateReflectionResponse(reflection.getSlug());
   }
 
   @Transactional

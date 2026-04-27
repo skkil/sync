@@ -17,6 +17,9 @@ import lombok.Getter;
 @Getter
 public class Reflection extends BaseEntity {
 
+  @Column(name = "slug", nullable = false, unique = true)
+  private String slug;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "author_id", nullable = false)
   private User author;
@@ -25,14 +28,19 @@ public class Reflection extends BaseEntity {
   @JoinColumn(name = "project_experience_id", nullable = true)
   private ProjectExperience experience;
 
+  @Column(name = "title")
+  private String title;
+
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
   protected Reflection() {}
 
   @Builder
-  public Reflection(User author, String content) {
+  public Reflection(String slug, User author, String title, String content) {
+    this.slug = slug;
     this.author = author;
+    this.title = title;
     this.content = content;
   }
 

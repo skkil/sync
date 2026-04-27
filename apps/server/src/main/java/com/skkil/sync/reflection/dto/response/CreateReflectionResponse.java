@@ -1,3 +1,3 @@
 package com.skkil.sync.reflection.dto.response;
 
-public record CreateReflectionResponse(Long id) {}
+public record CreateReflectionResponse(String slug) {}

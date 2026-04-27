@@ -879,7 +879,7 @@ paths:
               $ref: "#/components/schemas/CreateReflectionRequest"
             examples:
               CreateReflection:
-                value: "{\"experienceId\":1,\"content\":\"This is a reflection content.\"\
+                value: "{\"title\":\"title\",\"content\":\"This is a reflection content.\"\
                   }"
       responses:
         "201":
@@ -892,7 +892,7 @@ paths:
                 CreateReflection:
                   value: |-
                     {
-                      "id" : 1
+                      "slug" : "slug"
                     }
   /reflections/{reflectionId}:
     delete:
@@ -1521,12 +1521,12 @@ components:
     CreateReflectionResponse:
       title: CreateReflectionResponse
       required:
-      - id
+      - slug
       type: object
       properties:
-        id:
-          type: number
-          description: Reflection ID
+        slug:
+          type: string
+          description: Reflection Slug
     GetJobPostingResponse:
       title: GetJobPostingResponse
       required:
@@ -1663,6 +1663,19 @@ components:
                   updatedAt:
                     type: string
                     description: Update Timestamp
+    CreateReflectionRequest:
+      title: CreateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title
+          nullable: true
+        content:
+          type: string
+          description: Content
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:
@@ -1862,19 +1875,6 @@ components:
         jobDescription:
           type: string
           description: Job Description
-    CreateReflectionRequest:
-      title: CreateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        experienceId:
-          type: number
-          description: Experience ID
-          nullable: true
-        content:
-          type: string
-          description: Content
     GetTeamBuildingPostsResponse:
       title: GetTeamBuildingPostsResponse
       type: object
