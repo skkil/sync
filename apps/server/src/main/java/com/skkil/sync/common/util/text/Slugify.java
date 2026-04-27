@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class Slugify {
 
-  private static final Pattern NON_ALPHANUMERIC = Pattern.compile("[^a-z0-9]+");
+  private static final Pattern NON_ALPHANUMERIC = Pattern.compile("[^a-z0-9-]+");
   private static final Pattern WHITESPACE = Pattern.compile("\\s+");
   private static final Pattern MULTIPLE_HYPHENS = Pattern.compile("-{2,}");
 
@@ -27,6 +27,10 @@ public class Slugify {
             .replaceAll("-")
             .toLowerCase(Locale.ENGLISH)
             .replaceAll("^-|-$", "");
+
+    if (slug.isEmpty()) {
+      return String.valueOf(System.currentTimeMillis());
+    }
 
     slug = slug + "-" + System.currentTimeMillis();
 

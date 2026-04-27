@@ -39,6 +39,7 @@ export default function MiniPostEditor() {
     onUpdate: ({ editor }) => {
       if (!editor) {
         setIsEmpty(true);
+        return;
       }
 
       setIsEmpty(editor.isEmpty);

@@ -120,5 +120,5 @@ export function isAuthenticated(session: Session) {
 }
 
 export function isOnboarded(session: Session) {
-  return session !== null && session.user.isOnboarded;
+  return session !== null && session.user !== null && session.user.isOnboarded;
 }
