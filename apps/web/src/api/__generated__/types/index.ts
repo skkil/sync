@@ -11,6 +11,7 @@ export * from './CreateJobApplicationResponse';
 export * from './CreateJobPostingRequest';
 export * from './CreateJobPostingResponse';
 export * from './CreateReflectionRequest';
+export * from './CreateReflectionRequestContent';
 export * from './CreateReflectionResponse';
 export * from './GetContestOccurrenceResponse';
 export * from './GetContestOccurrenceResponseContest';

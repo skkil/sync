@@ -879,8 +879,9 @@ paths:
               $ref: "#/components/schemas/CreateReflectionRequest"
             examples:
               CreateReflection:
-                value: "{\"title\":\"title\",\"content\":\"This is a reflection content.\"\
-                  }"
+                value: "{\"title\":\"title\",\"content\":{\"text\":\"This is a reflection\
+                  \ content.\",\"json\":\"{\\\"text\\\": \\\"This is a reflection\
+                  \ content.\\\"}\"}}"
       responses:
         "201":
           description: "201"
@@ -1570,6 +1571,29 @@ components:
         updatedAt:
           type: string
           description: Update Timestamp
+    CreateReflectionRequest:
+      title: CreateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title
+          nullable: true
+        content:
+          required:
+          - json
+          - text
+          type: object
+          properties:
+            json:
+              type: string
+              description: JSON Content
+            text:
+              type: string
+              description: Text Content
+          description: Content
     GetJobApplicationFilesResponse:
       title: GetJobApplicationFilesResponse
       required:
@@ -1663,19 +1687,6 @@ components:
                   updatedAt:
                     type: string
                     description: Update Timestamp
-    CreateReflectionRequest:
-      title: CreateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        title:
-          type: string
-          description: Title
-          nullable: true
-        content:
-          type: string
-          description: Content
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:
