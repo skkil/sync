@@ -13,6 +13,11 @@ spring:
     hibernate:
       ddl-auto: validate
 
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
@@ -48,6 +53,15 @@ spring:
           model: ${OLLAMA_MODEL}
           format: json
           temperature: 0
+      embedding:
+        model: ${OLLAMA_EMBEDDING_MODEL}
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimension: 1536
+        table-name: vector_store
+        initialize-schema: true
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}

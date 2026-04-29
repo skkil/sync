@@ -4,6 +4,7 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
+import type { CreateReflectionRequestContent } from './CreateReflectionRequestContent';
 
 export interface CreateReflectionRequest {
   /**
@@ -12,5 +13,5 @@ export interface CreateReflectionRequest {
    */
   title?: string | null;
   /** Content */
-  content: string;
+  content: CreateReflectionRequestContent;
 }

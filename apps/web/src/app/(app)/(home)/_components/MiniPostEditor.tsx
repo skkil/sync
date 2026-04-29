@@ -68,7 +68,10 @@ export default function MiniPostEditor() {
     createPost(
       {
         data: {
-          content: JSON.stringify(editor.getJSON()),
+          content: {
+            text: editor.getText(),
+            json: JSON.stringify(editor.getJSON()),
+          },
         },
       },
       {
