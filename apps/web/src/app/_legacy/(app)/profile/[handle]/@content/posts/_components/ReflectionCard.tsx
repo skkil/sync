@@ -4,6 +4,7 @@ import type { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { BaseViewer } from '@/components/ui/editor';
+import CommentsSection from '@/features/comment/components/CommentsSection';
 
 interface ReflectionCardProps {
   reflection: GetReflectionsResponseReflectionsNodesItemContent;
@@ -33,6 +34,8 @@ export default function ReflectionCard({ reflection }: ReflectionCardProps) {
             <BaseViewer content={reflection.content} />
           </div>
         </div>
+
+        <CommentsSection targetType="REFLECTION" targetId={reflection.id} />
       </CardContent>
     </Card>
   );

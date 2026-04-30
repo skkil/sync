@@ -5,6 +5,8 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from './CreateCommentRequest';
+export * from './CreateCommentResponse';
 export * from './CreateContestOccurrenceRequest';
 export * from './CreateJobApplicationRequest';
 export * from './CreateJobApplicationResponse';
@@ -12,6 +14,16 @@ export * from './CreateJobPostingRequest';
 export * from './CreateJobPostingResponse';
 export * from './CreateReflectionRequest';
 export * from './CreateReflectionResponse';
+export * from './GetCommentsParams';
+export * from './GetCommentsResponse';
+export * from './GetCommentsResponseComments';
+export * from './GetCommentsResponseCommentsNodesItem';
+export * from './GetCommentsResponseCommentsNodesItemContent';
+export * from './GetCommentsResponseCommentsNodesItemContentAuthor';
+export * from './GetCommentsResponseCommentsNodesItemContentRepliesItem';
+export * from './GetCommentsResponseCommentsNodesItemContentRepliesItemAuthor';
+export * from './GetCommentsResponseCommentsNodesItemContentRepliesItemRepliesItem';
+export * from './GetCommentsResponseCommentsPageInfo';
 export * from './GetContestOccurrenceResponse';
 export * from './GetContestOccurrenceResponseContest';
 export * from './GetContestOccurrencesByContestParams';
@@ -77,6 +89,7 @@ export * from './GetUserReflectionsParams';
 export * from './LoginRequest';
 export * from './RegisterRequest';
 export * from './SearchProvidersParams';
+export * from './UpdateCommentRequest';
 export * from './UpdateProfileRequest';
 export * from './UpdateProfileRequestContacts';
 export * from './UpdateReflectionRequest';

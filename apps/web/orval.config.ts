@@ -44,6 +44,11 @@ export default defineConfig({
               useInfinite: true,
             },
           },
+          GetComments: {
+            query: {
+              useInfinite: true,
+            },
+          },
           SearchProviders: {
             query: {
               useInfinite: true,

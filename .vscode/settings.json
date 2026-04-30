@@ -1,0 +1,15 @@
+{
+  "java.compile.nullAnalysis.mode": "automatic",
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.import.gradle.enabled": true,
+  "java.import.gradle.wrapper.enabled": true,
+
+  "editor.detectIndentation": false,
+  "editor.insertSpaces": true,
+
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  }
+}

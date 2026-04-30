@@ -235,6 +235,138 @@ paths:
       responses:
         "204":
           description: "204"
+  /comments:
+    get:
+      tags:
+      - comment
+      summary: Get Comments
+      description: Get Comments
+      operationId: GetComments
+      parameters:
+      - name: targetType
+        in: query
+        description: Comment target type
+        required: true
+        schema:
+          type: string
+      - name: targetId
+        in: query
+        description: Comment target ID
+        required: true
+        schema:
+          type: string
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: Cursor after which to return items
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: Cursor before which to return items
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCommentsResponse"
+              examples:
+                GetComments:
+                  value: "{\"comments\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"handle\":\"user-handle\"\
+                    },\"content\":\"Comment content\",\"deleted\":false,\"createdAt\"\
+                    :\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\"\
+                    ,\"replies\":[{\"id\":2,\"author\":{\"id\":1,\"handle\":\"user-handle\"\
+                    },\"content\":\"Reply content\",\"deleted\":false,\"createdAt\"\
+                    :\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\"\
+                    ,\"replies\":[]}]}}]}}"
+    post:
+      tags:
+      - comment
+      summary: Create Comment
+      description: Create Comment
+      operationId: CreateComment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+            examples:
+              CreateComment:
+                value: "{\"targetType\":\"REFLECTION\",\"targetId\":1,\"parentId\"\
+                  :null,\"content\":\"Comment content\"}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCommentResponse"
+              examples:
+                CreateComment:
+                  value: |-
+                    {
+                      "id" : 1
+                    }
+  /comments/{commentId}:
+    delete:
+      tags:
+      - comment
+      summary: Delete Comment
+      description: Delete Comment
+      operationId: DeleteComment
+      parameters:
+      - name: commentId
+        in: path
+        description: Comment ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+    patch:
+      tags:
+      - comment
+      summary: Update Comment
+      description: Update Comment
+      operationId: UpdateComment
+      parameters:
+      - name: commentId
+        in: path
+        description: Comment ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCommentRequest"
+            examples:
+              UpdateComment:
+                value: "{\"content\":\"Updated comment content\"}"
+      responses:
+        "204":
+          description: "204"
   /companies/{companyId}/jobs:
     get:
       tags:
@@ -1518,6 +1650,15 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    UpdateCommentRequest:
+      title: UpdateCommentRequest
+      required:
+      - content
+      type: object
+      properties:
+        content:
+          type: string
+          description: Comment content
     CreateReflectionResponse:
       title: CreateReflectionResponse
       required:
@@ -1527,6 +1668,140 @@ components:
         slug:
           type: string
           description: Reflection Slug
+    GetCommentsResponse:
+      title: GetCommentsResponse
+      type: object
+      properties:
+        comments:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - createdAt
+                    - deleted
+                    - id
+                    - replies
+                    - updatedAt
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Creation timestamp
+                      deleted:
+                        type: boolean
+                        description: Deleted flag
+                      replies:
+                        type: array
+                        description: Replies
+                        items:
+                          required:
+                          - createdAt
+                          - deleted
+                          - id
+                          - replies
+                          - updatedAt
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                              description: Creation timestamp
+                            deleted:
+                              type: boolean
+                              description: Deleted flag
+                            replies:
+                              type: array
+                              description: Nested replies
+                              items:
+                                oneOf:
+                                - type: object
+                                - type: boolean
+                                - type: string
+                                - type: number
+                            author:
+                              required:
+                              - id
+                              type: object
+                              properties:
+                                handle:
+                                  type: string
+                                  description: Author handle
+                                  nullable: true
+                                id:
+                                  type: number
+                                  description: Author user ID
+                            id:
+                              type: number
+                              description: Reply ID
+                            content:
+                              type: string
+                              description: Reply content
+                              nullable: true
+                            updatedAt:
+                              type: string
+                              description: Update timestamp
+                      author:
+                        required:
+                        - id
+                        type: object
+                        properties:
+                          handle:
+                            type: string
+                            description: Author handle
+                            nullable: true
+                          id:
+                            type: number
+                            description: Author user ID
+                      id:
+                        type: number
+                        description: Comment ID
+                      content:
+                        type: string
+                        description: Comment content
+                        nullable: true
+                      updatedAt:
+                        type: string
+                        description: Update timestamp
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     GetJobPostingResponse:
       title: GetJobPostingResponse
       required:
@@ -1858,6 +2133,36 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
+    CreateCommentResponse:
+      title: CreateCommentResponse
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: number
+          description: Created comment ID
+    CreateCommentRequest:
+      title: CreateCommentRequest
+      required:
+      - content
+      - targetId
+      - targetType
+      type: object
+      properties:
+        targetId:
+          type: number
+          description: Comment target ID
+        targetType:
+          type: string
+          description: Comment target type
+        content:
+          type: string
+          description: Comment content
+        parentId:
+          type: number
+          description: Parent comment ID
+          nullable: true
     CreateJobPostingRequest:
       title: CreateJobPostingRequest
       required:
