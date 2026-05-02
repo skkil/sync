@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  ChatCircleDotsIcon,
-  HouseIcon,
-  PlusIcon,
-  UsersIcon,
-} from '@phosphor-icons/react';
+import { ChatCircleDotsIcon } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -46,33 +41,6 @@ function TopNavigationBarDesktop({
   isAuthenticated: boolean;
 }) {
   const tabs = [
-    {
-      id: 'home',
-      href: '/',
-      icon: <HouseIcon />,
-      highlight: () => {
-        return path === '/' || path.startsWith('/jobs');
-      },
-      authenticated: false,
-    },
-    {
-      id: 'create',
-      href: '/provider/create',
-      icon: <PlusIcon />,
-      highlight: () => {
-        return path.startsWith('/provider/create');
-      },
-      authenticated: true,
-    },
-    {
-      id: 'network',
-      href: '/network',
-      icon: <UsersIcon />,
-      highlight: () => {
-        return path.startsWith('/network');
-      },
-      authenticated: true,
-    },
     {
       id: 'messages',
       href: '/messages',

@@ -7,11 +7,19 @@
 
 export type GetReflectionsParams = {
   /**
-   * Pagination Cursor
+   * Number of items to return from the beginning of the list
    */
-  cursor?: string;
+  first?: string;
   /**
-   * Page Size (Long)
+   * Cursor for pagination, indicating the position after which to return items
    */
-  size: string;
+  after?: string;
+  /**
+   * Number of items to return from the end of the list
+   */
+  last?: string;
+  /**
+   * Cursor for pagination, indicating the position before which to return items
+   */
+  before?: string;
 };

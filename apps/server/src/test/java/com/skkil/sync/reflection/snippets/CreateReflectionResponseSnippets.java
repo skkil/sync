@@ -10,11 +10,11 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 public class CreateReflectionResponseSnippets {
 
   public static CreateReflectionResponse getCreateReflectionResponse() {
-    return new CreateReflectionResponse(1L);
+    return new CreateReflectionResponse("slug");
   }
 
   public static ResponseFieldsSnippet getCreateReflectionResponseFields() {
     return responseFields(
-        fieldWithPath("id").type(JsonFieldType.NUMBER).description("Reflection ID"));
+        fieldWithPath("slug").type(JsonFieldType.STRING).description("Reflection Slug"));
   }
 }

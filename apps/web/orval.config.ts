@@ -15,7 +15,7 @@ export default defineConfig({
       override: {
         query: {
           useInfinite: false,
-          useInfiniteQueryParam: 'cursor',
+          useInfiniteQueryParam: 'after',
         },
         mutator: {
           path: './src/lib/server.ts',
@@ -40,6 +40,36 @@ export default defineConfig({
             },
           },
           GetProjectExperienceReflections: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          SearchProviders: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          GetMyProviders: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          GetUnverifiedProviders: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          GetTeamBuildingPosts: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          GetTeamBuildingPostsByProject: {
+            query: {
+              useInfinite: true,
+            },
+          },
+          GetTrendingProjects: {
             query: {
               useInfinite: true,
             },

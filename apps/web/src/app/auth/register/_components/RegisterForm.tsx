@@ -8,6 +8,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
+import { useRegister } from '@/api/__generated__/auth/auth';
 import { Button } from '@/components/ui/button';
 import {
   Field,
@@ -16,7 +17,6 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { useRegisterMutation } from '@/features/auth/api/register';
 import SyncError, { ErrorCode } from '@/lib/error';
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -24,7 +24,7 @@ const MIN_PASSWORD_LENGTH = 8;
 export default function RegisterForm() {
   const t = useTranslations('pages.register.form');
 
-  const { mutate: register } = useRegisterMutation();
+  const { mutate: register } = useRegister();
   const router = useRouter();
 
   const RegisterFormSchema = z
@@ -74,8 +74,10 @@ export default function RegisterForm() {
   const onFormSubmit = async (values: RegisterFormValues) => {
     register(
       {
-        email: values.email,
-        password: values.password,
+        data: {
+          email: values.email,
+          password: values.password,
+        },
       },
       {
         onSuccess: () => {

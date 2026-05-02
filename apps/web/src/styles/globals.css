@@ -3,7 +3,7 @@
 @import 'shadcn/tailwind.css';
 
 @import './_keyframe-animations.scss';
-@import './_variables.scss';
+@import './tiptap.scss';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -83,6 +83,14 @@
   --sidebar-accent-foreground: oklch(0.98 0.02 166);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Basic colors */
+  --white: #ffffff;
+  --black: oklch(0.145 0 0);
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .dark {
@@ -117,6 +125,12 @@
   --sidebar-accent-foreground: oklch(0.26 0.05 173);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Basic colors for dark mode */
+  --black: #000000;
+
+  /* Shadow for dark mode */
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
 }
 
 @layer base {

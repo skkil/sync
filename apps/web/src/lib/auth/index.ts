@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
 import { nextCookies } from 'better-auth/next-js';
 
+import { getUserPreferences } from '@/api/__generated__/preferences/preferences';
 import { getAuthenticatedUser } from '@/api/__generated__/profile/profile';
 
 export const auth = betterAuth({
@@ -19,6 +20,11 @@ export const auth = betterAuth({
         type: 'string',
         input: false,
         defaultValue: 'USER',
+      },
+      theme: {
+        type: 'string',
+        input: false,
+        defaultValue: 'system',
       },
     },
   },
@@ -63,6 +69,12 @@ export const auth = betterAuth({
                 role,
               } = response;
 
+              const {
+                data: { theme },
+              } = await getUserPreferences().catch(() => ({
+                data: { theme: 'system' },
+              }));
+
               const user = await ctx.context.internalAdapter.createUser({
                 id: userId,
                 name,
@@ -71,6 +83,7 @@ export const auth = betterAuth({
                 image: profileImageUrl,
                 isOnboarded,
                 role,
+                theme,
               });
 
               const session = await ctx.context.internalAdapter.createSession(
@@ -99,3 +112,13 @@ export const auth = betterAuth({
     },
   ],
 });
+
+type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
+
+export function isAuthenticated(session: Session) {
+  return session !== null && session.user !== null;
+}
+
+export function isOnboarded(session: Session) {
+  return session !== null && session.user !== null && session.user.isOnboarded;
+}

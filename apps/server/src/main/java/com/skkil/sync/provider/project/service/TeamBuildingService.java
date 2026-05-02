@@ -1,12 +1,17 @@
 package com.skkil.sync.provider.project.service;
 
+import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
+import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.provider.project.dto.request.CreateTeamBuildingPostRequest;
 import com.skkil.sync.provider.project.dto.response.CreateTeamBuildingPostResponse;
-import com.skkil.sync.provider.project.dto.response.GetProjectTeamBuildingPosts;
+import com.skkil.sync.provider.project.dto.response.GetTeamBuildingPostsResponse;
+import com.skkil.sync.provider.project.mapper.ProjectMapper;
 import com.skkil.sync.provider.project.model.Project;
 import com.skkil.sync.provider.project.model.TeamBuildingPost;
 import com.skkil.sync.provider.project.repository.ProjectRepository;
+import com.skkil.sync.provider.project.repository.TeamBuildingPostQueryRepository;
 import com.skkil.sync.provider.project.repository.TeamBuildingPostRepository;
+import com.skkil.sync.provider.project.repository.pagination.TeamBuildingPostCursorPaginationProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +21,24 @@ public class TeamBuildingService {
 
   private final ProjectRepository projectRepository;
   private final TeamBuildingPostRepository teamBuildingPostRepository;
+  private final TeamBuildingPostQueryRepository teamBuildingPostQueryRepository;
+  private final PaginationService paginationService;
+  private final TeamBuildingPostCursorPaginationProvider paginationProvider;
+  private final ProjectMapper projectMapper;
 
   public TeamBuildingService(
-      ProjectRepository projectRepository, TeamBuildingPostRepository teamBuildingPostRepository) {
+      ProjectRepository projectRepository,
+      TeamBuildingPostRepository teamBuildingPostRepository,
+      TeamBuildingPostQueryRepository teamBuildingPostQueryRepository,
+      PaginationService paginationService,
+      TeamBuildingPostCursorPaginationProvider paginationProvider,
+      ProjectMapper projectMapper) {
     this.projectRepository = projectRepository;
     this.teamBuildingPostRepository = teamBuildingPostRepository;
+    this.teamBuildingPostQueryRepository = teamBuildingPostQueryRepository;
+    this.paginationService = paginationService;
+    this.paginationProvider = paginationProvider;
+    this.projectMapper = projectMapper;
   }
 
   @Transactional
@@ -42,20 +60,29 @@ public class TeamBuildingService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'PROVIDER', 'READ')")
-  public GetProjectTeamBuildingPosts getProjectTeamBuildingPosts(Long projectId) {
-    Project project = projectRepository.getReferenceById(projectId);
+  public GetTeamBuildingPostsResponse getTeamBuildingPostsByProject(
+      Long projectId, CursorPaginationRequest pagination) {
+    var posts =
+        paginationService
+            .paginate(
+                teamBuildingPostQueryRepository.getTeamBuildingPostsByProject(projectId),
+                paginationProvider,
+                pagination)
+            .map(projectMapper::toPostResponse);
 
-    var posts = teamBuildingPostRepository.findByProject(project);
+    return new GetTeamBuildingPostsResponse(posts);
+  }
 
-    return new GetProjectTeamBuildingPosts(
-        posts.stream()
-            .map(
-                post ->
-                    GetProjectTeamBuildingPosts.Post.builder()
-                        .id(post.getId().toString())
-                        .title(post.getTitle())
-                        .content(post.getContent())
-                        .build())
-            .toList());
+  @Transactional(readOnly = true)
+  public GetTeamBuildingPostsResponse getTeamBuildingPosts(CursorPaginationRequest pagination) {
+    var posts =
+        paginationService
+            .paginate(
+                teamBuildingPostQueryRepository.getTeamBuildingPosts(),
+                paginationProvider,
+                pagination)
+            .map(projectMapper::toPostResponse);
+
+    return new GetTeamBuildingPostsResponse(posts);
   }
 }

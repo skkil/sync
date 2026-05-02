@@ -75,6 +75,9 @@ public class User extends BaseEntity {
   @Column(name = "is_onboarded", nullable = false)
   private Boolean isOnboarded = false;
 
+  @Column(name = "is_email_verified", nullable = false)
+  private Boolean isEmailVerified = false;
+
   @Column(name = "deleted_at", nullable = true)
   private Instant deletedAt;
 
@@ -83,6 +86,9 @@ public class User extends BaseEntity {
       cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
       orphanRemoval = true)
   private List<UserOAuth2Account> oAuth2Accounts = new ArrayList<>();
+
+  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  private UserPreferences preferences;
 
   protected User() {}
 
@@ -107,6 +113,10 @@ public class User extends BaseEntity {
     }
 
     this.isOnboarded = true;
+  }
+
+  public void verifyEmail() {
+    this.isEmailVerified = true;
   }
 
   public void updateHandle(String handle) {
@@ -143,5 +153,9 @@ public class User extends BaseEntity {
     }
 
     return true;
+  }
+
+  public void setPreferences(UserPreferences preferences) {
+    this.preferences = preferences;
   }
 }

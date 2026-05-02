@@ -1,0 +1,15 @@
+services:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "$OLLAMA_PORT:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    post_start:
+      - command: ollama pull $OLLAMA_MODEL
+        user: root
+      - command: ollama pull $OLLAMA_EMBEDDING_MODEL
+        user: root
+
+volumes:
+  ollama_data:

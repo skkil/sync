@@ -17,15 +17,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.skkil.sync.common.config.TestSecurityConfig;
-import com.skkil.sync.common.util.pagination.dto.request.PaginationRequest;
-import com.skkil.sync.common.util.pagination.snippets.PaginationRequestSnippets;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
+import com.skkil.sync.common.util.pagination.snippets.OffsetPaginationRequestSnippets;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.provider.company.dto.request.CreateJobPostingRequest;
 import com.skkil.sync.provider.company.dto.response.CreateJobPostingResponse;
+import com.skkil.sync.provider.company.dto.response.GetJobPostingResponse;
 import com.skkil.sync.provider.company.dto.response.GetJobPostingsResponse;
 import com.skkil.sync.provider.company.service.JobPostingService;
 import com.skkil.sync.provider.company.snippets.CreateJobPostingRequestSnippets;
 import com.skkil.sync.provider.company.snippets.CreateJobPostingResponseSnippets;
+import com.skkil.sync.provider.company.snippets.GetJobPostingResponseSnippets;
 import com.skkil.sync.provider.company.snippets.GetJobPostingsResponseSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
@@ -90,16 +92,46 @@ public class JobPostingControllerTests {
   }
 
   @Test
+  @DisplayName("[getJobPosting] API 문서화 테스트")
+  void getJobPosting() throws Exception {
+    Long companyId = 1L;
+    Long postingId = 1L;
+    GetJobPostingResponse response = GetJobPostingResponseSnippets.getGetJobPostingResponse();
+
+    when(jobPostingService.getJobPosting(eq(companyId), eq(postingId))).thenReturn(response);
+
+    mockMvc
+        .perform(get("/companies/{companyId}/jobs/{postingId}", companyId, postingId))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetJobPosting",
+                ResourceSnippetParameters.builder()
+                    .tag("jobs")
+                    .summary("Get Job Posting")
+                    .description("Get Job Posting")
+                    .responseSchema(schema(GetJobPostingResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(
+                    parameterWithName("companyId").description("Company ID"),
+                    parameterWithName("postingId").description("Job Posting ID")),
+                GetJobPostingResponseSnippets.getJobPostingResponseFields()));
+  }
+
+  @Test
   @DisplayName("[getJobPostings] API 문서화 테스트")
   void getJobPostings() throws Exception {
-    PaginationRequest pagination = PaginationRequestSnippets.getPaginationRequest();
+    OffsetPaginationRequest pagination = OffsetPaginationRequestSnippets.getPaginationRequest();
     GetJobPostingsResponse response = GetJobPostingsResponseSnippets.getGetJobPostingsResponse();
 
     when(jobPostingService.getJobPostings(eq(pagination))).thenReturn(response);
 
     mockMvc
         .perform(
-            get("/jobs").queryParams(PaginationRequestSnippets.getPaginationRequestQueryParams()))
+            get("/jobs")
+                .queryParams(OffsetPaginationRequestSnippets.getPaginationRequestQueryParams()))
         .andExpect(status().isOk())
         .andDo(
             document(
@@ -112,7 +144,7 @@ public class JobPostingControllerTests {
                 null,
                 null,
                 Function.identity(),
-                PaginationRequestSnippets.getPaginationRequestParameters(),
+                OffsetPaginationRequestSnippets.getPaginationRequestParameters(),
                 GetJobPostingsResponseSnippets.getJobPostingsResponseFields()));
   }
 
@@ -120,7 +152,7 @@ public class JobPostingControllerTests {
   @DisplayName("[getJobPostingsByCompany] API 문서화 테스트")
   void getJobPostingsByCompany() throws Exception {
     Long companyId = 1L;
-    PaginationRequest pagination = PaginationRequestSnippets.getPaginationRequest();
+    OffsetPaginationRequest pagination = OffsetPaginationRequestSnippets.getPaginationRequest();
     GetJobPostingsResponse response = GetJobPostingsResponseSnippets.getGetJobPostingsResponse();
 
     when(jobPostingService.getJobPostingsByCompany(eq(companyId), eq(pagination)))
@@ -129,7 +161,7 @@ public class JobPostingControllerTests {
     mockMvc
         .perform(
             get("/companies/{companyId}/jobs", companyId)
-                .queryParams(PaginationRequestSnippets.getPaginationRequestQueryParams()))
+                .queryParams(OffsetPaginationRequestSnippets.getPaginationRequestQueryParams()))
         .andExpect(status().isOk())
         .andDo(
             document(
@@ -143,7 +175,7 @@ public class JobPostingControllerTests {
                 null,
                 Function.identity(),
                 pathParameters(parameterWithName("companyId").description("Company ID")),
-                PaginationRequestSnippets.getPaginationRequestParameters(),
+                OffsetPaginationRequestSnippets.getPaginationRequestParameters(),
                 GetJobPostingsResponseSnippets.getJobPostingsResponseFields()));
   }
 }

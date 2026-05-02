@@ -4,13 +4,14 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
+import type { CreateReflectionRequestContent } from './CreateReflectionRequestContent';
 
 export interface CreateReflectionRequest {
   /**
-   * Experience ID
+   * Title
    * @nullable
    */
-  experienceId?: number | null;
+  title?: string | null;
   /** Content */
-  content: string;
+  content: CreateReflectionRequestContent;
 }

@@ -1,16 +1,22 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { auth } from '@/lib/auth';
+import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
+
+import MiniPostEditor from './_components/MiniPostEditor';
 
 export default async function Home() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (session && !session.user.isOnboarded) {
+  if (isAuthenticated(session) && !isOnboarded(session)) {
     redirect('/onboarding');
   }
 
-  return <></>;
+  return (
+    <div>
+      <div>{isAuthenticated(session) && <MiniPostEditor />}</div>
+    </div>
+  );
 }

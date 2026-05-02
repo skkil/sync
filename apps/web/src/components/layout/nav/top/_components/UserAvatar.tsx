@@ -1,10 +1,16 @@
 'use client';
 
-import { GearSixIcon, SignOutIcon, UserIcon } from '@phosphor-icons/react';
+import {
+  GearSixIcon,
+  SignOutIcon,
+  UserGearIcon,
+  UserIcon,
+} from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { useLogout } from '@/api/__generated__/auth/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,7 +23,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { ModalType } from '@/constants/modal';
 import { useModal } from '@/hooks/store';
-import { useSession } from '@/lib/auth/client';
+import { signOut, useSession } from '@/lib/auth/client';
 
 interface UserAvatarProps {
   align?: 'start' | 'end';
@@ -25,6 +31,9 @@ interface UserAvatarProps {
 
 export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
   const router = useRouter();
+
+  const { mutateAsync: logout } = useLogout();
+
   const { isPending, data: session } = useSession();
   const { openModal } = useModal();
 
@@ -49,6 +58,7 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
   const menu = [
     {
       icon: UserIcon,
+      isAdmin: false,
       label: t('user.profile'),
       onClick: () => {
         router.push(`/@${session.user.handle}`);
@@ -56,16 +66,31 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
     },
     {
       icon: GearSixIcon,
+      isAdmin: false,
       label: t('user.settings'),
       onClick: () => {
         openModal(ModalType.SETTINGS);
       },
     },
     {
-      icon: SignOutIcon,
-      label: t('user.sign-out'),
+      icon: UserGearIcon,
+      isAdmin: true,
+      label: t('user.admin'),
       onClick: () => {
-        // TODO: need to implement sign out
+        router.push('/admin');
+      },
+    },
+    {
+      icon: SignOutIcon,
+      isAdmin: false,
+      label: t('user.sign-out'),
+      onClick: async () => {
+        try {
+          await logout();
+        } finally {
+          await signOut();
+          router.push('/');
+        }
       },
     },
   ];
@@ -85,6 +110,11 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
         <DropdownMenuGroup>
           {menu.map((item, index) => {
             const Icon = item.icon;
+
+            if (item.isAdmin && session.user.role !== 'ADMIN') {
+              return null;
+            }
+
             return (
               <DropdownMenuItem key={index} onClick={item.onClick}>
                 <Icon />

@@ -1,9 +1,11 @@
 {
   "pages": {
     "home": {
-      "title": "sync",
-      "left": {
-        "jobs": "채용 공고"
+      "post-editor": {
+        "placeholder": "오늘은 무엇을 배우셨나요?",
+        "post": {
+          "label": "게시물 작성"
+        }
       }
     },
     "jobs": {
@@ -15,6 +17,10 @@
       "bookmark": {
         "label": "저장한 채용 공고"
       }
+    },
+    "team-building": {
+      "title": "팀 빌딩 공고",
+      "description": "프로젝트에 함께할 팀원을 모집하세요"
     },
     "messages": {
       "conversations": {
@@ -43,6 +49,19 @@
         "settings": {
           "title": "대화 설정",
           "block": "차단"
+        }
+      }
+    },
+    "my-providers": {
+      "title": "내가 관리하는 페이지",
+      "description": "내가 관리하는 페이지를 한 곳에서 확인하세요",
+      "empty": "아직 관리하는 페이지가 없습니다.",
+      "loading": "내가 관리하는 페이지를 불러오는 중...",
+      "load-more": "더 불러오기",
+      "error": "페이지를 불러오는 중 오류가 발생했습니다.",
+      "provider": {
+        "unverified": {
+          "tooltip": "이 기관은 아직 검증되지 않았습니다."
         }
       }
     },
@@ -125,6 +144,60 @@
         "required_school_type": "학교 유형은 필수 항목입니다."
       }
     },
+    "contest": {
+      "about": {
+        "label": "소개"
+      },
+      "occurrences": {
+        "label": "회차",
+        "title": "회차",
+        "table": {
+          "title": "제목",
+          "empty": "회차가 없습니다.",
+          "load-more": "더 불러오기",
+          "loading": "회차를 불러오는 중..."
+        },
+        "details": {
+          "back-to-occurrences": "회차 목록으로 돌아가기"
+        },
+        "create-occurrence": {
+          "label": "새 회차 만들기",
+          "title": "회차 만들기",
+          "description": "이 대회에 대한 새로운 회차를 작성하세요",
+          "form": {
+            "title": {
+              "label": "제목",
+              "placeholder": "회차 제목을 입력하세요"
+            },
+            "description": {
+              "label": "설명",
+              "placeholder": "회차에 대한 자세한 설명을 입력하세요"
+            },
+            "startDate": {
+              "label": "시작 날짜",
+              "placeholder": "회차 시작 날짜를 입력하세요"
+            },
+            "endDate": {
+              "label": "종료 날짜",
+              "placeholder": "회차 종료 날짜를 입력하세요"
+            },
+            "submit": {
+              "label": "회차 만들기"
+            },
+            "errors": {
+              "required-title": "제목은 필수 항목입니다.",
+              "required-startDate": "시작 날짜는 필수 항목입니다.",
+              "required-endDate": "종료 날짜는 필수 항목입니다.",
+              "invalid-date-range": "종료 날짜는 시작 날짜 이후여야 합니다."
+            }
+          },
+          "messages": {
+            "success": "회차가 성공적으로 생성되었습니다.",
+            "error": "회차 생성에 실패했습니다. 나중에 다시 시도하세요"
+          }
+        }
+      }
+    },
     "create-contest": {
       "title": "만들고자 하는 대회에 대해 알려주세요",
       "form": {
@@ -157,7 +230,9 @@
         "label": "팀 빌딩",
         "list": {
           "title": "제목",
-          "empty": "팀 빌딩 공고가 없습니다."
+          "empty": "팀 빌딩 공고가 없습니다.",
+          "load-more": "더 불러오기",
+          "loading": "팀 빌딩 공고를 불러오는 중..."
         }
       },
       "admin": {
@@ -208,6 +283,11 @@
         "required_description": "설명은 필수 항목입니다."
       }
     },
+    "trending-projects": {
+      "loading": "인기 프로젝트를 불러오는 중...",
+      "empty": "프로젝트가 없습니다.",
+      "load-more": "더 불러오기"
+    },
     "provider": {
       "review": {
         "button": "리뷰 작성",
@@ -247,8 +327,7 @@
         "about": "소개",
         "people": "관련 인물",
         "reviews": "리뷰",
-        "jobs": "채용 공고",
-        "occurrences": "회차"
+        "jobs": "채용 공고"
       },
       "about": {
         "loading": "불러오는 중...",
@@ -308,23 +387,32 @@
     "provider-admin": {
       "sections": {
         "about": "소개",
-        "settings": "설정",
-        "job-postings": "채용 공고"
+        "settings": "설정"
       },
       "view-as-member": "일반 사용자로 보기"
     },
     "company": {
+      "about": {
+        "label": "소개"
+      },
       "job-postings": {
+        "label": "채용 공고",
         "title": "채용 공고",
+        "empty": "이 회사에는 현재 채용 공고가 없습니다.",
         "table": {
-          "empty": "이 회사에는 현재 채용 공고가 없습니다.",
           "error": "채용 공고를 불러오는 중 오류가 발생했습니다.",
           "job-title": "직책",
           "location": "근무 지역",
           "posted-date": "게시 날짜"
         },
-        "modal": {
-          "posted-on": "게시 날짜"
+        "posting": {
+          "view-all": "모든 채용 공고 보기",
+          "loading": "채용 공고를 불러오는 중...",
+          "empty": {
+            "title": "채용 공고가 없습니다."
+          },
+          "posted-on": "게시 날짜",
+          "save-to-my-applications": "내 지원 내역에 저장"
         },
         "create-posting": {
           "form": {
@@ -474,6 +562,51 @@
     "profile": {
       "resume": {
         "label": "이력서"
+      },
+      "applications": {
+        "label": "내 지원 내역",
+        "not-found": "지원 내역이 없습니다.",
+        "loading": "지원 내역을 불러오는 중...",
+        "error": "지원 내역을 불러오는 중 오류가 발생했습니다.",
+        "details": {
+          "back-to-applications": "지원 내역으로 돌아가기",
+          "job-title": "직책",
+          "company": "회사",
+          "status": "상태",
+          "applied-date": "지원 날짜",
+          "notes": "메모",
+          "overview": {
+            "title": "지원 정보",
+            "job-title": "직책",
+            "company": "회사",
+            "location": "근무 지역",
+            "status": "상태",
+            "error": "지원 정보를 불러오는 중 오류가 발생했습니다."
+          },
+          "tabs": {
+            "job-description": {
+              "label": "채용 공고",
+              "title": "채용 공고 상세",
+              "job-title": "직책",
+              "location": "근무 지역",
+              "description": "직무 설명"
+            },
+            "notes": {
+              "label": "메모",
+              "title": "내 메모",
+              "empty": "아직 메모가 없습니다."
+            },
+            "files": {
+              "label": "첨부 파일",
+              "upload-file": "파일 업로드",
+              "empty": "아직 첨부 파일이 없습니다.",
+              "upload-success": "파일이 성공적으로 업로드되었습니다.",
+              "errors": {
+                "upload-failed": "파일 업로드에 실패했습니다. 나중에 다시 시도하세요."
+              }
+            }
+          }
+        }
       },
       "projects": {
         "label": "프로젝트"
@@ -698,6 +831,9 @@
       "unverified-providers": {
         "title": "검증되지 않은 기관",
         "description": "기관을 검토하고 검증하세요",
+        "no-providers": "검증되지 않은 기관이 없습니다.",
+        "loading": "검증되지 않은 기관을 불러오는 중...",
+        "load-more": "더 불러오기",
         "actions": {
           "verify": "검증"
         }
@@ -728,6 +864,28 @@
               "cannot_be_deleted": "이 로그인 방법은 삭제할 수 없습니다. 다른 로그인 방법을 먼저 연결하세요."
             }
           }
+        },
+        "theme": {
+          "label": "테마",
+          "title": "테마 설정",
+          "description": "테마를 선택하여 앱의 모양을 개인화하세요",
+          "theme": {
+            "label": "테마",
+            "options": {
+              "light": {
+                "label": "라이트 모드",
+                "description": "밝은 테마로 앱을 사용합니다."
+              },
+              "dark": {
+                "label": "다크 모드",
+                "description": "어두운 테마로 앱을 사용합니다."
+              },
+              "system": {
+                "label": "시스템 설정 사용",
+                "description": "시스템 설정에 따라 테마가 자동으로 변경됩니다."
+              }
+            }
+          }
         }
       },
       "description": "계정 설정 관리",
@@ -743,15 +901,18 @@
   "components": {
     "navigation": {
       "search": {
-        "placeholder": "사람, 기관 또는 프로젝트 검색..."
+        "placeholder": "검색..."
       },
       "menu": {
-        "jobs": "채용 공고"
+        "jobs": "채용 공고",
+        "team-building": "팀원 모집",
+        "my-providers": "내가 관리하는 페이지"
       },
       "login": "로그인",
       "user": {
         "profile": "내 프로필",
         "settings": "설정",
+        "admin": "관리자 페이지",
         "sign-out": "로그아웃"
       }
     },

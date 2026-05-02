@@ -5,8 +5,6 @@ import com.skkil.sync.provider.dto.request.CreateProviderRequest;
 import com.skkil.sync.provider.dto.request.UpdateProviderRequest;
 import com.skkil.sync.provider.dto.response.CreateProviderResponse;
 import com.skkil.sync.provider.dto.response.GetProviderResponse;
-import com.skkil.sync.provider.dto.response.GetProvidersResponse;
-import com.skkil.sync.provider.dto.response.GetUnverifiedProvidersResponse;
 import com.skkil.sync.provider.exception.ProviderNotFoundException;
 import com.skkil.sync.provider.model.Maintainer;
 import com.skkil.sync.provider.model.Provider;
@@ -52,42 +50,17 @@ public class ProviderService {
 
     User creator = new User(userId);
     provider.setCreatedBy(creator);
+
+    if (provider.getType() == ProviderType.PROJECT) {
+      provider.verify(creator);
+    }
+
     providerRepository.save(provider);
 
     Maintainer maintainer = Maintainer.builder().provider(provider).user(creator).build();
     maintainerRepository.save(maintainer);
 
     return new CreateProviderResponse(provider.getId());
-  }
-
-  @Transactional(readOnly = true)
-  public GetProvidersResponse getProviders(
-      String query, List<ProviderType> types, Long cursor, int size) {
-    PageRequest pageRequest = PageRequest.of(0, size);
-
-    var providers = providerRepository.searchByTypeAndVerified(query, types, cursor, pageRequest);
-    return new GetProvidersResponse(
-        providers.map(
-            provider ->
-                GetProvidersResponse.Provider.builder()
-                    .type(provider.getType())
-                    .id(provider.getId().toString())
-                    .name(provider.getName())
-                    .build()));
-  }
-
-  @Transactional(readOnly = true)
-  public GetUnverifiedProvidersResponse getUnverifiedProviders(int page, int size) {
-    PageRequest pageRequest = PageRequest.of(page, size);
-
-    log.debug("Fetching unverified providers, page: {}, size: {}", page, size);
-    return new GetUnverifiedProvidersResponse(
-        providerRepository
-            .findUnverifiedProviders(pageRequest)
-            .map(
-                provider ->
-                    new GetUnverifiedProvidersResponse.Provider(
-                        provider.getId(), provider.getName())));
   }
 
   @Transactional(readOnly = true)
@@ -136,7 +109,7 @@ public class ProviderService {
     Provider provider =
         providerRepository.findById(id).orElseThrow(() -> new ProviderNotFoundException(id));
 
-    provider.setVerifiedBy(new User(userId));
+    provider.verify(new User(userId));
   }
 
   @Transactional

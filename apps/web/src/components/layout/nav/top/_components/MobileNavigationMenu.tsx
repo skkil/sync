@@ -1,12 +1,16 @@
 'use client';
 
-import { BriefcaseIcon, ListIcon } from '@phosphor-icons/react';
+import {
+  BriefcaseIcon,
+  ListIcon,
+  UserGearIcon,
+  UsersThreeIcon,
+} from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import {
   Sheet,
   SheetContent,
@@ -32,6 +36,21 @@ export default function MobileNavigationMenu() {
           href: '/jobs',
           label: t('jobs'),
         },
+        {
+          icon: <UsersThreeIcon />,
+          href: '/teams',
+          label: t('team-building'),
+        },
+      ],
+    },
+    {
+      id: 'business',
+      tabs: [
+        {
+          icon: <UserGearIcon />,
+          href: '/provider/my',
+          label: t('my-providers'),
+        },
       ],
     },
   ];
@@ -52,7 +71,7 @@ export default function MobileNavigationMenu() {
 
           {groups.map((group) => (
             <div key={group.id} className="space-y-2">
-              <div>
+              <div className="space-y-2">
                 {group.tabs.map((tab) => (
                   <Link
                     key={tab.label}
@@ -65,7 +84,6 @@ export default function MobileNavigationMenu() {
                   </Link>
                 ))}
               </div>
-              <Separator />
             </div>
           ))}
         </SheetHeader>

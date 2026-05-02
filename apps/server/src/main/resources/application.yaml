@@ -13,6 +13,11 @@ spring:
     hibernate:
       ddl-auto: validate
 
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
@@ -21,6 +26,10 @@ spring:
     store-type: jdbc
     jdbc:
       initialize-schema: always
+
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
 
   security:
     oauth2:
@@ -34,6 +43,38 @@ spring:
               - profile
               - email
 
+  ai:
+    model:
+      chat: ${AI_PROVIDER}
+    ollama:
+      base-url: ${OLLAMA_URL:http://localhost:11434}
+      chat:
+        options:
+          model: ${OLLAMA_MODEL}
+          format: json
+          temperature: 0
+      embedding:
+        model: ${OLLAMA_EMBEDDING_MODEL}
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimension: 1536
+        table-name: vector_store
+        initialize-schema: true
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   cloud:
     aws:
       s3:
@@ -45,6 +86,34 @@ app:
     frontend-redirect-uri: http://localhost:3000
   slack:
     webhook-url: ${SLACK_WEBHOOK_URL:}
+
+management:
+  observations:
+    annotations:
+      enabled: true
+
+  logging:
+    export:
+      otlp:
+        enabled: ${ENABLE_TELEMETRY:false}
+
+  tracing:
+    export:
+      enabled: ${ENABLE_TELEMETRY:false}
+
+  otlp:
+    metrics:
+      export:
+        enabled: ${ENABLE_TELEMETRY:false}
+
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+          - prometheus
 
 server:
   servlet:

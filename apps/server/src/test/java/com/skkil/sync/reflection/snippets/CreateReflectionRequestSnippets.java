@@ -10,15 +10,18 @@ import org.springframework.restdocs.payload.RequestFieldsSnippet;
 public class CreateReflectionRequestSnippets {
 
   public static CreateReflectionRequest getCreateReflectionRequest() {
-    return new CreateReflectionRequest(1L, "This is a reflection content.");
+    CreateReflectionRequest.Content content =
+        new CreateReflectionRequest.Content(
+            "This is a reflection content.", "{\"text\": \"This is a reflection content.\"}");
+
+    return new CreateReflectionRequest("title", content);
   }
 
   public static RequestFieldsSnippet getCreateReflectionRequestFields() {
     return requestFields(
-        fieldWithPath("experienceId")
-            .type(JsonFieldType.NUMBER)
-            .description("Experience ID")
-            .optional(),
-        fieldWithPath("content").type(JsonFieldType.STRING).description("Content"));
+        fieldWithPath("title").type(JsonFieldType.STRING).description("Title").optional(),
+        fieldWithPath("content").type(JsonFieldType.OBJECT).description("Content"),
+        fieldWithPath("content.text").type(JsonFieldType.STRING).description("Text Content"),
+        fieldWithPath("content.json").type(JsonFieldType.STRING).description("JSON Content"));
   }
 }

@@ -26,7 +26,7 @@ class AuthController {
   }
 
   @PostMapping("/auth/login")
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void login(HttpServletRequest http, @RequestBody @Validated LoginRequest request) {
     Authentication authentication = authService.authenticate(request);
 
@@ -40,7 +40,7 @@ class AuthController {
   }
 
   @PostMapping("/auth/register")
-  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void register(HttpServletRequest http, @RequestBody @Validated RegisterRequest request) {
     authService.registerUser(request);
   }

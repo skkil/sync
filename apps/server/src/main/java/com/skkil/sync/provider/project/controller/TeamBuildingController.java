@@ -1,8 +1,9 @@
 package com.skkil.sync.provider.project.controller;
 
+import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
 import com.skkil.sync.provider.project.dto.request.CreateTeamBuildingPostRequest;
 import com.skkil.sync.provider.project.dto.response.CreateTeamBuildingPostResponse;
-import com.skkil.sync.provider.project.dto.response.GetProjectTeamBuildingPosts;
+import com.skkil.sync.provider.project.dto.response.GetTeamBuildingPostsResponse;
 import com.skkil.sync.provider.project.service.TeamBuildingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +32,15 @@ public class TeamBuildingController {
 
   @GetMapping("/projects/{projectId}/team-building")
   @ResponseStatus(HttpStatus.OK)
-  public GetProjectTeamBuildingPosts getProjectTeamBuildingPosts(@PathVariable Long projectId) {
-    return teamBuildingService.getProjectTeamBuildingPosts(projectId);
+  public GetTeamBuildingPostsResponse getTeamBuildingPostsByProject(
+      @PathVariable Long projectId, @Validated CursorPaginationRequest pagination) {
+    return teamBuildingService.getTeamBuildingPostsByProject(projectId, pagination);
+  }
+
+  @GetMapping("/team-building")
+  @ResponseStatus(HttpStatus.OK)
+  public GetTeamBuildingPostsResponse getTeamBuildingPosts(
+      @Validated CursorPaginationRequest pagination) {
+    return teamBuildingService.getTeamBuildingPosts(pagination);
   }
 }

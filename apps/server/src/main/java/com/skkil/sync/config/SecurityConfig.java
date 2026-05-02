@@ -37,6 +37,13 @@ public class SecurityConfig {
                 csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
         .formLogin(formLogin -> formLogin.disable())
+        .logout(
+            logout ->
+                logout
+                    .logoutUrl("/auth/logout")
+                    .logoutSuccessHandler(
+                        (request, response, authentication) ->
+                            response.setStatus(HttpStatus.NO_CONTENT.value())))
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         .authorizeHttpRequests(
@@ -49,11 +56,19 @@ public class SecurityConfig {
                         "/experiences/**",
                         "/companies/**",
                         "/reflections/**",
-                        "/users/**")
+                        "/users/**",
+                        "/team-building/**",
+                        "/projects/**",
+                        "/contests/**")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
-                    .requestMatchers("/users/**", "/profiles/me", "/media/**")
+                    .requestMatchers(
+                        "/users/**",
+                        "/profiles/me",
+                        "/media/**",
+                        "/providers/my/**",
+                        "/preferences/**")
                     .authenticated()
                     .requestMatchers(
                         "/jobs/**",
