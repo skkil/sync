@@ -14,20 +14,4 @@ export type GetCommentsParams = {
    * Comment target ID
    */
   targetId: string;
-  /**
-   * Number of items to return from the beginning of the list
-   */
-  first?: string;
-  /**
-   * Cursor after which to return items
-   */
-  after?: string;
-  /**
-   * Number of items to return from the end of the list
-   */
-  last?: string;
-  /**
-   * Cursor before which to return items
-   */
-  before?: string;
 };

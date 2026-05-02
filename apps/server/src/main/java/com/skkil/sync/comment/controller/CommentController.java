@@ -7,7 +7,6 @@ import com.skkil.sync.comment.dto.response.CreateCommentResponse;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
 import com.skkil.sync.comment.enums.CommentTargetType;
 import com.skkil.sync.comment.service.CommentService;
-import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -33,10 +32,8 @@ public class CommentController {
   @GetMapping("/comments")
   @ResponseStatus(HttpStatus.OK)
   public GetCommentsResponse getComments(
-      @RequestParam CommentTargetType targetType,
-      @RequestParam Long targetId,
-      @Validated CursorPaginationRequest pagination) {
-    return commentService.getComments(targetType, targetId, pagination);
+      @RequestParam CommentTargetType targetType, @RequestParam Long targetId) {
+    return commentService.getComments(targetType, targetId);
   }
 
   @PostMapping("/comments")

@@ -4,20 +4,16 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
-  DefinedUseInfiniteQueryResult,
   DefinedUseQueryResult,
-  InfiniteData,
   MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -76,193 +72,9 @@ export const getComments = async (
   });
 };
 
-export const getGetCommentsInfiniteQueryKey = (params?: GetCommentsParams) => {
-  return ['infinite', `/comments`, ...(params ? [params] : [])] as const;
-};
-
 export const getGetCommentsQueryKey = (params?: GetCommentsParams) => {
   return [`/comments`, ...(params ? [params] : [])] as const;
 };
-
-export const getGetCommentsInfiniteQueryOptions = <
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getComments>>,
-    GetCommentsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params: GetCommentsParams,
-  options?: {
-    query?: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getComments>>,
-        TError,
-        TData,
-        QueryKey,
-        GetCommentsParams['after']
-      >
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ?? getGetCommentsInfiniteQueryKey(params);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getComments>>,
-    QueryKey,
-    GetCommentsParams['after']
-  > = ({ signal, pageParam }) =>
-    getComments(
-      { ...params, after: pageParam || params?.['after'] },
-      { signal, ...requestOptions },
-    );
-
-  return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
-    Awaited<ReturnType<typeof getComments>>,
-    TError,
-    TData,
-    QueryKey,
-    GetCommentsParams['after']
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetCommentsInfiniteQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getComments>>
->;
-export type GetCommentsInfiniteQueryError = ErrorType<unknown>;
-
-export function useGetCommentsInfinite<
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getComments>>,
-    GetCommentsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params: GetCommentsParams,
-  options: {
-    query: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getComments>>,
-        TError,
-        TData,
-        QueryKey,
-        GetCommentsParams['after']
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getComments>>,
-          TError,
-          Awaited<ReturnType<typeof getComments>>,
-          QueryKey
-        >,
-        'initialData'
-      >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetCommentsInfinite<
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getComments>>,
-    GetCommentsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params: GetCommentsParams,
-  options?: {
-    query?: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getComments>>,
-        TError,
-        TData,
-        QueryKey,
-        GetCommentsParams['after']
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getComments>>,
-          TError,
-          Awaited<ReturnType<typeof getComments>>,
-          QueryKey
-        >,
-        'initialData'
-      >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetCommentsInfinite<
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getComments>>,
-    GetCommentsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params: GetCommentsParams,
-  options?: {
-    query?: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getComments>>,
-        TError,
-        TData,
-        QueryKey,
-        GetCommentsParams['after']
-      >
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary Get Comments
- */
-
-export function useGetCommentsInfinite<
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getComments>>,
-    GetCommentsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params: GetCommentsParams,
-  options?: {
-    query?: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getComments>>,
-        TError,
-        TData,
-        QueryKey,
-        GetCommentsParams['after']
-      >
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetCommentsInfiniteQueryOptions(params, options);
-
-  const query = useInfiniteQuery(
-    queryOptions,
-    queryClient,
-  ) as UseInfiniteQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
 
 export const getGetCommentsQueryOptions = <
   TData = Awaited<ReturnType<typeof getComments>>,

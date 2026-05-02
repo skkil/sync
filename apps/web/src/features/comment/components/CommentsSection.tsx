@@ -11,15 +11,15 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import {
-  getGetCommentsInfiniteQueryKey,
+  getGetCommentsQueryKey,
   useCreateComment,
   useDeleteComment,
-  useGetCommentsInfinite,
+  useGetComments,
   useUpdateComment,
 } from '@/api/__generated__/comment/comment';
 import type {
-  GetCommentsResponseCommentsNodesItemContent,
-  GetCommentsResponseCommentsNodesItemContentRepliesItem,
+  GetCommentsResponseCommentsItem,
+  GetCommentsResponseCommentsItemRepliesItem,
 } from '@/api/__generated__/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -28,12 +28,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { useSession } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 
-const COMMENTS_PAGE_SIZE = '10';
-
 type CommentTargetType = 'REFLECTION' | 'TEAM_BUILDING_POST';
 type CommentItem =
-  | GetCommentsResponseCommentsNodesItemContent
-  | GetCommentsResponseCommentsNodesItemContentRepliesItem;
+  | GetCommentsResponseCommentsItem
+  | GetCommentsResponseCommentsItemRepliesItem;
 
 interface CommentsSectionProps {
   targetType: CommentTargetType;
@@ -48,30 +46,15 @@ export default function CommentsSection({
   const params = {
     targetType,
     targetId: targetId.toString(),
-    first: COMMENTS_PAGE_SIZE,
-    after: '',
   };
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isPending,
-  } = useGetCommentsInfinite(params, {
+  const { data, isPending } = useGetComments(params, {
     query: {
       enabled: isOpen,
-      getNextPageParam: (lastPage) => {
-        const comments = lastPage.data.comments;
-        return comments?.pageInfo.hasNextPage
-          ? comments.pageInfo.endCursor
-          : undefined;
-      },
     },
   });
 
-  const comments =
-    data?.pages.flatMap((page) => page.data.comments?.nodes ?? []) ?? [];
+  const comments = data?.data.comments ?? [];
 
   return (
     <div className="border-t pt-3">
@@ -96,28 +79,14 @@ export default function CommentsSection({
             </div>
           ) : (
             <div className="space-y-4">
-              {comments.map((node) => (
+              {comments.map((comment) => (
                 <CommentThread
-                  key={node.content.id}
-                  comment={node.content}
+                  key={comment.id}
+                  comment={comment}
                   targetType={targetType}
                   targetId={targetId}
                 />
               ))}
-            </div>
-          )}
-
-          {hasNextPage && (
-            <div className="flex justify-center">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-              >
-                {isFetchingNextPage ? '불러오는 중' : '더 보기'}
-              </Button>
             </div>
           )}
         </div>
@@ -131,13 +100,17 @@ function CommentThread({
   targetType,
   targetId,
 }: {
-  comment: GetCommentsResponseCommentsNodesItemContent;
+  comment: GetCommentsResponseCommentsItem;
   targetType: CommentTargetType;
   targetId: string | number;
 }) {
   return (
     <div className="space-y-3">
-      <CommentRow comment={comment} targetType={targetType} targetId={targetId} />
+      <CommentRow
+        comment={comment}
+        targetType={targetType}
+        targetId={targetId}
+      />
 
       {comment.replies.length > 0 && (
         <div className="ml-10 space-y-3 border-l pl-3">
@@ -175,7 +148,9 @@ function CommentRow({
   const [isEditing, setIsEditing] = useState(false);
   const isMine = session?.user.id === comment.author?.id?.toString();
   const authorHandle = comment.author?.handle;
-  const authorLabel = authorHandle ? `@${authorHandle}` : `#${comment.author?.id ?? '?'}`;
+  const authorLabel = authorHandle
+    ? `@${authorHandle}`
+    : `#${comment.author?.id ?? '?'}`;
 
   return (
     <div className={cn('flex gap-3', isReply && 'text-sm')}>
@@ -268,15 +243,13 @@ function CommentForm({
   const params = {
     targetType,
     targetId: targetId.toString(),
-    first: COMMENTS_PAGE_SIZE,
-    after: '',
   };
   const { mutate, isPending } = useCreateComment({
     mutation: {
       onSuccess: () => {
         setContent('');
         queryClient.invalidateQueries({
-          queryKey: getGetCommentsInfiniteQueryKey(params),
+          queryKey: getGetCommentsQueryKey(params),
         });
         onSuccess?.();
       },
@@ -340,7 +313,7 @@ function EditCommentForm({
   const { mutate, isPending } = useUpdateComment({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['infinite', '/comments'] });
+        queryClient.invalidateQueries({ queryKey: ['/comments'] });
         onDone();
       },
       onError: () => toast.error('댓글을 수정하지 못했습니다.'),
@@ -379,7 +352,7 @@ function DeleteCommentButton({ commentId }: { commentId: number }) {
   const { mutate, isPending } = useDeleteComment({
     mutation: {
       onSuccess: () =>
-        queryClient.invalidateQueries({ queryKey: ['infinite', '/comments'] }),
+        queryClient.invalidateQueries({ queryKey: ['/comments'] }),
       onError: () => toast.error('댓글을 삭제하지 못했습니다.'),
     },
   });

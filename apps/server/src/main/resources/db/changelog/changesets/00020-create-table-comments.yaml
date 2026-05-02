@@ -39,7 +39,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: target_id //댓글이 달릴 대상 글의 id
+                  name: target_id
                   type: BIGINT
                   constraints:
                     nullable: false

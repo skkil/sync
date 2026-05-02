@@ -32,8 +32,6 @@ import com.skkil.sync.comment.snippets.UpdateCommentRequestSnippets;
 import com.skkil.sync.common.config.TestSecurityConfig;
 import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.common.security.WithAuthenticatedUserSecurityContextFactory;
-import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
-import com.skkil.sync.common.util.pagination.snippets.CursorPaginationRequestSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,26 +66,16 @@ class CommentControllerTests {
   @Test
   @DisplayName("[getComments] API 문서화 테스트")
   void getComments() throws Exception {
-    CursorPaginationRequest pagination = CursorPaginationRequestSnippets.getCursorPaginationRequest();
     GetCommentsResponse response = GetCommentsResponseSnippets.getGetCommentsResponse();
 
-    when(commentService.getComments(CommentTargetType.REFLECTION, 1L, pagination))
-        .thenReturn(response);
+    when(commentService.getComments(CommentTargetType.REFLECTION, 1L)).thenReturn(response);
 
     mockMvc
         .perform(
             get("/comments")
                 .queryParams(
                     org.springframework.util.MultiValueMap.fromSingleValue(
-                        java.util.Map.of(
-                            "targetType",
-                            "REFLECTION",
-                            "targetId",
-                            "1",
-                            "first",
-                            "10",
-                            "after",
-                            "cursor"))))
+                        java.util.Map.of("targetType", "REFLECTION", "targetId", "1"))))
         .andExpect(status().isOk())
         .andDo(
             document(
@@ -102,19 +90,7 @@ class CommentControllerTests {
                 Function.identity(),
                 queryParameters(
                     parameterWithName("targetType").description("Comment target type"),
-                    parameterWithName("targetId").description("Comment target ID"),
-                    parameterWithName("first")
-                        .description("Number of items to return from the beginning of the list")
-                        .optional(),
-                    parameterWithName("after")
-                        .description("Cursor after which to return items")
-                        .optional(),
-                    parameterWithName("last")
-                        .description("Number of items to return from the end of the list")
-                        .optional(),
-                    parameterWithName("before")
-                        .description("Cursor before which to return items")
-                        .optional()),
+                    parameterWithName("targetId").description("Comment target ID")),
                 GetCommentsResponseSnippets.getCommentsResponseFields()));
   }
 

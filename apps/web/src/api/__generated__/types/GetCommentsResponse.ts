@@ -4,8 +4,9 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetCommentsResponseComments } from './GetCommentsResponseComments';
+import type { GetCommentsResponseCommentsItem } from './GetCommentsResponseCommentsItem';
 
 export interface GetCommentsResponse {
-  comments?: GetCommentsResponseComments;
+  /** Comments */
+  comments: GetCommentsResponseCommentsItem[];
 }

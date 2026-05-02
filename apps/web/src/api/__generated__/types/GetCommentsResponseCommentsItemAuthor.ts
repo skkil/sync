@@ -5,7 +5,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type GetCommentsResponseCommentsNodesItemContentRepliesItemAuthor = {
+export type GetCommentsResponseCommentsItemAuthor = {
   /**
    * Author handle
    * @nullable

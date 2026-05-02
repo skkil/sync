@@ -5,7 +5,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 
 import com.epages.restdocs.apispec.FieldDescriptors;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
-import com.skkil.sync.common.util.pagination.snippets.CursorPaginationResponseSnippets;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -34,16 +33,17 @@ public class GetCommentsResponseSnippets {
             Instant.parse("2026-01-01T00:00:00Z"),
             List.of(reply));
 
-    return new GetCommentsResponse(CursorPaginationResponseSnippets.of(List.of(comment)));
+    return new GetCommentsResponse(List.of(comment));
   }
 
   public static ResponseFieldsSnippet getCommentsResponseFields() {
     FieldDescriptors fields =
-        CursorPaginationResponseSnippets.getCursorPaginationResponseFields("comments");
+        new FieldDescriptors()
+            .and(fieldWithPath("comments").type(JsonFieldType.ARRAY).description("Comments"));
 
     fields =
         fields.andWithPrefix(
-            "comments.nodes[].content",
+            "comments[]",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Comment ID"),
             fieldWithPath(".content")
                 .type(JsonFieldType.STRING)
@@ -58,7 +58,7 @@ public class GetCommentsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "comments.nodes[].content.author",
+            "comments[].author",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Author user ID"),
             fieldWithPath(".handle")
                 .type(JsonFieldType.STRING)
@@ -67,7 +67,7 @@ public class GetCommentsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "comments.nodes[].content.replies[]",
+            "comments[].replies[]",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Reply ID"),
             fieldWithPath(".content")
                 .type(JsonFieldType.STRING)
@@ -82,7 +82,7 @@ public class GetCommentsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "comments.nodes[].content.replies[].author",
+            "comments[].replies[].author",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Author user ID"),
             fieldWithPath(".handle")
                 .type(JsonFieldType.STRING)
