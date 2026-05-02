@@ -1,5 +1,7 @@
 package com.skkil.sync.search.service;
 
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
+import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.model.Provider;
 import com.skkil.sync.provider.service.ProviderService;
@@ -17,21 +19,33 @@ public class SearchService {
 
   private final ProfileService profileService;
   private final ProviderService providerService;
+  private final PaginationService paginationService;
 
-  public SearchService(ProfileService profileService, ProviderService providerService) {
+  public SearchService(
+      ProfileService profileService,
+      ProviderService providerService,
+      PaginationService paginationService) {
     this.profileService = profileService;
     this.providerService = providerService;
+    this.paginationService = paginationService;
   }
 
-  public SearchResponse search(String query, SearchType type, int page, int size) {
+  public SearchResponse search(String query, SearchType type, OffsetPaginationRequest pagination) {
     var results =
-        switch (type) {
-          case USER -> searchUsers(query, page, size);
-          case SCHOOL -> searchSchools(query, page, size);
-          case COMPANY -> searchCompanies(query, page, size);
-          case CONTEST -> searchContests(query, page, size);
-          case PROJECT -> searchProjects(query, page, size);
-        };
+        paginationService.paginate(
+            pageable ->
+                switch (type) {
+                  case USER -> searchUsers(query, pageable.getPageNumber(), pageable.getPageSize());
+                  case SCHOOL ->
+                      searchSchools(query, pageable.getPageNumber(), pageable.getPageSize());
+                  case COMPANY ->
+                      searchCompanies(query, pageable.getPageNumber(), pageable.getPageSize());
+                  case CONTEST ->
+                      searchContests(query, pageable.getPageNumber(), pageable.getPageSize());
+                  case PROJECT ->
+                      searchProjects(query, pageable.getPageNumber(), pageable.getPageSize());
+                },
+            pagination);
 
     var count =
         SearchResponse.Count.builder()

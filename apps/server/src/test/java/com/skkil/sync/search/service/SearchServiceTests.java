@@ -3,6 +3,9 @@ package com.skkil.sync.search.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.skkil.sync.common.util.pagination.converter.CursorConverter;
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
+import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.provider.company.model.Company;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.contest.model.Contest;
@@ -12,10 +15,10 @@ import com.skkil.sync.search.dto.response.SearchResponse;
 import com.skkil.sync.search.enums.SearchType;
 import com.skkil.sync.user.service.ProfileService;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
@@ -25,8 +28,15 @@ class SearchServiceTests {
 
   @Mock private ProfileService profileService;
   @Mock private ProviderService providerService;
+  @Mock private CursorConverter cursorConverter;
 
-  @InjectMocks private SearchService searchService;
+  private SearchService searchService;
+
+  @BeforeEach
+  void setUp() {
+    searchService =
+        new SearchService(profileService, providerService, new PaginationService(cursorConverter));
+  }
 
   @Test
   @DisplayName("[search] 기업 검색 시 기업 결과와 전체 카운트를 반환")
@@ -40,9 +50,9 @@ class SearchServiceTests {
         .thenReturn(new PageImpl<>(List.of(company)));
     stubCounts(query);
 
-    SearchResponse response = searchService.search(query, SearchType.COMPANY, 0, 10);
+    SearchResponse response = searchService.search(query, SearchType.COMPANY, pagination());
 
-    assertThat(response.results().getContent())
+    assertThat(response.results().content())
         .singleElement()
         .extracting(SearchResponse.Result::id, SearchResponse.Result::name)
         .containsExactly(1L, "Sync");
@@ -64,9 +74,9 @@ class SearchServiceTests {
         .thenReturn(new PageImpl<>(List.of(contest)));
     stubCounts(query);
 
-    SearchResponse response = searchService.search(query, SearchType.CONTEST, 0, 10);
+    SearchResponse response = searchService.search(query, SearchType.CONTEST, pagination());
 
-    assertThat(response.results().getContent())
+    assertThat(response.results().content())
         .singleElement()
         .extracting(SearchResponse.Result::id, SearchResponse.Result::name)
         .containsExactly(2L, "Sync Hackathon");
@@ -83,9 +93,9 @@ class SearchServiceTests {
         .thenReturn(new PageImpl<>(List.of(project)));
     stubCounts(query);
 
-    SearchResponse response = searchService.search(query, SearchType.PROJECT, 0, 10);
+    SearchResponse response = searchService.search(query, SearchType.PROJECT, pagination());
 
-    assertThat(response.results().getContent())
+    assertThat(response.results().content())
         .singleElement()
         .extracting(SearchResponse.Result::id, SearchResponse.Result::name)
         .containsExactly(3L, "Sync Platform");
@@ -97,5 +107,9 @@ class SearchServiceTests {
     when(providerService.countProviders(ProviderType.COMPANY, query)).thenReturn(3L);
     when(providerService.countProviders(ProviderType.CONTEST, query)).thenReturn(2L);
     when(providerService.countProviders(ProviderType.PROJECT, query)).thenReturn(1L);
+  }
+
+  private OffsetPaginationRequest pagination() {
+    return new OffsetPaginationRequest(0, 10);
   }
 }

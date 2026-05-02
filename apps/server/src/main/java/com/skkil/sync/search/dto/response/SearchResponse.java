@@ -1,9 +1,9 @@
 package com.skkil.sync.search.dto.response;
 
+import com.skkil.sync.common.util.pagination.dto.response.OffsetPaginationResponse;
 import lombok.Builder;
-import org.springframework.data.domain.Page;
 
-public record SearchResponse(Page<Result> results, Count count) {
+public record SearchResponse(OffsetPaginationResponse<Result> results, Count count) {
 
   @Builder
   public static record Result(Long id, String name) {}
