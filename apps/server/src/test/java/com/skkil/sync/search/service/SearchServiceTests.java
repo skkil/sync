@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.skkil.sync.provider.company.model.Company;
 import com.skkil.sync.provider.constant.ProviderType;
-import com.skkil.sync.provider.model.Contest;
+import com.skkil.sync.provider.contest.model.Contest;
 import com.skkil.sync.provider.project.model.Project;
 import com.skkil.sync.provider.service.ProviderService;
 import com.skkil.sync.search.dto.response.SearchResponse;
