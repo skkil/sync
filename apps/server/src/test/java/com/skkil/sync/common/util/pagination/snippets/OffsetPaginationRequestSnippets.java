@@ -4,8 +4,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 
 import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
-import java.util.Map;
 import org.springframework.restdocs.request.QueryParametersSnippet;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 public class OffsetPaginationRequestSnippets {
@@ -18,10 +18,11 @@ public class OffsetPaginationRequestSnippets {
   }
 
   public static MultiValueMap<String, String> getPaginationRequestQueryParams() {
-    return MultiValueMap.fromSingleValue(
-        Map.of(
-            "page", String.valueOf(DEFAULT_PAGE),
-            "size", String.valueOf(DEFAULT_SIZE)));
+    MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+    queryParams.add("page", String.valueOf(DEFAULT_PAGE));
+    queryParams.add("size", String.valueOf(DEFAULT_SIZE));
+
+    return queryParams;
   }
 
   public static QueryParametersSnippet getPaginationRequestParameters() {

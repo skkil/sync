@@ -53,12 +53,12 @@ public class ReflectionService {
             .slug(slug)
             .author(author)
             .title(request.title())
-            .content(request.content())
+            .content(request.content().json())
             .build();
 
     reflection = reflectionRepository.save(reflection);
     eventPublisher.publishEvent(
-        new ReflectionCreatedEvent(reflection.getId(), reflection.getContent()));
+        new ReflectionCreatedEvent(reflection.getId(), request.content().text()));
 
     return new CreateReflectionResponse(reflection.getSlug());
   }

@@ -920,8 +920,9 @@ paths:
               $ref: "#/components/schemas/CreateReflectionRequest"
             examples:
               CreateReflection:
-                value: "{\"title\":\"title\",\"content\":\"This is a reflection content.\"\
-                  }"
+                value: "{\"title\":\"title\",\"content\":{\"text\":\"This is a reflection\
+                  \ content.\",\"json\":\"{\\\"text\\\": \\\"This is a reflection\
+                  \ content.\\\"}\"}}"
       responses:
         "201":
           description: "201"
@@ -1041,6 +1042,51 @@ paths:
               examples:
                 CreateComment:
                   value: "{\"id\":1}"
+  /search:
+    get:
+      tags:
+      - search
+      summary: Search
+      description: Search
+      operationId: Search
+      parameters:
+      - name: page
+        in: query
+        description: Page (Integer)
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Integer)
+        required: true
+        schema:
+          type: string
+      - name: query
+        in: query
+        description: Search Query
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: Search Type
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+              examples:
+                Search:
+                  value: "{\"results\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
+                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":1,\"name\"\
+                    :\"Sync\"}]},\"count\":{\"userCount\":5,\"schoolCount\":4,\"companyCount\"\
+                    :3,\"contestCount\":2,\"projectCount\":1}}"
   /search/providers:
     get:
       tags:
@@ -1623,6 +1669,79 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    SearchResponse:
+      title: SearchResponse
+      required:
+      - count
+      type: object
+      properties:
+        count:
+          required:
+          - companyCount
+          - contestCount
+          - projectCount
+          - schoolCount
+          - userCount
+          type: object
+          properties:
+            projectCount:
+              type: number
+              description: Project Count
+            companyCount:
+              type: number
+              description: Company Count
+            userCount:
+              type: number
+              description: User Count
+            contestCount:
+              type: number
+              description: Contest Count
+            schoolCount:
+              type: number
+              description: School Count
+          description: Search Result Counts
+        results:
+          required:
+          - content
+          - pageInfo
+          type: object
+          properties:
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - page
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                page:
+                  type: number
+                  description: Page Number
+              description: Page Info
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - id
+                - name
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Result Name
+                  id:
+                    type: number
+                    description: Result ID
     UpdateCommentRequest:
       title: UpdateCommentRequest
       required:
@@ -1684,6 +1803,29 @@ components:
         updatedAt:
           type: string
           description: Update Timestamp
+    CreateReflectionRequest:
+      title: CreateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title
+          nullable: true
+        content:
+          required:
+          - json
+          - text
+          type: object
+          properties:
+            json:
+              type: string
+              description: JSON Content
+            text:
+              type: string
+              description: Text Content
+          description: Content
     GetJobApplicationFilesResponse:
       title: GetJobApplicationFilesResponse
       required:
@@ -1844,19 +1986,6 @@ components:
               updatedAt:
                 type: string
                 description: Update timestamp
-    CreateReflectionRequest:
-      title: CreateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        title:
-          type: string
-          description: Title
-          nullable: true
-        content:
-          type: string
-          description: Content
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:
