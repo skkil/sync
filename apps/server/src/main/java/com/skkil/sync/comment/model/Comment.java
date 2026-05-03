@@ -1,12 +1,10 @@
 package com.skkil.sync.comment.model;
 
-import com.skkil.sync.comment.enums.CommentTargetType;
 import com.skkil.sync.common.domain.BaseEntity;
+import com.skkil.sync.reflection.model.Reflection;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -24,12 +22,9 @@ public class Comment extends BaseEntity {
   @JoinColumn(name = "author_id", nullable = false)
   private User author;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "target_type", nullable = false, length = 50)
-  private CommentTargetType targetType;
-
-  @Column(name = "target_id", nullable = false)
-  private Long targetId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "post_id", nullable = false)
+  private Reflection reflection;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_id")
@@ -44,11 +39,9 @@ public class Comment extends BaseEntity {
   protected Comment() {}
 
   @Builder
-  public Comment(
-      User author, CommentTargetType targetType, Long targetId, Comment parent, String content) {
+  public Comment(User author, Reflection reflection, Comment parent, String content) {
     this.author = author;
-    this.targetType = targetType;
-    this.targetId = targetId;
+    this.reflection = reflection;
     this.parent = parent;
     this.content = content;
   }

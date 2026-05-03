@@ -5,7 +5,6 @@ import com.skkil.sync.comment.dto.request.CreateCommentRequest;
 import com.skkil.sync.comment.dto.request.UpdateCommentRequest;
 import com.skkil.sync.comment.dto.response.CreateCommentResponse;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
-import com.skkil.sync.comment.enums.CommentTargetType;
 import com.skkil.sync.comment.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,19 +27,19 @@ public class CommentController {
     this.commentService = commentService;
   }
 
-  @GetMapping("/comments")
+  @GetMapping("/reflections/{reflectionId}/comments")
   @ResponseStatus(HttpStatus.OK)
-  public GetCommentsResponse getComments(
-      @RequestParam CommentTargetType targetType, @RequestParam Long targetId) {
-    return commentService.getComments(targetType, targetId);
+  public GetCommentsResponse getComments(@PathVariable Long reflectionId) {
+    return commentService.getComments(reflectionId);
   }
 
-  @PostMapping("/comments")
+  @PostMapping("/reflections/{reflectionId}/comments")
   @ResponseStatus(HttpStatus.CREATED)
   public CreateCommentResponse createComment(
       @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable Long reflectionId,
       @RequestBody @Validated CreateCommentRequest request) {
-    return commentService.createComment(user.userId(), request);
+    return commentService.createComment(user.userId(), reflectionId, request);
   }
 
   @PatchMapping("/comments/{commentId}")

@@ -10,10 +10,10 @@ import type { GetCommentsResponseCommentsItemRepliesItem } from './GetCommentsRe
 export type GetCommentsResponseCommentsItem = {
   /** Creation timestamp */
   createdAt: string;
-  /** Deleted flag */
-  deleted: boolean;
   /** Replies */
   replies: GetCommentsResponseCommentsItemRepliesItem[];
+  /** Is deleted */
+  isDeleted: boolean;
   author?: GetCommentsResponseCommentsItemAuthor;
   /** Comment ID */
   id: number;

@@ -4,19 +4,20 @@ import com.skkil.sync.comment.dto.request.CreateCommentRequest;
 import com.skkil.sync.comment.dto.request.UpdateCommentRequest;
 import com.skkil.sync.comment.dto.response.CreateCommentResponse;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
-import com.skkil.sync.comment.enums.CommentTargetType;
 import com.skkil.sync.comment.exception.CommentNotFoundException;
 import com.skkil.sync.comment.exception.InvalidCommentException;
+import com.skkil.sync.comment.mapper.CommentMapper;
 import com.skkil.sync.comment.model.Comment;
 import com.skkil.sync.comment.repository.CommentRepository;
-import com.skkil.sync.provider.project.repository.TeamBuildingPostRepository;
-import com.skkil.sync.reflection.repository.ReflectionRepository;
+import com.skkil.sync.media.service.domain.MediaDomainService;
+import com.skkil.sync.reflection.model.Reflection;
+import com.skkil.sync.reflection.service.ReflectionDomainService;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,59 +26,85 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
 
   private final CommentRepository commentRepository;
-  private final ReflectionRepository reflectionRepository;
-  private final TeamBuildingPostRepository teamBuildingPostRepository;
+  private final ReflectionDomainService reflectionDomainService;
   private final UserDomainService userDomainService;
+  private final MediaDomainService mediaDomainService;
+  private final CommentMapper commentMapper;
 
   public CommentService(
       CommentRepository commentRepository,
-      ReflectionRepository reflectionRepository,
-      TeamBuildingPostRepository teamBuildingPostRepository,
-      UserDomainService userDomainService) {
+      ReflectionDomainService reflectionDomainService,
+      UserDomainService userDomainService,
+      MediaDomainService mediaDomainService,
+      CommentMapper commentMapper) {
     this.commentRepository = commentRepository;
-    this.reflectionRepository = reflectionRepository;
-    this.teamBuildingPostRepository = teamBuildingPostRepository;
+    this.reflectionDomainService = reflectionDomainService;
     this.userDomainService = userDomainService;
+    this.mediaDomainService = mediaDomainService;
+    this.commentMapper = commentMapper;
   }
 
   @Transactional(readOnly = true)
-  public GetCommentsResponse getComments(CommentTargetType targetType, Long targetId) {
-    List<Comment> roots = commentRepository.findByTargetTypeAndTargetIdAndParentIsNullOrderByCreatedAtAscIdAsc(
-        targetType, targetId);
-    Map<Long, List<Comment>> repliesByParentId = getRepliesByParentId(roots);
+  public GetCommentsResponse getComments(Long reflectionId) {
+    Reflection reflection = reflectionDomainService.getReflection(reflectionId);
 
-    List<GetCommentsResponse.Comment> comments = roots.stream()
-        .map(comment -> toResponse(comment, repliesByParentId))
-        .toList();
+    List<Comment> comments = commentRepository.findByReflection(reflection);
 
-    return new GetCommentsResponse(comments);
+    List<Comment> roots = new ArrayList<>();
+    Map<Long, List<Comment>> replies = new HashMap<>();
+    Map<Long, String> profileImageUrls = new HashMap<>();
+
+    for (Comment comment : comments) {
+      if (comment.isReply()) {
+        replies.computeIfAbsent(comment.getParent().getId(), k -> new ArrayList<>()).add(comment);
+      } else {
+        roots.add(comment);
+      }
+
+      Long authorId = comment.getAuthor().getId();
+      if (!profileImageUrls.containsKey(authorId)) {
+        String profileImageUrl =
+            mediaDomainService
+                .generatePublicGetUrl(comment.getAuthor().getProfileImage())
+                .toExternalForm();
+        profileImageUrls.put(authorId, profileImageUrl);
+      }
+    }
+
+    return commentMapper.toGetCommentsResponse(reflection, roots, replies, profileImageUrls);
   }
 
   @Transactional
-  public CreateCommentResponse createComment(Long authorId, CreateCommentRequest request) {
-    validateTargetExists(request.targetType(), request.targetId());
+  public CreateCommentResponse createComment(
+      Long authorId, Long reflectionId, CreateCommentRequest request) {
+    User author = userDomainService.getUserReference(authorId);
+    Reflection reflection = reflectionDomainService.getReflection(reflectionId);
 
     Comment parent = null;
     if (request.parentId() != null) {
       parent =
           commentRepository
-          .findById(request.parentId())
-          .orElseThrow(() -> new CommentNotFoundException(request.parentId()));
-      validateParent(parent, request);
+              .findById(request.parentId())
+              .orElseThrow(() -> new CommentNotFoundException(request.parentId()));
+
+      if (parent.isReply()) {
+        throw new InvalidCommentException("Replies cannot have replies.");
+      }
+
+      if (!reflectionId.equals(parent.getReflection().getId())) {
+        throw new InvalidCommentException("Reply target must match parent comment target.");
+      }
     }
 
-    User author = userDomainService.getUserReference(authorId);
     Comment comment =
         Comment.builder()
-        .author(author)
-        .targetType(request.targetType())
-        .targetId(request.targetId())
-        .parent(parent)
-        .content(request.content())
-        .build();
+            .author(author)
+            .reflection(reflection)
+            .parent(parent)
+            .content(request.content())
+            .build();
 
     comment = commentRepository.save(comment);
-
     return new CreateCommentResponse(comment.getId());
   }
 
@@ -86,11 +113,8 @@ public class CommentService {
   public void updateComment(Long commentId, UpdateCommentRequest request) {
     Comment comment =
         commentRepository
-        .findById(commentId)
-        .orElseThrow(() -> new CommentNotFoundException(commentId));
-    if (comment.isDeleted()) {
-      throw new InvalidCommentException("Deleted comment cannot be updated.");
-    }
+            .findById(commentId)
+            .orElseThrow(() -> new CommentNotFoundException(commentId));
 
     comment.updateContent(request.content());
   }
@@ -98,60 +122,10 @@ public class CommentService {
   @Transactional
   @PreAuthorize("hasPermission(#commentId, 'COMMENT', 'DELETE')")
   public void deleteComment(Long commentId) {
-    Comment comment =
-        commentRepository
+    commentRepository
         .findById(commentId)
-        .orElseThrow(() -> new CommentNotFoundException(commentId));
-    if (!comment.isDeleted()) {
-      comment.delete();
-    }
-  }
-
-  private void validateTargetExists(CommentTargetType targetType, Long targetId) {
-    boolean exists =
-        switch (targetType) {
-      case REFLECTION -> reflectionRepository.existsById(targetId);
-      case TEAM_BUILDING_POST -> teamBuildingPostRepository.existsById(targetId);
-    };
-
-    if (!exists) {
-      throw new InvalidCommentException("Comment target does not exist.");
-    }
-  }
-
-  private void validateParent(Comment parent, CreateCommentRequest request) {
-    if (parent.isReply()) {
-      throw new InvalidCommentException("Replies cannot have replies.");
-    }
-    if (!parent.getTargetType().equals(request.targetType())
-        || !parent.getTargetId().equals(request.targetId())) {
-      throw new InvalidCommentException("Reply target must match parent comment target.");
-    }
-  }
-
-  private Map<Long, List<Comment>> getRepliesByParentId(List<Comment> roots) {
-    if (roots.isEmpty()) {
-      return Map.of();
-    }
-
-    return commentRepository.findByParentInOrderByCreatedAtAscIdAsc(roots).stream()
-        .collect(Collectors.groupingBy(comment -> comment.getParent().getId()));
-  }
-
-  private GetCommentsResponse.Comment toResponse(
-      Comment comment, Map<Long, List<Comment>> repliesByParentId) {
-    List<GetCommentsResponse.Comment> replies =
-        repliesByParentId.getOrDefault(comment.getId(), List.of()).stream()
-        .map(reply -> toResponse(reply, Map.of()))
-        .toList();
-
-    return new GetCommentsResponse.Comment(
-        comment.getId(),
-        new GetCommentsResponse.Author(comment.getAuthor().getId(), comment.getAuthor().getHandle()),
-        comment.isDeleted() ? null : comment.getContent(),
-        comment.isDeleted(),
-        comment.getCreatedAt(),
-        comment.getUpdatedAt(),
-        new ArrayList<>(replies));
+        .orElseThrow(() -> new CommentNotFoundException(commentId))
+        .delete();
+    ;
   }
 }

@@ -32,13 +32,21 @@ public class CommentPermissionEvaluator implements CustomPermissionEvaluator {
       log.debug("Comment with ID {} not found", targetId);
       return false;
     }
-    if (user == null) {
-      log.debug("Unauthenticated user cannot change comment {}", targetId);
-      return false;
-    }
 
     return switch (permission) {
-      case EDIT, DELETE -> user.userId().equals(comment.getAuthor().getId());
+      case EDIT, DELETE -> {
+        if (user == null) {
+          log.debug("Unauthenticated user cannot change comment {}", targetId);
+          yield false;
+        }
+
+        if (comment.isDeleted()) {
+          log.debug("Cannot edit or delete already deleted comment {}", targetId);
+          yield false;
+        }
+
+        yield user.userId().equals(comment.getAuthor().getId());
+      }
       default -> false;
     };
   }

@@ -10,7 +10,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -23,7 +22,6 @@ import com.skkil.sync.comment.dto.request.CreateCommentRequest;
 import com.skkil.sync.comment.dto.request.UpdateCommentRequest;
 import com.skkil.sync.comment.dto.response.CreateCommentResponse;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
-import com.skkil.sync.comment.enums.CommentTargetType;
 import com.skkil.sync.comment.service.CommentService;
 import com.skkil.sync.comment.snippets.CreateCommentRequestSnippets;
 import com.skkil.sync.comment.snippets.CreateCommentResponseSnippets;
@@ -54,28 +52,22 @@ import tools.jackson.databind.json.JsonMapper;
 @Import(TestSecurityConfig.class)
 class CommentControllerTests {
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired
-  private JsonMapper jsonMapper;
+  @Autowired private JsonMapper jsonMapper;
 
-  @MockitoBean
-  private CommentService commentService;
+  @MockitoBean private CommentService commentService;
 
   @Test
   @DisplayName("[getComments] API 문서화 테스트")
   void getComments() throws Exception {
+    Long reflectionId = 1L;
     GetCommentsResponse response = GetCommentsResponseSnippets.getGetCommentsResponse();
 
-    when(commentService.getComments(CommentTargetType.REFLECTION, 1L)).thenReturn(response);
+    when(commentService.getComments(reflectionId)).thenReturn(response);
 
     mockMvc
-        .perform(
-            get("/comments")
-                .queryParams(
-                    org.springframework.util.MultiValueMap.fromSingleValue(
-                        java.util.Map.of("targetType", "REFLECTION", "targetId", "1"))))
+        .perform(get("/reflections/{reflectionId}/comments", reflectionId))
         .andExpect(status().isOk())
         .andDo(
             document(
@@ -88,9 +80,7 @@ class CommentControllerTests {
                 null,
                 null,
                 Function.identity(),
-                queryParameters(
-                    parameterWithName("targetType").description("Comment target type"),
-                    parameterWithName("targetId").description("Comment target ID")),
+                pathParameters(parameterWithName("reflectionId").description("Reflection ID")),
                 GetCommentsResponseSnippets.getCommentsResponseFields()));
   }
 
@@ -98,15 +88,17 @@ class CommentControllerTests {
   @DisplayName("[createComment] API 문서화 테스트")
   @WithAuthenticatedUser
   void createComment() throws Exception {
+    Long reflectionId = 1L;
     AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
     CreateCommentRequest request = CreateCommentRequestSnippets.getCreateCommentRequest();
     CreateCommentResponse response = CreateCommentResponseSnippets.getCreateCommentResponse();
 
-    when(commentService.createComment(eq(user.userId()), eq(request))).thenReturn(response);
+    when(commentService.createComment(eq(user.userId()), eq(reflectionId), eq(request)))
+        .thenReturn(response);
 
     mockMvc
         .perform(
-            post("/comments")
+            post("/reflections/{reflectionId}/comments", reflectionId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
@@ -122,6 +114,7 @@ class CommentControllerTests {
                 preprocessRequest(modifyHeaders().set("Content-Type", "application/json")),
                 null,
                 Function.identity(),
+                pathParameters(parameterWithName("reflectionId").description("Reflection ID")),
                 CreateCommentRequestSnippets.getCreateCommentRequestFields(),
                 CreateCommentResponseSnippets.getCreateCommentResponseFields()));
   }

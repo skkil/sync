@@ -6,10 +6,6 @@
  */
 
 export interface CreateCommentRequest {
-  /** Comment target ID */
-  targetId: number;
-  /** Comment target type */
-  targetType: string;
   /** Comment content */
   content: string;
   /**

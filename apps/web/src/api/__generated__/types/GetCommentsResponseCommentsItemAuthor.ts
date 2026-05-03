@@ -6,11 +6,17 @@
  */
 
 export type GetCommentsResponseCommentsItemAuthor = {
-  /**
-   * Author handle
-   * @nullable
-   */
-  handle?: string | null;
+  /** Whether the author is the post author */
+  isPostAuthor: boolean;
+  /** Author name */
+  name: string;
+  /** Author handle */
+  handle: string;
   /** Author user ID */
   id: number;
+  /**
+   * Author profile image URL
+   * @nullable
+   */
+  profileImageUrl?: string | null;
 };

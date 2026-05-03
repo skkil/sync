@@ -17,10 +17,7 @@ import {
   useGetComments,
   useUpdateComment,
 } from '@/api/__generated__/comment/comment';
-import type {
-  GetCommentsResponseCommentsItem,
-  GetCommentsResponseCommentsItemRepliesItem,
-} from '@/api/__generated__/types';
+import type { GetCommentsResponseCommentsItem } from '@/api/__generated__/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -28,27 +25,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useSession } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 
-type CommentTargetType = 'REFLECTION' | 'TEAM_BUILDING_POST';
-type CommentItem =
-  | GetCommentsResponseCommentsItem
-  | GetCommentsResponseCommentsItemRepliesItem;
-
 interface CommentsSectionProps {
-  targetType: CommentTargetType;
-  targetId: string | number;
+  reflectionId: string;
 }
 
 export default function CommentsSection({
-  targetType,
-  targetId,
+  reflectionId,
 }: CommentsSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const params = {
-    targetType,
-    targetId: targetId.toString(),
-  };
-
-  const { data, isPending } = useGetComments(params, {
+  const { data, isPending } = useGetComments(reflectionId, {
     query: {
       enabled: isOpen,
     },
@@ -71,7 +56,7 @@ export default function CommentsSection({
 
       {isOpen && (
         <div className="mt-3 space-y-4">
-          <CommentForm targetType={targetType} targetId={targetId} />
+          <CommentForm reflectionId={reflectionId} />
 
           {isPending ? (
             <div className="flex justify-center py-4">
@@ -83,8 +68,7 @@ export default function CommentsSection({
                 <CommentThread
                   key={comment.id}
                   comment={comment}
-                  targetType={targetType}
-                  targetId={targetId}
+                  reflectionId={reflectionId}
                 />
               ))}
             </div>
@@ -97,29 +81,22 @@ export default function CommentsSection({
 
 function CommentThread({
   comment,
-  targetType,
-  targetId,
+  reflectionId,
 }: {
   comment: GetCommentsResponseCommentsItem;
-  targetType: CommentTargetType;
-  targetId: string | number;
+  reflectionId: string;
 }) {
   return (
     <div className="space-y-3">
-      <CommentRow
-        comment={comment}
-        targetType={targetType}
-        targetId={targetId}
-      />
+      <CommentRow comment={comment} reflectionId={reflectionId} />
 
       {comment.replies.length > 0 && (
         <div className="ml-10 space-y-3 border-l pl-3">
           {comment.replies.map((reply) => (
             <CommentRow
-              key={reply.id}
-              comment={reply}
-              targetType={targetType}
-              targetId={targetId}
+              key={(reply as GetCommentsResponseCommentsItem).id}
+              comment={reply as GetCommentsResponseCommentsItem}
+              reflectionId={reflectionId}
               parentId={comment.id}
               isReply
             />
@@ -132,14 +109,12 @@ function CommentThread({
 
 function CommentRow({
   comment,
-  targetType,
-  targetId,
+  reflectionId,
   parentId,
   isReply = false,
 }: {
-  comment: CommentItem;
-  targetType: CommentTargetType;
-  targetId: string | number;
+  comment: GetCommentsResponseCommentsItem;
+  reflectionId: string;
   parentId?: number;
   isReply?: boolean;
 }) {
@@ -170,7 +145,7 @@ function CommentRow({
               </p>
             </div>
 
-            {isMine && !comment.deleted && (
+            {isMine && !comment.isDeleted && (
               <div className="flex shrink-0 items-center gap-1">
                 <Button
                   type="button"
@@ -188,17 +163,18 @@ function CommentRow({
           {isEditing ? (
             <EditCommentForm
               commentId={comment.id}
+              reflectionId={reflectionId}
               initialContent={comment.content ?? ''}
               onDone={() => setIsEditing(false)}
             />
           ) : (
             <p className="mt-2 whitespace-pre-wrap break-words text-sm">
-              {comment.deleted ? '삭제된 댓글입니다.' : comment.content}
+              {comment.isDeleted ? '삭제된 댓글입니다.' : comment.content}
             </p>
           )}
         </div>
 
-        {!isReply && !comment.deleted && session && (
+        {!isReply && !comment.isDeleted && session && (
           <div>
             <Button
               type="button"
@@ -212,8 +188,7 @@ function CommentRow({
             {isReplying && (
               <div className="mt-2">
                 <CommentForm
-                  targetType={targetType}
-                  targetId={targetId}
+                  reflectionId={reflectionId}
                   parentId={parentId ?? comment.id}
                   onSuccess={() => setIsReplying(false)}
                 />
@@ -227,29 +202,24 @@ function CommentRow({
 }
 
 function CommentForm({
-  targetType,
-  targetId,
+  reflectionId,
   parentId,
   onSuccess,
 }: {
-  targetType: CommentTargetType;
-  targetId: string | number;
+  reflectionId: string;
   parentId?: number;
   onSuccess?: () => void;
 }) {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const [content, setContent] = useState('');
-  const params = {
-    targetType,
-    targetId: targetId.toString(),
-  };
+
   const { mutate, isPending } = useCreateComment({
     mutation: {
       onSuccess: () => {
         setContent('');
         queryClient.invalidateQueries({
-          queryKey: getGetCommentsQueryKey(params),
+          queryKey: getGetCommentsQueryKey(reflectionId),
         });
         onSuccess?.();
       },
@@ -268,9 +238,8 @@ function CommentForm({
     }
 
     mutate({
+      reflectionId,
       data: {
-        targetType,
-        targetId: Number(targetId),
         parentId,
         content: trimmed,
       },
@@ -301,10 +270,12 @@ function CommentForm({
 
 function EditCommentForm({
   commentId,
+  reflectionId,
   initialContent,
   onDone,
 }: {
   commentId: number;
+  reflectionId: string;
   initialContent: string;
   onDone: () => void;
 }) {
@@ -313,7 +284,9 @@ function EditCommentForm({
   const { mutate, isPending } = useUpdateComment({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['/comments'] });
+        queryClient.invalidateQueries({
+          queryKey: getGetCommentsQueryKey(reflectionId),
+        });
         onDone();
       },
       onError: () => toast.error('댓글을 수정하지 못했습니다.'),

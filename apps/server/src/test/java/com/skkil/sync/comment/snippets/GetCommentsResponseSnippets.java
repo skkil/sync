@@ -2,6 +2,7 @@ package com.skkil.sync.comment.snippets;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 
 import com.epages.restdocs.apispec.FieldDescriptors;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
@@ -13,7 +14,15 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 public class GetCommentsResponseSnippets {
 
   public static GetCommentsResponse getGetCommentsResponse() {
-    GetCommentsResponse.Author author = new GetCommentsResponse.Author(1L, "user-handle");
+    GetCommentsResponse.Author author =
+        GetCommentsResponse.Author.builder()
+            .id(1L)
+            .handle("user-handle")
+            .name("User Name")
+            .profileImageUrl("http://example.com/profile.jpg")
+            .isPostAuthor(false)
+            .build();
+
     GetCommentsResponse.Comment reply =
         new GetCommentsResponse.Comment(
             2L,
@@ -49,45 +58,28 @@ public class GetCommentsResponseSnippets {
                 .type(JsonFieldType.STRING)
                 .description("Comment content")
                 .optional(),
-            fieldWithPath(".deleted").type(JsonFieldType.BOOLEAN).description("Deleted flag"),
+            fieldWithPath(".isDeleted").type(JsonFieldType.BOOLEAN).description("Is deleted"),
             fieldWithPath(".createdAt")
                 .type(JsonFieldType.STRING)
                 .description("Creation timestamp"),
             fieldWithPath(".updatedAt").type(JsonFieldType.STRING).description("Update timestamp"),
-            fieldWithPath(".replies").type(JsonFieldType.ARRAY).description("Replies"));
+            // TODO: Spring REST Docs does not support recursive field descriptors, need to
+            // implement custom handling for replies
+            subsectionWithPath(".replies").type(JsonFieldType.ARRAY).description("Replies"));
 
     fields =
         fields.andWithPrefix(
             "comments[].author",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Author user ID"),
-            fieldWithPath(".handle")
+            fieldWithPath(".handle").type(JsonFieldType.STRING).description("Author handle"),
+            fieldWithPath(".name").type(JsonFieldType.STRING).description("Author name"),
+            fieldWithPath(".profileImageUrl")
                 .type(JsonFieldType.STRING)
-                .description("Author handle")
-                .optional());
-
-    fields =
-        fields.andWithPrefix(
-            "comments[].replies[]",
-            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Reply ID"),
-            fieldWithPath(".content")
-                .type(JsonFieldType.STRING)
-                .description("Reply content")
+                .description("Author profile image URL")
                 .optional(),
-            fieldWithPath(".deleted").type(JsonFieldType.BOOLEAN).description("Deleted flag"),
-            fieldWithPath(".createdAt")
-                .type(JsonFieldType.STRING)
-                .description("Creation timestamp"),
-            fieldWithPath(".updatedAt").type(JsonFieldType.STRING).description("Update timestamp"),
-            fieldWithPath(".replies").type(JsonFieldType.ARRAY).description("Nested replies"));
-
-    fields =
-        fields.andWithPrefix(
-            "comments[].replies[].author",
-            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Author user ID"),
-            fieldWithPath(".handle")
-                .type(JsonFieldType.STRING)
-                .description("Author handle")
-                .optional());
+            fieldWithPath(".isPostAuthor")
+                .type(JsonFieldType.BOOLEAN)
+                .description("Whether the author is the post author"));
 
     return responseFields(fields.getFieldDescriptors());
   }

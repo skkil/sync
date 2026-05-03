@@ -235,70 +235,6 @@ paths:
       responses:
         "204":
           description: "204"
-  /comments:
-    get:
-      tags:
-      - comment
-      summary: Get Comments
-      description: Get Comments
-      operationId: GetComments
-      parameters:
-      - name: targetType
-        in: query
-        description: Comment target type
-        required: true
-        schema:
-          type: string
-      - name: targetId
-        in: query
-        description: Comment target ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetCommentsResponse"
-              examples:
-                GetComments:
-                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
-                    :\"user-handle\"},\"content\":\"Comment content\",\"deleted\"\
-                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
-                    2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"author\":{\"id\"\
-                    :1,\"handle\":\"user-handle\"},\"content\":\"Reply content\",\"\
-                    deleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\"\
-                    :\"2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
-    post:
-      tags:
-      - comment
-      summary: Create Comment
-      description: Create Comment
-      operationId: CreateComment
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateCommentRequest"
-            examples:
-              CreateComment:
-                value: "{\"targetType\":\"REFLECTION\",\"targetId\":1,\"parentId\"\
-                  :null,\"content\":\"Comment content\"}"
-      responses:
-        "201":
-          description: "201"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateCommentResponse"
-              examples:
-                CreateComment:
-                  value: |-
-                    {
-                      "id" : 1
-                    }
   /comments/{commentId}:
     delete:
       tags:
@@ -1041,6 +977,70 @@ paths:
       responses:
         "204":
           description: "204"
+  /reflections/{reflectionId}/comments:
+    get:
+      tags:
+      - comment
+      summary: Get Comments
+      description: Get Comments
+      operationId: GetComments
+      parameters:
+      - name: reflectionId
+        in: path
+        description: Reflection ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCommentsResponse"
+              examples:
+                GetComments:
+                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
+                    :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
+                    http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
+                    :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
+                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
+                    author\":{\"id\":1,\"handle\":\"user-handle\",\"name\":\"User\
+                    \ Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
+                    ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
+                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
+                    2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
+    post:
+      tags:
+      - comment
+      summary: Create Comment
+      description: Create Comment
+      operationId: CreateComment
+      parameters:
+      - name: reflectionId
+        in: path
+        description: Reflection ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+            examples:
+              CreateComment:
+                value: "{\"parentId\":1,\"content\":\"Comment content\"}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCommentResponse"
+              examples:
+                CreateComment:
+                  value: "{\"id\":1}"
   /search/providers:
     get:
       tags:
@@ -1641,101 +1641,6 @@ components:
         slug:
           type: string
           description: Reflection Slug
-    GetCommentsResponse:
-      title: GetCommentsResponse
-      required:
-      - comments
-      type: object
-      properties:
-        comments:
-          type: array
-          description: Comments
-          items:
-            required:
-            - createdAt
-            - deleted
-            - id
-            - replies
-            - updatedAt
-            type: object
-            properties:
-              createdAt:
-                type: string
-                description: Creation timestamp
-              deleted:
-                type: boolean
-                description: Deleted flag
-              replies:
-                type: array
-                description: Replies
-                items:
-                  required:
-                  - createdAt
-                  - deleted
-                  - id
-                  - replies
-                  - updatedAt
-                  type: object
-                  properties:
-                    createdAt:
-                      type: string
-                      description: Creation timestamp
-                    deleted:
-                      type: boolean
-                      description: Deleted flag
-                    replies:
-                      type: array
-                      description: Nested replies
-                      items:
-                        oneOf:
-                        - type: object
-                        - type: boolean
-                        - type: string
-                        - type: number
-                    author:
-                      required:
-                      - id
-                      type: object
-                      properties:
-                        handle:
-                          type: string
-                          description: Author handle
-                          nullable: true
-                        id:
-                          type: number
-                          description: Author user ID
-                    id:
-                      type: number
-                      description: Reply ID
-                    content:
-                      type: string
-                      description: Reply content
-                      nullable: true
-                    updatedAt:
-                      type: string
-                      description: Update timestamp
-              author:
-                required:
-                - id
-                type: object
-                properties:
-                  handle:
-                    type: string
-                    description: Author handle
-                    nullable: true
-                  id:
-                    type: number
-                    description: Author user ID
-              id:
-                type: number
-                description: Comment ID
-              content:
-                type: string
-                description: Comment content
-                nullable: true
-              updatedAt:
-                type: string
-                description: Update timestamp
     GetJobPostingResponse:
       title: GetJobPostingResponse
       required:
@@ -1872,6 +1777,73 @@ components:
                   updatedAt:
                     type: string
                     description: Update Timestamp
+    GetCommentsResponse:
+      title: GetCommentsResponse
+      required:
+      - comments
+      type: object
+      properties:
+        comments:
+          type: array
+          description: Comments
+          items:
+            required:
+            - createdAt
+            - id
+            - isDeleted
+            - replies
+            - updatedAt
+            type: object
+            properties:
+              createdAt:
+                type: string
+                description: Creation timestamp
+              replies:
+                type: array
+                description: Replies
+                items:
+                  oneOf:
+                  - type: object
+                  - type: boolean
+                  - type: string
+                  - type: number
+              isDeleted:
+                type: boolean
+                description: Is deleted
+              author:
+                required:
+                - handle
+                - id
+                - isPostAuthor
+                - name
+                type: object
+                properties:
+                  isPostAuthor:
+                    type: boolean
+                    description: Whether the author is the post author
+                  name:
+                    type: string
+                    description: Author name
+                  handle:
+                    type: string
+                    description: Author handle
+                  id:
+                    type: number
+                    description: Author user ID
+                  profileImageUrl:
+                    type: string
+                    description: Author profile image URL
+                    nullable: true
+              id:
+                type: number
+                description: Comment ID
+              content:
+                type: string
+                description: Comment content
+                nullable: true
+              updatedAt:
+                type: string
+                description: Update timestamp
     CreateReflectionRequest:
       title: CreateReflectionRequest
       required:
@@ -2076,27 +2048,6 @@ components:
         id:
           type: number
           description: Created comment ID
-    CreateCommentRequest:
-      title: CreateCommentRequest
-      required:
-      - content
-      - targetId
-      - targetType
-      type: object
-      properties:
-        targetId:
-          type: number
-          description: Comment target ID
-        targetType:
-          type: string
-          description: Comment target type
-        content:
-          type: string
-          description: Comment content
-        parentId:
-          type: number
-          description: Parent comment ID
-          nullable: true
     CreateJobPostingRequest:
       title: CreateJobPostingRequest
       required:
@@ -2258,6 +2209,19 @@ components:
         content:
           type: string
           description: Content
+    CreateCommentRequest:
+      title: CreateCommentRequest
+      required:
+      - content
+      type: object
+      properties:
+        content:
+          type: string
+          description: Comment content
+        parentId:
+          type: number
+          description: Parent comment ID
+          nullable: true
     GetContestOccurrenceResponse:
       title: GetContestOccurrenceResponse
       required:

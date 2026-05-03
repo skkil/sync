@@ -4,24 +4,9 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetCommentsResponseCommentsItemRepliesItemAuthor } from './GetCommentsResponseCommentsItemRepliesItemAuthor';
-import type { GetCommentsResponseCommentsItemRepliesItemRepliesItem } from './GetCommentsResponseCommentsItemRepliesItemRepliesItem';
 
-export type GetCommentsResponseCommentsItemRepliesItem = {
-  /** Creation timestamp */
-  createdAt: string;
-  /** Deleted flag */
-  deleted: boolean;
-  /** Nested replies */
-  replies: GetCommentsResponseCommentsItemRepliesItemRepliesItem[];
-  author?: GetCommentsResponseCommentsItemRepliesItemAuthor;
-  /** Reply ID */
-  id: number;
-  /**
-   * Reply content
-   * @nullable
-   */
-  content?: string | null;
-  /** Update timestamp */
-  updatedAt: string;
-};
+export type GetCommentsResponseCommentsItemRepliesItem =
+  | { [key: string]: unknown }
+  | boolean
+  | string
+  | number;
