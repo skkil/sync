@@ -1,5 +1,6 @@
 package com.skkil.sync.search.controller;
 
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
 import com.skkil.sync.search.dto.response.SearchResponse;
 import com.skkil.sync.search.enums.SearchType;
 import com.skkil.sync.search.service.SearchService;
@@ -26,8 +27,7 @@ public class SearchController {
   public SearchResponse search(
       @RequestParam(required = true) @NotBlank String query,
       @RequestParam(required = true) SearchType type,
-      @RequestParam(required = false, defaultValue = "0") int page,
-      @RequestParam(required = false, defaultValue = "50") int size) {
-    return searchService.search(query, type, page, size);
+      @Validated OffsetPaginationRequest pagination) {
+    return searchService.search(query, type, pagination);
   }
 }

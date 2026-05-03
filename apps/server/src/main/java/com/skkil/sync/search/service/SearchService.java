@@ -1,5 +1,7 @@
 package com.skkil.sync.search.service;
 
+import com.skkil.sync.common.util.pagination.dto.request.OffsetPaginationRequest;
+import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.model.Provider;
 import com.skkil.sync.provider.service.ProviderService;
@@ -17,23 +19,41 @@ public class SearchService {
 
   private final ProfileService profileService;
   private final ProviderService providerService;
+  private final PaginationService paginationService;
 
-  public SearchService(ProfileService profileService, ProviderService providerService) {
+  public SearchService(
+      ProfileService profileService,
+      ProviderService providerService,
+      PaginationService paginationService) {
     this.profileService = profileService;
     this.providerService = providerService;
+    this.paginationService = paginationService;
   }
 
-  public SearchResponse search(String query, SearchType type, int page, int size) {
+  public SearchResponse search(String query, SearchType type, OffsetPaginationRequest pagination) {
     var results =
-        switch (type) {
-          case USER -> searchUsers(query, page, size);
-          case SCHOOL -> searchSchools(query, page, size);
-        };
+        paginationService.paginate(
+            pageable ->
+                switch (type) {
+                  case USER -> searchUsers(query, pageable.getPageNumber(), pageable.getPageSize());
+                  case SCHOOL ->
+                      searchSchools(query, pageable.getPageNumber(), pageable.getPageSize());
+                  case COMPANY ->
+                      searchCompanies(query, pageable.getPageNumber(), pageable.getPageSize());
+                  case CONTEST ->
+                      searchContests(query, pageable.getPageNumber(), pageable.getPageSize());
+                  case PROJECT ->
+                      searchProjects(query, pageable.getPageNumber(), pageable.getPageSize());
+                },
+            pagination);
 
     var count =
         SearchResponse.Count.builder()
             .userCount(profileService.countUsers(query))
             .schoolCount(providerService.countProviders(ProviderType.SCHOOL, query))
+            .companyCount(providerService.countProviders(ProviderType.COMPANY, query))
+            .contestCount(providerService.countProviders(ProviderType.CONTEST, query))
+            .projectCount(providerService.countProviders(ProviderType.PROJECT, query))
             .build();
 
     return new SearchResponse(results, count);
@@ -61,5 +81,44 @@ public class SearchService {
     return schools.map(
         school ->
             SearchResponse.Result.builder().id(school.getId()).name(school.getName()).build());
+  }
+
+  public Page<SearchResponse.Result> searchCompanies(String query, int page, int size) {
+    log.debug("Searching for companies with query '{}', page {}, size {}", query, page, size);
+
+    Page<Provider> companies =
+        providerService.searchProviders(ProviderType.COMPANY, query, page, size);
+
+    log.debug("Found {} companies matching query '{}'", companies.getTotalElements(), query);
+
+    return companies.map(
+        company ->
+            SearchResponse.Result.builder().id(company.getId()).name(company.getName()).build());
+  }
+
+  public Page<SearchResponse.Result> searchContests(String query, int page, int size) {
+    log.debug("Searching for contests with query '{}', page {}, size {}", query, page, size);
+
+    Page<Provider> contests =
+        providerService.searchProviders(ProviderType.CONTEST, query, page, size);
+
+    log.debug("Found {} contests matching query '{}'", contests.getTotalElements(), query);
+
+    return contests.map(
+        contest ->
+            SearchResponse.Result.builder().id(contest.getId()).name(contest.getName()).build());
+  }
+
+  public Page<SearchResponse.Result> searchProjects(String query, int page, int size) {
+    log.debug("Searching for projects with query '{}', page {}, size {}", query, page, size);
+
+    Page<Provider> projects =
+        providerService.searchProviders(ProviderType.PROJECT, query, page, size);
+
+    log.debug("Found {} projects matching query '{}'", projects.getTotalElements(), query);
+
+    return projects.map(
+        project ->
+            SearchResponse.Result.builder().id(project.getId()).name(project.getName()).build());
   }
 }
