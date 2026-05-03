@@ -56,6 +56,7 @@ public class SecurityConfig {
                         "/experiences/**",
                         "/companies/**",
                         "/reflections/**",
+                        "/comments/**",
                         "/users/**",
                         "/team-building/**",
                         "/projects/**",

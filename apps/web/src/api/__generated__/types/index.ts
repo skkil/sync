@@ -5,6 +5,8 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from './CreateCommentRequest';
+export * from './CreateCommentResponse';
 export * from './CreateContestOccurrenceRequest';
 export * from './CreateJobApplicationRequest';
 export * from './CreateJobApplicationResponse';
@@ -13,6 +15,10 @@ export * from './CreateJobPostingResponse';
 export * from './CreateReflectionRequest';
 export * from './CreateReflectionRequestContent';
 export * from './CreateReflectionResponse';
+export * from './GetCommentsResponse';
+export * from './GetCommentsResponseCommentsItem';
+export * from './GetCommentsResponseCommentsItemAuthor';
+export * from './GetCommentsResponseCommentsItemRepliesItem';
 export * from './GetContestOccurrenceResponse';
 export * from './GetContestOccurrenceResponseContest';
 export * from './GetContestOccurrencesByContestParams';
@@ -84,6 +90,7 @@ export * from './SearchResponseCount';
 export * from './SearchResponseResults';
 export * from './SearchResponseResultsContentItem';
 export * from './SearchResponseResultsPageInfo';
+export * from './UpdateCommentRequest';
 export * from './UpdateProfileRequest';
 export * from './UpdateProfileRequestContacts';
 export * from './UpdateReflectionRequest';

@@ -38,4 +38,8 @@ public class WithAuthenticatedUserSecurityContextFactory
 
     return (AuthenticatedUser) authentication.getPrincipal();
   }
+
+  public static AuthenticatedUser createAuthenticatedUser() {
+    return null;
+  }
 }
