@@ -30,6 +30,7 @@ import type {
   CreateReflectionRequest,
   CreateReflectionResponse,
   GetProjectExperienceReflectionsParams,
+  GetReflectionResponse,
   GetReflectionsParams,
   GetReflectionsResponse,
   GetUserReflectionsParams,
@@ -1115,6 +1116,187 @@ export const useUpdateReflection = <
 > => {
   return useMutation(getUpdateReflectionMutationOptions(options), queryClient);
 };
+/**
+ * Get Reflections
+ * @summary Get Reflections
+ */
+export type getReflectionBySlugResponse200 = {
+  data: GetReflectionResponse;
+  status: 200;
+};
+
+export type getReflectionBySlugResponseSuccess =
+  getReflectionBySlugResponse200 & {
+    headers: Headers;
+  };
+export type getReflectionBySlugResponse = getReflectionBySlugResponseSuccess;
+
+export const getGetReflectionBySlugUrl = (slug: string) => {
+  return `/reflections/${slug}`;
+};
+
+export const getReflectionBySlug = async (
+  slug: string,
+  options?: RequestInit,
+): Promise<getReflectionBySlugResponse> => {
+  return api<getReflectionBySlugResponse>(getGetReflectionBySlugUrl(slug), {
+    ...options,
+    method: 'GET',
+  });
+};
+
+export const getGetReflectionBySlugQueryKey = (slug: string) => {
+  return [`/reflections/${slug}`] as const;
+};
+
+export const getGetReflectionBySlugQueryOptions = <
+  TData = Awaited<ReturnType<typeof getReflectionBySlug>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionBySlug>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetReflectionBySlugQueryKey(slug);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getReflectionBySlug>>
+  > = ({ signal }) => getReflectionBySlug(slug, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getReflectionBySlug>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetReflectionBySlugQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getReflectionBySlug>>
+>;
+export type GetReflectionBySlugQueryError = ErrorType<unknown>;
+
+export function useGetReflectionBySlug<
+  TData = Awaited<ReturnType<typeof getReflectionBySlug>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionBySlug>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionBySlug>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionBySlug>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionBySlug<
+  TData = Awaited<ReturnType<typeof getReflectionBySlug>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionBySlug>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionBySlug>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionBySlug>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionBySlug<
+  TData = Awaited<ReturnType<typeof getReflectionBySlug>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionBySlug>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Reflections
+ */
+
+export function useGetReflectionBySlug<
+  TData = Awaited<ReturnType<typeof getReflectionBySlug>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionBySlug>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetReflectionBySlugQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
 /**
  * Get Reflections
  * @summary Get Reflections

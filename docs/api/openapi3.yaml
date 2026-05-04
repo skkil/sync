@@ -978,17 +978,17 @@ paths:
       responses:
         "204":
           description: "204"
-  /reflections/{reflectionId}/comments:
+  /reflections/{slug}:
     get:
       tags:
-      - comment
-      summary: Get Comments
-      description: Get Comments
-      operationId: GetComments
+      - reflection
+      summary: Get Reflections
+      description: Get Reflections
+      operationId: GetReflectionBySlug
       parameters:
-      - name: reflectionId
+      - name: slug
         in: path
-        description: Reflection ID
+        description: ""
         required: true
         schema:
           type: string
@@ -998,19 +998,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetCommentsResponse"
+                $ref: "#/components/schemas/GetReflectionResponse"
               examples:
-                GetComments:
-                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
-                    :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
-                    http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
-                    :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
-                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
-                    author\":{\"id\":1,\"handle\":\"user-handle\",\"name\":\"User\
-                    \ Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
-                    ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
-                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
-                    2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
+                GetReflectionBySlug:
+                  value: "{\"id\":1,\"author\":{\"id\":1,\"name\":\"Author Name\"\
+                    },\"content\":\"Reflection Content\",\"likeCount\":1,\"commentCount\"\
+                    :1}"
+  /reflections/{reflectionId}/comments:
     post:
       tags:
       - comment
@@ -1042,6 +1036,39 @@ paths:
               examples:
                 CreateComment:
                   value: "{\"id\":1}"
+  /reflections/{slug}/comments:
+    get:
+      tags:
+      - comment
+      summary: Get Reflection Comments
+      description: Get Reflection Comments
+      operationId: GetReflectionComments
+      parameters:
+      - name: slug
+        in: path
+        description: Reflection Slug
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCommentsResponse"
+              examples:
+                GetReflectionComments:
+                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
+                    :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
+                    http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
+                    :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
+                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
+                    author\":{\"id\":1,\"handle\":\"user-handle\",\"name\":\"User\
+                    \ Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
+                    ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
+                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
+                    2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
   /search:
     get:
       tags:
@@ -1270,6 +1297,41 @@ components:
         expiresAt:
           type: string
           description: Expiration Time
+    GetReflectionResponse:
+      title: GetReflectionResponse
+      required:
+      - author
+      - commentCount
+      - content
+      - likeCount
+      type: object
+      properties:
+        author:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Author Name
+            id:
+              type: number
+              description: Author User ID
+          description: Author Information
+        likeCount:
+          type: number
+          description: Number of Likes
+        id:
+          type: number
+          description: Reflection ID
+          nullable: true
+        content:
+          type: string
+          description: Reflection Content
+        commentCount:
+          type: number
+          description: Number of Comments
     CreateContestOccurrenceRequest:
       title: CreateContestOccurrenceRequest
       required:

@@ -61,6 +61,8 @@ export * from './GetProvidersResponseProviders';
 export * from './GetProvidersResponseProvidersNodesItem';
 export * from './GetProvidersResponseProvidersNodesItemContent';
 export * from './GetProvidersResponseProvidersPageInfo';
+export * from './GetReflectionResponse';
+export * from './GetReflectionResponseAuthor';
 export * from './GetReflectionsParams';
 export * from './GetReflectionsResponse';
 export * from './GetReflectionsResponseReflections';

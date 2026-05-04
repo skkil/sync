@@ -1,6 +1,7 @@
 package com.skkil.sync.reflection.controller;
 
 import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
+import com.skkil.sync.reflection.dto.response.GetReflectionResponse;
 import com.skkil.sync.reflection.dto.response.GetReflectionsResponse;
 import com.skkil.sync.reflection.service.ReflectionQueryService;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,12 @@ public class ReflectionQueryController {
   @ResponseStatus(HttpStatus.OK)
   public GetReflectionsResponse getReflections(@Validated CursorPaginationRequest pagination) {
     return reflectionQueryService.getReflections(pagination);
+  }
+
+  @GetMapping("/reflections/{slug}")
+  @ResponseStatus(HttpStatus.OK)
+  public GetReflectionResponse getReflectionBySlug(@PathVariable String slug) {
+    return reflectionQueryService.getReflectionBySlug(slug);
   }
 
   @GetMapping("/users/{userId}/reflections")

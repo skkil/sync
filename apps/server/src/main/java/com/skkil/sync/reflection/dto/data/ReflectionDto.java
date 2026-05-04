@@ -10,4 +10,6 @@ public record ReflectionDto(
     Long projectId,
     String projectName,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt) {}
+    LocalDateTime updatedAt,
+    Long likeCount,
+    Long commentCount) {}
