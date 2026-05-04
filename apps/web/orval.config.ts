@@ -74,6 +74,11 @@ export default defineConfig({
               useInfinite: true,
             },
           },
+          GetRecentFeed: {
+            query: {
+              useInfinite: true,
+            },
+          },
         },
       },
     },

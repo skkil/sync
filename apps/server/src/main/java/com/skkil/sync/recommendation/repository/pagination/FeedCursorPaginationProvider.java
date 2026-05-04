@@ -1,0 +1,45 @@
+package com.skkil.sync.recommendation.repository.pagination;
+
+import static com.skkil.sync.jooq.tables.Reflections.REFLECTIONS;
+
+import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationProvider;
+import com.skkil.sync.recommendation.dto.data.FeedCursor;
+import com.skkil.sync.recommendation.dto.data.FeedDto;
+import java.util.List;
+import org.jooq.Condition;
+import org.jooq.OrderField;
+import org.springframework.stereotype.Component;
+
+@Component
+public class FeedCursorPaginationProvider implements CursorPaginationProvider<FeedDto, FeedCursor> {
+
+  @Override
+  public Class<FeedCursor> getCursorClass() {
+    return FeedCursor.class;
+  }
+
+  @Override
+  public Condition getNextCondition(FeedCursor cursor) {
+    return REFLECTIONS.ID.gt(cursor.id());
+  }
+
+  @Override
+  public Condition getPreviousCondition(FeedCursor cursor) {
+    return REFLECTIONS.ID.lt(cursor.id());
+  }
+
+  @Override
+  public List<OrderField<?>> getOrderFields() {
+    return List.of(REFLECTIONS.CREATED_AT.desc(), REFLECTIONS.ID.desc());
+  }
+
+  @Override
+  public List<OrderField<?>> getReversedOrderFields() {
+    return List.of(REFLECTIONS.CREATED_AT.asc(), REFLECTIONS.ID.asc());
+  }
+
+  @Override
+  public FeedCursor convert(FeedDto entity) {
+    return new FeedCursor(entity.id());
+  }
+}
