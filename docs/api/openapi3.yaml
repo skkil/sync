@@ -982,8 +982,8 @@ paths:
     get:
       tags:
       - reflection
-      summary: Get Reflections
-      description: Get Reflections
+      summary: Get Reflection By Slug
+      description: Get Reflection By Slug
       operationId: GetReflectionBySlug
       parameters:
       - name: slug
@@ -1297,41 +1297,6 @@ components:
         expiresAt:
           type: string
           description: Expiration Time
-    GetReflectionResponse:
-      title: GetReflectionResponse
-      required:
-      - author
-      - commentCount
-      - content
-      - likeCount
-      type: object
-      properties:
-        author:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Author Name
-            id:
-              type: number
-              description: Author User ID
-          description: Author Information
-        likeCount:
-          type: number
-          description: Number of Likes
-        id:
-          type: number
-          description: Reflection ID
-          nullable: true
-        content:
-          type: string
-          description: Reflection Content
-        commentCount:
-          type: number
-          description: Number of Comments
     CreateContestOccurrenceRequest:
       title: CreateContestOccurrenceRequest
       required:
@@ -1731,6 +1696,41 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    GetReflectionResponse:
+      title: GetReflectionResponse
+      required:
+      - author
+      - commentCount
+      - content
+      - id
+      - likeCount
+      type: object
+      properties:
+        author:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Author Name
+            id:
+              type: number
+              description: Author User ID
+          description: Author Information
+        likeCount:
+          type: number
+          description: Number of Likes
+        id:
+          type: number
+          description: Reflection ID
+        content:
+          type: string
+          description: Reflection Content
+        commentCount:
+          type: number
+          description: Number of Comments
     SearchResponse:
       title: SearchResponse
       required:

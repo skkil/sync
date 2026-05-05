@@ -11,11 +11,8 @@ export interface GetReflectionResponse {
   author: GetReflectionResponseAuthor;
   /** Number of Likes */
   likeCount: number;
-  /**
-   * Reflection ID
-   * @nullable
-   */
-  id?: number | null;
+  /** Reflection ID */
+  id: number;
   /** Reflection Content */
   content: string;
   /** Number of Comments */

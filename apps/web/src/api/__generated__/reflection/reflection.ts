@@ -1117,8 +1117,8 @@ export const useUpdateReflection = <
   return useMutation(getUpdateReflectionMutationOptions(options), queryClient);
 };
 /**
- * Get Reflections
- * @summary Get Reflections
+ * Get Reflection By Slug
+ * @summary Get Reflection By Slug
  */
 export type getReflectionBySlugResponse200 = {
   data: GetReflectionResponse;
@@ -1265,7 +1265,7 @@ export function useGetReflectionBySlug<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get Reflections
+ * @summary Get Reflection By Slug
  */
 
 export function useGetReflectionBySlug<
