@@ -26,6 +26,7 @@ public class ReflectionService {
 
   private final UserDomainService userDomainService;
   private final ExperienceDomainService experienceDomainService;
+  private final ReflectionContentMediaService contentMediaService;
   private final ApplicationEventPublisher eventPublisher;
 
   private final ReflectionRepository reflectionRepository;
@@ -33,10 +34,12 @@ public class ReflectionService {
   public ReflectionService(
       UserDomainService userDomainService,
       ExperienceDomainService experienceDomainService,
+      ReflectionContentMediaService contentMediaService,
       ReflectionRepository reflectionRepository,
       ApplicationEventPublisher eventPublisher) {
     this.userDomainService = userDomainService;
     this.experienceDomainService = experienceDomainService;
+    this.contentMediaService = contentMediaService;
     this.reflectionRepository = reflectionRepository;
     this.eventPublisher = eventPublisher;
   }
@@ -55,7 +58,8 @@ public class ReflectionService {
             .slug(slug)
             .author(author)
             .title(request.title())
-            .content(request.content().json())
+            .content(
+                contentMediaService.prepareContentForCreate(authorId, request.content().json()))
             .build();
 
     reflection = reflectionRepository.save(reflection);
