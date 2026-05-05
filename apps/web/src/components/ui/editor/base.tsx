@@ -1,4 +1,6 @@
 import {
+  CaretLeftIcon,
+  CaretRightIcon,
   CodeIcon,
   TextBolderIcon,
   TextItalicIcon,
@@ -34,6 +36,14 @@ import { PostImage } from './extensions/post-image';
 interface PostImageNode {
   src: string;
   alt?: string;
+}
+
+type PreviewDirection = 'previous' | 'next';
+
+interface OutgoingPreviewImage {
+  image: PostImageNode;
+  index: number;
+  direction: PreviewDirection;
 }
 
 function parseContent(content: string): JSONContent | string {
@@ -127,11 +137,63 @@ function BaseViewer({ content }: { content: string }) {
 }
 
 function PostImageGallery({ images }: { images: PostImageNode[] }) {
-  const [previewImage, setPreviewImage] = useState<PostImageNode | null>(null);
+  const [previewImageIndex, setPreviewImageIndex] = useState<number | null>(
+    null,
+  );
+  const [previewDirection, setPreviewDirection] =
+    useState<PreviewDirection | null>(null);
+  const [outgoingPreviewImage, setOutgoingPreviewImage] =
+    useState<OutgoingPreviewImage | null>(null);
 
   if (images.length === 0) {
     return null;
   }
+
+  const previewImage =
+    previewImageIndex === null ? null : images[previewImageIndex];
+  const hasPreviousImage = previewImageIndex !== null && previewImageIndex > 0;
+  const hasNextImage =
+    previewImageIndex !== null && previewImageIndex < images.length - 1;
+
+  const closePreview = () => {
+    setPreviewDirection(null);
+    setOutgoingPreviewImage(null);
+    setPreviewImageIndex(null);
+  };
+
+  const openPreview = (index: number) => {
+    setPreviewDirection(null);
+    setOutgoingPreviewImage(null);
+    setPreviewImageIndex(index);
+  };
+
+  const movePreview = (direction: PreviewDirection) => {
+    if (previewImageIndex === null) {
+      return;
+    }
+
+    const currentImage = images[previewImageIndex];
+    if (!currentImage) {
+      return;
+    }
+
+    const nextIndex =
+      direction === 'previous'
+        ? Math.max(previewImageIndex - 1, 0)
+        : Math.min(previewImageIndex + 1, images.length - 1);
+
+    if (nextIndex === previewImageIndex) {
+      return;
+    }
+
+    setOutgoingPreviewImage({
+      image: currentImage,
+      index: previewImageIndex,
+      direction,
+    });
+    setPreviewDirection(direction);
+    setPreviewImageIndex(nextIndex);
+  };
 
   return (
     <>
@@ -147,7 +209,7 @@ function PostImageGallery({ images }: { images: PostImageNode[] }) {
             type="button"
             className="block w-full text-left"
             aria-label="Open image"
-            onClick={() => setPreviewImage(image)}
+            onClick={() => openPreview(index)}
           >
             <div
               className={cn(
@@ -171,10 +233,10 @@ function PostImageGallery({ images }: { images: PostImageNode[] }) {
       </div>
 
       <Dialog
-        open={Boolean(previewImage)}
+        open={previewImageIndex !== null}
         onOpenChange={(open) => {
           if (!open) {
-            setPreviewImage(null);
+            closePreview();
           }
         }}
       >
@@ -182,25 +244,76 @@ function PostImageGallery({ images }: { images: PostImageNode[] }) {
           className="fixed inset-0 top-0 left-0 flex h-dvh w-dvw max-w-none translate-x-0 translate-y-0 items-center justify-center overflow-hidden rounded-none bg-transparent p-10 ring-0 sm:max-w-none"
           onClick={(event) => {
             if (event.target === event.currentTarget) {
-              setPreviewImage(null);
+              closePreview();
             }
           }}
         >
           <DialogTitle className="sr-only">Image preview</DialogTitle>
           <DialogClose className="fixed top-4 right-4 z-10 bg-background/80 hover:bg-background" />
-          {previewImage && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={previewImage.src}
-              alt={previewImage.alt ?? ''}
-              className="h-full max-h-full w-full max-w-full rounded-lg object-contain"
-              onClick={(event) => {
-                if (isOutsideRenderedImage(event)) {
-                  setPreviewImage(null);
-                }
-              }}
-            />
+          {images.length > 1 && hasPreviousImage && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon-lg"
+              className="fixed top-1/2 left-4 z-10 -translate-y-1/2 bg-background/80 hover:bg-background"
+              aria-label="Previous image"
+              onClick={() => movePreview('previous')}
+            >
+              <CaretLeftIcon weight="bold" />
+            </Button>
           )}
+
+          {images.length > 1 && hasNextImage && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon-lg"
+              className="fixed top-1/2 right-4 z-10 -translate-y-1/2 bg-background/80 hover:bg-background"
+              aria-label="Next image"
+              onClick={() => movePreview('next')}
+            >
+              <CaretRightIcon weight="bold" />
+            </Button>
+          )}
+          <div className="relative h-full max-h-full w-full max-w-full overflow-hidden">
+            {outgoingPreviewImage && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={`outgoing-${outgoingPreviewImage.image.src}-${outgoingPreviewImage.index}`}
+                src={outgoingPreviewImage.image.src}
+                alt={outgoingPreviewImage.image.alt ?? ''}
+                className={cn(
+                  'pointer-events-none absolute inset-0 z-10 h-full w-full rounded-lg object-contain',
+                  outgoingPreviewImage.direction === 'next' &&
+                    'post-image-preview-exit-next',
+                  outgoingPreviewImage.direction === 'previous' &&
+                    'post-image-preview-exit-previous',
+                )}
+                onAnimationEnd={() => setOutgoingPreviewImage(null)}
+              />
+            )}
+
+            {previewImage && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={`${previewImage.src}-${previewImageIndex}`}
+                src={previewImage.src}
+                alt={previewImage.alt ?? ''}
+                className={cn(
+                  'absolute inset-0 h-full w-full rounded-lg object-contain',
+                  previewDirection === 'next' &&
+                    'post-image-preview-enter-next',
+                  previewDirection === 'previous' &&
+                    'post-image-preview-enter-previous',
+                )}
+                onClick={(event) => {
+                  if (isOutsideRenderedImage(event)) {
+                    closePreview();
+                  }
+                }}
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </>
