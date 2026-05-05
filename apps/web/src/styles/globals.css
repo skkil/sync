@@ -5,6 +5,8 @@
 @import './_keyframe-animations.scss';
 @import './tiptap.scss';
 
+@import 'react-calendar-heatmap/dist/styles.css';
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

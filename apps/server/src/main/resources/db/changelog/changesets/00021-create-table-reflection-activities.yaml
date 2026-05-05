@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00021-create-table-reflection-activities
+      author: hyoungjoojin
+      preConditions:
+        - not:
+            tableExists:
+              tableName: reflection_activities
+      changes:
+        - createTable:
+            tableName: reflection_activities
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: count
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: reflection_activities
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_reflection_activities_user_id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: reflection_activities
+            columnNames: user_id, date
+            constraintName: uq_reflection_activities_user_id_date
