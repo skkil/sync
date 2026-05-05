@@ -2,7 +2,9 @@ package com.skkil.sync.reflection.service;
 
 import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
 import com.skkil.sync.common.util.pagination.service.PaginationService;
+import com.skkil.sync.reflection.dto.response.GetReflectionResponse;
 import com.skkil.sync.reflection.dto.response.GetReflectionsResponse;
+import com.skkil.sync.reflection.exception.ReflectionNotFoundException;
 import com.skkil.sync.reflection.mapper.ReflectionMapper;
 import com.skkil.sync.reflection.repository.ReflectionQueryRepository;
 import com.skkil.sync.reflection.repository.pagination.ReflectionCursorPaginationProvider;
@@ -40,6 +42,16 @@ public class ReflectionQueryService {
             .map(reflectionMapper::toReflectionResponse);
 
     return new GetReflectionsResponse(reflections);
+  }
+
+  @Transactional(readOnly = true)
+  public GetReflectionResponse getReflectionBySlug(String slug) {
+    var reflection =
+        reflectionQueryRepository
+            .getReflectionBySlug(slug)
+            .orElseThrow(() -> new ReflectionNotFoundException(slug));
+
+    return reflectionMapper.toGetReflectionResponse(reflection);
   }
 
   @Transactional(readOnly = true)

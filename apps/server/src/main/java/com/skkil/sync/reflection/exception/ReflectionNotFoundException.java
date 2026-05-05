@@ -11,6 +11,10 @@ public class ReflectionNotFoundException extends SyncException {
     super(String.format("Reflection with id %d not found.", reflectionId));
   }
 
+  public ReflectionNotFoundException(String slug) {
+    super(String.format("Reflection with slug '%s' not found.", slug));
+  }
+
   @Override
   public HttpStatusCode getStatusCode() {
     return HttpStatus.NOT_FOUND;

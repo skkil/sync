@@ -45,8 +45,8 @@ public class CommentService {
   }
 
   @Transactional(readOnly = true)
-  public GetCommentsResponse getComments(Long reflectionId) {
-    Reflection reflection = reflectionDomainService.getReflection(reflectionId);
+  public GetCommentsResponse getReflectionComments(String slug) {
+    Reflection reflection = reflectionDomainService.getReflectionBySlug(slug);
 
     List<Comment> comments = commentRepository.findByReflection(reflection);
 
