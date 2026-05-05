@@ -11,10 +11,10 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import {
-  getGetCommentsQueryKey,
+  getGetReflectionCommentsQueryOptions,
   useCreateComment,
   useDeleteComment,
-  useGetComments,
+  useGetReflectionComments,
   useUpdateComment,
 } from '@/api/__generated__/comment/comment';
 import type { GetCommentsResponseCommentsItem } from '@/api/__generated__/types';
@@ -33,7 +33,7 @@ export default function CommentsSection({
   reflectionId,
 }: CommentsSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isPending } = useGetComments(reflectionId, {
+  const { data, isPending } = useGetReflectionComments(reflectionId, {
     query: {
       enabled: isOpen,
     },
@@ -218,9 +218,9 @@ function CommentForm({
     mutation: {
       onSuccess: () => {
         setContent('');
-        queryClient.invalidateQueries({
-          queryKey: getGetCommentsQueryKey(reflectionId),
-        });
+        queryClient.invalidateQueries(
+          getGetReflectionCommentsQueryOptions(reflectionId),
+        );
         onSuccess?.();
       },
       onError: () => toast.error('댓글을 저장하지 못했습니다.'),
@@ -284,9 +284,9 @@ function EditCommentForm({
   const { mutate, isPending } = useUpdateComment({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: getGetCommentsQueryKey(reflectionId),
-        });
+        queryClient.invalidateQueries(
+          getGetReflectionCommentsQueryOptions(reflectionId),
+        );
         onDone();
       },
       onError: () => toast.error('댓글을 수정하지 못했습니다.'),

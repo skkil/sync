@@ -229,166 +229,6 @@ export const useUpdateComment = <
   return useMutation(getUpdateCommentMutationOptions(options), queryClient);
 };
 /**
- * Get Comments
- * @summary Get Comments
- */
-export type getCommentsResponse200 = {
-  data: GetCommentsResponse;
-  status: 200;
-};
-
-export type getCommentsResponseSuccess = getCommentsResponse200 & {
-  headers: Headers;
-};
-export type getCommentsResponse = getCommentsResponseSuccess;
-
-export const getGetCommentsUrl = (reflectionId: string) => {
-  return `/reflections/${reflectionId}/comments`;
-};
-
-export const getComments = async (
-  reflectionId: string,
-  options?: RequestInit,
-): Promise<getCommentsResponse> => {
-  return api<getCommentsResponse>(getGetCommentsUrl(reflectionId), {
-    ...options,
-    method: 'GET',
-  });
-};
-
-export const getGetCommentsQueryKey = (reflectionId: string) => {
-  return [`/reflections/${reflectionId}/comments`] as const;
-};
-
-export const getGetCommentsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getComments>>,
-  TError = ErrorType<unknown>,
->(
-  reflectionId: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ?? getGetCommentsQueryKey(reflectionId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getComments>>> = ({
-    signal,
-  }) => getComments(reflectionId, { signal, ...requestOptions });
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!reflectionId,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getComments>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetCommentsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getComments>>
->;
-export type GetCommentsQueryError = ErrorType<unknown>;
-
-export function useGetComments<
-  TData = Awaited<ReturnType<typeof getComments>>,
-  TError = ErrorType<unknown>,
->(
-  reflectionId: string,
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getComments>>,
-          TError,
-          Awaited<ReturnType<typeof getComments>>
-        >,
-        'initialData'
-      >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetComments<
-  TData = Awaited<ReturnType<typeof getComments>>,
-  TError = ErrorType<unknown>,
->(
-  reflectionId: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getComments>>,
-          TError,
-          Awaited<ReturnType<typeof getComments>>
-        >,
-        'initialData'
-      >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetComments<
-  TData = Awaited<ReturnType<typeof getComments>>,
-  TError = ErrorType<unknown>,
->(
-  reflectionId: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary Get Comments
- */
-
-export function useGetComments<
-  TData = Awaited<ReturnType<typeof getComments>>,
-  TError = ErrorType<unknown>,
->(
-  reflectionId: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetCommentsQueryOptions(reflectionId, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-/**
  * Create Comment
  * @summary Create Comment
  */
@@ -488,3 +328,185 @@ export const useCreateComment = <
 > => {
   return useMutation(getCreateCommentMutationOptions(options), queryClient);
 };
+/**
+ * Get Reflection Comments
+ * @summary Get Reflection Comments
+ */
+export type getReflectionCommentsResponse200 = {
+  data: GetCommentsResponse;
+  status: 200;
+};
+
+export type getReflectionCommentsResponseSuccess =
+  getReflectionCommentsResponse200 & {
+    headers: Headers;
+  };
+export type getReflectionCommentsResponse =
+  getReflectionCommentsResponseSuccess;
+
+export const getGetReflectionCommentsUrl = (slug: string) => {
+  return `/reflections/${slug}/comments`;
+};
+
+export const getReflectionComments = async (
+  slug: string,
+  options?: RequestInit,
+): Promise<getReflectionCommentsResponse> => {
+  return api<getReflectionCommentsResponse>(getGetReflectionCommentsUrl(slug), {
+    ...options,
+    method: 'GET',
+  });
+};
+
+export const getGetReflectionCommentsQueryKey = (slug: string) => {
+  return [`/reflections/${slug}/comments`] as const;
+};
+
+export const getGetReflectionCommentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getReflectionComments>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionComments>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetReflectionCommentsQueryKey(slug);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getReflectionComments>>
+  > = ({ signal }) =>
+    getReflectionComments(slug, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getReflectionComments>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetReflectionCommentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getReflectionComments>>
+>;
+export type GetReflectionCommentsQueryError = ErrorType<unknown>;
+
+export function useGetReflectionComments<
+  TData = Awaited<ReturnType<typeof getReflectionComments>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionComments>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionComments>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionComments>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionComments<
+  TData = Awaited<ReturnType<typeof getReflectionComments>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionComments>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionComments>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionComments>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionComments<
+  TData = Awaited<ReturnType<typeof getReflectionComments>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionComments>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Reflection Comments
+ */
+
+export function useGetReflectionComments<
+  TData = Awaited<ReturnType<typeof getReflectionComments>>,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionComments>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetReflectionCommentsQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}

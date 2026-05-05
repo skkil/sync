@@ -68,6 +68,8 @@ export * from './GetProvidersResponseProvidersNodesItem';
 export * from './GetProvidersResponseProvidersNodesItemContent';
 export * from './GetProvidersResponseProvidersPageInfo';
 export * from './GetRecentFeedParams';
+export * from './GetReflectionResponse';
+export * from './GetReflectionResponseAuthor';
 export * from './GetReflectionsParams';
 export * from './GetReflectionsResponse';
 export * from './GetReflectionsResponseReflections';

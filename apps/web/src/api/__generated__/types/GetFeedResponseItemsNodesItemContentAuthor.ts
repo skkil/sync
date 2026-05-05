@@ -12,6 +12,9 @@ export type GetFeedResponseItemsNodesItemContentAuthor = {
   handle: string;
   /** Author ID */
   id: number;
-  /** Author Profile Image URL */
-  profileImageUrl: string;
+  /**
+   * Author Profile Image URL
+   * @nullable
+   */
+  profileImageUrl?: string | null;
 };

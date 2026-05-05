@@ -13,8 +13,10 @@ import com.skkil.sync.common.config.TestSecurityConfig;
 import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
 import com.skkil.sync.common.util.pagination.snippets.CursorPaginationRequestSnippets;
 import com.skkil.sync.config.SecurityConfig;
+import com.skkil.sync.reflection.dto.response.GetReflectionResponse;
 import com.skkil.sync.reflection.dto.response.GetReflectionsResponse;
 import com.skkil.sync.reflection.service.ReflectionQueryService;
+import com.skkil.sync.reflection.snippets.GetReflectionResponseSnippets;
 import com.skkil.sync.reflection.snippets.GetReflectionsResponseSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
@@ -68,6 +70,31 @@ class ReflectionQueryControllerTests {
                 Function.identity(),
                 CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
                 GetReflectionsResponseSnippets.getReflectionsResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getReflectionBySlug] API 문서화 테스트")
+  void getReflectionBySlug() throws Exception {
+    String slug = "test-slug";
+    GetReflectionResponse response = GetReflectionResponseSnippets.getGetReflectionResponse();
+
+    when(reflectionQueryService.getReflectionBySlug(slug)).thenReturn(response);
+
+    mockMvc
+        .perform(get("/reflections/{slug}", slug))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetReflectionBySlug",
+                ResourceSnippetParameters.builder()
+                    .tag("reflection")
+                    .summary("Get Reflection By Slug")
+                    .description("Get Reflection By Slug")
+                    .responseSchema(schema(GetReflectionResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                GetReflectionResponseSnippets.getReflectionResponseFields()));
   }
 
   @Test
