@@ -51,7 +51,8 @@ public class GetFeedResponseSnippets {
             fieldWithPath(".name").type(JsonFieldType.STRING).description("Author Name"),
             fieldWithPath(".profileImageUrl")
                 .type(JsonFieldType.STRING)
-                .description("Author Profile Image URL"));
+                .description("Author Profile Image URL")
+                .optional());
 
     return responseFields(fields.getFieldDescriptors());
   }
