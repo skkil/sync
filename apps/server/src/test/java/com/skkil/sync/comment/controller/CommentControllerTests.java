@@ -59,28 +59,28 @@ class CommentControllerTests {
   @MockitoBean private CommentService commentService;
 
   @Test
-  @DisplayName("[getComments] API 문서화 테스트")
-  void getComments() throws Exception {
-    Long reflectionId = 1L;
+  @DisplayName("[getReflectionComments] API 문서화 테스트")
+  void getReflectionComments() throws Exception {
+    String slug = "test-reflection";
     GetCommentsResponse response = GetCommentsResponseSnippets.getGetCommentsResponse();
 
-    when(commentService.getComments(reflectionId)).thenReturn(response);
+    when(commentService.getReflectionComments(slug)).thenReturn(response);
 
     mockMvc
-        .perform(get("/reflections/{reflectionId}/comments", reflectionId))
+        .perform(get("/reflections/{slug}/comments", slug))
         .andExpect(status().isOk())
         .andDo(
             document(
-                "GetComments",
+                "GetReflectionComments",
                 ResourceSnippetParameters.builder()
                     .tag("comment")
-                    .summary("Get Comments")
-                    .description("Get Comments")
+                    .summary("Get Reflection Comments")
+                    .description("Get Reflection Comments")
                     .responseSchema(schema(GetCommentsResponse.class.getSimpleName())),
                 null,
                 null,
                 Function.identity(),
-                pathParameters(parameterWithName("reflectionId").description("Reflection ID")),
+                pathParameters(parameterWithName("slug").description("Reflection Slug")),
                 GetCommentsResponseSnippets.getCommentsResponseFields()));
   }
 

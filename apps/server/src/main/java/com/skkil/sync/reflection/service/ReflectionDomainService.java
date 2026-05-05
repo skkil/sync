@@ -21,4 +21,11 @@ public class ReflectionDomainService {
         .findById(reflectionId)
         .orElseThrow(() -> new ReflectionNotFoundException(reflectionId));
   }
+
+  @Transactional(readOnly = true)
+  public Reflection getReflectionBySlug(String slug) {
+    return reflectionRepository
+        .findBySlug(slug)
+        .orElseThrow(() -> new ReflectionNotFoundException(slug));
+  }
 }

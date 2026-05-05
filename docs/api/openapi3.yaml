@@ -536,6 +536,77 @@ paths:
                     ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
                     },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
                     \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+  /feed/recent:
+    get:
+      tags:
+      - feed
+      summary: Get Recent Feed
+      description: Get Recent Feed
+      operationId: GetRecentFeed
+      parameters:
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetFeedResponse"
+              examples:
+                GetRecentFeed:
+                  value: |-
+                    {
+                      "items" : {
+                        "pageInfo" : {
+                          "size" : 1,
+                          "hasNextPage" : false,
+                          "hasPreviousPage" : false,
+                          "startCursor" : "start-cursor",
+                          "endCursor" : "end-cursor"
+                        },
+                        "nodes" : [ {
+                          "cursor" : "cursor",
+                          "content" : {
+                            "id" : 1,
+                            "author" : {
+                              "id" : 1,
+                              "handle" : "user_handle",
+                              "name" : "User Name",
+                              "profileImageUrl" : "https://example.com/profile.jpg"
+                            },
+                            "content" : "This is a feed item content",
+                            "likeCount" : 10,
+                            "commentCount" : 5,
+                            "createdAt" : "2026-05-04T12:00:00"
+                          }
+                        } ]
+                      }
+                    }
   /jobs:
     get:
       tags:
@@ -1009,17 +1080,17 @@ paths:
       responses:
         "204":
           description: "204"
-  /reflections/{reflectionId}/comments:
+  /reflections/{slug}:
     get:
       tags:
-      - comment
-      summary: Get Comments
-      description: Get Comments
-      operationId: GetComments
+      - reflection
+      summary: Get Reflection By Slug
+      description: Get Reflection By Slug
+      operationId: GetReflectionBySlug
       parameters:
-      - name: reflectionId
+      - name: slug
         in: path
-        description: Reflection ID
+        description: ""
         required: true
         schema:
           type: string
@@ -1029,19 +1100,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetCommentsResponse"
+                $ref: "#/components/schemas/GetReflectionResponse"
               examples:
-                GetComments:
-                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
-                    :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
-                    http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
-                    :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
-                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
-                    author\":{\"id\":1,\"handle\":\"user-handle\",\"name\":\"User\
-                    \ Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
-                    ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
-                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
-                    2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
+                GetReflectionBySlug:
+                  value: "{\"id\":1,\"author\":{\"id\":1,\"name\":\"Author Name\"\
+                    },\"content\":\"Reflection Content\",\"likeCount\":1,\"commentCount\"\
+                    :1}"
+  /reflections/{reflectionId}/comments:
     post:
       tags:
       - comment
@@ -1073,6 +1138,39 @@ paths:
               examples:
                 CreateComment:
                   value: "{\"id\":1}"
+  /reflections/{slug}/comments:
+    get:
+      tags:
+      - comment
+      summary: Get Reflection Comments
+      description: Get Reflection Comments
+      operationId: GetReflectionComments
+      parameters:
+      - name: slug
+        in: path
+        description: Reflection Slug
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCommentsResponse"
+              examples:
+                GetReflectionComments:
+                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
+                    :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
+                    http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
+                    :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
+                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
+                    author\":{\"id\":1,\"handle\":\"user-handle\",\"name\":\"User\
+                    \ Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
+                    ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
+                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
+                    2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
   /search:
     get:
       tags:
@@ -1377,6 +1475,98 @@ components:
         id:
           type: string
           description: Job Posting ID
+    GetFeedResponse:
+      title: GetFeedResponse
+      type: object
+      properties:
+        items:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - commentCount
+                    - content
+                    - createdAt
+                    - id
+                    - likeCount
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Created At
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                          id:
+                            type: number
+                            description: Author ID
+                          profileImageUrl:
+                            type: string
+                            description: Author Profile Image URL
+                            nullable: true
+                      likeCount:
+                        type: number
+                        description: Like Count
+                      id:
+                        type: number
+                        description: Feed Item ID
+                      content:
+                        type: string
+                        description: Content
+                      commentCount:
+                        type: number
+                        description: Comment Count
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     GetProvidersResponse:
       title: GetProvidersResponse
       type: object
@@ -1700,6 +1890,41 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    GetReflectionResponse:
+      title: GetReflectionResponse
+      required:
+      - author
+      - commentCount
+      - content
+      - id
+      - likeCount
+      type: object
+      properties:
+        author:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Author Name
+            id:
+              type: number
+              description: Author User ID
+          description: Author Information
+        likeCount:
+          type: number
+          description: Number of Likes
+        id:
+          type: number
+          description: Reflection ID
+        content:
+          type: string
+          description: Reflection Content
+        commentCount:
+          type: number
+          description: Number of Comments
     SearchResponse:
       title: SearchResponse
       required:

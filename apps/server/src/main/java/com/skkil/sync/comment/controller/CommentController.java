@@ -27,10 +27,10 @@ public class CommentController {
     this.commentService = commentService;
   }
 
-  @GetMapping("/reflections/{reflectionId}/comments")
+  @GetMapping("/reflections/{slug}/comments")
   @ResponseStatus(HttpStatus.OK)
-  public GetCommentsResponse getComments(@PathVariable Long reflectionId) {
-    return commentService.getComments(reflectionId);
+  public GetCommentsResponse getReflectionComments(@PathVariable String slug) {
+    return commentService.getReflectionComments(slug);
   }
 
   @PostMapping("/reflections/{reflectionId}/comments")

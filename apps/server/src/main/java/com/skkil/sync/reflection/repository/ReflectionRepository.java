@@ -2,11 +2,14 @@ package com.skkil.sync.reflection.repository;
 
 import com.skkil.sync.reflection.model.Reflection;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface ReflectionRepository extends JpaRepository<Reflection, Long> {
+
+  Optional<Reflection> findBySlug(String slug);
 
   @Modifying
   @Query(
