@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
 
 import MiniPostEditor from './_components/MiniPostEditor';
+import Posts from './_components/Posts';
 
 export default async function Home() {
   const session = await auth.api.getSession({
@@ -17,6 +18,9 @@ export default async function Home() {
   return (
     <div>
       <div>{isAuthenticated(session) && <MiniPostEditor />}</div>
+      <div>
+        <Posts />
+      </div>
     </div>
   );
 }
