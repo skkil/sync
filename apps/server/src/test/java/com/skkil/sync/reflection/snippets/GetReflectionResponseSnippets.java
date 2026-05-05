@@ -24,7 +24,7 @@ public class GetReflectionResponseSnippets {
 
   public static ResponseFieldsSnippet getReflectionResponseFields() {
     return responseFields(
-        fieldWithPath("id").type(JsonFieldType.NUMBER).description("Reflection ID").optional(),
+        fieldWithPath("id").type(JsonFieldType.NUMBER).description("Reflection ID"),
         fieldWithPath("author").type(JsonFieldType.OBJECT).description("Author Information"),
         fieldWithPath("author.id").type(JsonFieldType.NUMBER).description("Author User ID"),
         fieldWithPath("author.name").type(JsonFieldType.STRING).description("Author Name"),

@@ -59,8 +59,8 @@ class CommentControllerTests {
   @MockitoBean private CommentService commentService;
 
   @Test
-  @DisplayName("[getComments] API 문서화 테스트")
-  void getComments() throws Exception {
+  @DisplayName("[getReflectionComments] API 문서화 테스트")
+  void getReflectionComments() throws Exception {
     String slug = "test-reflection";
     GetCommentsResponse response = GetCommentsResponseSnippets.getGetCommentsResponse();
 

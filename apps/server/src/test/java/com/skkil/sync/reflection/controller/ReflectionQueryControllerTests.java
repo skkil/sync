@@ -88,8 +88,8 @@ class ReflectionQueryControllerTests {
                 "GetReflectionBySlug",
                 ResourceSnippetParameters.builder()
                     .tag("reflection")
-                    .summary("Get Reflections")
-                    .description("Get Reflections")
+                    .summary("Get Reflection By Slug")
+                    .description("Get Reflection By Slug")
                     .responseSchema(schema(GetReflectionResponse.class.getSimpleName())),
                 null,
                 null,
