@@ -9,8 +9,8 @@ import { EditorContent, type JSONContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useTranslations } from 'next-intl';
 import {
-  forwardRef,
   type MouseEvent,
+  forwardRef,
   useImperativeHandle,
   useState,
 } from 'react';
@@ -28,8 +28,8 @@ import {
 } from '@/components/ui/editor/primitives/toolbar';
 import { cn } from '@/lib/utils';
 
-import { PostImage } from './extensions/post-image';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip';
+import { PostImage } from './extensions/post-image';
 
 interface PostImageNode {
   src: string;
