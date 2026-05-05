@@ -7,6 +7,7 @@ import com.skkil.sync.recommendation.dto.response.GetFeedResponse;
 import com.skkil.sync.recommendation.mapper.FeedMapper;
 import com.skkil.sync.recommendation.repository.FeedQueryRepository;
 import com.skkil.sync.recommendation.repository.pagination.FeedCursorPaginationProvider;
+import com.skkil.sync.reflection.service.ReflectionContentMediaService;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,18 +25,21 @@ public class FeedService {
   private final PaginationService paginationService;
   private final FeedCursorPaginationProvider paginationProvider;
   private final MediaDomainService mediaDomainService;
+  private final ReflectionContentMediaService contentMediaService;
 
   public FeedService(
       FeedQueryRepository feedQueryRepository,
       FeedMapper feedMapper,
       PaginationService paginationService,
       FeedCursorPaginationProvider paginationProvider,
-      MediaDomainService mediaDomainService) {
+      MediaDomainService mediaDomainService,
+      ReflectionContentMediaService contentMediaService) {
     this.feedQueryRepository = feedQueryRepository;
     this.feedMapper = feedMapper;
     this.paginationService = paginationService;
     this.paginationProvider = paginationProvider;
     this.mediaDomainService = mediaDomainService;
+    this.contentMediaService = contentMediaService;
   }
 
   @Transactional(readOnly = true)
@@ -53,6 +57,18 @@ public class FeedService {
     Map<Long, URL> profileImageUrls = mediaDomainService.generatePublicGetUrls(profileImageIds);
 
     return new GetFeedResponse(
-        feedItems.map(feedItem -> feedMapper.toFeedItemResponse(feedItem, profileImageUrls)));
+        feedItems
+            .map(feedItem -> feedMapper.toFeedItemResponse(feedItem, profileImageUrls))
+            .map(this::resolveImageUrls));
+  }
+
+  private GetFeedResponse.FeedItem resolveImageUrls(GetFeedResponse.FeedItem feedItem) {
+    return new GetFeedResponse.FeedItem(
+        feedItem.id(),
+        feedItem.author(),
+        contentMediaService.resolveImageUrls(feedItem.content()),
+        feedItem.likeCount(),
+        feedItem.commentCount(),
+        feedItem.createdAt());
   }
 }

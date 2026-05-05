@@ -161,6 +161,7 @@ function PostImageGallery({ images }: { images: PostImageNode[] }) {
                 alt={image.alt ?? ''}
                 className={cn(
                   'block w-full cursor-zoom-in',
+                  images.length === 1 && 'max-h-[520px] object-contain',
                   images.length > 1 && 'h-full object-cover',
                 )}
               />
