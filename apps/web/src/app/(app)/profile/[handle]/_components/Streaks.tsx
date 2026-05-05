@@ -51,8 +51,8 @@ export default function Streaks({ handle }: StreaksProps) {
 
       <CardContent>
         <CalendarHeatmap
-          startDate={new Date(`${selectedYear}-01-01`)}
-          endDate={new Date(`${selectedYear}-12-31`)}
+          startDate={new Date(selectedYear, 0, 1)}
+          endDate={new Date(selectedYear, 11, 31)}
           values={activities}
         />
       </CardContent>

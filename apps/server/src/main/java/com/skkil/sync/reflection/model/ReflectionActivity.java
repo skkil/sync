@@ -28,4 +28,6 @@ public class ReflectionActivity extends BaseEntity {
 
   @Column(name = "count", nullable = false)
   private Long count = 0L;
+
+  protected ReflectionActivity() {}
 }

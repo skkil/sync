@@ -4,6 +4,7 @@ import com.skkil.sync.reflection.dto.response.GetReflectionActivitiesResponse;
 import com.skkil.sync.reflection.repository.ReflectionActivityRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
+import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,10 @@ public class ReflectionActivityService {
     User user = userDomainService.getUserByHandle(handle);
 
     var activities =
-        reflectionActivityRepository.findAllByUserAndYear(user, year).stream()
+        reflectionActivityRepository
+            .findAllByUserAndBetweenYears(
+                user, LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31))
+            .stream()
             .map(
                 activity ->
                     GetReflectionActivitiesResponse.Activity.builder()
