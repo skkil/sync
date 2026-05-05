@@ -1,6 +1,18 @@
 package com.skkil.sync.reflection.repository;
 
 import com.skkil.sync.reflection.model.Reflection;
+import java.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-public interface ReflectionRepository extends JpaRepository<Reflection, Long> {}
+public interface ReflectionRepository extends JpaRepository<Reflection, Long> {
+
+  @Modifying
+  @Query(
+      value =
+          "INSERT INTO reflection_activities(user_id, date, count) VALUES (:userId, :date, 1) "
+              + "ON CONFLICT (user_id, date) DO UPDATE SET count = reflection_activities.count + 1",
+      nativeQuery = true)
+  void incrementActivityCount(Long userId, LocalDate date);
+}
