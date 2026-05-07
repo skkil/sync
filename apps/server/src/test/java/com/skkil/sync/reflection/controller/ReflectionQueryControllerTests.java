@@ -2,6 +2,7 @@ package com.skkil.sync.reflection.controller;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.Schema.schema;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -9,7 +10,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.common.config.TestSecurityConfig;
+import com.skkil.sync.common.security.WithAuthenticatedUser;
+import com.skkil.sync.common.security.WithAuthenticatedUserSecurityContextFactory;
 import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
 import com.skkil.sync.common.util.pagination.snippets.CursorPaginationRequestSnippets;
 import com.skkil.sync.config.SecurityConfig;
@@ -74,11 +78,14 @@ class ReflectionQueryControllerTests {
 
   @Test
   @DisplayName("[getReflectionBySlug] API 문서화 테스트")
+  @WithAuthenticatedUser
   void getReflectionBySlug() throws Exception {
+    AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
     String slug = "test-slug";
     GetReflectionResponse response = GetReflectionResponseSnippets.getGetReflectionResponse();
 
-    when(reflectionQueryService.getReflectionBySlug(slug)).thenReturn(response);
+    when(reflectionQueryService.getReflectionBySlug(eq(user.userId()), eq(slug)))
+        .thenReturn(response);
 
     mockMvc
         .perform(get("/reflections/{slug}", slug))

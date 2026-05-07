@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public record FeedDto(
     Long id,
+    String slug,
     Long authorId,
     String authorHandle,
     String authorName,
@@ -11,5 +12,6 @@ public record FeedDto(
     String content,
     Long likeCount,
     Long commentCount,
+    Boolean bookmarked,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}

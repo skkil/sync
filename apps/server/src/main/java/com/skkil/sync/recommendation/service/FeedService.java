@@ -39,10 +39,10 @@ public class FeedService {
   }
 
   @Transactional(readOnly = true)
-  public GetFeedResponse getRecentFeed(CursorPaginationRequest pagination) {
+  public GetFeedResponse getRecentFeed(Long requesterId, CursorPaginationRequest pagination) {
     var feedItems =
         paginationService.paginate(
-            feedQueryRepository.getRecentReflections(), paginationProvider, pagination);
+            feedQueryRepository.getRecentReflections(requesterId), paginationProvider, pagination);
 
     List<Long> profileImageIds = new ArrayList<>();
 

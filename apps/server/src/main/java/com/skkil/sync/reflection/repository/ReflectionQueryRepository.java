@@ -3,6 +3,7 @@ package com.skkil.sync.reflection.repository;
 import static com.skkil.sync.jooq.tables.Experiences.EXPERIENCES;
 import static com.skkil.sync.jooq.tables.ProjectExperiences.PROJECT_EXPERIENCES;
 import static com.skkil.sync.jooq.tables.Providers.PROVIDERS;
+import static com.skkil.sync.jooq.tables.ReflectionBookmarks.REFLECTION_BOOKMARKS;
 import static com.skkil.sync.jooq.tables.Reflections.REFLECTIONS;
 import static com.skkil.sync.jooq.tables.Users.USERS;
 
@@ -10,6 +11,7 @@ import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetc
 import com.skkil.sync.reflection.dto.data.ReflectionDto;
 import java.util.Optional;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
@@ -22,9 +24,10 @@ public class ReflectionQueryRepository {
     this.dsl = dsl;
   }
 
-  public Optional<ReflectionDto> getReflectionBySlug(String slug) {
+  public Optional<ReflectionDto> getReflectionBySlug(Long requesterId, String slug) {
     return dsl.select(
             REFLECTIONS.ID,
+            REFLECTIONS.SLUG,
             REFLECTIONS.AUTHOR_ID,
             USERS.FULL_NAME,
             REFLECTIONS.CONTENT,
@@ -33,7 +36,8 @@ public class ReflectionQueryRepository {
             REFLECTIONS.CREATED_AT,
             REFLECTIONS.UPDATED_AT,
             DSL.value(0L).as("likeCount"),
-            DSL.value(0L).as("commentCount"))
+            DSL.value(0L).as("commentCount"),
+            bookmarkedField(requesterId))
         .from(REFLECTIONS)
         .join(USERS)
         .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
@@ -52,6 +56,7 @@ public class ReflectionQueryRepository {
     return (condition, orderFields, size) ->
         dsl.select(
                 REFLECTIONS.ID,
+                REFLECTIONS.SLUG,
                 REFLECTIONS.AUTHOR_ID,
                 USERS.FULL_NAME,
                 REFLECTIONS.CONTENT,
@@ -87,5 +92,19 @@ public class ReflectionQueryRepository {
       return base.fetch(
           condition.and(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(experienceId)), orderFields, size);
     };
+  }
+
+  private Field<Boolean> bookmarkedField(Long requesterId) {
+    if (requesterId == null) {
+      return DSL.value(false).as("bookmarked");
+    }
+
+    return DSL.field(
+            DSL.exists(
+                DSL.selectOne()
+                    .from(REFLECTION_BOOKMARKS)
+                    .where(REFLECTION_BOOKMARKS.REFLECTION_ID.eq(REFLECTIONS.ID))
+                    .and(REFLECTION_BOOKMARKS.USER_ID.eq(requesterId))))
+        .as("bookmarked");
   }
 }

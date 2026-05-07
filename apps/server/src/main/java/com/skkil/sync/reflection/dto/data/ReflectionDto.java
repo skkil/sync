@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public record ReflectionDto(
     Long id,
+    String slug,
     Long authorId,
     String authorName,
     String content,
@@ -12,4 +13,5 @@ public record ReflectionDto(
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     Long likeCount,
-    Long commentCount) {}
+    Long commentCount,
+    Boolean bookmarked) {}

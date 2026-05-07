@@ -23,10 +23,12 @@ public interface FeedMapper {
 
     return GetFeedResponse.FeedItem.builder()
         .id(feedDto.id())
+        .slug(feedDto.slug())
         .author(author)
         .content(feedDto.content())
         .likeCount(feedDto.likeCount())
         .commentCount(feedDto.commentCount())
+        .bookmarked(Boolean.TRUE.equals(feedDto.bookmarked()))
         .createdAt(feedDto.createdAt())
         .build();
   }

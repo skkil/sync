@@ -45,10 +45,10 @@ public class ReflectionQueryService {
   }
 
   @Transactional(readOnly = true)
-  public GetReflectionResponse getReflectionBySlug(String slug) {
+  public GetReflectionResponse getReflectionBySlug(Long requesterId, String slug) {
     var reflection =
         reflectionQueryRepository
-            .getReflectionBySlug(slug)
+            .getReflectionBySlug(requesterId, slug)
             .orElseThrow(() -> new ReflectionNotFoundException(slug));
 
     return reflectionMapper.toGetReflectionResponse(reflection);
