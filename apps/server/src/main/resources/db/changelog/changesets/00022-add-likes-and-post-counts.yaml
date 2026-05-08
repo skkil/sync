@@ -1,0 +1,115 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00022-add-reflection-counts
+      author: jieunseo
+      changes:
+        - addColumn:
+            tableName: reflections
+            columns:
+              - column:
+                  name: like_count
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment_count
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 00022-add-team-building-post-counts
+      author: jieunseo
+      changes:
+        - addColumn:
+            tableName: team_building_posts
+            columns:
+              - column:
+                  name: like_count
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment_count
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 00022-add-comment-like-count
+      author: jieunseo
+      changes:
+        - addColumn:
+            tableName: comments
+            columns:
+              - column:
+                  name: like_count
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 00022-create-table-likes
+      author: jieunseo
+      preConditions:
+        - not:
+            tableExists:
+              tableName: likes
+      changes:
+        - createTable:
+            tableName: likes
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: likes
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_likes_user_id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: likes
+            columnNames: user_id, target_type, target_id
+            constraintName: uk_likes_user_target
+        - createIndex:
+            tableName: likes
+            indexName: idx_likes_target
+            columns:
+              - column:
+                  name: target_type
+              - column:
+                  name: target_id

@@ -23,6 +23,8 @@ public class GetReflectionsResponseSnippets {
             author,
             project,
             "Reflection Content",
+            1L,
+            2L,
             DateTimeTestUtils.defaultTestLocalDateTime());
 
     return new GetReflectionsResponse(CursorPaginationResponseSnippets.of(List.of(reflection)));
@@ -37,6 +39,8 @@ public class GetReflectionsResponseSnippets {
             "reflections.nodes[].content",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Reflection ID"),
             fieldWithPath(".content").type(JsonFieldType.STRING).description("Reflection Content"),
+            fieldWithPath(".likeCount").type(JsonFieldType.NUMBER).description("Like Count"),
+            fieldWithPath(".commentCount").type(JsonFieldType.NUMBER).description("Comment Count"),
             fieldWithPath(".createdAt")
                 .type(JsonFieldType.STRING)
                 .description("Creation Timestamp"));

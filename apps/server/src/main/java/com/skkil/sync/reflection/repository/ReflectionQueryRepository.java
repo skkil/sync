@@ -5,6 +5,8 @@ import static com.skkil.sync.jooq.tables.ProjectExperiences.PROJECT_EXPERIENCES;
 import static com.skkil.sync.jooq.tables.Providers.PROVIDERS;
 import static com.skkil.sync.jooq.tables.Reflections.REFLECTIONS;
 import static com.skkil.sync.jooq.tables.Users.USERS;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
 import com.skkil.sync.reflection.dto.data.ReflectionDto;
@@ -29,6 +31,8 @@ public class ReflectionQueryRepository {
                 REFLECTIONS.CONTENT,
                 PROVIDERS.ID,
                 PROVIDERS.NAME,
+                field(name("reflections", "like_count"), Long.class),
+                field(name("reflections", "comment_count"), Long.class),
                 REFLECTIONS.CREATED_AT,
                 REFLECTIONS.UPDATED_AT)
             .from(REFLECTIONS)

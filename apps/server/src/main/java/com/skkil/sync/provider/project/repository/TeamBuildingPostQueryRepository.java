@@ -2,6 +2,8 @@ package com.skkil.sync.provider.project.repository;
 
 import static com.skkil.sync.jooq.tables.Providers.PROVIDERS;
 import static com.skkil.sync.jooq.tables.TeamBuildingPosts.TEAM_BUILDING_POSTS;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
 import com.skkil.sync.provider.project.dto.data.TeamBuildingPostDto;
@@ -26,6 +28,8 @@ public class TeamBuildingPostQueryRepository {
                 PROVIDERS.DESCRIPTION,
                 TEAM_BUILDING_POSTS.TITLE,
                 TEAM_BUILDING_POSTS.CONTENT,
+                field(name("team_building_posts", "like_count"), Long.class),
+                field(name("team_building_posts", "comment_count"), Long.class),
                 TEAM_BUILDING_POSTS.CREATED_AT,
                 TEAM_BUILDING_POSTS.UPDATED_AT)
             .from(TEAM_BUILDING_POSTS)

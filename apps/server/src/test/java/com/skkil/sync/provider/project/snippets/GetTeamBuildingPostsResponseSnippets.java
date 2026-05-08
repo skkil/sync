@@ -17,7 +17,7 @@ public class GetTeamBuildingPostsResponseSnippets {
         new GetTeamBuildingPostsResponse.Project("1", "Project Name", "Project Description");
 
     GetTeamBuildingPostsResponse.Post post =
-        new GetTeamBuildingPostsResponse.Post("1", project, "Post Title", "Post Content");
+        new GetTeamBuildingPostsResponse.Post("1", project, "Post Title", "Post Content", 1L, 2L);
 
     return new GetTeamBuildingPostsResponse(CursorPaginationResponseSnippets.of(List.of(post)));
   }
@@ -32,6 +32,8 @@ public class GetTeamBuildingPostsResponseSnippets {
             fieldWithPath(".id").type(JsonFieldType.STRING).description("Post ID"),
             fieldWithPath(".title").type(JsonFieldType.STRING).description("Post Title"),
             fieldWithPath(".content").type(JsonFieldType.STRING).description("Post Content"),
+            fieldWithPath(".likeCount").type(JsonFieldType.NUMBER).description("Like Count"),
+            fieldWithPath(".commentCount").type(JsonFieldType.NUMBER).description("Comment Count"),
             fieldWithPath(".project").type(JsonFieldType.OBJECT).description("Project"));
 
     fields =

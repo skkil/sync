@@ -63,6 +63,10 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/providers/**")
                     .authenticated()
+                    .requestMatchers(HttpMethod.POST, "/likes")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.DELETE, "/likes")
+                    .permitAll()
                     .requestMatchers(
                         "/users/**",
                         "/profiles/me",

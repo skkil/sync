@@ -34,6 +34,12 @@ public class Reflection extends BaseEntity {
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
+  @Column(name = "like_count", nullable = false)
+  private long likeCount;
+
+  @Column(name = "comment_count", nullable = false)
+  private long commentCount;
+
   protected Reflection() {}
 
   @Builder
@@ -50,5 +56,25 @@ public class Reflection extends BaseEntity {
 
   public void updateContent(String content) {
     this.content = content;
+  }
+
+  public void incrementLikeCount() {
+    likeCount++;
+  }
+
+  public void decrementLikeCount() {
+    if (likeCount > 0) {
+      likeCount--;
+    }
+  }
+
+  public void incrementCommentCount() {
+    commentCount++;
+  }
+
+  public void decrementCommentCount() {
+    if (commentCount > 0) {
+      commentCount--;
+    }
   }
 }

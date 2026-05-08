@@ -9,5 +9,7 @@ public record TeamBuildingPostDto(
     String projectDescription,
     String title,
     String content,
+    Long likeCount,
+    Long commentCount,
     LocalDateTime createdAt,
     LocalDateTime updatedAt) {}

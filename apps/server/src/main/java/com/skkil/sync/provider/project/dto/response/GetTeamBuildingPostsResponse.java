@@ -6,7 +6,13 @@ import lombok.Builder;
 public record GetTeamBuildingPostsResponse(CursorPaginationResponse<Post> posts) {
 
   @Builder
-  public static record Post(String id, Project project, String title, String content) {}
+  public static record Post(
+      String id,
+      Project project,
+      String title,
+      String content,
+      Long likeCount,
+      Long commentCount) {}
 
   @Builder
   public static record Project(String id, String name, String description) {}
