@@ -235,6 +235,58 @@ paths:
       responses:
         "204":
           description: "204"
+  /bookmarks/reflections:
+    get:
+      tags:
+      - bookmark
+      summary: Get Bookmarked Reflections
+      description: Get Bookmarked Reflections
+      operationId: GetBookmarkedReflections
+      parameters:
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBookmarkedReflectionsResponse"
+              examples:
+                GetBookmarkedReflections:
+                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
+                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
+                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
+                    :{\"id\":1,\"slug\":\"test-slug\",\"author\":{\"id\":1,\"handle\"\
+                    :\"user_handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
+                    https://example.com/profile.jpg\"},\"content\":\"This is a bookmarked\
+                    \ reflection content\",\"likeCount\":10,\"commentCount\":5,\"\
+                    bookmarked\":true,\"createdAt\":\"2026-05-04T12:00:00\",\"bookmarkedAt\"\
+                    :\"2026-05-05T12:00:00\"}}]}}"
   /comments/{commentId}:
     delete:
       tags:
@@ -593,6 +645,7 @@ paths:
                           "cursor" : "cursor",
                           "content" : {
                             "id" : 1,
+                            "slug" : "test-slug",
                             "author" : {
                               "id" : 1,
                               "handle" : "user_handle",
@@ -602,6 +655,7 @@ paths:
                             "content" : "This is a feed item content",
                             "likeCount" : 10,
                             "commentCount" : 5,
+                            "bookmarked" : true,
                             "createdAt" : "2026-05-04T12:00:00"
                           }
                         } ]
@@ -1103,9 +1157,42 @@ paths:
                 $ref: "#/components/schemas/GetReflectionResponse"
               examples:
                 GetReflectionBySlug:
-                  value: "{\"id\":1,\"author\":{\"id\":1,\"name\":\"Author Name\"\
-                    },\"content\":\"Reflection Content\",\"likeCount\":1,\"commentCount\"\
-                    :1}"
+                  value: "{\"id\":1,\"slug\":\"test-slug\",\"author\":{\"id\":1,\"\
+                    name\":\"Author Name\"},\"content\":\"Reflection Content\",\"\
+                    likeCount\":1,\"commentCount\":1,\"bookmarked\":true}"
+  /reflections/{reflectionId}/bookmarks:
+    post:
+      tags:
+      - bookmark
+      summary: Bookmark Reflection
+      description: Bookmark Reflection
+      operationId: BookmarkReflection
+      parameters:
+      - name: reflectionId
+        in: path
+        description: Reflection ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+    delete:
+      tags:
+      - bookmark
+      summary: Unbookmark Reflection
+      description: Unbookmark Reflection
+      operationId: UnbookmarkReflection
+      parameters:
+      - name: reflectionId
+        in: path
+        description: Reflection ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
   /reflections/{reflectionId}/comments:
     post:
       tags:
@@ -1475,98 +1562,6 @@ components:
         id:
           type: string
           description: Job Posting ID
-    GetFeedResponse:
-      title: GetFeedResponse
-      type: object
-      properties:
-        items:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - commentCount
-                    - content
-                    - createdAt
-                    - id
-                    - likeCount
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Created At
-                      author:
-                        required:
-                        - handle
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          handle:
-                            type: string
-                            description: Author Handle
-                          id:
-                            type: number
-                            description: Author ID
-                          profileImageUrl:
-                            type: string
-                            description: Author Profile Image URL
-                            nullable: true
-                      likeCount:
-                        type: number
-                        description: Like Count
-                      id:
-                        type: number
-                        description: Feed Item ID
-                      content:
-                        type: string
-                        description: Content
-                      commentCount:
-                        type: number
-                        description: Comment Count
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     GetProvidersResponse:
       title: GetProvidersResponse
       type: object
@@ -1716,6 +1711,110 @@ components:
         email:
           type: string
           description: Email
+    GetBookmarkedReflectionsResponse:
+      title: GetBookmarkedReflectionsResponse
+      type: object
+      properties:
+        posts:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - bookmarked
+                    - bookmarkedAt
+                    - commentCount
+                    - content
+                    - createdAt
+                    - id
+                    - likeCount
+                    - slug
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Created At
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                          id:
+                            type: number
+                            description: Author ID
+                          profileImageUrl:
+                            type: string
+                            description: Author Profile Image URL
+                            nullable: true
+                      bookmarked:
+                        type: boolean
+                        description: Whether the current user bookmarked this reflection
+                      likeCount:
+                        type: number
+                        description: Like Count
+                      id:
+                        type: number
+                        description: Reflection ID
+                      bookmarkedAt:
+                        type: string
+                        description: Bookmarked At
+                      content:
+                        type: string
+                        description: Content
+                      slug:
+                        type: string
+                        description: Reflection Slug
+                      commentCount:
+                        type: number
+                        description: Comment Count
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     UploadJobApplicationFileRequest:
       title: UploadJobApplicationFileRequest
       required:
@@ -1817,6 +1916,107 @@ components:
           type: string
           description: User theme preference
           nullable: true
+    GetFeedResponse:
+      title: GetFeedResponse
+      type: object
+      properties:
+        items:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - bookmarked
+                    - commentCount
+                    - content
+                    - createdAt
+                    - id
+                    - likeCount
+                    - slug
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Created At
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                          id:
+                            type: number
+                            description: Author ID
+                          profileImageUrl:
+                            type: string
+                            description: Author Profile Image URL
+                            nullable: true
+                      bookmarked:
+                        type: boolean
+                        description: Whether the current user bookmarked this feed
+                          item
+                      likeCount:
+                        type: number
+                        description: Like Count
+                      id:
+                        type: number
+                        description: Feed Item ID
+                      content:
+                        type: string
+                        description: Content
+                      slug:
+                        type: string
+                        description: Reflection Slug
+                      commentCount:
+                        type: number
+                        description: Comment Count
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     UploadMediaRequest:
       title: UploadMediaRequest
       required:
@@ -1890,41 +2090,6 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
-    GetReflectionResponse:
-      title: GetReflectionResponse
-      required:
-      - author
-      - commentCount
-      - content
-      - id
-      - likeCount
-      type: object
-      properties:
-        author:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Author Name
-            id:
-              type: number
-              description: Author User ID
-          description: Author Information
-        likeCount:
-          type: number
-          description: Number of Likes
-        id:
-          type: number
-          description: Reflection ID
-        content:
-          type: string
-          description: Reflection Content
-        commentCount:
-          type: number
-          description: Number of Comments
     SearchResponse:
       title: SearchResponse
       required:
@@ -2607,6 +2772,49 @@ components:
           type: number
           description: Parent comment ID
           nullable: true
+    GetReflectionResponse:
+      title: GetReflectionResponse
+      required:
+      - author
+      - bookmarked
+      - commentCount
+      - content
+      - id
+      - likeCount
+      - slug
+      type: object
+      properties:
+        bookmarked:
+          type: boolean
+          description: Whether the current user bookmarked this reflection
+        author:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Author Name
+            id:
+              type: number
+              description: Author User ID
+          description: Author Information
+        likeCount:
+          type: number
+          description: Number of Likes
+        id:
+          type: number
+          description: Reflection ID
+        content:
+          type: string
+          description: Reflection Content
+        slug:
+          type: string
+          description: Reflection Slug
+        commentCount:
+          type: number
+          description: Number of Comments
     GetReflectionActivitiesResponse:
       title: GetReflectionActivitiesResponse
       required:
