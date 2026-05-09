@@ -16,6 +16,8 @@ import com.skkil.sync.reflection.repository.ReflectionMediaFileRepository;
 import com.skkil.sync.reflection.repository.ReflectionRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -73,6 +75,9 @@ public class ReflectionService {
       reflectionMediaFileRepository.save(
           new ReflectionMediaFile(reflection, preparedContent.mediaFiles().get(i), i));
     }
+
+    reflectionRepository.incrementActivityCount(
+        author.getId(), LocalDate.ofInstant(reflection.getCreatedAt(), ZoneId.systemDefault()));
 
     eventPublisher.publishEvent(
         new ReflectionCreatedEvent(reflection.getId(), request.content().text()));

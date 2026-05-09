@@ -30,6 +30,8 @@ import type {
   CreateReflectionRequest,
   CreateReflectionResponse,
   GetProjectExperienceReflectionsParams,
+  GetReflectionActivitiesParams,
+  GetReflectionActivitiesResponse,
   GetReflectionResponse,
   GetReflectionsParams,
   GetReflectionsResponse,
@@ -456,6 +458,224 @@ export function useGetProjectExperienceReflections<
 } {
   const queryOptions = getGetProjectExperienceReflectionsQueryOptions(
     experienceId,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Get Reflection Activities
+ * @summary Get Reflection Activities
+ */
+export type getReflectionActivitiesResponse200 = {
+  data: GetReflectionActivitiesResponse;
+  status: 200;
+};
+
+export type getReflectionActivitiesResponseSuccess =
+  getReflectionActivitiesResponse200 & {
+    headers: Headers;
+  };
+export type getReflectionActivitiesResponse =
+  getReflectionActivitiesResponseSuccess;
+
+export const getGetReflectionActivitiesUrl = (
+  handle: string,
+  params: GetReflectionActivitiesParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/profiles/${handle}/reflections/activities?${stringifiedParams}`
+    : `/profiles/${handle}/reflections/activities`;
+};
+
+export const getReflectionActivities = async (
+  handle: string,
+  params: GetReflectionActivitiesParams,
+  options?: RequestInit,
+): Promise<getReflectionActivitiesResponse> => {
+  return api<getReflectionActivitiesResponse>(
+    getGetReflectionActivitiesUrl(handle, params),
+    {
+      ...options,
+      method: 'GET',
+    },
+  );
+};
+
+export const getGetReflectionActivitiesQueryKey = (
+  handle: string,
+  params?: GetReflectionActivitiesParams,
+) => {
+  return [
+    `/profiles/${handle}/reflections/activities`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetReflectionActivitiesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getReflectionActivities>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params: GetReflectionActivitiesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionActivities>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetReflectionActivitiesQueryKey(handle, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getReflectionActivities>>
+  > = ({ signal }) =>
+    getReflectionActivities(handle, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!handle,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getReflectionActivities>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetReflectionActivitiesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getReflectionActivities>>
+>;
+export type GetReflectionActivitiesQueryError = ErrorType<unknown>;
+
+export function useGetReflectionActivities<
+  TData = Awaited<ReturnType<typeof getReflectionActivities>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params: GetReflectionActivitiesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionActivities>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionActivities>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionActivities>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionActivities<
+  TData = Awaited<ReturnType<typeof getReflectionActivities>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params: GetReflectionActivitiesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionActivities>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionActivities>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionActivities>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionActivities<
+  TData = Awaited<ReturnType<typeof getReflectionActivities>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params: GetReflectionActivitiesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionActivities>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Reflection Activities
+ */
+
+export function useGetReflectionActivities<
+  TData = Awaited<ReturnType<typeof getReflectionActivities>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params: GetReflectionActivitiesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionActivities>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetReflectionActivitiesQueryOptions(
+    handle,
     params,
     options,
   );

@@ -756,6 +756,37 @@ paths:
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
                     ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
                     :false,\"role\":\"USER\",\"contacts\":null}"
+  /profiles/{handle}/reflections/activities:
+    get:
+      tags:
+      - reflection
+      summary: Get Reflection Activities
+      description: Get Reflection Activities
+      operationId: GetReflectionActivities
+      parameters:
+      - name: handle
+        in: path
+        description: User Handle
+        required: true
+        schema:
+          type: string
+      - name: year
+        in: query
+        description: Year of Activities
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetReflectionActivitiesResponse"
+              examples:
+                GetReflectionActivities:
+                  value: "{\"activities\":[{\"date\":\"2024-01-01\",\"count\":5},{\"\
+                    date\":\"2024-01-02\",\"count\":3}]}"
   /projects/trending:
     get:
       tags:
@@ -2551,6 +2582,27 @@ components:
           type: number
           description: Parent comment ID
           nullable: true
+    GetReflectionActivitiesResponse:
+      title: GetReflectionActivitiesResponse
+      required:
+      - activities
+      type: object
+      properties:
+        activities:
+          type: array
+          description: List of Activities
+          items:
+            required:
+            - count
+            - date
+            type: object
+            properties:
+              date:
+                type: string
+                description: Activity Date
+              count:
+                type: number
+                description: Number of Reflections
     GetContestOccurrenceResponse:
       title: GetContestOccurrenceResponse
       required:
