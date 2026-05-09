@@ -8,10 +8,14 @@ import type { GetFeedResponseItemsNodesItem } from '@/api/__generated__/types/Ge
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
+import ReflectionBookmarkButton from '@/features/bookmark/components/ReflectionBookmarkButton';
+import { useSession } from '@/lib/auth/client';
 
 const FEED_PAGE_SIZE = '50';
 
 export default function Posts() {
+  const { data: session } = useSession();
+  const isAuthenticated = session === undefined ? undefined : !!session?.user;
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
     useGetRecentFeedInfinite(
       {
@@ -59,7 +63,11 @@ export default function Posts() {
     <div>
       <div className="space-y-4">
         {posts.map((post) => (
-          <PostCard key={post.content.id} post={post} />
+          <PostCard
+            key={post.content.id}
+            post={post}
+            isAuthenticated={isAuthenticated}
+          />
         ))}
       </div>
 
@@ -74,8 +82,23 @@ export default function Posts() {
   );
 }
 
-function PostCard({ post }: { post: GetFeedResponseItemsNodesItem }) {
-  const { content, createdAt, author, likeCount, commentCount } = post.content;
+function PostCard({
+  post,
+  isAuthenticated,
+}: {
+  post: GetFeedResponseItemsNodesItem;
+  isAuthenticated?: boolean;
+}) {
+  const {
+    id,
+    slug,
+    content,
+    createdAt,
+    author,
+    likeCount,
+    commentCount,
+    bookmarked,
+  } = post.content;
 
   return (
     <div className="rounded-md border p-4">
@@ -89,9 +112,18 @@ function PostCard({ post }: { post: GetFeedResponseItemsNodesItem }) {
         <BaseViewer content={content} />
       </div>
 
-      <div className="flex gap-4 text-sm text-muted-foreground">
-        <span>{likeCount} likes</span>
-        <span>{commentCount} comments</span>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex gap-4 text-sm text-muted-foreground">
+          <span>{likeCount} likes</span>
+          <span>{commentCount} comments</span>
+        </div>
+
+        <ReflectionBookmarkButton
+          reflectionId={id}
+          slug={slug}
+          bookmarked={bookmarked}
+          isAuthenticated={isAuthenticated}
+        />
       </div>
     </div>
   );
