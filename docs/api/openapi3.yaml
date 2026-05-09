@@ -348,10 +348,7 @@ paths:
                 $ref: "#/components/schemas/CreateJobPostingResponse"
               examples:
                 CreateJobPosting:
-                  value: |-
-                    {
-                      "id" : "1"
-                    }
+                  value: "{\r\n  \"id\" : \"1\"\r\n}"
   /companies/{companyId}/jobs/{postingId}:
     get:
       tags:
@@ -579,34 +576,19 @@ paths:
                 $ref: "#/components/schemas/GetFeedResponse"
               examples:
                 GetRecentFeed:
-                  value: |-
-                    {
-                      "items" : {
-                        "pageInfo" : {
-                          "size" : 1,
-                          "hasNextPage" : false,
-                          "hasPreviousPage" : false,
-                          "startCursor" : "start-cursor",
-                          "endCursor" : "end-cursor"
-                        },
-                        "nodes" : [ {
-                          "cursor" : "cursor",
-                          "content" : {
-                            "id" : 1,
-                            "author" : {
-                              "id" : 1,
-                              "handle" : "user_handle",
-                              "name" : "User Name",
-                              "profileImageUrl" : "https://example.com/profile.jpg"
-                            },
-                            "content" : "This is a feed item content",
-                            "likeCount" : 10,
-                            "commentCount" : 5,
-                            "createdAt" : "2026-05-04T12:00:00"
-                          }
-                        } ]
-                      }
-                    }
+                  value: "{\r\n  \"items\" : {\r\n    \"pageInfo\" : {\r\n      \"\
+                    size\" : 1,\r\n      \"hasNextPage\" : false,\r\n      \"hasPreviousPage\"\
+                    \ : false,\r\n      \"startCursor\" : \"start-cursor\",\r\n  \
+                    \    \"endCursor\" : \"end-cursor\"\r\n    },\r\n    \"nodes\"\
+                    \ : [ {\r\n      \"cursor\" : \"cursor\",\r\n      \"content\"\
+                    \ : {\r\n        \"id\" : 1,\r\n        \"author\" : {\r\n   \
+                    \       \"id\" : 1,\r\n          \"handle\" : \"user_handle\"\
+                    ,\r\n          \"name\" : \"User Name\",\r\n          \"profileImageUrl\"\
+                    \ : \"https://example.com/profile.jpg\"\r\n        },\r\n    \
+                    \    \"content\" : \"This is a feed item content\",\r\n      \
+                    \  \"likeCount\" : 10,\r\n        \"commentCount\" : 5,\r\n  \
+                    \      \"createdAt\" : \"2026-05-04T12:00:00\"\r\n      }\r\n\
+                    \    } ]\r\n  }\r\n}"
   /jobs:
     get:
       tags:
@@ -667,12 +649,8 @@ paths:
                 $ref: "#/components/schemas/UploadMediaResponse"
               examples:
                 UploadMedia:
-                  value: |-
-                    {
-                      "mediaId" : 1,
-                      "uploadUrl" : "https://example.com/upload",
-                      "expiresAt" : "1970-01-01T00:00:00"
-                    }
+                  value: "{\r\n  \"mediaId\" : 1,\r\n  \"uploadUrl\" : \"https://example.com/upload\"\
+                    ,\r\n  \"expiresAt\" : \"1970-01-01T00:00:00\"\r\n}"
   /preferences/me:
     get:
       tags:
@@ -1003,10 +981,7 @@ paths:
                 $ref: "#/components/schemas/CreateReflectionResponse"
               examples:
                 CreateReflection:
-                  value: |-
-                    {
-                      "slug" : "slug"
-                    }
+                  value: "{\r\n  \"slug\" : \"slug\"\r\n}"
   /reflections/{reflectionId}:
     delete:
       tags:

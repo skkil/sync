@@ -94,7 +94,7 @@ public class ReflectionQueryService {
     return new GetReflectionResponse(
         reflection.id(),
         reflection.author(),
-        contentMediaService.resolveImageUrls(reflection.content()),
+        contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
         reflection.likeCount(),
         reflection.commentCount());
   }
@@ -105,7 +105,7 @@ public class ReflectionQueryService {
         reflection.id(),
         reflection.author(),
         reflection.project(),
-        contentMediaService.resolveImageUrls(reflection.content()),
+        contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
         reflection.createdAt());
   }
 }

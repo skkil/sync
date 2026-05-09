@@ -1,8 +1,12 @@
 package com.skkil.sync.reflection.service;
 
+import com.skkil.sync.media.model.Media;
 import com.skkil.sync.media.service.domain.MediaDomainService;
+import com.skkil.sync.reflection.repository.ReflectionMediaFileRepository;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -25,34 +29,49 @@ public class ReflectionContentMediaService {
 
   private final MediaDomainService mediaService;
   private final ObjectMapper objectMapper;
+  private final ReflectionMediaFileRepository reflectionMediaFileRepository;
 
-  public ReflectionContentMediaService(MediaDomainService mediaService, ObjectMapper objectMapper) {
+  public record PreparedContent(String content, List<Media> mediaFiles) {}
+
+  public ReflectionContentMediaService(
+      MediaDomainService mediaService,
+      ObjectMapper objectMapper,
+      ReflectionMediaFileRepository reflectionMediaFileRepository) {
     this.mediaService = mediaService;
     this.objectMapper = objectMapper;
+    this.reflectionMediaFileRepository = reflectionMediaFileRepository;
   }
 
-  public String prepareContentForCreate(Long authorId, String content) {
+  public PreparedContent prepareContentForCreate(Long authorId, String content) {
     JsonNode root = readContent(content);
-    Set<Long> mediaIds = getImageMediaIds(root);
+    List<Long> mediaIds = getImageMediaIds(root);
+    List<Media> mediaFiles = new ArrayList<>();
 
     for (Long mediaId : mediaIds) {
-      mediaService.getUnlinkedMedia(authorId, mediaId).markAsUploaded();
+      Media media = mediaService.getUnlinkedMedia(authorId, mediaId);
+      media.markAsUploaded();
+      mediaFiles.add(media);
     }
 
     clearImageSources(root);
-    return writeContent(root);
+    return new PreparedContent(writeContent(root), mediaFiles);
   }
 
-  public String resolveImageUrls(String content) {
+  public String resolveImageUrls(Long reflectionId, String content) {
     try {
-      JsonNode root = readContent(content);
-      Set<Long> mediaIds = getImageMediaIds(root);
+      List<Long> mediaIds =
+          reflectionMediaFileRepository
+              .findAllByReflectionIdOrderBySortOrderAsc(reflectionId)
+              .stream()
+              .map(reflectionMediaFile -> reflectionMediaFile.getMedia().getId())
+              .toList();
 
       if (mediaIds.isEmpty()) {
         return content;
       }
 
-      Map<Long, URL> urls = mediaService.generatePublicGetUrls(mediaIds.stream().toList());
+      JsonNode root = readContent(content);
+      Map<Long, URL> urls = mediaService.generatePublicGetUrls(mediaIds);
       applyImageUrls(root, urls);
 
       return writeContent(root);
@@ -78,10 +97,10 @@ public class ReflectionContentMediaService {
     }
   }
 
-  private Set<Long> getImageMediaIds(JsonNode node) {
+  private List<Long> getImageMediaIds(JsonNode node) {
     Set<Long> mediaIds = new LinkedHashSet<>();
     collectImageMediaIds(node, mediaIds);
-    return mediaIds;
+    return mediaIds.stream().toList();
   }
 
   private void collectImageMediaIds(JsonNode node, Set<Long> mediaIds) {
