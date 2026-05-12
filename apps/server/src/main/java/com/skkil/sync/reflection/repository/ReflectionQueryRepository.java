@@ -24,14 +24,14 @@ public class ReflectionQueryRepository {
 
   public Optional<ReflectionDto> getReflectionBySlug(String slug) {
     return dsl.select(
-            REFLECTIONS.ID,
-            REFLECTIONS.AUTHOR_ID,
-            USERS.FULL_NAME,
-            REFLECTIONS.CONTENT,
-            PROVIDERS.ID,
-            PROVIDERS.NAME,
-            REFLECTIONS.CREATED_AT,
-            REFLECTIONS.UPDATED_AT,
+            REFLECTIONS.ID.as("id"),
+            REFLECTIONS.AUTHOR_ID.as("authorId"),
+            USERS.FULL_NAME.as("authorName"),
+            REFLECTIONS.CONTENT.as("content"),
+            PROVIDERS.ID.as("projectId"),
+            PROVIDERS.NAME.as("projectName"),
+            REFLECTIONS.CREATED_AT.as("createdAt"),
+            REFLECTIONS.UPDATED_AT.as("updatedAt"),
             DSL.value(0L).as("likeCount"),
             DSL.value(0L).as("commentCount"))
         .from(REFLECTIONS)
@@ -51,14 +51,16 @@ public class ReflectionQueryRepository {
   public CursorPaginationDataFetcher<ReflectionDto> getReflections() {
     return (condition, orderFields, size) ->
         dsl.select(
-                REFLECTIONS.ID,
-                REFLECTIONS.AUTHOR_ID,
-                USERS.FULL_NAME,
-                REFLECTIONS.CONTENT,
-                PROVIDERS.ID,
-                PROVIDERS.NAME,
-                REFLECTIONS.CREATED_AT,
-                REFLECTIONS.UPDATED_AT)
+                REFLECTIONS.ID.as("id"),
+                REFLECTIONS.AUTHOR_ID.as("authorId"),
+                USERS.FULL_NAME.as("authorName"),
+                REFLECTIONS.CONTENT.as("content"),
+                PROVIDERS.ID.as("projectId"),
+                PROVIDERS.NAME.as("projectName"),
+                REFLECTIONS.CREATED_AT.as("createdAt"),
+                REFLECTIONS.UPDATED_AT.as("updatedAt"),
+                DSL.value(0L).as("likeCount"),
+                DSL.value(0L).as("commentCount"))
             .from(REFLECTIONS)
             .join(USERS)
             .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
