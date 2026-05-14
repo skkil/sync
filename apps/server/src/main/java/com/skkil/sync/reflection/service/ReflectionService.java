@@ -11,6 +11,8 @@ import com.skkil.sync.reflection.dto.response.CreateReflectionResponse;
 import com.skkil.sync.reflection.event.ReflectionCreatedEvent;
 import com.skkil.sync.reflection.exception.ReflectionNotFoundException;
 import com.skkil.sync.reflection.model.Reflection;
+import com.skkil.sync.reflection.model.ReflectionMediaFile;
+import com.skkil.sync.reflection.repository.ReflectionMediaFileRepository;
 import com.skkil.sync.reflection.repository.ReflectionRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
@@ -26,18 +28,24 @@ public class ReflectionService {
 
   private final UserDomainService userDomainService;
   private final ExperienceDomainService experienceDomainService;
+  private final ReflectionContentMediaService contentMediaService;
   private final ApplicationEventPublisher eventPublisher;
 
   private final ReflectionRepository reflectionRepository;
+  private final ReflectionMediaFileRepository reflectionMediaFileRepository;
 
   public ReflectionService(
       UserDomainService userDomainService,
       ExperienceDomainService experienceDomainService,
+      ReflectionContentMediaService contentMediaService,
       ReflectionRepository reflectionRepository,
+      ReflectionMediaFileRepository reflectionMediaFileRepository,
       ApplicationEventPublisher eventPublisher) {
     this.userDomainService = userDomainService;
     this.experienceDomainService = experienceDomainService;
+    this.contentMediaService = contentMediaService;
     this.reflectionRepository = reflectionRepository;
+    this.reflectionMediaFileRepository = reflectionMediaFileRepository;
     this.eventPublisher = eventPublisher;
   }
 
@@ -50,15 +58,24 @@ public class ReflectionService {
             ? String.format("%s-%d", author.getHandle(), System.currentTimeMillis())
             : Slugify.slugify(request.title());
 
+    ReflectionContentMediaService.PreparedContent preparedContent =
+        contentMediaService.prepareContentForCreate(authorId, request.content().json());
+
     Reflection reflection =
         Reflection.builder()
             .slug(slug)
             .author(author)
             .title(request.title())
-            .content(request.content().json())
+            .content(preparedContent.content())
             .build();
 
     reflection = reflectionRepository.save(reflection);
+
+    for (int i = 0; i < preparedContent.mediaFiles().size(); i++) {
+      reflectionMediaFileRepository.save(
+          new ReflectionMediaFile(reflection, preparedContent.mediaFiles().get(i), i));
+    }
+
     reflectionRepository.incrementActivityCount(
         author.getId(), LocalDate.ofInstant(reflection.getCreatedAt(), ZoneId.systemDefault()));
 
