@@ -240,37 +240,27 @@ const BaseEditor = forwardRef<BaseEditorRef, BaseEditorProps>(
       {
         id: 'bold',
         icon: <TextBolderIcon />,
-        onClick: () => {
-          editor?.chain().focus().toggleBold().run();
-        },
+        onClick: () => editor?.chain().focus().toggleBold().run(),
       },
       {
         id: 'italic',
         icon: <TextItalicIcon />,
-        onClick: () => {
-          editor?.chain().focus().toggleItalic().run();
-        },
+        onClick: () => editor?.chain().focus().toggleItalic().run(),
       },
       {
         id: 'underline',
         icon: <TextUnderlineIcon />,
-        onClick: () => {
-          editor?.chain().focus().toggleUnderline().run();
-        },
+        onClick: () => editor?.chain().focus().toggleUnderline().run(),
       },
       {
         id: 'strikethrough',
         icon: <TextStrikethroughIcon />,
-        onClick: () => {
-          editor?.chain().focus().toggleStrike().run();
-        },
+        onClick: () => editor?.chain().focus().toggleStrike().run(),
       },
       {
         id: 'code',
         icon: <CodeIcon />,
-        onClick: () => {
-          editor?.chain().focus().toggleCodeBlock().run();
-        },
+        onClick: () => editor?.chain().focus().toggleCodeBlock().run(),
       },
     ];
 
@@ -284,6 +274,7 @@ const BaseEditor = forwardRef<BaseEditorRef, BaseEditorProps>(
                   <Button
                     tabIndex={-1}
                     variant="ghost"
+                    disabled={!editor}
                     onClick={button.onClick}
                   >
                     {button.icon}
