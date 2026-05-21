@@ -4,6 +4,7 @@ import { getGetProfileByHandleQueryOptions } from '@/api/__generated__/profile/p
 import { getQueryClient } from '@/lib/query';
 
 import ProfileCard from './_components/ProfileCard';
+import ProfilePosts from './_components/ProfilePosts';
 import Streaks from './_components/Streaks';
 
 interface ProfileProps {
@@ -23,6 +24,7 @@ export default async function Profile({ params }: ProfileProps) {
       <div className="space-y-4">
         <ProfileCard handle={handle} />
         <Streaks handle={handle} />
+        <ProfilePosts handle={handle} />
       </div>
     </HydrationBoundary>
   );
