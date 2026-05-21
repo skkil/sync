@@ -1,0 +1,151 @@
+'use client';
+
+import { useIntersectionObserver } from '@uidotdev/usehooks';
+import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
+
+import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
+import { useGetUserReflectionsInfinite } from '@/api/__generated__/reflection/reflection';
+import type { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__generated__/types';
+import { Badge } from '@/components/ui/badge';
+import { BaseViewer } from '@/components/ui/editor';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Spinner } from '@/components/ui/spinner';
+
+const POSTS_PAGE_SIZE = '10';
+
+interface ProfilePostsProps {
+  handle: string;
+}
+
+export default function ProfilePosts({ handle }: ProfilePostsProps) {
+  const t = useTranslations('pages.profile.posts');
+
+  const {
+    data: profile,
+    isPending: isProfilePending,
+    isError: isProfileError,
+  } = useGetProfileByHandle(handle);
+
+  const userId = profile?.data.userId;
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending: isPostsPending,
+    isError: isPostsError,
+  } = useGetUserReflectionsInfinite(
+    userId ?? '',
+    {
+      first: POSTS_PAGE_SIZE,
+      after: '',
+    },
+    {
+      query: {
+        enabled: !!userId,
+        getNextPageParam: (lastPage) => {
+          const pageInfo = lastPage.data.reflections?.pageInfo;
+          return pageInfo?.hasNextPage
+            ? (pageInfo.endCursor ?? undefined)
+            : undefined;
+        },
+      },
+    },
+  );
+
+  const [ref, entry] = useIntersectionObserver({
+    threshold: 0.2,
+    root: null,
+    rootMargin: '400px',
+  });
+
+  useEffect(() => {
+    if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [entry?.isIntersecting, fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  const posts =
+    data?.pages.flatMap((page) => page.data.reflections?.nodes ?? []) ?? [];
+
+  const isPending = isProfilePending || (!!userId && isPostsPending);
+  const isError = isProfileError || isPostsError;
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-medium">{t('label')}</h2>
+
+      {isPending && <ProfilePostsSkeleton />}
+
+      {!isPending && isError && (
+        <div className="rounded-md border px-4 py-8 text-center">
+          <p className="text-sm text-destructive">{t('list.error')}</p>
+        </div>
+      )}
+
+      {!isPending && !isError && posts.length === 0 && (
+        <div className="rounded-md border px-4 py-8 text-center">
+          <p className="text-sm text-muted-foreground">{t('list.empty')}</p>
+        </div>
+      )}
+
+      {!isPending && !isError && posts.length > 0 && (
+        <>
+          <div className="space-y-4">
+            {posts.map((post) => (
+              <PostCard key={post.content.id} post={post.content} />
+            ))}
+          </div>
+
+          <div ref={ref} className="py-4">
+            {isFetchingNextPage && (
+              <div className="flex justify-center">
+                <Spinner />
+              </div>
+            )}
+          </div>
+
+          {!hasNextPage && (
+            <div className="py-4 text-center">
+              <p className="text-xs text-muted-foreground">{t('list.end')}</p>
+            </div>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
+function PostCard({
+  post,
+}: {
+  post: GetReflectionsResponseReflectionsNodesItemContent;
+}) {
+  return (
+    <article className="rounded-md border p-4">
+      <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+        {post.project?.name && (
+          <>
+            <span>|</span>
+            <Badge variant="secondary">{post.project.name}</Badge>
+          </>
+        )}
+      </div>
+
+      <BaseViewer content={post.content} />
+    </article>
+  );
+}
+
+function ProfilePostsSkeleton() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <Skeleton key={index} className="h-32 w-full" />
+      ))}
+    </div>
+  );
+}
