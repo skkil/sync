@@ -18,12 +18,16 @@ import {
 } from '@/components/ui/card';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
+import ReflectionBookmarkButton from '@/features/bookmark/components/ReflectionBookmarkButton';
+import { useSession } from '@/lib/auth/client';
 
 interface PostContentProps {
   slug: string;
 }
 
 export default function PostContent({ slug }: PostContentProps) {
+  const { data: session } = useSession();
+  const isAuthenticated = session === undefined ? undefined : !!session?.user;
   const { data, isPending } = useGetReflectionBySlug(slug);
 
   if (isPending) {
@@ -75,6 +79,14 @@ export default function PostContent({ slug }: PostContentProps) {
             {post.commentCount}
           </Button>
         </div>
+
+        <ReflectionBookmarkButton
+          reflectionId={post.id}
+          slug={post.slug}
+          bookmarked={post.bookmarked}
+          isAuthenticated={isAuthenticated}
+          size="sm"
+        />
       </CardFooter>
     </Card>
   );

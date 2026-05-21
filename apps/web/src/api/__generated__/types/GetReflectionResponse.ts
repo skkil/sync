@@ -7,6 +7,8 @@
 import type { GetReflectionResponseAuthor } from './GetReflectionResponseAuthor';
 
 export interface GetReflectionResponse {
+  /** Whether the current user bookmarked this reflection */
+  bookmarked: boolean;
   /** Author Information */
   author: GetReflectionResponseAuthor;
   /** Number of Likes */
@@ -15,6 +17,8 @@ export interface GetReflectionResponse {
   id: number;
   /** Reflection Content */
   content: string;
+  /** Reflection Slug */
+  slug: string;
   /** Number of Comments */
   commentCount: number;
 }

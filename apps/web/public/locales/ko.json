@@ -904,6 +904,7 @@
         "placeholder": "검색..."
       },
       "menu": {
+        "bookmarks": "저장한 포스트",
         "jobs": "채용 공고",
         "team-building": "팀원 모집",
         "my-providers": "내가 관리하는 페이지"

@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  BookmarkSimpleIcon,
   BriefcaseIcon,
   ListIcon,
   UserGearIcon,
@@ -31,6 +32,11 @@ export default function MobileNavigationMenu() {
     {
       id: 'home',
       tabs: [
+        {
+          icon: <BookmarkSimpleIcon />,
+          href: '/bookmarks',
+          label: t('bookmarks'),
+        },
         {
           icon: <BriefcaseIcon />,
           href: '/jobs',

@@ -13,12 +13,16 @@ export type GetFeedResponseItemsNodesItemContent = {
   /** Created At */
   createdAt: string;
   author?: GetFeedResponseItemsNodesItemContentAuthor;
+  /** Whether the current user bookmarked this feed item */
+  bookmarked: boolean;
   /** Like Count */
   likeCount: number;
   /** Feed Item ID */
   id: number;
   /** Content */
   content: string;
+  /** Reflection Slug */
+  slug: string;
   /** Comment Count */
   commentCount: number;
 };

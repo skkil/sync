@@ -11,6 +11,7 @@ import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetc
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationProvider;
 import com.skkil.sync.common.util.pagination.interfaces.OffsetPaginationDataFetcher;
 import com.skkil.sync.common.util.pagination.model.Cursor;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jooq.Condition;
@@ -65,13 +66,14 @@ public class PaginationService {
     List<T> results = fetcher.fetch(condition, orderFields, requestedSize + 1);
 
     List<CursorPaginationResponse.Node<T>> nodes =
-        results.stream()
-            .limit(requestedSize)
-            .map(
-                result ->
-                    new CursorPaginationResponse.Node<>(
-                        cursorConverter.encode(provider.convert(result)), result))
-            .toList();
+        new ArrayList<>(
+            results.stream()
+                .limit(requestedSize)
+                .map(
+                    result ->
+                        new CursorPaginationResponse.Node<>(
+                            cursorConverter.encode(provider.convert(result)), result))
+                .toList());
 
     if (!isForward) {
       Collections.reverse(nodes);

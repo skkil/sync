@@ -9,10 +9,12 @@ public record GetFeedResponse(CursorPaginationResponse<FeedItem> items) {
   @Builder
   public static record FeedItem(
       Long id,
+      String slug,
       Author author,
       String content,
       Long likeCount,
       Long commentCount,
+      boolean bookmarked,
       LocalDateTime createdAt) {}
 
   @Builder

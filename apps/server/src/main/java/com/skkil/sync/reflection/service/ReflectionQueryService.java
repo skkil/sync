@@ -49,10 +49,10 @@ public class ReflectionQueryService {
   }
 
   @Transactional(readOnly = true)
-  public GetReflectionResponse getReflectionBySlug(String slug) {
+  public GetReflectionResponse getReflectionBySlug(Long requesterId, String slug) {
     var reflection =
         reflectionQueryRepository
-            .getReflectionBySlug(slug)
+            .getReflectionBySlug(requesterId, slug)
             .orElseThrow(() -> new ReflectionNotFoundException(slug));
 
     return resolveImageUrls(reflectionMapper.toGetReflectionResponse(reflection));
@@ -93,10 +93,12 @@ public class ReflectionQueryService {
   private GetReflectionResponse resolveImageUrls(GetReflectionResponse reflection) {
     return new GetReflectionResponse(
         reflection.id(),
+        reflection.slug(),
         reflection.author(),
         contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
         reflection.likeCount(),
-        reflection.commentCount());
+        reflection.commentCount(),
+        reflection.bookmarked());
   }
 
   private GetReflectionsResponse.Reflection resolveImageUrls(

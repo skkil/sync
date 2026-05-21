@@ -79,6 +79,11 @@ export default defineConfig({
               useInfinite: true,
             },
           },
+          GetBookmarkedReflections: {
+            query: {
+              useInfinite: true,
+            },
+          },
         },
       },
     },

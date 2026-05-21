@@ -1,6 +1,6 @@
 'use client';
 
-import { ChatCircleDotsIcon } from '@phosphor-icons/react';
+import { BookmarkSimpleIcon, ChatCircleDotsIcon } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -41,6 +41,15 @@ function TopNavigationBarDesktop({
   isAuthenticated: boolean;
 }) {
   const tabs = [
+    {
+      id: 'bookmarks',
+      href: '/bookmarks',
+      icon: <BookmarkSimpleIcon />,
+      highlight: () => {
+        return path.startsWith('/bookmarks');
+      },
+      authenticated: true,
+    },
     {
       id: 'messages',
       href: '/messages',

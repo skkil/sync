@@ -1,0 +1,81 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00022-create-table-reflection-bookmarks
+      author: jungjun0708
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: users
+            - tableExists:
+                tableName: reflections
+            - not:
+                tableExists:
+                  tableName: reflection_bookmarks
+      changes:
+        - createTable:
+            tableName: reflection_bookmarks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reflection_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: reflection_bookmarks
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_reflection_bookmarks_user_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: reflection_bookmarks
+            baseColumnNames: reflection_id
+            referencedTableName: reflections
+            referencedColumnNames: id
+            constraintName: fk_reflection_bookmarks_reflection_id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: reflection_bookmarks
+            columnNames: user_id, reflection_id
+            constraintName: uq_reflection_bookmarks_user_reflection
+        - createIndex:
+            tableName: reflection_bookmarks
+            indexName: idx_reflection_bookmarks_user_created_id
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: created_at
+                  descending: true
+              - column:
+                  name: id
+                  descending: true
+        - createIndex:
+            tableName: reflection_bookmarks
+            indexName: idx_reflection_bookmarks_reflection_id
+            columns:
+              - column:
+                  name: reflection_id
