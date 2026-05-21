@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReflectionQueryService {
 
   private final ReflectionQueryRepository reflectionQueryRepository;
+  private final ReflectionContentMediaService contentMediaService;
   private final ReflectionMapper reflectionMapper;
 
   private final PaginationService paginationService;
@@ -25,10 +26,12 @@ public class ReflectionQueryService {
 
   public ReflectionQueryService(
       ReflectionQueryRepository reflectionQueryRepository,
+      ReflectionContentMediaService contentMediaService,
       ReflectionMapper reflectionMapper,
       ReflectionCursorPaginationProvider paginationProvider,
       PaginationService paginationService) {
     this.reflectionQueryRepository = reflectionQueryRepository;
+    this.contentMediaService = contentMediaService;
     this.reflectionMapper = reflectionMapper;
     this.paginationProvider = paginationProvider;
     this.paginationService = paginationService;
@@ -39,7 +42,8 @@ public class ReflectionQueryService {
     var reflections =
         paginationService
             .paginate(reflectionQueryRepository.getReflections(), paginationProvider, pagination)
-            .map(reflectionMapper::toReflectionResponse);
+            .map(reflectionMapper::toReflectionResponse)
+            .map(this::resolveImageUrls);
 
     return new GetReflectionsResponse(reflections);
   }
@@ -51,7 +55,7 @@ public class ReflectionQueryService {
             .getReflectionBySlug(slug)
             .orElseThrow(() -> new ReflectionNotFoundException(slug));
 
-    return reflectionMapper.toGetReflectionResponse(reflection);
+    return resolveImageUrls(reflectionMapper.toGetReflectionResponse(reflection));
   }
 
   @Transactional(readOnly = true)
@@ -64,7 +68,8 @@ public class ReflectionQueryService {
                 reflectionQueryRepository.getReflectionsByUser(userId),
                 paginationProvider,
                 pagination)
-            .map(reflectionMapper::toReflectionResponse);
+            .map(reflectionMapper::toReflectionResponse)
+            .map(this::resolveImageUrls);
 
     return new GetReflectionsResponse(reflections);
   }
@@ -79,8 +84,28 @@ public class ReflectionQueryService {
                 reflectionQueryRepository.getReflectionsByExperience(experienceId),
                 paginationProvider,
                 pagination)
-            .map(reflectionMapper::toReflectionResponse);
+            .map(reflectionMapper::toReflectionResponse)
+            .map(this::resolveImageUrls);
 
     return new GetReflectionsResponse(reflections);
+  }
+
+  private GetReflectionResponse resolveImageUrls(GetReflectionResponse reflection) {
+    return new GetReflectionResponse(
+        reflection.id(),
+        reflection.author(),
+        contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
+        reflection.likeCount(),
+        reflection.commentCount());
+  }
+
+  private GetReflectionsResponse.Reflection resolveImageUrls(
+      GetReflectionsResponse.Reflection reflection) {
+    return new GetReflectionsResponse.Reflection(
+        reflection.id(),
+        reflection.author(),
+        reflection.project(),
+        contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
+        reflection.createdAt());
   }
 }

@@ -88,6 +88,14 @@
     padding-left: 1rem;
   }
 
+  img {
+    border-radius: calc(var(--radius) - 2px);
+    display: block;
+    height: auto;
+    margin: 0.75rem 0;
+    max-width: 100%;
+  }
+
   hr {
     border: none;
     border-top: 1px solid var(--border);
