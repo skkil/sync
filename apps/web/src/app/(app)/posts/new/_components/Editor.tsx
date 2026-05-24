@@ -158,6 +158,7 @@ function EditorBubbleMenu({
               'rounded p-1.5 transition-colors hover:bg-accent',
               btn.isActive() && 'bg-accent text-accent-foreground',
             )}
+            aria-label={btn.id}
           >
             {btn.icon}
           </button>

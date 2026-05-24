@@ -19,6 +19,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
+const MAX_COMMAND_QUERY_LENGTH = 6;
+
 interface CommandsItemProps {
   name: string;
   icon: React.ReactNode;
@@ -99,10 +101,12 @@ export const CommandsExtension = Extension.create<CommandsExtensionOptions>({
         startOfLine: false,
         allow: ({ editor }) => editor.isFocused,
         render: () => {
-          let renderer: ReactRenderer<
-            CommandsRef,
-            CommandsProps & RefAttributes<CommandsRef>
-          > | void;
+          let renderer:
+            | ReactRenderer<
+                CommandsRef,
+                CommandsProps & RefAttributes<CommandsRef>
+              >
+            | undefined;
 
           return {
             onStart(props) {
@@ -124,9 +128,13 @@ export const CommandsExtension = Extension.create<CommandsExtensionOptions>({
                 return;
               }
 
-              if (props.query.length >= 6 || props.items.length === 0) {
+              if (
+                props.query.length >= MAX_COMMAND_QUERY_LENGTH ||
+                props.items.length === 0
+              ) {
                 renderer.element.remove();
                 renderer.destroy();
+                renderer = undefined;
                 return;
               }
 
@@ -143,6 +151,7 @@ export const CommandsExtension = Extension.create<CommandsExtensionOptions>({
                 if (renderer) {
                   renderer.element.remove();
                   renderer.destroy();
+                  renderer = undefined;
                 }
 
                 return true;
@@ -214,14 +223,20 @@ const Commands = forwardRef<CommandsRef, CommandsProps>((props, ref) => {
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }) => {
       if (event.key === 'ArrowUp') {
-        setSelectedIndex(
-          (selectedIndex + props.items.length - 1) % props.items.length,
-        );
+        if (props.items.length !== 0) {
+          setSelectedIndex(
+            (prev) => (prev + props.items.length - 1) % props.items.length,
+          );
+        }
+
         return true;
       }
 
       if (event.key === 'ArrowDown') {
-        setSelectedIndex((selectedIndex + 1) % props.items.length);
+        if (props.items.length !== 0) {
+          setSelectedIndex((prev) => (prev + 1) % props.items.length);
+        }
+
         return true;
       }
 
@@ -239,6 +254,7 @@ const Commands = forwardRef<CommandsRef, CommandsProps>((props, ref) => {
       {props.items.map((item, index) => (
         <div
           key={index}
+          role="button"
           className={cn(
             'flex cursor-pointer items-center rounded-md',
             index === selectedIndex

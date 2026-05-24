@@ -389,9 +389,9 @@ export default function MiniPostEditor() {
                 />
               </div>
               <div className="flex items-center gap-3">
-                <Link href="/posts/new">
-                  <Button>{t('post.advanced')}</Button>
-                </Link>
+                <Button asChild>
+                  <Link href="/posts/new">{t('post.advanced')}</Link>
+                </Button>
 
                 <Button
                   disabled={isPostDisabled}
