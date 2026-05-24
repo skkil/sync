@@ -4,6 +4,7 @@
       "post-editor": {
         "placeholder": "오늘은 무엇을 배우셨나요?",
         "post": {
+          "advanced": "더 자세히 작성하기",
           "label": "게시물 작성"
         }
       }
@@ -923,6 +924,32 @@
       "privacy": "개인정보 처리방침"
     },
     "editor": {
+      "commands": {
+        "h1": {
+          "title": "제목 1",
+          "description": ""
+        },
+        "h2": {
+          "title": "제목 2",
+          "description": ""
+        },
+        "bold": {
+          "title": "굵게",
+          "description": ""
+        },
+        "italic": {
+          "title": "기울임",
+          "description": ""
+        },
+        "ignore": {
+          "title": "/ 를 입력하기"
+        }
+      },
+      "placeholders": {
+        "title": "제목을 입력하세요",
+        "content": "/ 를 입력하여 명령어를 사용하거나 텍스트를 입력하세요"
+      },
+      "submit": "게시하기",
       "toolbar": {
         "bold": {
           "tooltip": "굵기 적용"
