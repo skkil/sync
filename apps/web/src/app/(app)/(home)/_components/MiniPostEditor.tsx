@@ -6,6 +6,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -387,8 +388,11 @@ export default function MiniPostEditor() {
                   onChange={handleImageChange}
                 />
               </div>
-
               <div className="flex items-center gap-3">
+                <Button asChild>
+                  <Link href="/posts/new">{t('post.advanced')}</Link>
+                </Button>
+
                 <Button
                   disabled={isPostDisabled}
                   isPending={isCreatingPost || isUploadingImages}
