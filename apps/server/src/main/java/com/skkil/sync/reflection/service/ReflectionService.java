@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReflectionService {
 
   private final UserDomainService userDomainService;
+  private final TagService tagService;
   private final ExperienceDomainService experienceDomainService;
   private final ReflectionContentMediaService contentMediaService;
   private final ApplicationEventPublisher eventPublisher;
@@ -36,12 +37,14 @@ public class ReflectionService {
 
   public ReflectionService(
       UserDomainService userDomainService,
+      TagService tagService,
       ExperienceDomainService experienceDomainService,
       ReflectionContentMediaService contentMediaService,
       ReflectionRepository reflectionRepository,
       ReflectionMediaFileRepository reflectionMediaFileRepository,
       ApplicationEventPublisher eventPublisher) {
     this.userDomainService = userDomainService;
+    this.tagService = tagService;
     this.experienceDomainService = experienceDomainService;
     this.contentMediaService = contentMediaService;
     this.reflectionRepository = reflectionRepository;
@@ -68,6 +71,7 @@ public class ReflectionService {
             .title(request.title())
             .content(preparedContent.content())
             .build();
+    tagService.addTagsToReflection(reflection, request.tags());
 
     reflection = reflectionRepository.save(reflection);
 

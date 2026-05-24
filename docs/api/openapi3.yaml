@@ -1024,7 +1024,7 @@ paths:
               CreateReflection:
                 value: "{\"title\":\"title\",\"content\":{\"text\":\"This is a reflection\
                   \ content.\",\"json\":\"{\\\"text\\\": \\\"This is a reflection\
-                  \ content.\\\"}\"}}"
+                  \ content.\\\"}\"},\"tags\":[\"java\",\"spring\"]}"
       responses:
         "201":
           description: "201"
@@ -1276,6 +1276,32 @@ paths:
                     ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
                     ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
                     :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
+  /search/tags:
+    get:
+      tags:
+      - tag
+      summary: Search Tags
+      description: 검색어로 태그를 검색합니다.
+      operationId: SearchTags
+      parameters:
+      - name: query
+        in: query
+        description: 태그 검색어
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchTagsResponse"
+              examples:
+                SearchTags:
+                  value: "{\"tags\":[{\"name\":\"java\",\"description\":\"자바 관련 태그\
+                    \",\"postCount\":10},{\"name\":\"spring\",\"description\":\"스프\
+                    링 프레임워크 관련 태그\",\"postCount\":5}]}"
   /team-building:
     get:
       tags:
@@ -2059,29 +2085,6 @@ components:
         updatedAt:
           type: string
           description: Update Timestamp
-    CreateReflectionRequest:
-      title: CreateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        title:
-          type: string
-          description: Title
-          nullable: true
-        content:
-          required:
-          - json
-          - text
-          type: object
-          properties:
-            json:
-              type: string
-              description: JSON Content
-            text:
-              type: string
-              description: Text Content
-          description: Content
     GetJobApplicationFilesResponse:
       title: GetJobApplicationFilesResponse
       required:
@@ -2594,6 +2597,64 @@ components:
         content:
           type: string
           description: Content
+    CreateReflectionRequest:
+      title: CreateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title
+          nullable: true
+        content:
+          required:
+          - json
+          - text
+          type: object
+          properties:
+            json:
+              type: string
+              description: JSON Content
+            text:
+              type: string
+              description: Text Content
+          description: Content
+        tags:
+          type: array
+          description: 태그 목록
+          nullable: true
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
+    SearchTagsResponse:
+      title: SearchTagsResponse
+      required:
+      - tags
+      type: object
+      properties:
+        tags:
+          type: array
+          description: 태그 목록
+          items:
+            required:
+            - description
+            - name
+            - postCount
+            type: object
+            properties:
+              name:
+                type: string
+                description: 태그 이름
+              postCount:
+                type: number
+                description: 태그가 사용된 게시물 수
+              description:
+                type: string
+                description: 태그 설명
     CreateCommentRequest:
       title: CreateCommentRequest
       required:
