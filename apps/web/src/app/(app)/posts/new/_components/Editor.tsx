@@ -12,7 +12,7 @@ import { CharacterCount, Placeholder } from '@tiptap/extensions';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import StarterKit from '@tiptap/starter-kit';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -21,15 +21,18 @@ import { Button } from '@/components/ui/button';
 import { CommandsExtension } from '@/components/ui/editor/extensions/commands';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { getTemplates } from '@/features/editor/templates';
 import { cn } from '@/lib/utils';
 
 export default function Editor() {
   const t = useTranslations('components.editor');
+  const locale = useLocale();
   const router = useRouter();
 
   const { mutate: createPost } = useCreateReflection();
 
   const [title, setTitle] = useState('');
+  const [isEditorEmpty, setIsEditorEmpty] = useState(true);
 
   const editor = useEditor({
     extensions: [
@@ -42,7 +45,12 @@ export default function Editor() {
     ],
     content: '',
     immediatelyRender: false,
+    onUpdate: ({ editor }) => {
+      setIsEditorEmpty(editor.isEmpty);
+    },
   });
+
+  const templates = getTemplates(locale);
 
   const handleSubmit = () => {
     if (!editor) {
@@ -82,6 +90,31 @@ export default function Editor() {
         <ScrollArea className="flex-1 min-h-0 max-h-screen">
           <EditorContent editor={editor} />
           {editor && <EditorBubbleMenu editor={editor} />}
+          {isEditorEmpty && (
+            <div className="mt-4 text-muted-foreground">
+              {t('templates.suggestions')}
+
+              <div className="flex flex-col gap-2 items-start mt-2">
+                {templates.map((template) => (
+                  <button
+                    key={template.id}
+                    type="button"
+                    className="px-3 py-1.5 text-sm text-muted-foreground hover:underline"
+                    onClick={() => {
+                      setTitle(template.title);
+                      if (editor) {
+                        editor.commands.setContent(
+                          JSON.parse(template.content),
+                        );
+                      }
+                    }}
+                  >
+                    {template.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </ScrollArea>
       </div>
 
