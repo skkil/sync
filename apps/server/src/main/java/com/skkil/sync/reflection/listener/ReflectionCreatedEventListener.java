@@ -63,14 +63,15 @@ public class ReflectionCreatedEventListener {
     Prompt prompt = Prompt.builder().messages(systemMessage, userMessage).build();
 
     log.debug("Summarizing reflection {}", event.getReflectionId());
-    ReflectionSummaryDto response = ChatClient.create(chatModel).prompt(prompt).call()
-        .entity(ReflectionSummaryDto.class);
+    ReflectionSummaryDto response =
+        ChatClient.create(chatModel).prompt(prompt).call().entity(ReflectionSummaryDto.class);
     log.debug("Summarized reflection {}", event.getReflectionId());
 
-    ReflectionSummary summary = ReflectionSummary.builder()
-        .reflection(reflectionRepository.getReferenceById(event.getReflectionId()))
-        .summary(response.summary())
-        .build();
+    ReflectionSummary summary =
+        ReflectionSummary.builder()
+            .reflection(reflectionRepository.getReferenceById(event.getReflectionId()))
+            .summary(response.summary())
+            .build();
 
     reflectionSummaryRepository.save(summary);
     log.debug("Saved summary for reflection {}", event.getReflectionId());

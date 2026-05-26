@@ -1,0 +1,12 @@
+{
+  "id": "til",
+  "label": {
+    "ko": "오늘 배운 것"
+  },
+  "title": {
+    "ko": "오늘 배운 것: "
+  },
+  "content": {
+    "ko": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"무엇을 배웠나요?\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"왜 중요한가요?\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"출처\"}]},{\"type\":\"paragraph\",\"content\":[]}]}"
+  }
+}

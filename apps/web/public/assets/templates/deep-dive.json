@@ -1,0 +1,12 @@
+{
+  "id": "deep-dive",
+  "label": {
+    "ko": "딥 다이브"
+  },
+  "title": {
+    "ko": "딥 다이브: "
+  },
+  "content": {
+    "ko": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"무엇을 이해하려 했나요?\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"처음에 어떻게 생각했나요?\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"실제로 발견한 것\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"핵심 정리\"}]},{\"type\":\"paragraph\",\"content\":[]}]}"
+  }
+}

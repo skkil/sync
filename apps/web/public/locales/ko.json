@@ -967,6 +967,9 @@
         "code": {
           "tooltip": "코드 블록"
         }
+      },
+      "templates": {
+        "suggestions": "혹은 아래 템플릿을 사용해보세요"
       }
     },
     "provider": {
