@@ -20,7 +20,7 @@ interface LocalizedTemplate {
   id: string;
   label: string;
   title: string;
-  content: string;
+  content: JSON;
 }
 
 const ALL_TEMPLATES: Template[] = [
@@ -40,6 +40,6 @@ export function getTemplates(locale: string): LocalizedTemplate[] {
     id: template.id,
     label: template.label[locale]!,
     title: template.title[locale]!,
-    content: template.content[locale]!,
+    content: JSON.parse(template.content[locale]!) as JSON,
   }));
 }

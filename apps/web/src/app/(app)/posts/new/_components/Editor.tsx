@@ -103,9 +103,7 @@ export default function Editor() {
                     onClick={() => {
                       setTitle(template.title);
                       if (editor) {
-                        editor.commands.setContent(
-                          JSON.parse(template.content),
-                        );
+                        editor.commands.setContent(template.content);
                       }
                     }}
                   >
