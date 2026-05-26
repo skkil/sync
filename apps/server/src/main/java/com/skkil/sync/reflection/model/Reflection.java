@@ -5,6 +5,7 @@ import com.skkil.sync.experience.model.ProjectExperience;
 import com.skkil.sync.reflection.constants.ReflectionConstants;
 import com.skkil.sync.reflection.exception.ReflectionTagLimitExceededException;
 import com.skkil.sync.user.model.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,7 +40,11 @@ public class Reflection extends BaseEntity {
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
-  @OneToMany(mappedBy = "reflection", fetch = FetchType.LAZY)
+  @OneToMany(
+      mappedBy = "reflection",
+      fetch = FetchType.LAZY,
+      cascade = {CascadeType.ALL},
+      orphanRemoval = true)
   private List<ReflectionTag> tags = new ArrayList<>();
 
   protected Reflection() {}
@@ -69,6 +74,6 @@ public class Reflection extends BaseEntity {
   }
 
   public void removeTag(Tag tag) {
-    this.tags.removeIf(reflectionTag -> reflectionTag.getTag().equals(tag));
+    this.tags.removeIf(reflectionTag -> reflectionTag.getTag().getName().equals(tag.getName()));
   }
 }

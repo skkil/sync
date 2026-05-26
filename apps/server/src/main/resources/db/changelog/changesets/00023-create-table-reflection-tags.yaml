@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 00022-create-table-reflection-tags
+      id: 00023-create-table-reflection-tags
       author: hyoungjoojin
       preConditions:
         - and:

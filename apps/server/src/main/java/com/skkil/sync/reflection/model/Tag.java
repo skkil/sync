@@ -31,6 +31,5 @@ public class Tag extends BaseEntity {
     this.name = name;
     this.description = "";
     this.postCount = 0L;
-    this.verified = false;
   }
 }

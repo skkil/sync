@@ -38,19 +38,27 @@ public class TagService {
 
   @Transactional
   public void addTagsToReflection(Reflection reflection, List<String> tags) {
-    if (tags.size() > ReflectionConstants.MAX_TAGS_PER_REFLECTION) {
+    if (tags == null || tags.isEmpty()) {
+      return;
+    }
+
+    List<String> filteredTags =
+        tags.stream()
+            .filter(tag -> tag != null)
+            .map(String::trim)
+            .filter(tag -> !tag.isBlank())
+            .distinct()
+            .toList();
+
+    if (filteredTags.size() > ReflectionConstants.MAX_TAGS_PER_REFLECTION) {
       throw new ReflectionTagLimitExceededException();
     }
 
-    for (String name : tags) {
+    for (String name : filteredTags) {
       Tag tag =
           tagRepository
               .findByName(name)
-              .orElseGet(
-                  () -> {
-                    Tag newTag = Tag.builder().name(name).build();
-                    return tagRepository.save(newTag);
-                  });
+              .orElseGet(() -> tagRepository.save(Tag.builder().name(name).build()));
 
       ReflectionTag reflectionTag = ReflectionTag.builder().reflection(reflection).tag(tag).build();
       reflection.addTag(reflectionTag);
