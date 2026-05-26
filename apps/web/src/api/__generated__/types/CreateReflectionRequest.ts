@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { CreateReflectionRequestContent } from './CreateReflectionRequestContent';
+import type { CreateReflectionRequestTagsItem } from './CreateReflectionRequestTagsItem';
 
 export interface CreateReflectionRequest {
   /**
@@ -14,4 +15,9 @@ export interface CreateReflectionRequest {
   title?: string | null;
   /** Content */
   content: CreateReflectionRequestContent;
+  /**
+   * 태그 목록
+   * @nullable
+   */
+  tags?: CreateReflectionRequestTagsItem[] | null;
 }
