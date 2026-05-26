@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00023-create-table-reflection-embeddings
+      author: hyoungjoojin
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: reflections
+            - not:
+                tableExists:
+                  tableName: reflection_embeddings
+      changes:
+        - createTable:
+            tableName: reflection_embeddings
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: reflection_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: embedding
+                  type: VECTOR(1536)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: reflection_embeddings
+            baseColumnNames: reflection_id
+            referencedTableName: reflections
+            referencedColumnNames: id
+            constraintName: fk_reflection_embeddings_reflection_id
+            onDelete: CASCADE
