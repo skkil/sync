@@ -33,4 +33,8 @@ public class ReflectionSummary {
     this.reflection = reflection;
     this.summary = summary;
   }
+
+  public void updateSummary(String summary) {
+    this.summary = summary;
+  }
 }

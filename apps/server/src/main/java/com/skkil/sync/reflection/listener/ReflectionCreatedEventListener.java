@@ -25,6 +25,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Slf4j
 public class ReflectionCreatedEventListener {
 
+  private static final int MINIMUM_SUMMARIZABLE_CONTENT_LENGTH = 200;
+
   @Value("classpath:/prompts/reflection/summary.st")
   private Resource resource;
 
@@ -48,6 +50,11 @@ public class ReflectionCreatedEventListener {
   @TransactionalEventListener
   public void createReflectionSummary(ReflectionCreatedEvent event) {
     log.debug("Handling ReflectionCreatedEvent {}", event.getReflectionId());
+
+    if (event.getContent().trim().length() <= MINIMUM_SUMMARIZABLE_CONTENT_LENGTH) {
+      log.debug("Skipping summary for short reflection {}", event.getReflectionId());
+      return;
+    }
 
     SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(resource);
     Message systemMessage = systemPromptTemplate.createMessage();

@@ -3,6 +3,7 @@ package com.skkil.sync.reflection.controller;
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.reflection.dto.request.CreateReflectionRequest;
 import com.skkil.sync.reflection.dto.request.UpdateReflectionRequest;
+import com.skkil.sync.reflection.dto.request.UpdateReflectionSummaryRequest;
 import com.skkil.sync.reflection.dto.response.CreateReflectionResponse;
 import com.skkil.sync.reflection.service.ReflectionService;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,14 @@ public class ReflectionController {
   public void updateReflection(
       @PathVariable Long reflectionId, @RequestBody @Validated UpdateReflectionRequest request) {
     reflectionService.updateReflection(reflectionId, request);
+  }
+
+  @PatchMapping("/reflections/{reflectionId}/summary")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updateReflectionSummary(
+      @PathVariable Long reflectionId,
+      @RequestBody @Validated UpdateReflectionSummaryRequest request) {
+    reflectionService.updateReflectionSummary(reflectionId, request);
   }
 
   @DeleteMapping("/reflections/{reflectionId}")
