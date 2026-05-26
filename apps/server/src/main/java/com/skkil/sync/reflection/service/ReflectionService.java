@@ -7,13 +7,16 @@ import com.skkil.sync.experience.model.ProjectExperience;
 import com.skkil.sync.experience.service.domain.ExperienceDomainService;
 import com.skkil.sync.reflection.dto.request.CreateReflectionRequest;
 import com.skkil.sync.reflection.dto.request.UpdateReflectionRequest;
+import com.skkil.sync.reflection.dto.request.UpdateReflectionSummaryRequest;
 import com.skkil.sync.reflection.dto.response.CreateReflectionResponse;
 import com.skkil.sync.reflection.event.ReflectionCreatedEvent;
 import com.skkil.sync.reflection.exception.ReflectionNotFoundException;
 import com.skkil.sync.reflection.model.Reflection;
 import com.skkil.sync.reflection.model.ReflectionMediaFile;
+import com.skkil.sync.reflection.model.ReflectionSummary;
 import com.skkil.sync.reflection.repository.ReflectionMediaFileRepository;
 import com.skkil.sync.reflection.repository.ReflectionRepository;
+import com.skkil.sync.reflection.repository.ReflectionSummaryRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
 import java.time.LocalDate;
@@ -33,6 +36,7 @@ public class ReflectionService {
 
   private final ReflectionRepository reflectionRepository;
   private final ReflectionMediaFileRepository reflectionMediaFileRepository;
+  private final ReflectionSummaryRepository reflectionSummaryRepository;
 
   public ReflectionService(
       UserDomainService userDomainService,
@@ -40,12 +44,14 @@ public class ReflectionService {
       ReflectionContentMediaService contentMediaService,
       ReflectionRepository reflectionRepository,
       ReflectionMediaFileRepository reflectionMediaFileRepository,
+      ReflectionSummaryRepository reflectionSummaryRepository,
       ApplicationEventPublisher eventPublisher) {
     this.userDomainService = userDomainService;
     this.experienceDomainService = experienceDomainService;
     this.contentMediaService = contentMediaService;
     this.reflectionRepository = reflectionRepository;
     this.reflectionMediaFileRepository = reflectionMediaFileRepository;
+    this.reflectionSummaryRepository = reflectionSummaryRepository;
     this.eventPublisher = eventPublisher;
   }
 
@@ -104,6 +110,23 @@ public class ReflectionService {
 
       reflection.updateExperience((ProjectExperience) experience);
     }
+  }
+
+  @Transactional
+  @PreAuthorize("hasPermission(#reflectionId, 'REFLECTION', 'EDIT')")
+  public void updateReflectionSummary(Long reflectionId, UpdateReflectionSummaryRequest request) {
+    Reflection reflection =
+        reflectionRepository
+            .findById(reflectionId)
+            .orElseThrow(() -> new ReflectionNotFoundException(reflectionId));
+
+    ReflectionSummary summary =
+        reflectionSummaryRepository
+            .findById(reflectionId)
+            .orElseGet(() -> new ReflectionSummary(reflection, request.summary()));
+
+    summary.updateSummary(request.summary());
+    reflectionSummaryRepository.save(summary);
   }
 
   @Transactional
