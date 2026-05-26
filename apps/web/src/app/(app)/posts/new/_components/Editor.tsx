@@ -1,16 +1,7 @@
 'use client';
 
-import {
-  CodeIcon,
-  TextBolderIcon,
-  TextHOneIcon,
-  TextHTwoIcon,
-  TextItalicIcon,
-  TextStrikethroughIcon,
-} from '@phosphor-icons/react';
 import { CharacterCount, Placeholder } from '@tiptap/extensions';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { BubbleMenu } from '@tiptap/react/menus';
 import StarterKit from '@tiptap/starter-kit';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -22,7 +13,10 @@ import { CommandsExtension } from '@/components/ui/editor/extensions/commands';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { getTemplates } from '@/features/editor/templates';
-import { cn } from '@/lib/utils';
+
+import { EditorBubbleMenu } from './EditorBubbleMenu';
+import { EditorTemplates } from './EditorTemplates';
+import { TagInput } from './TagInput';
 
 export default function Editor() {
   const t = useTranslations('components.editor');
@@ -32,6 +26,7 @@ export default function Editor() {
   const { mutate: createPost } = useCreateReflection();
 
   const [title, setTitle] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
 
   const editor = useEditor({
@@ -61,6 +56,7 @@ export default function Editor() {
       {
         data: {
           title,
+          tags,
           content: {
             json: JSON.stringify(editor.getJSON()),
             text: editor.getText(),
@@ -82,119 +78,32 @@ export default function Editor() {
           className="w-full shrink-0 resize-none bg-transparent text-4xl font-bold outline-none placeholder:text-muted-foreground leading-tight"
           placeholder={t('placeholders.title')}
           value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-          }}
+          onChange={(e) => setTitle(e.target.value)}
         />
 
         <ScrollArea className="flex-1 min-h-0 max-h-screen">
           <EditorContent editor={editor} />
           {editor && <EditorBubbleMenu editor={editor} />}
           {isEditorEmpty && (
-            <div className="mt-4 text-muted-foreground">
-              {t('templates.suggestions')}
-
-              <div className="flex flex-col gap-2 items-start mt-2">
-                {templates.map((template) => (
-                  <button
-                    key={template.id}
-                    type="button"
-                    className="px-3 py-1.5 text-sm text-muted-foreground hover:underline"
-                    onClick={() => {
-                      setTitle(template.title);
-                      if (editor) {
-                        editor.commands.setContent(template.content);
-                      }
-                    }}
-                  >
-                    {template.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <EditorTemplates
+              templates={templates}
+              onSelect={(template) => {
+                setTitle(template.title);
+                editor?.commands.setContent(template.content);
+              }}
+            />
           )}
         </ScrollArea>
       </div>
 
       <Separator />
 
-      <div className="px-6 py-3 flex items-center gap-4 shrink-0">
-        <div className="flex justify-end w-full">
+      <div className="px-6 py-3 flex flex-col gap-3 shrink-0">
+        <TagInput tags={tags} onChange={setTags} />
+        <div className="flex justify-end">
           <Button onClick={handleSubmit}>{t('submit')}</Button>
         </div>
       </div>
     </div>
-  );
-}
-
-function EditorBubbleMenu({
-  editor,
-}: {
-  editor: ReturnType<typeof useEditor>;
-}) {
-  const buttons = [
-    {
-      id: 'bold',
-      icon: <TextBolderIcon />,
-      isActive: () => editor?.isActive('bold') ?? false,
-      onClick: () => editor?.chain().focus().toggleBold().run(),
-    },
-    {
-      id: 'italic',
-      icon: <TextItalicIcon />,
-      isActive: () => editor?.isActive('italic') ?? false,
-      onClick: () => editor?.chain().focus().toggleItalic().run(),
-    },
-    {
-      id: 'strike',
-      icon: <TextStrikethroughIcon />,
-      isActive: () => editor?.isActive('strike') ?? false,
-      onClick: () => editor?.chain().focus().toggleStrike().run(),
-    },
-    {
-      id: 'code',
-      icon: <CodeIcon />,
-      isActive: () => editor?.isActive('code') ?? false,
-      onClick: () => editor?.chain().focus().toggleCode().run(),
-    },
-    null,
-    {
-      id: 'h1',
-      icon: <TextHOneIcon />,
-      isActive: () => editor?.isActive('heading', { level: 1 }) ?? false,
-      onClick: () => editor?.chain().focus().toggleHeading({ level: 1 }).run(),
-    },
-    {
-      id: 'h2',
-      icon: <TextHTwoIcon />,
-      isActive: () => editor?.isActive('heading', { level: 2 }) ?? false,
-      onClick: () => editor?.chain().focus().toggleHeading({ level: 2 }).run(),
-    },
-  ];
-
-  return (
-    <BubbleMenu
-      editor={editor}
-      className="flex items-center gap-0.5 rounded-lg border bg-popover p-1 shadow-lg"
-    >
-      {buttons.map((btn, i) =>
-        btn === null ? (
-          <Separator key={i} orientation="vertical" className="mx-1 h-5" />
-        ) : (
-          <button
-            key={btn.id}
-            type="button"
-            onClick={btn.onClick}
-            className={cn(
-              'rounded p-1.5 transition-colors hover:bg-accent',
-              btn.isActive() && 'bg-accent text-accent-foreground',
-            )}
-            aria-label={btn.id}
-          >
-            {btn.icon}
-          </button>
-        ),
-      )}
-    </BubbleMenu>
   );
 }
