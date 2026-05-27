@@ -6,7 +6,6 @@ import com.skkil.sync.reflection.dto.response.SearchReflectionsResponse;
 import com.skkil.sync.reflection.repository.ReflectionQueryRepository;
 import com.skkil.sync.reflection.repository.ReflectionSearchRepository;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Vector;
 import org.springframework.stereotype.Service;
@@ -28,24 +27,20 @@ public class ReflectionSearchService {
   }
 
   public SearchReflectionsResponse searchReflections(String query) {
+    int k = 60;
+
     float[] queryEmbedding = reflectionEmbeddingService.computeEmbedding(query);
 
-    CompletableFuture<List<Long>>
+    List<Long>
         topNByEmbeddingSimilarity =
-            CompletableFuture.supplyAsync(
-                () ->
-                    reflectionSearchRepository
-                        .findByEmbeddingNear(Vector.of(queryEmbedding), Limit.of(60))
-                        .stream()
-                        .map(r -> r.getContent().getReflection().getId())
-                        .toList()),
-        topNByFullTextSearch =
-            CompletableFuture.supplyAsync(
-                () -> reflectionSearchRepository.findTopNByFullTextSearch(query, 60));
+            reflectionSearchRepository
+                .findByEmbeddingNear(Vector.of(queryEmbedding), Limit.of(k))
+                .stream()
+                .map(r -> r.getContent().getReflection().getId())
+                .toList(),
+        topNByFullTextSearch = reflectionSearchRepository.findTopNByFullTextSearch(query, k);
 
-    CompletableFuture.allOf(topNByEmbeddingSimilarity, topNByFullTextSearch).join();
-
-    List<Long> ids = RRFMerger.merge(topNByEmbeddingSimilarity.join(), topNByFullTextSearch.join());
+    List<Long> ids = RRFMerger.merge(k, topNByEmbeddingSimilarity, topNByFullTextSearch);
     List<ReflectionDto> reflections = reflectionQueryRepository.getReflectionsByIds(ids);
 
     List<SearchReflectionsResponse.Reflection> results =

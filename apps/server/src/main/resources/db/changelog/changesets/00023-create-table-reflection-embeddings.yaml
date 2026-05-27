@@ -44,3 +44,7 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_reflection_embeddings_reflection_id
             onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: reflection_embeddings
+            columnNames: reflection_id
+            constraintName: uk_reflection_embeddings_reflection_id

@@ -23,7 +23,7 @@ public class ReflectionEmbedding extends BaseEntity {
   @JoinColumn(name = "reflection_id", nullable = false)
   private Reflection reflection;
 
-  @Column(name = "embedding", nullable = false, columnDefinition = "VECTOR")
+  @Column(name = "embedding", nullable = false, columnDefinition = "vector(1536)")
   @JdbcTypeCode(SqlTypes.VECTOR)
   @Array(length = 1536)
   private Vector embedding;

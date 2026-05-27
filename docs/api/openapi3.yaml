@@ -1363,6 +1363,31 @@ paths:
                     ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
                     ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
                     :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
+  /search/reflections:
+    get:
+      tags:
+      - reflection
+      summary: Search Reflections
+      description: Search Reflections by query string
+      operationId: SearchReflections
+      parameters:
+      - name: query
+        in: query
+        description: Search query (1-100 characters)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchReflectionsResponse"
+              examples:
+                SearchReflections:
+                  value: "{\"reflections\":[{\"id\":1,\"content\":\"Reflection Content\"\
+                    }]}"
   /team-building:
     get:
       tags:
@@ -2034,6 +2059,27 @@ components:
         mediaType:
           type: string
           description: Media Type
+    SearchReflectionsResponse:
+      title: SearchReflectionsResponse
+      required:
+      - reflections
+      type: object
+      properties:
+        reflections:
+          type: array
+          description: Reflection List
+          items:
+            required:
+            - content
+            - id
+            type: object
+            properties:
+              id:
+                type: number
+                description: Reflection ID
+              content:
+                type: string
+                description: Reflection Content
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object

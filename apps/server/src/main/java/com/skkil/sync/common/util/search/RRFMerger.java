@@ -6,12 +6,10 @@ import java.util.Map;
 
 public final class RRFMerger {
 
-  private static final int k = 60;
-
   private RRFMerger() {}
 
   @SafeVarargs
-  public static List<Long> merge(List<Long>... lists) {
+  public static List<Long> merge(int k, List<Long>... lists) {
     Map<Long, Double> scores = new HashMap<>();
 
     for (List<Long> ranked : lists) {

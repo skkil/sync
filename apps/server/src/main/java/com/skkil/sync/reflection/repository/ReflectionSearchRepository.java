@@ -16,8 +16,8 @@ public interface ReflectionSearchRepository extends Repository<ReflectionEmbeddi
       value =
           """
           SELECT r.id FROM reflections r
-          WHERE to_tsvector('english', r.content) @@ plainto_tsquery('english', :query)
-          ORDER BY ts_rank(to_tsvector('english', r.content), plainto_tsquery('english', :query)) DESC
+          WHERE r.content ILIKE '%' || :query || '%'
+          ORDER BY similarity(r.content, :query) DESC
           LIMIT :n
           """,
       nativeQuery = true)
