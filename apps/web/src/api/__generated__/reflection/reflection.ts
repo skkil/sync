@@ -36,6 +36,8 @@ import type {
   GetReflectionsParams,
   GetReflectionsResponse,
   GetUserReflectionsParams,
+  SearchReflectionsParams,
+  SearchReflectionsResponse,
   UpdateReflectionRequest,
 } from '../types';
 
@@ -1508,6 +1510,195 @@ export function useGetReflectionBySlug<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetReflectionBySlugQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Search Reflections by query string
+ * @summary Search Reflections
+ */
+export type searchReflectionsResponse200 = {
+  data: SearchReflectionsResponse;
+  status: 200;
+};
+
+export type searchReflectionsResponseSuccess = searchReflectionsResponse200 & {
+  headers: Headers;
+};
+export type searchReflectionsResponse = searchReflectionsResponseSuccess;
+
+export const getSearchReflectionsUrl = (params: SearchReflectionsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/search/reflections?${stringifiedParams}`
+    : `/search/reflections`;
+};
+
+export const searchReflections = async (
+  params: SearchReflectionsParams,
+  options?: RequestInit,
+): Promise<searchReflectionsResponse> => {
+  return api<searchReflectionsResponse>(getSearchReflectionsUrl(params), {
+    ...options,
+    method: 'GET',
+  });
+};
+
+export const getSearchReflectionsQueryKey = (
+  params?: SearchReflectionsParams,
+) => {
+  return [`/search/reflections`, ...(params ? [params] : [])] as const;
+};
+
+export const getSearchReflectionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof searchReflections>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchReflections>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getSearchReflectionsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof searchReflections>>
+  > = ({ signal }) => searchReflections(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof searchReflections>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type SearchReflectionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof searchReflections>>
+>;
+export type SearchReflectionsQueryError = ErrorType<unknown>;
+
+export function useSearchReflections<
+  TData = Awaited<ReturnType<typeof searchReflections>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchReflectionsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchReflections>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchReflections>>,
+          TError,
+          Awaited<ReturnType<typeof searchReflections>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchReflections<
+  TData = Awaited<ReturnType<typeof searchReflections>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchReflections>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchReflections>>,
+          TError,
+          Awaited<ReturnType<typeof searchReflections>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchReflections<
+  TData = Awaited<ReturnType<typeof searchReflections>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchReflections>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Search Reflections
+ */
+
+export function useSearchReflections<
+  TData = Awaited<ReturnType<typeof searchReflections>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchReflectionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchReflections>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getSearchReflectionsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

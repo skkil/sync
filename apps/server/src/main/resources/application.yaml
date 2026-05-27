@@ -55,13 +55,6 @@ spring:
           temperature: 0
       embedding:
         model: ${OLLAMA_EMBEDDING_MODEL}
-    vectorstore:
-      pgvector:
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimension: 1536
-        table-name: vector_store
-        initialize-schema: true
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}

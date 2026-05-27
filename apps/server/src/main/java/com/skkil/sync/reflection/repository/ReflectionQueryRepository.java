@@ -9,7 +9,11 @@ import static com.skkil.sync.jooq.tables.Users.USERS;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
 import com.skkil.sync.reflection.dto.data.ReflectionDto;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -95,6 +99,43 @@ public class ReflectionQueryRepository {
       return base.fetch(
           condition.and(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(experienceId)), orderFields, size);
     };
+  }
+
+  public List<ReflectionDto> getReflectionsByIds(List<Long> ids) {
+    if (ids.isEmpty()) {
+      return List.of();
+    }
+
+    Map<Long, ReflectionDto> byId =
+        dsl
+            .select(
+                REFLECTIONS.ID.as("id"),
+                REFLECTIONS.SLUG.as("slug"),
+                REFLECTIONS.AUTHOR_ID.as("authorId"),
+                USERS.FULL_NAME.as("authorName"),
+                REFLECTIONS.CONTENT.as("content"),
+                PROVIDERS.ID.as("projectId"),
+                PROVIDERS.NAME.as("projectName"),
+                REFLECTIONS.CREATED_AT.as("createdAt"),
+                REFLECTIONS.UPDATED_AT.as("updatedAt"),
+                DSL.value(0L).as("likeCount"),
+                DSL.value(0L).as("commentCount"),
+                bookmarkedField(null))
+            .from(REFLECTIONS)
+            .join(USERS)
+            .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
+            .leftJoin(PROJECT_EXPERIENCES)
+            .on(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(PROJECT_EXPERIENCES.ID))
+            .leftJoin(EXPERIENCES)
+            .on(PROJECT_EXPERIENCES.ID.eq(EXPERIENCES.ID))
+            .leftJoin(PROVIDERS)
+            .on(EXPERIENCES.PROVIDER_ID.eq(PROVIDERS.ID))
+            .where(REFLECTIONS.ID.in(ids))
+            .fetchInto(ReflectionDto.class)
+            .stream()
+            .collect(Collectors.toMap(ReflectionDto::id, Function.identity()));
+
+    return ids.stream().map(byId::get).filter(dto -> dto != null).toList();
   }
 
   private Field<Boolean> bookmarkedField(Long requesterId) {
