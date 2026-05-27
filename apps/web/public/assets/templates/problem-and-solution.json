@@ -1,0 +1,12 @@
+{
+  "id": "problem-and-solution",
+  "label": {
+    "ko": "문제와 해결"
+  },
+  "title": {
+    "ko": "문제와 해결: "
+  },
+  "content": {
+    "ko": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"어떤 문제가 있었나요?\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"무엇을 시도했나요?\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"어떻게 해결했나요?\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"왜 그게 효과가 있었나요?\"}]},{\"type\":\"paragraph\",\"content\":[]}]}"
+  }
+}

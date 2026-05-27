@@ -1,0 +1,12 @@
+{
+  "id": "weekly-reflection",
+  "label": {
+    "ko": "주간 회고"
+  },
+  "title": {
+    "ko": "주간 회고: "
+  },
+  "content": {
+    "ko": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"이번 주에 한 것\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"이해가 된 것\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"아직 확실하지 않은 것\"}]},{\"type\":\"paragraph\",\"content\":[]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"다음 주 목표\"}]},{\"type\":\"paragraph\",\"content\":[]}]}"
+  }
+}
