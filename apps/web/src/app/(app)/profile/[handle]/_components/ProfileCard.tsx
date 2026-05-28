@@ -1,6 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EnvelopeIcon, PencilIcon } from '@phosphor-icons/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -606,12 +607,19 @@ interface FollowButtonProps {
 
 function FollowButton({ handle }: FollowButtonProps) {
   const t = useTranslations('pages.profile.header');
+  const queryClient = useQueryClient();
 
   const { data: session } = useSession();
   const { data: profile, isPending } = useGetProfileByHandle(handle);
 
-  const { mutate: followUser } = useFollowUserMutation();
-  const { mutate: unfollowUser } = useUnfollowUserMutation();
+  const invalidateProfile = () => {
+    void queryClient.invalidateQueries(getGetProfileByHandleQueryOptions(handle));
+  };
+
+  const { mutate: followUser, isPending: isFollowPending } =
+    useFollowUserMutation();
+  const { mutate: unfollowUser, isPending: isUnfollowPending } =
+    useUnfollowUserMutation();
 
   if (isPending || !profile) {
     return null;
@@ -624,8 +632,11 @@ function FollowButton({ handle }: FollowButtonProps) {
   if (profile.data.isFollowing) {
     return (
       <Button
+        disabled={isUnfollowPending}
         onClick={() => {
-          unfollowUser(handle);
+          unfollowUser(profile.data.userId, {
+            onSuccess: invalidateProfile,
+          });
         }}
       >
         {t('unfollow')}
@@ -634,8 +645,11 @@ function FollowButton({ handle }: FollowButtonProps) {
   } else {
     return (
       <Button
+        disabled={isFollowPending}
         onClick={() => {
-          followUser(handle);
+          followUser(profile.data.userId, {
+            onSuccess: invalidateProfile,
+          });
         }}
       >
         {t('follow')}
