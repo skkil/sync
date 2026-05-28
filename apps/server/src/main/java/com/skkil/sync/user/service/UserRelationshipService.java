@@ -1,12 +1,14 @@
 package com.skkil.sync.user.service;
 
 import com.skkil.sync.user.dto.response.GetConnectionsResponse;
+import com.skkil.sync.user.event.UserFollowedEvent;
 import com.skkil.sync.user.exception.UserCannotFollowSelfException;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserFollowRelationship;
 import com.skkil.sync.user.repository.UserFollowRelationshipRepository;
 import com.skkil.sync.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +18,15 @@ public class UserRelationshipService {
 
   private final UserRepository userRepository;
   private final UserFollowRelationshipRepository userFollowRelationshipRepository;
+  private final ApplicationEventPublisher eventPublisher;
 
   public UserRelationshipService(
       UserRepository userRepository,
-      UserFollowRelationshipRepository userFollowRelationshipRepository) {
+      UserFollowRelationshipRepository userFollowRelationshipRepository,
+      ApplicationEventPublisher eventPublisher) {
     this.userRepository = userRepository;
     this.userFollowRelationshipRepository = userFollowRelationshipRepository;
+    this.eventPublisher = eventPublisher;
   }
 
   @Transactional
@@ -44,6 +49,7 @@ public class UserRelationshipService {
     var relationship =
         UserFollowRelationship.builder().follower(follower).followee(followee).build();
     userFollowRelationshipRepository.save(relationship);
+    eventPublisher.publishEvent(new UserFollowedEvent(followerId, followeeId));
   }
 
   @Transactional(readOnly = true)

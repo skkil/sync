@@ -62,9 +62,11 @@ public class NotificationProcessorService {
 
   @Transactional
   Notification createNotification(NotificationEvent event) {
+    User actor = event.getActorId() == null ? null : new User(event.getActorId());
     Notification notification =
         Notification.builder()
             .user(new User(event.getRecipientId()))
+            .actor(actor)
             .type(event.getNotificationType())
             .build();
     return notificationRepository.save(notification);

@@ -8,11 +8,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
+import org.jspecify.annotations.Nullable;
 
 @Entity
 @Table(name = "notifications")
@@ -22,6 +24,10 @@ public class Notification extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "actor_user_id")
+  private @Nullable User actor;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "type", nullable = false, length = 50)
@@ -34,8 +40,9 @@ public class Notification extends BaseEntity {
   protected Notification() {}
 
   @Builder
-  public Notification(User user, NotificationType type) {
+  public Notification(User user, NotificationType type, @Nullable User actor) {
     this.user = user;
     this.type = type;
+    this.actor = actor;
   }
 }
