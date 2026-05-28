@@ -9,11 +9,19 @@ import org.springframework.data.jpa.repository.Query;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
   @Query(
-      """
-      SELECT n FROM Notification n
-      WHERE n.user.id = :userId
-      AND (:cursor IS NULL OR n.id < :cursor)
-      ORDER BY n.id DESC
-      """)
+      value =
+          """
+          SELECT n FROM Notification n
+          LEFT JOIN FETCH n.actor
+          WHERE n.user.id = :userId
+          AND (:cursor IS NULL OR n.id < :cursor)
+          ORDER BY n.id DESC
+          """,
+      countQuery =
+          """
+          SELECT COUNT(n) FROM Notification n
+          WHERE n.user.id = :userId
+          AND (:cursor IS NULL OR n.id < :cursor)
+          """)
   public Page<Notification> findByUser(Long userId, Pageable pageable, Long cursor);
 }
