@@ -1,0 +1,94 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00025-add-image-url-to-tags
+      author: jieunseo
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: tags
+            - not:
+                columnExists:
+                  tableName: tags
+                  columnName: image_url
+      changes:
+        - addColumn:
+            tableName: tags
+            columns:
+              - column:
+                  name: image_url
+                  type: VARCHAR(2048)
+
+  - changeSet:
+      id: 00025-create-table-badge-collections
+      author: jieunseo
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: users
+            - tableExists:
+                tableName: tags
+            - not:
+                tableExists:
+                  tableName: badge_collections
+      changes:
+        - createTable:
+            tableName: badge_collections
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tag_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_post_count
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: level
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: badge_collections
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_badge_collections_user_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: badge_collections
+            baseColumnNames: tag_id
+            referencedTableName: tags
+            referencedColumnNames: id
+            constraintName: fk_badge_collections_tag_id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: badge_collections
+            columnNames: user_id, tag_id
+            constraintName: uq_badge_collections_user_id_tag_id

@@ -11,6 +11,17 @@ public interface ReflectionRepository extends JpaRepository<Reflection, Long> {
 
   Optional<Reflection> findBySlug(String slug);
 
+  @Query(
+      """
+      SELECT r
+      FROM Reflection r
+      JOIN FETCH r.author
+      LEFT JOIN FETCH r.tags rt
+      LEFT JOIN FETCH rt.tag
+      WHERE r.id = :id
+      """)
+  Optional<Reflection> findByIdWithAuthorAndTags(Long id);
+
   @Modifying
   @Query(
       value =

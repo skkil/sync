@@ -1,5 +1,6 @@
 package com.skkil.sync.reflection.service;
 
+import com.skkil.sync.badge.service.BadgeCollectionService;
 import com.skkil.sync.common.util.text.Slugify;
 import com.skkil.sync.experience.constant.ExperienceType;
 import com.skkil.sync.experience.model.Experience;
@@ -14,6 +15,7 @@ import com.skkil.sync.reflection.exception.ReflectionNotFoundException;
 import com.skkil.sync.reflection.model.Reflection;
 import com.skkil.sync.reflection.model.ReflectionMediaFile;
 import com.skkil.sync.reflection.model.ReflectionSummary;
+import com.skkil.sync.reflection.model.Tag;
 import com.skkil.sync.reflection.repository.ReflectionMediaFileRepository;
 import com.skkil.sync.reflection.repository.ReflectionRepository;
 import com.skkil.sync.reflection.repository.ReflectionSummaryRepository;
@@ -21,6 +23,7 @@ import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReflectionService {
 
   private final UserDomainService userDomainService;
+  private final BadgeCollectionService badgeCollectionService;
   private final TagService tagService;
   private final ExperienceDomainService experienceDomainService;
   private final ReflectionContentMediaService contentMediaService;
@@ -41,6 +45,7 @@ public class ReflectionService {
 
   public ReflectionService(
       UserDomainService userDomainService,
+      BadgeCollectionService badgeCollectionService,
       TagService tagService,
       ExperienceDomainService experienceDomainService,
       ReflectionContentMediaService contentMediaService,
@@ -49,6 +54,7 @@ public class ReflectionService {
       ReflectionSummaryRepository reflectionSummaryRepository,
       ApplicationEventPublisher eventPublisher) {
     this.userDomainService = userDomainService;
+    this.badgeCollectionService = badgeCollectionService;
     this.tagService = tagService;
     this.experienceDomainService = experienceDomainService;
     this.contentMediaService = contentMediaService;
@@ -77,9 +83,10 @@ public class ReflectionService {
             .title(request.title())
             .content(preparedContent.content())
             .build();
-    tagService.addTagsToReflection(reflection, request.tags());
+    List<Tag> tags = tagService.addTagsToReflection(reflection, request.tags());
 
     reflection = reflectionRepository.save(reflection);
+    badgeCollectionService.increaseBadges(author, tags);
 
     for (int i = 0; i < preparedContent.mediaFiles().size(); i++) {
       reflectionMediaFileRepository.save(
@@ -140,6 +147,15 @@ public class ReflectionService {
       throw new ReflectionNotFoundException(reflectionId);
     }
 
-    reflectionRepository.deleteById(reflectionId);
+    Reflection reflection =
+        reflectionRepository
+            .findByIdWithAuthorAndTags(reflectionId)
+            .orElseThrow(() -> new ReflectionNotFoundException(reflectionId));
+
+    List<Tag> tags =
+        reflection.getTags().stream().map(reflectionTag -> reflectionTag.getTag()).toList();
+    tagService.decrementPostCounts(tags);
+    badgeCollectionService.decreaseBadges(reflection.getAuthor(), tags);
+    reflectionRepository.delete(reflection);
   }
 }

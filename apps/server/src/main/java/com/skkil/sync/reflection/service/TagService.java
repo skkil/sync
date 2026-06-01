@@ -7,6 +7,7 @@ import com.skkil.sync.reflection.model.Reflection;
 import com.skkil.sync.reflection.model.ReflectionTag;
 import com.skkil.sync.reflection.model.Tag;
 import com.skkil.sync.reflection.repository.TagRepository;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +38,9 @@ public class TagService {
   }
 
   @Transactional
-  public void addTagsToReflection(Reflection reflection, List<String> tags) {
+  public List<Tag> addTagsToReflection(Reflection reflection, List<String> tags) {
     if (tags == null || tags.isEmpty()) {
-      return;
+      return List.of();
     }
 
     List<String> filteredTags =
@@ -54,6 +55,7 @@ public class TagService {
       throw new ReflectionTagLimitExceededException();
     }
 
+    List<Tag> reflectionTags = new ArrayList<>();
     for (String name : filteredTags) {
       Tag tag =
           tagRepository
@@ -63,6 +65,16 @@ public class TagService {
       ReflectionTag reflectionTag = ReflectionTag.builder().reflection(reflection).tag(tag).build();
       reflection.addTag(reflectionTag);
       tagRepository.incrementPostCount(tag);
+      reflectionTags.add(tag);
+    }
+
+    return reflectionTags;
+  }
+
+  @Transactional
+  public void decrementPostCounts(List<Tag> tags) {
+    for (Tag tag : tags) {
+      tagRepository.decrementPostCount(tag);
     }
   }
 }

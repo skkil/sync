@@ -287,6 +287,43 @@ paths:
                     \ reflection content\",\"likeCount\":10,\"commentCount\":5,\"\
                     bookmarked\":true,\"createdAt\":\"2026-05-04T12:00:00\",\"bookmarkedAt\"\
                     :\"2026-05-05T12:00:00\"}}]}}"
+  /comments:
+    get:
+      tags:
+      - comment
+      summary: Get Comments
+      description: Get Comments
+      operationId: GetComments
+      parameters:
+      - name: targetType
+        in: query
+        description: Comment target type
+        required: true
+        schema:
+          type: string
+      - name: targetId
+        in: query
+        description: Comment target ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCommentsResponse"
+              examples:
+                GetComments:
+                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
+                    :\"user-handle\"},\"content\":\"Comment content\",\"deleted\"\
+                    :false,\"likeCount\":1,\"createdAt\":\"2026-01-01T00:00:00Z\"\
+                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
+                    author\":{\"id\":1,\"handle\":\"user-handle\"},\"content\":\"\
+                    Reply content\",\"deleted\":false,\"likeCount\":0,\"createdAt\"\
+                    :\"2026-01-01T00:00:00Z\",\"updatedAt\":\"2026-01-01T00:00:00Z\"\
+                    ,\"replies\":[]}]}]}"
   /comments/{commentId}:
     delete:
       tags:
@@ -696,6 +733,55 @@ paths:
                     Software Engineer\",\"jobDescription\":\"Job Description\",\"\
                     location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
                     ,\"updatedAt\":\"1970-01-01T00:00:00\"}]}}"
+  /likes:
+    post:
+      tags:
+      - like
+      summary: Create Like
+      description: Create Like
+      operationId: CreateLike
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLikeRequest"
+            examples:
+              CreateLike:
+                value: "{\"targetType\":\"REFLECTION\",\"targetId\":1}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateLikeResponse"
+              examples:
+                CreateLike:
+                  value: "{\"likeCount\":1,\"liked\":true}"
+    delete:
+      tags:
+      - like
+      summary: Delete Like
+      description: Delete Like
+      operationId: DeleteLike
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLikeRequest"
+            examples:
+              DeleteLike:
+                value: "{\"targetType\":\"REFLECTION\",\"targetId\":1}"
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateLikeResponse"
+              examples:
+                DeleteLike:
+                  value: "{\"likeCount\":0,\"liked\":false}"
   /media:
     post:
       tags:
@@ -1463,6 +1549,33 @@ paths:
                     :{\"id\":\"1\",\"project\":{\"id\":\"1\",\"name\":\"Project Name\"\
                     ,\"description\":\"Project Description\"},\"title\":\"Post Title\"\
                     ,\"content\":\"Post Content\"}}]}}"
+  /users/{userId}/badges:
+    get:
+      tags:
+      - badge
+      summary: Get Badge Collections
+      description: 유저의 뱃지 도감을 조회합니다.
+      operationId: GetBadgeCollections
+      parameters:
+      - name: userId
+        in: path
+        description: 유저 ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetBadgeCollectionsResponse"
+              examples:
+                GetBadgeCollections:
+                  value: "{\"badges\":[{\"id\":1,\"tag\":{\"id\":1,\"name\":\"java\"\
+                    ,\"description\":\"자바 관련 태그\",\"imageUrl\":\"https://example.com/badges/java.png\"\
+                    },\"postCount\":10,\"level\":3,\"createdAt\":\"2026-05-27T10:00:00Z\"\
+                    }]}"
   /users/{userId}/reflections:
     get:
       tags:
@@ -1604,6 +1717,70 @@ components:
                   id:
                     type: number
                     description: Application ID
+    CreateLikeResponse:
+      title: CreateLikeResponse
+      required:
+      - likeCount
+      - liked
+      type: object
+      properties:
+        likeCount:
+          type: number
+          description: Like count
+        liked:
+          type: boolean
+          description: Liked flag
+    GetBadgeCollectionsResponse:
+      title: GetBadgeCollectionsResponse
+      required:
+      - badges
+      type: object
+      properties:
+        badges:
+          type: array
+          description: 뱃지 도감 목록
+          items:
+            required:
+            - createdAt
+            - id
+            - level
+            - postCount
+            - tag
+            type: object
+            properties:
+              createdAt:
+                type: string
+                description: 뱃지 최초 획득 시각
+              level:
+                type: number
+                description: 뱃지 레벨
+              postCount:
+                type: number
+                description: 해당 태그로 작성한 글 수
+              tag:
+                required:
+                - description
+                - id
+                - name
+                type: object
+                properties:
+                  imageUrl:
+                    type: string
+                    description: 뱃지 이미지 URL
+                    nullable: true
+                  name:
+                    type: string
+                    description: 태그 이름
+                  description:
+                    type: string
+                    description: 태그 설명
+                  id:
+                    type: number
+                    description: 태그 ID
+                description: 뱃지 태그
+              id:
+                type: number
+                description: 도감 항목 ID
     CreateJobPostingResponse:
       title: CreateJobPostingResponse
       required:
@@ -1613,6 +1790,73 @@ components:
         id:
           type: string
           description: Job Posting ID
+    GetCommentsResponse:
+      title: GetCommentsResponse
+      required:
+      - comments
+      type: object
+      properties:
+        comments:
+          type: array
+          description: Comments
+          items:
+            required:
+            - createdAt
+            - id
+            - isDeleted
+            - replies
+            - updatedAt
+            type: object
+            properties:
+              createdAt:
+                type: string
+                description: Creation timestamp
+              replies:
+                type: array
+                description: Replies
+                items:
+                  oneOf:
+                  - type: object
+                  - type: boolean
+                  - type: string
+                  - type: number
+              isDeleted:
+                type: boolean
+                description: Is deleted
+              author:
+                required:
+                - handle
+                - id
+                - isPostAuthor
+                - name
+                type: object
+                properties:
+                  isPostAuthor:
+                    type: boolean
+                    description: Whether the author is the post author
+                  name:
+                    type: string
+                    description: Author name
+                  handle:
+                    type: string
+                    description: Author handle
+                  id:
+                    type: number
+                    description: Author user ID
+                  profileImageUrl:
+                    type: string
+                    description: Author profile image URL
+                    nullable: true
+              id:
+                type: number
+                description: Comment ID
+              content:
+                type: string
+                description: Comment content
+                nullable: true
+              updatedAt:
+                type: string
+                description: Update timestamp
     GetProvidersResponse:
       title: GetProvidersResponse
       type: object
@@ -1685,6 +1929,19 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
     GetProjectsResponse:
       title: GetProjectsResponse
       type: object
@@ -1749,19 +2006,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    LoginRequest:
-      title: LoginRequest
-      required:
-      - email
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: Password
-        email:
-          type: string
-          description: Email
     GetBookmarkedReflectionsResponse:
       title: GetBookmarkedReflectionsResponse
       type: object
@@ -1967,6 +2211,19 @@ components:
           type: string
           description: User theme preference
           nullable: true
+    CreateLikeRequest:
+      title: CreateLikeRequest
+      required:
+      - targetId
+      - targetType
+      type: object
+      properties:
+        targetId:
+          type: number
+          description: Like target ID
+        targetType:
+          type: string
+          description: Like target type
     GetFeedResponse:
       title: GetFeedResponse
       type: object
@@ -2085,27 +2342,6 @@ components:
         mediaType:
           type: string
           description: Media Type
-    SearchReflectionsResponse:
-      title: SearchReflectionsResponse
-      required:
-      - reflections
-      type: object
-      properties:
-        reflections:
-          type: array
-          description: Reflection List
-          items:
-            required:
-            - content
-            - id
-            type: object
-            properties:
-              id:
-                type: number
-                description: Reflection ID
-              content:
-                type: string
-                description: Reflection Content
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -2162,6 +2398,27 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    SearchReflectionsResponse:
+      title: SearchReflectionsResponse
+      required:
+      - reflections
+      type: object
+      properties:
+        reflections:
+          type: array
+          description: Reflection List
+          items:
+            required:
+            - content
+            - id
+            type: object
+            properties:
+              id:
+                type: number
+                description: Reflection ID
+              content:
+                type: string
+                description: Reflection Content
     SearchResponse:
       title: SearchResponse
       required:
@@ -2389,73 +2646,6 @@ components:
                   updatedAt:
                     type: string
                     description: Update Timestamp
-    GetCommentsResponse:
-      title: GetCommentsResponse
-      required:
-      - comments
-      type: object
-      properties:
-        comments:
-          type: array
-          description: Comments
-          items:
-            required:
-            - createdAt
-            - id
-            - isDeleted
-            - replies
-            - updatedAt
-            type: object
-            properties:
-              createdAt:
-                type: string
-                description: Creation timestamp
-              replies:
-                type: array
-                description: Replies
-                items:
-                  oneOf:
-                  - type: object
-                  - type: boolean
-                  - type: string
-                  - type: number
-              isDeleted:
-                type: boolean
-                description: Is deleted
-              author:
-                required:
-                - handle
-                - id
-                - isPostAuthor
-                - name
-                type: object
-                properties:
-                  isPostAuthor:
-                    type: boolean
-                    description: Whether the author is the post author
-                  name:
-                    type: string
-                    description: Author name
-                  handle:
-                    type: string
-                    description: Author handle
-                  id:
-                    type: number
-                    description: Author user ID
-                  profileImageUrl:
-                    type: string
-                    description: Author profile image URL
-                    nullable: true
-              id:
-                type: number
-                description: Comment ID
-              content:
-                type: string
-                description: Comment content
-                nullable: true
-              updatedAt:
-                type: string
-                description: Update timestamp
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:
@@ -2795,6 +2985,31 @@ components:
         status:
           type: string
           description: Application Status
+    SearchTagsResponse:
+      title: SearchTagsResponse
+      required:
+      - tags
+      type: object
+      properties:
+        tags:
+          type: array
+          description: 태그 목록
+          items:
+            required:
+            - description
+            - name
+            - postCount
+            type: object
+            properties:
+              name:
+                type: string
+                description: 태그 이름
+              postCount:
+                type: number
+                description: 태그가 사용된 게시물 수
+              description:
+                type: string
+                description: 태그 설명
     UpdateReflectionRequest:
       title: UpdateReflectionRequest
       required:
@@ -2841,31 +3056,6 @@ components:
             - type: boolean
             - type: string
             - type: number
-    SearchTagsResponse:
-      title: SearchTagsResponse
-      required:
-      - tags
-      type: object
-      properties:
-        tags:
-          type: array
-          description: 태그 목록
-          items:
-            required:
-            - description
-            - name
-            - postCount
-            type: object
-            properties:
-              name:
-                type: string
-                description: 태그 이름
-              postCount:
-                type: number
-                description: 태그가 사용된 게시물 수
-              description:
-                type: string
-                description: 태그 설명
     CreateCommentRequest:
       title: CreateCommentRequest
       required:

@@ -18,6 +18,9 @@ public class Tag extends BaseEntity {
   @Column(name = "description")
   private String description;
 
+  @Column(name = "image_url", length = 2048)
+  private String imageUrl;
+
   @Column(name = "post_count", nullable = false)
   private Long postCount;
 
@@ -31,5 +34,9 @@ public class Tag extends BaseEntity {
     this.name = name;
     this.description = "";
     this.postCount = 0L;
+  }
+
+  public void updateImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
   }
 }
