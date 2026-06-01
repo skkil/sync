@@ -16,6 +16,7 @@ import { getTemplates } from '@/features/editor/templates';
 
 import { EditorBubbleMenu } from './EditorBubbleMenu';
 import { EditorTemplates } from './EditorTemplates';
+import { ProjectInput } from './ProjectInput';
 import { TagInput } from './TagInput';
 
 export default function Editor() {
@@ -27,6 +28,7 @@ export default function Editor() {
 
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+  const [projectId, setProjectId] = useState<number | null>(null);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
 
   const editor = useEditor({
@@ -57,6 +59,7 @@ export default function Editor() {
         data: {
           title,
           tags,
+          projectId,
           content: {
             json: JSON.stringify(editor.getJSON()),
             text: editor.getText(),
@@ -99,6 +102,12 @@ export default function Editor() {
       <Separator />
 
       <div className="px-6 py-3 flex flex-col gap-3 shrink-0">
+        <ProjectInput
+          projectId={projectId}
+          onChange={(id) => {
+            setProjectId(id);
+          }}
+        />
         <TagInput tags={tags} onChange={setTags} />
         <div className="flex justify-end">
           <Button onClick={handleSubmit}>{t('submit')}</Button>

@@ -533,61 +533,6 @@ paths:
                   value: "{\"id\":1,\"contest\":{\"id\":1,\"name\":\"Contest Name\"\
                     },\"title\":\"Occurrence Title\",\"description\":\"Occurrence\
                     \ Description\"}"
-  /experiences/project/{experienceId}/reflections:
-    get:
-      tags:
-      - reflection
-      summary: Get Reflections
-      description: Get Reflections
-      operationId: GetProjectExperienceReflections
-      parameters:
-      - name: experienceId
-        in: path
-        description: Project Experience ID
-        required: true
-        schema:
-          type: string
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetReflectionsResponse"
-              examples:
-                GetProjectExperienceReflections:
-                  value: "{\"reflections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
-                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }}]}}"
   /feed/recent:
     get:
       tags:
