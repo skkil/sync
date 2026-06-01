@@ -586,8 +586,8 @@ paths:
                     :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
                     ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
                     ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
-                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
-                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
+                    }}]}}"
   /feed/recent:
     get:
       tags:
@@ -863,109 +863,31 @@ paths:
                 GetReflectionActivities:
                   value: "{\"activities\":[{\"date\":\"2024-01-01\",\"count\":5},{\"\
                     date\":\"2024-01-02\",\"count\":3}]}"
-  /projects/trending:
-    get:
+  /projects:
+    post:
       tags:
       - project
-      summary: Get Trending Projects
-      description: Get Trending Projects
-      operationId: GetTrendingProjects
-      parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
+      summary: Create Project
+      description: 새로운 프로젝트를 생성합니다.
+      operationId: CreateProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+            examples:
+              CreateProject:
+                value: "{\"name\":\"새로운 프로젝트\"}"
       responses:
-        "200":
-          description: "200"
+        "201":
+          description: "201"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetProjectsResponse"
+                $ref: "#/components/schemas/CreateProjectResponse"
               examples:
-                GetTrendingProjects:
-                  value: "{\"projects\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"id\":1,\"name\":\"Project Name\",\"description\"\
-                    :\"Project Description\"}}]}}"
-  /projects/{projectId}/team-building:
-    get:
-      tags:
-      - team-building
-      summary: Get Team Building Posts By Project
-      description: Get Team Building Posts By Project
-      operationId: GetTeamBuildingPostsByProject
-      parameters:
-      - name: projectId
-        in: path
-        description: ""
-        required: true
-        schema:
-          type: string
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetTeamBuildingPostsResponse"
-              examples:
-                GetTeamBuildingPostsByProject:
-                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
-                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
-                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":\"1\",\"project\":{\"id\":\"1\",\"name\":\"Project Name\"\
-                    ,\"description\":\"Project Description\"},\"title\":\"Post Title\"\
-                    ,\"content\":\"Post Content\"}}]}}"
+                CreateProject:
+                  value: "{\"projectId\":1}"
   /providers/my:
     get:
       tags:
@@ -1061,8 +983,8 @@ paths:
                     :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
                     ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
                     ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
-                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
-                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
+                    }}]}}"
     post:
       tags:
       - reflection
@@ -1078,7 +1000,8 @@ paths:
               CreateReflection:
                 value: "{\"title\":\"title\",\"content\":{\"text\":\"This is a reflection\
                   \ content.\",\"json\":\"{\\\"text\\\": \\\"This is a reflection\
-                  \ content.\\\"}\"},\"tags\":[\"java\",\"spring\"]}"
+                  \ content.\\\"}\"},\"tags\":[\"java\",\"spring\"],\"projectId\"\
+                  :1}"
       responses:
         "201":
           description: "201"
@@ -1129,7 +1052,7 @@ paths:
               $ref: "#/components/schemas/UpdateReflectionRequest"
             examples:
               UpdateReflection:
-                value: "{\"experienceId\":1,\"content\":\"This is a reflection content.\"\
+                value: "{\"projectId\":1,\"content\":\"This is a reflection content.\"\
                   }"
       responses:
         "204":
@@ -1303,6 +1226,31 @@ paths:
                     :true,\"hasPreviousPage\":true},\"content\":[{\"id\":1,\"name\"\
                     :\"Sync\"}]},\"count\":{\"userCount\":5,\"schoolCount\":4,\"companyCount\"\
                     :3,\"contestCount\":2,\"projectCount\":1}}"
+  /search/projects:
+    get:
+      tags:
+      - project
+      summary: Search Projects
+      description: 검색어로 프로젝트를 검색합니다.
+      operationId: SearchProjects
+      parameters:
+      - name: query
+        in: query
+        description: 프로젝트 검색어
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchProjectsResponse"
+              examples:
+                SearchProjects:
+                  value: "{\"projects\":[{\"id\":1,\"name\":\"Spring Boot 프로젝트\"},{\"\
+                    id\":2,\"name\":\"React 프로젝트\"}]}"
   /search/providers:
     get:
       tags:
@@ -1414,55 +1362,6 @@ paths:
                   value: "{\"tags\":[{\"name\":\"java\",\"description\":\"자바 관련 태그\
                     \",\"postCount\":10},{\"name\":\"spring\",\"description\":\"스프\
                     링 프레임워크 관련 태그\",\"postCount\":5}]}"
-  /team-building:
-    get:
-      tags:
-      - team-building
-      summary: Get Team Building Posts
-      description: Get Team Building Posts
-      operationId: GetTeamBuildingPosts
-      parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetTeamBuildingPostsResponse"
-              examples:
-                GetTeamBuildingPosts:
-                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
-                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
-                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":\"1\",\"project\":{\"id\":\"1\",\"name\":\"Project Name\"\
-                    ,\"description\":\"Project Description\"},\"title\":\"Post Title\"\
-                    ,\"content\":\"Post Content\"}}]}}"
   /users/{userId}/reflections:
     get:
       tags:
@@ -1516,8 +1415,8 @@ paths:
                     :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
                     ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
                     ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
-                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
-                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
+                    }}]}}"
 components:
   schemas:
     UploadMediaResponse:
@@ -1685,70 +1584,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    GetProjectsResponse:
-      title: GetProjectsResponse
-      type: object
-      properties:
-        projects:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - description
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Project Name
-                      description:
-                        type: string
-                        description: Project Description
-                      id:
-                        type: number
-                        description: Project ID
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     LoginRequest:
       title: LoginRequest
       required:
@@ -1866,6 +1701,103 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
+    GetReflectionsResponse:
+      title: GetReflectionsResponse
+      type: object
+      properties:
+        reflections:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - content
+                    - createdAt
+                    - id
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Creation Timestamp
+                      author:
+                        required:
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          id:
+                            type: number
+                            description: Author User ID
+                      id:
+                        type: number
+                        description: Reflection ID
+                      content:
+                        type: string
+                        description: Reflection Content
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
+    SearchProjectsResponse:
+      title: SearchProjectsResponse
+      required:
+      - projects
+      type: object
+      properties:
+        projects:
+          type: array
+          description: 프로젝트 목록
+          items:
+            required:
+            - id
+            - name
+            type: object
+            properties:
+              name:
+                type: string
+                description: 프로젝트 이름
+              id:
+                type: number
+                description: 프로젝트 ID
     UploadJobApplicationFileRequest:
       title: UploadJobApplicationFileRequest
       required:
@@ -1884,6 +1816,15 @@ components:
         applicationId:
           type: number
           description: Job Application ID
+    CreateProjectResponse:
+      title: CreateProjectResponse
+      required:
+      - projectId
+      type: object
+      properties:
+        projectId:
+          type: number
+          description: 생성된 프로젝트 ID
     CreateJobApplicationRequest:
       title: CreateJobApplicationRequest
       required:
@@ -2551,93 +2492,6 @@ components:
         email:
           type: string
           description: Email
-    GetReflectionsResponse:
-      title: GetReflectionsResponse
-      type: object
-      properties:
-        reflections:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - content
-                    - createdAt
-                    - id
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Creation Timestamp
-                      author:
-                        required:
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          id:
-                            type: number
-                            description: Author User ID
-                      project:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Project Name
-                            nullable: true
-                          id:
-                            type: number
-                            description: Project ID
-                            nullable: true
-                      id:
-                        type: number
-                        description: Reflection ID
-                      content:
-                        type: string
-                        description: Reflection Content
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     CreateCommentResponse:
       title: CreateCommentResponse
       required:
@@ -2647,6 +2501,43 @@ components:
         id:
           type: number
           description: Created comment ID
+    CreateReflectionRequest:
+      title: CreateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title
+          nullable: true
+        projectId:
+          type: number
+          description: 프로젝트 ID
+          nullable: true
+        content:
+          required:
+          - json
+          - text
+          type: object
+          properties:
+            json:
+              type: string
+              description: JSON Content
+            text:
+              type: string
+              description: Text Content
+          description: Content
+        tags:
+          type: array
+          description: 태그 목록
+          nullable: true
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
     CreateJobPostingRequest:
       title: CreateJobPostingRequest
       required:
@@ -2664,88 +2555,28 @@ components:
         jobDescription:
           type: string
           description: Job Description
-    GetTeamBuildingPostsResponse:
-      title: GetTeamBuildingPostsResponse
+    UpdateReflectionRequest:
+      title: UpdateReflectionRequest
+      required:
+      - content
       type: object
       properties:
-        posts:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - content
-                    - id
-                    - project
-                    - title
-                    type: object
-                    properties:
-                      project:
-                        required:
-                        - description
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Project Name
-                          description:
-                            type: string
-                            description: Project Description
-                          id:
-                            type: string
-                            description: Project ID
-                        description: Project
-                      id:
-                        type: string
-                        description: Post ID
-                      title:
-                        type: string
-                        description: Post Title
-                      content:
-                        type: string
-                        description: Post Content
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
+        projectId:
+          type: number
+          description: Project ID
+          nullable: true
+        content:
+          type: string
+          description: Content
+    CreateProjectRequest:
+      title: CreateProjectRequest
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 프로젝트 이름
     GetJobApplicationResponse:
       title: GetJobApplicationResponse
       required:
@@ -2795,52 +2626,6 @@ components:
         status:
           type: string
           description: Application Status
-    UpdateReflectionRequest:
-      title: UpdateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        experienceId:
-          type: number
-          description: Experience ID
-          nullable: true
-        content:
-          type: string
-          description: Content
-    CreateReflectionRequest:
-      title: CreateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        title:
-          type: string
-          description: Title
-          nullable: true
-        content:
-          required:
-          - json
-          - text
-          type: object
-          properties:
-            json:
-              type: string
-              description: JSON Content
-            text:
-              type: string
-              description: Text Content
-          description: Content
-        tags:
-          type: array
-          description: 태그 목록
-          nullable: true
-          items:
-            oneOf:
-            - type: object
-            - type: boolean
-            - type: string
-            - type: number
     SearchTagsResponse:
       title: SearchTagsResponse
       required:

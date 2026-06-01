@@ -15,10 +15,7 @@ public class UpdateReflectionRequestSnippets {
 
   public static RequestFieldsSnippet getUpdateReflectionRequestFields() {
     return requestFields(
-        fieldWithPath("experienceId")
-            .type(JsonFieldType.NUMBER)
-            .description("Experience ID")
-            .optional(),
+        fieldWithPath("projectId").type(JsonFieldType.NUMBER).description("Project ID").optional(),
         fieldWithPath("content").type(JsonFieldType.STRING).description("Content"));
   }
 }

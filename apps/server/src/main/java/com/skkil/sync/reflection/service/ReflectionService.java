@@ -1,10 +1,8 @@
 package com.skkil.sync.reflection.service;
 
 import com.skkil.sync.common.util.text.Slugify;
-import com.skkil.sync.experience.constant.ExperienceType;
-import com.skkil.sync.experience.model.Experience;
-import com.skkil.sync.experience.model.ProjectExperience;
-import com.skkil.sync.experience.service.domain.ExperienceDomainService;
+import com.skkil.sync.project.model.Project;
+import com.skkil.sync.project.service.ProjectDomainService;
 import com.skkil.sync.reflection.dto.request.CreateReflectionRequest;
 import com.skkil.sync.reflection.dto.request.UpdateReflectionRequest;
 import com.skkil.sync.reflection.dto.request.UpdateReflectionSummaryRequest;
@@ -30,8 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReflectionService {
 
   private final UserDomainService userDomainService;
+  private final ProjectDomainService projectDomainService;
+
   private final TagService tagService;
-  private final ExperienceDomainService experienceDomainService;
   private final ReflectionContentMediaService contentMediaService;
   private final ApplicationEventPublisher eventPublisher;
 
@@ -41,16 +40,16 @@ public class ReflectionService {
 
   public ReflectionService(
       UserDomainService userDomainService,
+      ProjectDomainService projectDomainService,
       TagService tagService,
-      ExperienceDomainService experienceDomainService,
       ReflectionContentMediaService contentMediaService,
       ReflectionRepository reflectionRepository,
       ReflectionMediaFileRepository reflectionMediaFileRepository,
       ReflectionSummaryRepository reflectionSummaryRepository,
       ApplicationEventPublisher eventPublisher) {
     this.userDomainService = userDomainService;
+    this.projectDomainService = projectDomainService;
     this.tagService = tagService;
-    this.experienceDomainService = experienceDomainService;
     this.contentMediaService = contentMediaService;
     this.reflectionRepository = reflectionRepository;
     this.reflectionMediaFileRepository = reflectionMediaFileRepository;
@@ -70,13 +69,19 @@ public class ReflectionService {
     ReflectionContentMediaService.PreparedContent preparedContent =
         contentMediaService.prepareContentForCreate(authorId, request.content().json());
 
-    Reflection reflection =
+    Reflection.ReflectionBuilder reflectionBuilder =
         Reflection.builder()
             .slug(slug)
             .author(author)
             .title(request.title())
-            .content(preparedContent.content())
-            .build();
+            .content(preparedContent.content());
+
+    if (request.projectId() != null) {
+      Project project = projectDomainService.getProject(request.projectId());
+      reflectionBuilder.project(project);
+    }
+
+    Reflection reflection = reflectionBuilder.build();
     tagService.addTagsToReflection(reflection, request.tags());
 
     reflection = reflectionRepository.save(reflection);
@@ -105,14 +110,11 @@ public class ReflectionService {
 
     reflection.updateContent(request.content());
 
-    if (request.experienceId() == null) {
-      reflection.updateExperience(null);
+    if (request.projectId() == null) {
+      reflection.unlinkProject();
     } else {
-      Experience experience =
-          experienceDomainService.getExperience(
-              request.experienceId(), ExperienceType.PROJECT_EXPERIENCE);
-
-      reflection.updateExperience((ProjectExperience) experience);
+      Project project = projectDomainService.getProject(request.projectId());
+      reflection.linkProject(project);
     }
   }
 

@@ -1,7 +1,7 @@
 package com.skkil.sync.reflection.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
-import com.skkil.sync.experience.model.ProjectExperience;
+import com.skkil.sync.project.model.Project;
 import com.skkil.sync.reflection.constants.ReflectionConstants;
 import com.skkil.sync.reflection.exception.ReflectionTagLimitExceededException;
 import com.skkil.sync.user.model.User;
@@ -31,8 +31,8 @@ public class Reflection extends BaseEntity {
   private User author;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "project_experience_id", nullable = true)
-  private ProjectExperience experience;
+  @JoinColumn(name = "project_id", nullable = true)
+  private Project project;
 
   @Column(name = "title")
   private String title;
@@ -50,15 +50,12 @@ public class Reflection extends BaseEntity {
   protected Reflection() {}
 
   @Builder
-  public Reflection(String slug, User author, String title, String content) {
+  public Reflection(String slug, User author, Project project, String title, String content) {
     this.slug = slug;
     this.author = author;
+    this.project = project;
     this.title = title;
     this.content = content;
-  }
-
-  public void updateExperience(ProjectExperience experience) {
-    this.experience = experience;
   }
 
   public void updateContent(String content) {
@@ -75,5 +72,13 @@ public class Reflection extends BaseEntity {
 
   public void removeTag(Tag tag) {
     this.tags.removeIf(reflectionTag -> reflectionTag.getTag().getName().equals(tag.getName()));
+  }
+
+  public void linkProject(Project project) {
+    this.project = project;
+  }
+
+  public void unlinkProject() {
+    this.project = null;
   }
 }

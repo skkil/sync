@@ -15,7 +15,7 @@ public class CreateReflectionRequestSnippets {
         new CreateReflectionRequest.Content(
             "This is a reflection content.", "{\"text\": \"This is a reflection content.\"}");
 
-    return new CreateReflectionRequest("title", content, List.of("java", "spring"));
+    return new CreateReflectionRequest("title", content, List.of("java", "spring"), 1L);
   }
 
   public static RequestFieldsSnippet getCreateReflectionRequestFields() {
@@ -24,6 +24,7 @@ public class CreateReflectionRequestSnippets {
         fieldWithPath("content").type(JsonFieldType.OBJECT).description("Content"),
         fieldWithPath("content.text").type(JsonFieldType.STRING).description("Text Content"),
         fieldWithPath("content.json").type(JsonFieldType.STRING).description("JSON Content"),
-        fieldWithPath("tags").type(JsonFieldType.ARRAY).description("태그 목록").optional());
+        fieldWithPath("tags").type(JsonFieldType.ARRAY).description("태그 목록").optional(),
+        fieldWithPath("projectId").type(JsonFieldType.NUMBER).description("프로젝트 ID").optional());
   }
 }

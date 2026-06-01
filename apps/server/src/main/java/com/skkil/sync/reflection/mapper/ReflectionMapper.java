@@ -18,9 +18,7 @@ public interface ReflectionMapper {
 
   @Mappings({
     @Mapping(target = "author.id", source = "authorId"),
-    @Mapping(target = "author.name", source = "authorName"),
-    @Mapping(target = "project.id", source = "projectId"),
-    @Mapping(target = "project.name", source = "projectName"),
+    @Mapping(target = "author.name", source = "authorName")
   })
   GetReflectionsResponse.Reflection toReflectionResponse(ReflectionDto reflectionDto);
 }
