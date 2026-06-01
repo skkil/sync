@@ -3,12 +3,11 @@
 import { XIcon } from '@phosphor-icons/react';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { type KeyboardEvent, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useSearchTags } from '@/api/__generated__/tag/tag';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const MAXIMUM_ALLOWED_TAGS = 5;
@@ -67,7 +66,7 @@ export function TagInput({ tags, onChange }: TagInputProps) {
     onChange(tags.filter((t) => t !== name));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       addTag(input);
@@ -86,9 +85,8 @@ export function TagInput({ tags, onChange }: TagInputProps) {
         onClick={() => inputRef.current?.focus()}
       >
         {tags.map((tag) => (
-          <Button
+          <button
             key={tag}
-            asChild
             onClick={(e) => {
               e.stopPropagation();
               removeTag(tag);
@@ -98,7 +96,7 @@ export function TagInput({ tags, onChange }: TagInputProps) {
               {tag}
               <XIcon size={10} />
             </Badge>
-          </Button>
+          </button>
         ))}
 
         <input
