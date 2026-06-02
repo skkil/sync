@@ -1,8 +1,5 @@
 package com.skkil.sync.reflection.repository;
 
-import static com.skkil.sync.jooq.tables.Experiences.EXPERIENCES;
-import static com.skkil.sync.jooq.tables.ProjectExperiences.PROJECT_EXPERIENCES;
-import static com.skkil.sync.jooq.tables.Providers.PROVIDERS;
 import static com.skkil.sync.jooq.tables.ReflectionBookmarks.REFLECTION_BOOKMARKS;
 import static com.skkil.sync.jooq.tables.Reflections.REFLECTIONS;
 import static com.skkil.sync.jooq.tables.Users.USERS;
@@ -35,8 +32,6 @@ public class ReflectionQueryRepository {
             REFLECTIONS.AUTHOR_ID.as("authorId"),
             USERS.FULL_NAME.as("authorName"),
             REFLECTIONS.CONTENT.as("content"),
-            PROVIDERS.ID.as("projectId"),
-            PROVIDERS.NAME.as("projectName"),
             REFLECTIONS.CREATED_AT.as("createdAt"),
             REFLECTIONS.UPDATED_AT.as("updatedAt"),
             DSL.value(0L).as("likeCount"),
@@ -45,12 +40,6 @@ public class ReflectionQueryRepository {
         .from(REFLECTIONS)
         .join(USERS)
         .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
-        .leftJoin(PROJECT_EXPERIENCES)
-        .on(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(PROJECT_EXPERIENCES.ID))
-        .leftJoin(EXPERIENCES)
-        .on(PROJECT_EXPERIENCES.ID.eq(EXPERIENCES.ID))
-        .leftJoin(PROVIDERS)
-        .on(EXPERIENCES.PROVIDER_ID.eq(PROVIDERS.ID))
         .where(REFLECTIONS.SLUG.eq(slug))
         .fetchOptional()
         .map(record -> record.into(ReflectionDto.class));
@@ -64,8 +53,6 @@ public class ReflectionQueryRepository {
                 REFLECTIONS.AUTHOR_ID.as("authorId"),
                 USERS.FULL_NAME.as("authorName"),
                 REFLECTIONS.CONTENT.as("content"),
-                PROVIDERS.ID.as("projectId"),
-                PROVIDERS.NAME.as("projectName"),
                 REFLECTIONS.CREATED_AT.as("createdAt"),
                 REFLECTIONS.UPDATED_AT.as("updatedAt"),
                 DSL.value(0L).as("likeCount"),
@@ -74,12 +61,6 @@ public class ReflectionQueryRepository {
             .from(REFLECTIONS)
             .join(USERS)
             .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
-            .leftJoin(PROJECT_EXPERIENCES)
-            .on(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(PROJECT_EXPERIENCES.ID))
-            .leftJoin(EXPERIENCES)
-            .on(PROJECT_EXPERIENCES.ID.eq(EXPERIENCES.ID))
-            .leftJoin(PROVIDERS)
-            .on(EXPERIENCES.PROVIDER_ID.eq(PROVIDERS.ID))
             .where(condition)
             .orderBy(orderFields)
             .limit(size)
@@ -90,14 +71,6 @@ public class ReflectionQueryRepository {
     return (condition, orderFields, size) -> {
       CursorPaginationDataFetcher<ReflectionDto> base = getReflections();
       return base.fetch(condition.and(REFLECTIONS.AUTHOR_ID.eq(userId)), orderFields, size);
-    };
-  }
-
-  public CursorPaginationDataFetcher<ReflectionDto> getReflectionsByExperience(Long experienceId) {
-    return (condition, orderFields, size) -> {
-      CursorPaginationDataFetcher<ReflectionDto> base = getReflections();
-      return base.fetch(
-          condition.and(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(experienceId)), orderFields, size);
     };
   }
 
@@ -114,8 +87,6 @@ public class ReflectionQueryRepository {
                 REFLECTIONS.AUTHOR_ID.as("authorId"),
                 USERS.FULL_NAME.as("authorName"),
                 REFLECTIONS.CONTENT.as("content"),
-                PROVIDERS.ID.as("projectId"),
-                PROVIDERS.NAME.as("projectName"),
                 REFLECTIONS.CREATED_AT.as("createdAt"),
                 REFLECTIONS.UPDATED_AT.as("updatedAt"),
                 DSL.value(0L).as("likeCount"),
@@ -124,12 +95,6 @@ public class ReflectionQueryRepository {
             .from(REFLECTIONS)
             .join(USERS)
             .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
-            .leftJoin(PROJECT_EXPERIENCES)
-            .on(REFLECTIONS.PROJECT_EXPERIENCE_ID.eq(PROJECT_EXPERIENCES.ID))
-            .leftJoin(EXPERIENCES)
-            .on(PROJECT_EXPERIENCES.ID.eq(EXPERIENCES.ID))
-            .leftJoin(PROVIDERS)
-            .on(EXPERIENCES.PROVIDER_ID.eq(PROVIDERS.ID))
             .where(REFLECTIONS.ID.in(ids))
             .fetchInto(ReflectionDto.class)
             .stream()

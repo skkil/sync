@@ -13,6 +13,11 @@ export interface CreateReflectionRequest {
    * @nullable
    */
   title?: string | null;
+  /**
+   * 프로젝트 ID
+   * @nullable
+   */
+  projectId?: number | null;
   /** Content */
   content: CreateReflectionRequestContent;
   /**

@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { useGetUserReflectionsInfinite } from '@/api/__generated__/reflection/reflection';
 import type { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__generated__/types';
-import { Badge } from '@/components/ui/badge';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
@@ -127,12 +126,6 @@ function PostCard({
     <article className="rounded-md border p-4">
       <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-        {post.project?.name && (
-          <>
-            <span>|</span>
-            <Badge variant="secondary">{post.project.name}</Badge>
-          </>
-        )}
       </div>
 
       <BaseViewer content={post.content} />

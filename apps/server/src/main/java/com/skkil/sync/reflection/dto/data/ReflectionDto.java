@@ -8,8 +8,6 @@ public record ReflectionDto(
     Long authorId,
     String authorName,
     String content,
-    Long projectId,
-    String projectName,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     Long likeCount,
