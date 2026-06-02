@@ -100,6 +100,7 @@ export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
       >
         {selectedProjectName && (
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               removeProject();

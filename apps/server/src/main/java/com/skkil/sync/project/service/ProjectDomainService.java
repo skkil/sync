@@ -1,5 +1,6 @@
 package com.skkil.sync.project.service;
 
+import com.skkil.sync.project.exception.ProjectNotFoundException;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,6 @@ public class ProjectDomainService {
 
   @Transactional
   public Project getProject(Long projectId) {
-    return projectRepository.findById(projectId).orElseThrow();
+    return projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException());
   }
 }
