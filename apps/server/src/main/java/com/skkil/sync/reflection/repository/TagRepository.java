@@ -18,6 +18,14 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
       """)
   List<Tag> searchTags(String query);
 
+  @Query(
+      """
+      SELECT t
+      FROM Tag t
+      ORDER BY t.createdAt DESC
+      """)
+  List<Tag> findAllOrderByCreatedAtDesc();
+
   Optional<Tag> findByName(String name);
 
   @Modifying
