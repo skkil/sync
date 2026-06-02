@@ -7,6 +7,28 @@ servers:
 - url: ""
 tags: []
 paths:
+  /admin/tags:
+    get:
+      tags:
+      - tag
+      summary: Get All Tags
+      description: 모든 태그를 조회합니다. (관리자 전용)
+      operationId: GetAllTags
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTagsResponse"
+              examples:
+                GetAllTags:
+                  value: "{\"tags\":[{\"id\":1,\"name\":\"java\",\"description\":\"\
+                    자바 관련 태그\",\"postCount\":10,\"verified\":true,\"createdAt\":\"\
+                    2024-01-01T00:00:00\",\"updatedAt\":\"2024-01-01T00:00:00\"},{\"\
+                    id\":2,\"name\":\"spring\",\"description\":\"스프링 프레임워크 관련 태그\"\
+                    ,\"postCount\":5,\"verified\":false,\"createdAt\":\"2024-01-02T00:00:00\"\
+                    ,\"updatedAt\":\"2024-01-02T00:00:00\"}]}"
   /admin/providers/unverified:
     get:
       tags:
@@ -55,6 +77,47 @@ paths:
                     ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
                     ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
                     :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
+  /admin/tags/{tagId}:
+    delete:
+      tags:
+      - tag
+      summary: Delete Tag
+      description: 태그를 삭제합니다. (관리자 전용)
+      operationId: DeleteTag
+      parameters:
+      - name: tagId
+        in: path
+        description: 태그 ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+    patch:
+      tags:
+      - tag
+      summary: Update Tag
+      description: 태그 정보를 수정합니다. (관리자 전용)
+      operationId: UpdateTag
+      parameters:
+      - name: tagId
+        in: path
+        description: 태그 ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTagRequest"
+            examples:
+              UpdateTag:
+                value: "{\"description\":\"업데이트된 태그 설명\",\"verified\":true}"
+      responses:
+        "204":
+          description: "204"
   /applications:
     post:
       tags:
@@ -1685,6 +1748,19 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
     GetProjectsResponse:
       title: GetProjectsResponse
       type: object
@@ -1749,19 +1825,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    LoginRequest:
-      title: LoginRequest
-      required:
-      - email
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: Password
-        email:
-          type: string
-          description: Email
     GetBookmarkedReflectionsResponse:
       title: GetBookmarkedReflectionsResponse
       type: object
@@ -2085,27 +2148,6 @@ components:
         mediaType:
           type: string
           description: Media Type
-    SearchReflectionsResponse:
-      title: SearchReflectionsResponse
-      required:
-      - reflections
-      type: object
-      properties:
-        reflections:
-          type: array
-          description: Reflection List
-          items:
-            required:
-            - content
-            - id
-            type: object
-            properties:
-              id:
-                type: number
-                description: Reflection ID
-              content:
-                type: string
-                description: Reflection Content
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -2162,6 +2204,27 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    SearchReflectionsResponse:
+      title: SearchReflectionsResponse
+      required:
+      - reflections
+      type: object
+      properties:
+        reflections:
+          type: array
+          description: Reflection List
+          items:
+            required:
+            - content
+            - id
+            type: object
+            properties:
+              id:
+                type: number
+                description: Reflection ID
+              content:
+                type: string
+                description: Reflection Content
     SearchResponse:
       title: SearchResponse
       required:
@@ -2244,6 +2307,18 @@ components:
         content:
           type: string
           description: Comment content
+    UpdateTagRequest:
+      title: UpdateTagRequest
+      type: object
+      properties:
+        verified:
+          type: boolean
+          description: 태그 검증 여부
+          nullable: true
+        description:
+          type: string
+          description: 태그 설명
+          nullable: true
     CreateReflectionResponse:
       title: CreateReflectionResponse
       required:
@@ -2638,6 +2713,47 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
+    GetTagsResponse:
+      title: GetTagsResponse
+      required:
+      - tags
+      type: object
+      properties:
+        tags:
+          type: array
+          description: 태그 목록
+          items:
+            required:
+            - createdAt
+            - description
+            - id
+            - name
+            - postCount
+            - updatedAt
+            - verified
+            type: object
+            properties:
+              createdAt:
+                type: string
+                description: 태그 생성일시
+              verified:
+                type: boolean
+                description: 태그 검증 여부
+              name:
+                type: string
+                description: 태그 이름
+              postCount:
+                type: number
+                description: 태그가 사용된 게시물 수
+              description:
+                type: string
+                description: 태그 설명
+              id:
+                type: number
+                description: 태그 ID
+              updatedAt:
+                type: string
+                description: 태그 수정일시
     CreateCommentResponse:
       title: CreateCommentResponse
       required:
@@ -2795,6 +2911,31 @@ components:
         status:
           type: string
           description: Application Status
+    SearchTagsResponse:
+      title: SearchTagsResponse
+      required:
+      - tags
+      type: object
+      properties:
+        tags:
+          type: array
+          description: 태그 목록
+          items:
+            required:
+            - description
+            - name
+            - postCount
+            type: object
+            properties:
+              name:
+                type: string
+                description: 태그 이름
+              postCount:
+                type: number
+                description: 태그가 사용된 게시물 수
+              description:
+                type: string
+                description: 태그 설명
     UpdateReflectionRequest:
       title: UpdateReflectionRequest
       required:
@@ -2841,31 +2982,6 @@ components:
             - type: boolean
             - type: string
             - type: number
-    SearchTagsResponse:
-      title: SearchTagsResponse
-      required:
-      - tags
-      type: object
-      properties:
-        tags:
-          type: array
-          description: 태그 목록
-          items:
-            required:
-            - description
-            - name
-            - postCount
-            type: object
-            properties:
-              name:
-                type: string
-                description: 태그 이름
-              postCount:
-                type: number
-                description: 태그가 사용된 게시물 수
-              description:
-                type: string
-                description: 태그 설명
     CreateCommentRequest:
       title: CreateCommentRequest
       required:
