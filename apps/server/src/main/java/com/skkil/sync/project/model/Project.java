@@ -1,6 +1,7 @@
 package com.skkil.sync.project.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
+import com.skkil.sync.common.util.text.Slugify;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,6 +17,9 @@ import lombok.Getter;
 @Getter
 public class Project extends BaseEntity {
 
+  @Column(name = "handle", nullable = false, unique = true)
+  private String handle;
+
   @Column(name = "name", nullable = false)
   private String name;
 
@@ -25,7 +29,8 @@ public class Project extends BaseEntity {
   protected Project() {}
 
   @Builder
-  public Project(String name) {
+  public Project(String handle, String name) {
+    this.handle = handle == null ? Slugify.slugify(handle) : handle.trim();
     this.name = name;
   }
 

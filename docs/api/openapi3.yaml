@@ -822,7 +822,7 @@ paths:
               $ref: "#/components/schemas/CreateProjectRequest"
             examples:
               CreateProject:
-                value: "{\"name\":\"새로운 프로젝트\"}"
+                value: "{\"handle\":\"project-handle\",\"name\":\"새로운 프로젝트\"}"
       responses:
         "201":
           description: "201"
@@ -832,7 +832,7 @@ paths:
                 $ref: "#/components/schemas/CreateProjectResponse"
               examples:
                 CreateProject:
-                  value: "{\"projectId\":1}"
+                  value: "{\"handle\":\"my-project\"}"
   /providers/my:
     get:
       tags:
@@ -1759,6 +1759,19 @@ components:
         fileId:
           type: number
           description: File ID
+    CreateProjectRequest:
+      title: CreateProjectRequest
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 프로젝트 이름
+        handle:
+          type: string
+          description: 프로젝트 핸들
+          nullable: true
     CreateJobApplicationResponse:
       title: CreateJobApplicationResponse
       required:
@@ -1768,15 +1781,6 @@ components:
         applicationId:
           type: number
           description: Job Application ID
-    CreateProjectResponse:
-      title: CreateProjectResponse
-      required:
-      - projectId
-      type: object
-      properties:
-        projectId:
-          type: number
-          description: 생성된 프로젝트 ID
     CreateJobApplicationRequest:
       title: CreateJobApplicationRequest
       required:
@@ -2277,6 +2281,15 @@ components:
         updatedAt:
           type: string
           description: Update Timestamp
+    CreateProjectResponse:
+      title: CreateProjectResponse
+      required:
+      - handle
+      type: object
+      properties:
+        handle:
+          type: string
+          description: 생성된 프로젝트 핸들
     GetJobApplicationFilesResponse:
       title: GetJobApplicationFilesResponse
       required:
@@ -2608,15 +2621,6 @@ components:
         content:
           type: string
           description: Content
-    CreateProjectRequest:
-      title: CreateProjectRequest
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-          description: 프로젝트 이름
     GetJobApplicationResponse:
       title: GetJobApplicationResponse
       required:

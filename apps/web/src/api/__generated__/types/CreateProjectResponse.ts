@@ -6,6 +6,6 @@
  */
 
 export interface CreateProjectResponse {
-  /** 생성된 프로젝트 ID */
-  projectId: number;
+  /** 생성된 프로젝트 핸들 */
+  handle: string;
 }

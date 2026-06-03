@@ -25,7 +25,7 @@ public class ProjectService {
 
   @Transactional
   public CreateProjectResponse createProject(Long userId, CreateProjectRequest request) {
-    Project project = Project.builder().name(request.name()).build();
+    Project project = Project.builder().name(request.name()).handle(request.handle()).build();
 
     User user = userDomainService.getUserReference(userId);
     Teammate owner = Teammate.builder().project(project).user(user).build();
@@ -35,7 +35,7 @@ public class ProjectService {
 
     project = projectRepository.save(project);
 
-    return new CreateProjectResponse(project.getId());
+    return new CreateProjectResponse(project.getHandle());
   }
 
   @Transactional(readOnly = true)
