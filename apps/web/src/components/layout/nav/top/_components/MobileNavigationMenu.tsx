@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  BookmarkSimpleIcon,
-  BriefcaseIcon,
-  ListIcon,
-  UserGearIcon,
-  UsersThreeIcon,
-} from '@phosphor-icons/react';
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { ListIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -24,42 +16,7 @@ import {
 import UserAvatar from './UserAvatar';
 
 export default function MobileNavigationMenu() {
-  const t = useTranslations('components.navigation.menu');
-
   const [open, setOpen] = useState(false);
-
-  const groups = [
-    {
-      id: 'home',
-      tabs: [
-        {
-          icon: <BookmarkSimpleIcon />,
-          href: '/bookmarks',
-          label: t('bookmarks'),
-        },
-        {
-          icon: <BriefcaseIcon />,
-          href: '/jobs',
-          label: t('jobs'),
-        },
-        {
-          icon: <UsersThreeIcon />,
-          href: '/teams',
-          label: t('team-building'),
-        },
-      ],
-    },
-    {
-      id: 'business',
-      tabs: [
-        {
-          icon: <UserGearIcon />,
-          href: '/provider/my',
-          label: t('my-providers'),
-        },
-      ],
-    },
-  ];
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -74,24 +31,6 @@ export default function MobileNavigationMenu() {
             <UserAvatar align="start" />
           </SheetTitle>
           <SheetDescription></SheetDescription>
-
-          {groups.map((group) => (
-            <div key={group.id} className="space-y-2">
-              <div className="space-y-2">
-                {group.tabs.map((tab) => (
-                  <Link
-                    key={tab.label}
-                    href={tab.href}
-                    className="flex items-center gap-2"
-                    onClick={() => setOpen(false)}
-                  >
-                    {tab.icon}
-                    {tab.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
         </SheetHeader>
       </SheetContent>
     </Sheet>
