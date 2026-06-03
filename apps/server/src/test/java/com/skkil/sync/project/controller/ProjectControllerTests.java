@@ -3,6 +3,7 @@ package com.skkil.sync.project.controller;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.Schema.schema;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -99,6 +100,33 @@ class ProjectControllerTests {
                     .tag("project")
                     .summary("Search Projects")
                     .description("검색어로 프로젝트를 검색합니다.")
+                    .responseSchema(schema(SearchProjectsResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                queryParameters(parameterWithName("query").description("프로젝트 검색어")),
+                SearchProjectsResponseSnippets.getSearchProjectsResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[searchMyProjects] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void searchMyProjects() throws Exception {
+    String query = "Spring";
+    SearchProjectsResponse response = SearchProjectsResponseSnippets.getSearchProjectsResponse();
+
+    when(projectService.searchMyProjects(anyLong(), eq(query))).thenReturn(response);
+
+    mockMvc
+        .perform(get("/search/projects/my").queryParam("query", query))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "SearchMyProjects",
+                ResourceSnippetParameters.builder()
+                    .tag("project")
+                    .summary("Search My Projects")
+                    .description("내 프로젝트를 검색어로 검색합니다.")
                     .responseSchema(schema(SearchProjectsResponse.class.getSimpleName())),
                 null,
                 null,

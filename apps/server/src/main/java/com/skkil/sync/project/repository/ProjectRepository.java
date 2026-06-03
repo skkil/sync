@@ -15,4 +15,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
       LIMIT 10
       """)
   List<Project> searchProjects(String query);
+
+  List<Project> findByTeammatesUserIdAndNameContainingIgnoreCase(Long userId, String query);
 }

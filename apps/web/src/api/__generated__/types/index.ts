@@ -91,6 +91,7 @@ export * from './GetUserPreferencesResponse';
 export * from './GetUserReflectionsParams';
 export * from './LoginRequest';
 export * from './RegisterRequest';
+export * from './SearchMyProjectsParams';
 export * from './SearchParams';
 export * from './SearchProjectsParams';
 export * from './SearchProjectsResponse';

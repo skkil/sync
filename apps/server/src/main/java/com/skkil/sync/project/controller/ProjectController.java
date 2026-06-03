@@ -39,4 +39,12 @@ public class ProjectController {
   public SearchProjectsResponse searchProjects(@RequestParam(required = true) String query) {
     return projectService.searchProjects(query);
   }
+
+  @GetMapping("/search/projects/my")
+  @ResponseStatus(HttpStatus.OK)
+  public SearchProjectsResponse searchMyProjects(
+      @AuthenticationPrincipal @NotNull AuthenticatedUser user,
+      @RequestParam(required = true) String query) {
+    return projectService.searchMyProjects(user.userId(), query);
+  }
 }

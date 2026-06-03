@@ -1308,6 +1308,31 @@ paths:
                   value: "{\"tags\":[{\"name\":\"java\",\"description\":\"자바 관련 태그\
                     \",\"postCount\":10},{\"name\":\"spring\",\"description\":\"스프\
                     링 프레임워크 관련 태그\",\"postCount\":5}]}"
+  /search/projects/my:
+    get:
+      tags:
+      - project
+      summary: Search My Projects
+      description: 내 프로젝트를 검색어로 검색합니다.
+      operationId: SearchMyProjects
+      parameters:
+      - name: query
+        in: query
+        description: 프로젝트 검색어
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchProjectsResponse"
+              examples:
+                SearchMyProjects:
+                  value: "{\"projects\":[{\"id\":1,\"name\":\"Spring Boot 프로젝트\"},{\"\
+                    id\":2,\"name\":\"React 프로젝트\"}]}"
   /users/{userId}/reflections:
     get:
       tags:

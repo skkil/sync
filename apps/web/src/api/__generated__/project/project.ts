@@ -25,6 +25,7 @@ import type { ErrorType } from '../../../lib/server';
 import type {
   CreateProjectRequest,
   CreateProjectResponse,
+  SearchMyProjectsParams,
   SearchProjectsParams,
   SearchProjectsResponse,
 } from '../types';
@@ -287,6 +288,195 @@ export function useSearchProjects<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getSearchProjectsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 내 프로젝트를 검색어로 검색합니다.
+ * @summary Search My Projects
+ */
+export type searchMyProjectsResponse200 = {
+  data: SearchProjectsResponse;
+  status: 200;
+};
+
+export type searchMyProjectsResponseSuccess = searchMyProjectsResponse200 & {
+  headers: Headers;
+};
+export type searchMyProjectsResponse = searchMyProjectsResponseSuccess;
+
+export const getSearchMyProjectsUrl = (params: SearchMyProjectsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/search/projects/my?${stringifiedParams}`
+    : `/search/projects/my`;
+};
+
+export const searchMyProjects = async (
+  params: SearchMyProjectsParams,
+  options?: RequestInit,
+): Promise<searchMyProjectsResponse> => {
+  return api<searchMyProjectsResponse>(getSearchMyProjectsUrl(params), {
+    ...options,
+    method: 'GET',
+  });
+};
+
+export const getSearchMyProjectsQueryKey = (
+  params?: SearchMyProjectsParams,
+) => {
+  return [`/search/projects/my`, ...(params ? [params] : [])] as const;
+};
+
+export const getSearchMyProjectsQueryOptions = <
+  TData = Awaited<ReturnType<typeof searchMyProjects>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchMyProjectsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchMyProjects>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getSearchMyProjectsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof searchMyProjects>>
+  > = ({ signal }) => searchMyProjects(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof searchMyProjects>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type SearchMyProjectsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof searchMyProjects>>
+>;
+export type SearchMyProjectsQueryError = ErrorType<unknown>;
+
+export function useSearchMyProjects<
+  TData = Awaited<ReturnType<typeof searchMyProjects>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchMyProjectsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchMyProjects>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchMyProjects>>,
+          TError,
+          Awaited<ReturnType<typeof searchMyProjects>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchMyProjects<
+  TData = Awaited<ReturnType<typeof searchMyProjects>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchMyProjectsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchMyProjects>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchMyProjects>>,
+          TError,
+          Awaited<ReturnType<typeof searchMyProjects>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchMyProjects<
+  TData = Awaited<ReturnType<typeof searchMyProjects>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchMyProjectsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchMyProjects>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Search My Projects
+ */
+
+export function useSearchMyProjects<
+  TData = Awaited<ReturnType<typeof searchMyProjects>>,
+  TError = ErrorType<unknown>,
+>(
+  params: SearchMyProjectsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchMyProjects>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getSearchMyProjectsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
