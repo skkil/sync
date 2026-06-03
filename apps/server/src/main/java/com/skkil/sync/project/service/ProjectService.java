@@ -3,7 +3,9 @@ package com.skkil.sync.project.service;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
+import com.skkil.sync.project.dto.response.GetProjectResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
+import com.skkil.sync.project.exception.ProjectNotFoundException;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.model.Teammate;
 import com.skkil.sync.project.repository.ProjectRepository;
@@ -37,6 +39,19 @@ public class ProjectService {
     project = projectRepository.save(project);
 
     return new CreateProjectResponse(project.getHandle());
+  }
+
+  @Transactional(readOnly = true)
+  public GetProjectResponse getProjectByHandle(String handle) {
+    Project project =
+        projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
+
+    var teammates =
+        project.getTeammates().stream()
+            .map(t -> new GetProjectResponse.Teammate(t.getId(), t.getIsOwner()))
+            .toList();
+
+    return new GetProjectResponse(project.getHandle(), project.getName(), teammates);
   }
 
   @Transactional(readOnly = true)

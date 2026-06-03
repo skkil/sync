@@ -5,6 +5,7 @@ import com.skkil.sync.project.constants.ProjectConstants;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
+import com.skkil.sync.project.dto.response.GetProjectResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.service.ProjectService;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +37,12 @@ public class ProjectController {
       @AuthenticationPrincipal @NotNull AuthenticatedUser user,
       @RequestBody CreateProjectRequest request) {
     return projectService.createProject(user.userId(), request);
+  }
+
+  @GetMapping("/projects/{handle}")
+  @ResponseStatus(HttpStatus.OK)
+  public GetProjectResponse getProjectByHandle(@PathVariable String handle) {
+    return projectService.getProjectByHandle(handle);
   }
 
   @GetMapping("/projects/handles/availability")

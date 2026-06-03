@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,11 +20,13 @@ import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
+import com.skkil.sync.project.dto.response.GetProjectResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.service.ProjectService;
 import com.skkil.sync.project.snippets.CreateProjectRequestSnippets;
 import com.skkil.sync.project.snippets.CreateProjectResponseSnippets;
 import com.skkil.sync.project.snippets.GetProjectHandleAvailabilityResponseSnippets;
+import com.skkil.sync.project.snippets.GetProjectResponseSnippets;
 import com.skkil.sync.project.snippets.SearchProjectsResponseSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
@@ -82,6 +85,31 @@ class ProjectControllerTests {
                 Function.identity(),
                 CreateProjectRequestSnippets.getCreateProjectRequestFields(),
                 CreateProjectResponseSnippets.getCreateProjectResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getProjectByHandle] API 문서화 테스트")
+  void getProjectByHandle() throws Exception {
+    GetProjectResponse response = GetProjectResponseSnippets.getGetProjectResponse();
+
+    when(projectService.getProjectByHandle(response.handle())).thenReturn(response);
+
+    mockMvc
+        .perform(get("/projects/{handle}", response.handle()))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetProjectByHandle",
+                ResourceSnippetParameters.builder()
+                    .tag("project")
+                    .summary("Get Project By Handle")
+                    .description("핸들로 프로젝트를 조회합니다.")
+                    .responseSchema(schema(GetProjectResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("handle").description("프로젝트 핸들")),
+                GetProjectResponseSnippets.getGetProjectResponseFields()));
   }
 
   @Test
