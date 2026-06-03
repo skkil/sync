@@ -79,6 +79,7 @@ public class ReflectionQueryService {
         reflection.id(),
         reflection.slug(),
         reflection.author(),
+        reflection.project(),
         contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
         reflection.likeCount(),
         reflection.commentCount(),
@@ -90,6 +91,7 @@ public class ReflectionQueryService {
     return new GetReflectionsResponse.Reflection(
         reflection.id(),
         reflection.author(),
+        reflection.project(),
         contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
         reflection.createdAt());
   }

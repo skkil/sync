@@ -7,6 +7,8 @@ public record ReflectionDto(
     String slug,
     Long authorId,
     String authorName,
+    Long projectId,
+    String projectName,
     String content,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,

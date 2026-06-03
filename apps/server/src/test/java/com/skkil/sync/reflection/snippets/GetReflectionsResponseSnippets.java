@@ -15,10 +15,15 @@ public class GetReflectionsResponseSnippets {
 
   public static GetReflectionsResponse getGetReflectionsResponse() {
     GetReflectionsResponse.Author author = new GetReflectionsResponse.Author(1L, "User");
+    GetReflectionsResponse.Project project = new GetReflectionsResponse.Project(1L, "Project");
 
     GetReflectionsResponse.Reflection reflection =
         new GetReflectionsResponse.Reflection(
-            1L, author, "Reflection Content", DateTimeTestUtils.defaultTestLocalDateTime());
+            1L,
+            author,
+            project,
+            "Reflection Content",
+            DateTimeTestUtils.defaultTestLocalDateTime());
 
     return new GetReflectionsResponse(CursorPaginationResponseSnippets.of(List.of(reflection)));
   }
@@ -41,6 +46,12 @@ public class GetReflectionsResponseSnippets {
             "reflections.nodes[].content.author",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Author User ID"),
             fieldWithPath(".name").type(JsonFieldType.STRING).description("Author Name"));
+
+    fields =
+        fields.andWithPrefix(
+            "reflections.nodes[].content.project",
+            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Project ID"),
+            fieldWithPath(".name").type(JsonFieldType.STRING).description("Project Name"));
 
     return responseFields(fields.getFieldDescriptors());
   }

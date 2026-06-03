@@ -928,8 +928,8 @@ paths:
                     :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
                     ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
                     ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
-                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }}]}}"
+                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
+                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
     post:
       tags:
       - reflection
@@ -1026,8 +1026,9 @@ paths:
               examples:
                 GetReflectionBySlug:
                   value: "{\"id\":1,\"slug\":\"test-slug\",\"author\":{\"id\":1,\"\
-                    name\":\"Author Name\"},\"content\":\"Reflection Content\",\"\
-                    likeCount\":1,\"commentCount\":1,\"bookmarked\":true}"
+                    name\":\"Author Name\"},\"project\":{\"id\":1,\"name\":\"Project\
+                    \ Name\"},\"content\":\"Reflection Content\",\"likeCount\":1,\"\
+                    commentCount\":1,\"bookmarked\":true}"
   /reflections/{reflectionId}/bookmarks:
     post:
       tags:
@@ -1360,8 +1361,8 @@ paths:
                     :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
                     ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
                     ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
-                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }}]}}"
+                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
+                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
 components:
   schemas:
     UploadMediaResponse:
@@ -1448,6 +1449,63 @@ components:
                   id:
                     type: number
                     description: Application ID
+    GetReflectionResponse:
+      title: GetReflectionResponse
+      required:
+      - author
+      - bookmarked
+      - commentCount
+      - content
+      - id
+      - likeCount
+      - project
+      - slug
+      type: object
+      properties:
+        bookmarked:
+          type: boolean
+          description: Whether the current user bookmarked this reflection
+        author:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Author Name
+            id:
+              type: number
+              description: Author User ID
+          description: Author Information
+        project:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Project Name
+            id:
+              type: number
+              description: Project ID
+          description: Project Information
+        likeCount:
+          type: number
+          description: Number of Likes
+        id:
+          type: number
+          description: Reflection ID
+        content:
+          type: string
+          description: Reflection Content
+        slug:
+          type: string
+          description: Reflection Slug
+        commentCount:
+          type: number
+          description: Number of Comments
     CreateJobPostingResponse:
       title: CreateJobPostingResponse
       required:
@@ -1646,82 +1704,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    GetReflectionsResponse:
-      title: GetReflectionsResponse
-      type: object
-      properties:
-        reflections:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - content
-                    - createdAt
-                    - id
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Creation Timestamp
-                      author:
-                        required:
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          id:
-                            type: number
-                            description: Author User ID
-                      id:
-                        type: number
-                        description: Reflection ID
-                      content:
-                        type: string
-                        description: Reflection Content
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     SearchProjectsResponse:
       title: SearchProjectsResponse
       required:
@@ -1845,6 +1827,94 @@ components:
                   title:
                     type: string
                     description: Occurrence Title
+    GetReflectionsResponse:
+      title: GetReflectionsResponse
+      type: object
+      properties:
+        reflections:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - content
+                    - createdAt
+                    - id
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Creation Timestamp
+                      author:
+                        required:
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          id:
+                            type: number
+                            description: Author User ID
+                      project:
+                        required:
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Project Name
+                          id:
+                            type: number
+                            description: Project ID
+                      id:
+                        type: number
+                        description: Reflection ID
+                      content:
+                        type: string
+                        description: Reflection Content
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     UpdateUserPreferencesRequest:
       title: UpdateUserPreferencesRequest
       type: object
@@ -2609,49 +2679,6 @@ components:
           type: number
           description: Parent comment ID
           nullable: true
-    GetReflectionResponse:
-      title: GetReflectionResponse
-      required:
-      - author
-      - bookmarked
-      - commentCount
-      - content
-      - id
-      - likeCount
-      - slug
-      type: object
-      properties:
-        bookmarked:
-          type: boolean
-          description: Whether the current user bookmarked this reflection
-        author:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Author Name
-            id:
-              type: number
-              description: Author User ID
-          description: Author Information
-        likeCount:
-          type: number
-          description: Number of Likes
-        id:
-          type: number
-          description: Reflection ID
-        content:
-          type: string
-          description: Reflection Content
-        slug:
-          type: string
-          description: Reflection Slug
-        commentCount:
-          type: number
-          description: Number of Comments
     GetReflectionActivitiesResponse:
       title: GetReflectionActivitiesResponse
       required:
