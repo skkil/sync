@@ -1,11 +1,14 @@
 package com.skkil.sync.project.controller;
 
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.project.constants.ProjectConstants;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
+import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.service.ProjectService;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +35,15 @@ public class ProjectController {
       @AuthenticationPrincipal @NotNull AuthenticatedUser user,
       @RequestBody CreateProjectRequest request) {
     return projectService.createProject(user.userId(), request);
+  }
+
+  @GetMapping("/projects/handles/availability")
+  @ResponseStatus(HttpStatus.OK)
+  public GetProjectHandleAvailabilityResponse getProjectHandleAvailability(
+      @RequestParam
+          @Size(min = ProjectConstants.MIN_HANDLE_LENGTH, max = ProjectConstants.MAX_HANDLE_LENGTH)
+          String handle) {
+    return projectService.isProjectHandleAvailable(handle);
   }
 
   @GetMapping("/search/projects")

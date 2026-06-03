@@ -18,10 +18,12 @@ import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
+import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.service.ProjectService;
 import com.skkil.sync.project.snippets.CreateProjectRequestSnippets;
 import com.skkil.sync.project.snippets.CreateProjectResponseSnippets;
+import com.skkil.sync.project.snippets.GetProjectHandleAvailabilityResponseSnippets;
 import com.skkil.sync.project.snippets.SearchProjectsResponseSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
@@ -80,6 +82,35 @@ class ProjectControllerTests {
                 Function.identity(),
                 CreateProjectRequestSnippets.getCreateProjectRequestFields(),
                 CreateProjectResponseSnippets.getCreateProjectResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getProjectHandleAvailability] API 문서화 테스트")
+  void getProjectHandleAvailability() throws Exception {
+    String handle = "my-project";
+
+    GetProjectHandleAvailabilityResponse response =
+        GetProjectHandleAvailabilityResponseSnippets.getGetProjectHandleAvailabilityResponse();
+
+    when(projectService.isProjectHandleAvailable(handle)).thenReturn(response);
+
+    mockMvc
+        .perform(get("/projects/handles/availability").queryParam("handle", handle))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetProjectHandleAvailability",
+                ResourceSnippetParameters.builder()
+                    .tag("project")
+                    .summary("Get Project Handle Availability")
+                    .description("프로젝트 핸들의 사용 가능 여부를 확인합니다.")
+                    .responseSchema(
+                        schema(GetProjectHandleAvailabilityResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                queryParameters(parameterWithName("handle").description("확인할 프로젝트 핸들")),
+                GetProjectHandleAvailabilityResponseSnippets.getResponseFields()));
   }
 
   @Test

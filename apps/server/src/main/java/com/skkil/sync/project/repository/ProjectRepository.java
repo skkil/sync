@@ -17,4 +17,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
   List<Project> searchProjects(String query);
 
   List<Project> findByTeammatesUserIdAndNameContainingIgnoreCase(Long userId, String query);
+
+  boolean existsByHandle(String handle);
 }
