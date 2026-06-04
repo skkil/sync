@@ -1,7 +1,7 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
 import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/project';
-import { getGetReflectionsByProjectQueryOptions } from '@/api/__generated__/reflection/reflection';
+import { getGetReflectionsByProjectInfiniteQueryOptions } from '@/api/__generated__/reflection/reflection';
 import { getQueryClient } from '@/lib/query';
 
 import ProjectOverview from './_components/ProjectOverview';
@@ -19,8 +19,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const queryClient = getQueryClient();
   await Promise.all([
     queryClient.prefetchQuery(getGetProjectByHandleQueryOptions(handle)),
-    queryClient.prefetchQuery(
-      getGetReflectionsByProjectQueryOptions(handle, { first: '10' }),
+    queryClient.prefetchInfiniteQuery(
+      getGetReflectionsByProjectInfiniteQueryOptions(handle, { first: '10' }),
     ),
   ]);
 

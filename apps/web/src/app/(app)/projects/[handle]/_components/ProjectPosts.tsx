@@ -1,11 +1,10 @@
 'use client';
 
-import { useQueries } from '@tanstack/react-query';
 import { useIntersectionObserver } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { getGetReflectionsByProjectQueryOptions } from '@/api/__generated__/reflection/reflection';
+import { useGetReflectionsByProjectInfinite } from '@/api/__generated__/reflection/reflection';
 import type { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__generated__/types';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,29 +19,30 @@ interface ProjectPostsProps {
 export default function ProjectPosts({ handle }: ProjectPostsProps) {
   const t = useTranslations('pages.project.posts');
 
-  const [afterCursors, setAfterCursors] = useState<(string | undefined)[]>([
-    undefined,
-  ]);
-
-  const results = useQueries({
-    queries: afterCursors.map((cursor) =>
-      getGetReflectionsByProjectQueryOptions(handle, {
-        first: PAGE_SIZE,
-        after: cursor,
-      }),
-    ),
-  });
-
-  const posts = results.flatMap(
-    (r) => r.data?.data.reflections?.nodes ?? [],
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending,
+    isError,
+  } = useGetReflectionsByProjectInfinite(
+    handle,
+    { first: PAGE_SIZE },
+    {
+      query: {
+        getNextPageParam: (lastPage) => {
+          const pageInfo = lastPage.data.reflections?.pageInfo;
+          return pageInfo?.hasNextPage
+            ? (pageInfo.endCursor ?? undefined)
+            : undefined;
+        },
+      },
+    },
   );
-  const lastResult = results[results.length - 1];
-  const pageInfo = lastResult?.data?.data.reflections?.pageInfo;
-  const hasNextPage = pageInfo?.hasNextPage ?? false;
-  const endCursor = pageInfo?.endCursor ?? undefined;
-  const isFetching = results.some((r) => r.isFetching);
-  const isError = results.some((r) => r.isError);
-  const isPending = results[0].isPending;
+
+  const posts =
+    data?.pages.flatMap((page) => page.data.reflections?.nodes ?? []) ?? [];
 
   const [ref, entry] = useIntersectionObserver({
     threshold: 0.2,
@@ -51,10 +51,10 @@ export default function ProjectPosts({ handle }: ProjectPostsProps) {
   });
 
   useEffect(() => {
-    if (entry?.isIntersecting && hasNextPage && !isFetching && endCursor) {
-      setAfterCursors((prev) => [...prev, endCursor]);
+    if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
-  }, [entry?.isIntersecting, hasNextPage, isFetching, endCursor]);
+  }, [entry?.isIntersecting, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
     <section className="space-y-3">
@@ -83,7 +83,7 @@ export default function ProjectPosts({ handle }: ProjectPostsProps) {
           </div>
 
           <div ref={ref} className="py-4">
-            {isFetching && (
+            {isFetchingNextPage && (
               <div className="flex justify-center">
                 <Spinner />
               </div>

@@ -310,6 +310,17 @@ export const getReflectionsByProject = async (
   );
 };
 
+export const getGetReflectionsByProjectInfiniteQueryKey = (
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+) => {
+  return [
+    'infinite',
+    `/projects/${handle}/reflections`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
 export const getGetReflectionsByProjectQueryKey = (
   handle: string,
   params?: GetReflectionsByProjectParams,
@@ -319,6 +330,202 @@ export const getGetReflectionsByProjectQueryKey = (
     ...(params ? [params] : []),
   ] as const;
 };
+
+export const getGetReflectionsByProjectInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflectionsByProject>>,
+    GetReflectionsByProjectParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsByProjectParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetReflectionsByProjectInfiniteQueryKey(handle, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getReflectionsByProject>>,
+    QueryKey,
+    GetReflectionsByProjectParams['after']
+  > = ({ signal, pageParam }) =>
+    getReflectionsByProject(
+      handle,
+      { ...params, after: pageParam || params?.['after'] },
+      { signal, ...requestOptions },
+    );
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!handle,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getReflectionsByProject>>,
+    TError,
+    TData,
+    QueryKey,
+    GetReflectionsByProjectParams['after']
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetReflectionsByProjectInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getReflectionsByProject>>
+>;
+export type GetReflectionsByProjectInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetReflectionsByProjectInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflectionsByProject>>,
+    GetReflectionsByProjectParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params: undefined | GetReflectionsByProjectParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsByProjectParams['after']
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionsByProject>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionsByProject>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionsByProjectInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflectionsByProject>>,
+    GetReflectionsByProjectParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsByProjectParams['after']
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionsByProject>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionsByProject>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionsByProjectInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflectionsByProject>>,
+    GetReflectionsByProjectParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsByProjectParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Reflections By Project
+ */
+
+export function useGetReflectionsByProjectInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getReflectionsByProject>>,
+    GetReflectionsByProjectParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData,
+        QueryKey,
+        GetReflectionsByProjectParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetReflectionsByProjectInfiniteQueryOptions(
+    handle,
+    params,
+    options,
+  );
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 export const getGetReflectionsByProjectQueryOptions = <
   TData = Awaited<ReturnType<typeof getReflectionsByProject>>,

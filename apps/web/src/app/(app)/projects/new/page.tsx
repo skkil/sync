@@ -68,13 +68,11 @@ export default function CreateProjectPage() {
   const isHandleQueryable =
     debouncedHandle.length >= 6 && HANDLE_REGEX.test(debouncedHandle);
 
-  const {
-    data: handleAvailability,
-    isFetching: isCheckingHandle,
-  } = useGetProjectHandleAvailability(
-    { handle: debouncedHandle },
-    { query: { enabled: isHandleQueryable } },
-  );
+  const { data: handleAvailability, isFetching: isCheckingHandle } =
+    useGetProjectHandleAvailability(
+      { handle: debouncedHandle },
+      { query: { enabled: isHandleQueryable } },
+    );
 
   useEffect(() => {
     if (!isHandleQueryable) return;
@@ -162,7 +160,11 @@ export default function CreateProjectPage() {
           <CardFooter className="flex justify-end">
             <Button
               type="submit"
-              disabled={isPending || isAvailabilityPending || handleAvailability?.data.available === false}
+              disabled={
+                isPending ||
+                isAvailabilityPending ||
+                handleAvailability?.data.available === false
+              }
             >
               {isPending ? t('form.submit.creating') : t('form.submit.label')}
             </Button>
