@@ -74,6 +74,21 @@ public class ReflectionQueryService {
     return new GetReflectionsResponse(reflections);
   }
 
+  @Transactional(readOnly = true)
+  public GetReflectionsResponse getReflectionsByProject(
+      String handle, CursorPaginationRequest pagination) {
+    var reflections =
+        paginationService
+            .paginate(
+                reflectionQueryRepository.getReflectionsByProject(handle),
+                paginationProvider,
+                pagination)
+            .map(reflectionMapper::toReflectionResponse)
+            .map(this::resolveImageUrls);
+
+    return new GetReflectionsResponse(reflections);
+  }
+
   private GetReflectionResponse resolveImageUrls(GetReflectionResponse reflection) {
     return new GetReflectionResponse(
         reflection.id(),

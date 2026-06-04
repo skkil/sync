@@ -135,4 +135,37 @@ class ReflectionQueryControllerTests {
                 CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
                 GetReflectionsResponseSnippets.getReflectionsResponseFields()));
   }
+
+  @Test
+  @DisplayName("[getReflectionsByProject] API 문서화 테스트")
+  void getReflectionsByProject() throws Exception {
+    String handle = "project";
+
+    CursorPaginationRequest pagination =
+        CursorPaginationRequestSnippets.getCursorPaginationRequest();
+    GetReflectionsResponse response = GetReflectionsResponseSnippets.getGetReflectionsResponse();
+
+    when(reflectionQueryService.getReflectionsByProject(handle, pagination)).thenReturn(response);
+
+    mockMvc
+        .perform(
+            get("/projects/{handle}/reflections", handle)
+                .queryParams(
+                    CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetReflectionsByProject",
+                ResourceSnippetParameters.builder()
+                    .tag("reflection")
+                    .summary("Get Reflections By Project")
+                    .description("Get Reflections By Project")
+                    .responseSchema(schema(GetReflectionsResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("handle").description("프로젝트 핸들")),
+                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
+                GetReflectionsResponseSnippets.getReflectionsResponseFields()));
+  }
 }

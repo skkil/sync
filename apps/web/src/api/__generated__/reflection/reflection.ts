@@ -32,6 +32,7 @@ import type {
   GetReflectionActivitiesParams,
   GetReflectionActivitiesResponse,
   GetReflectionResponse,
+  GetReflectionsByProjectParams,
   GetReflectionsParams,
   GetReflectionsResponse,
   GetUserReflectionsParams,
@@ -247,6 +248,224 @@ export function useGetReflectionActivities<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetReflectionActivitiesQueryOptions(
+    handle,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Get Reflections By Project
+ * @summary Get Reflections By Project
+ */
+export type getReflectionsByProjectResponse200 = {
+  data: GetReflectionsResponse;
+  status: 200;
+};
+
+export type getReflectionsByProjectResponseSuccess =
+  getReflectionsByProjectResponse200 & {
+    headers: Headers;
+  };
+export type getReflectionsByProjectResponse =
+  getReflectionsByProjectResponseSuccess;
+
+export const getGetReflectionsByProjectUrl = (
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/projects/${handle}/reflections?${stringifiedParams}`
+    : `/projects/${handle}/reflections`;
+};
+
+export const getReflectionsByProject = async (
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: RequestInit,
+): Promise<getReflectionsByProjectResponse> => {
+  return api<getReflectionsByProjectResponse>(
+    getGetReflectionsByProjectUrl(handle, params),
+    {
+      ...options,
+      method: 'GET',
+    },
+  );
+};
+
+export const getGetReflectionsByProjectQueryKey = (
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+) => {
+  return [
+    `/projects/${handle}/reflections`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetReflectionsByProjectQueryOptions = <
+  TData = Awaited<ReturnType<typeof getReflectionsByProject>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetReflectionsByProjectQueryKey(handle, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getReflectionsByProject>>
+  > = ({ signal }) =>
+    getReflectionsByProject(handle, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!handle,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getReflectionsByProject>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetReflectionsByProjectQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getReflectionsByProject>>
+>;
+export type GetReflectionsByProjectQueryError = ErrorType<unknown>;
+
+export function useGetReflectionsByProject<
+  TData = Awaited<ReturnType<typeof getReflectionsByProject>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params: undefined | GetReflectionsByProjectParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionsByProject>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionsByProject>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionsByProject<
+  TData = Awaited<ReturnType<typeof getReflectionsByProject>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReflectionsByProject>>,
+          TError,
+          Awaited<ReturnType<typeof getReflectionsByProject>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetReflectionsByProject<
+  TData = Awaited<ReturnType<typeof getReflectionsByProject>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Reflections By Project
+ */
+
+export function useGetReflectionsByProject<
+  TData = Awaited<ReturnType<typeof getReflectionsByProject>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  params?: GetReflectionsByProjectParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getReflectionsByProject>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetReflectionsByProjectQueryOptions(
     handle,
     params,
     options,

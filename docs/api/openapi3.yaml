@@ -833,6 +833,110 @@ paths:
               examples:
                 CreateProject:
                   value: "{\"handle\":\"my-project\"}"
+  /projects/{handle}:
+    get:
+      tags:
+      - project
+      summary: Get Project By Handle
+      description: 핸들로 프로젝트를 조회합니다.
+      operationId: GetProjectByHandle
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectResponse"
+              examples:
+                GetProjectByHandle:
+                  value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"teammates\"\
+                    :[{\"id\":1,\"isOwner\":true},{\"id\":2,\"isOwner\":false}]}"
+  /projects/handles/availability:
+    get:
+      tags:
+      - project
+      summary: Get Project Handle Availability
+      description: 프로젝트 핸들의 사용 가능 여부를 확인합니다.
+      operationId: GetProjectHandleAvailability
+      parameters:
+      - name: handle
+        in: query
+        description: 확인할 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectHandleAvailabilityResponse"
+              examples:
+                GetProjectHandleAvailability:
+                  value: "{\"available\":true}"
+  /projects/{handle}/reflections:
+    get:
+      tags:
+      - reflection
+      summary: Get Reflections By Project
+      description: Get Reflections By Project
+      operationId: GetReflectionsByProject
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetReflectionsResponse"
+              examples:
+                GetReflectionsByProject:
+                  value: "{\"reflections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
+                    },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
+                    \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
   /providers/my:
     get:
       tags:
@@ -1729,6 +1833,35 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
+    GetProjectResponse:
+      title: GetProjectResponse
+      required:
+      - handle
+      - name
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - id
+            - isOwner
+            type: object
+            properties:
+              isOwner:
+                type: boolean
+                description: 오너 여부
+              id:
+                type: number
+                description: 팀원 ID
+        name:
+          type: string
+          description: 프로젝트 이름
+        handle:
+          type: string
+          description: 프로젝트 핸들
     SearchProjectsResponse:
       title: SearchProjectsResponse
       required:
@@ -1772,6 +1905,15 @@ components:
           type: string
           description: 프로젝트 핸들
           nullable: true
+    GetProjectHandleAvailabilityResponse:
+      title: GetProjectHandleAvailabilityResponse
+      required:
+      - available
+      type: object
+      properties:
+        available:
+          type: boolean
+          description: 핸들 사용 가능 여부
     CreateJobApplicationResponse:
       title: CreateJobApplicationResponse
       required:

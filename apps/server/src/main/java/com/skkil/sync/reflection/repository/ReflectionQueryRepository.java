@@ -83,6 +83,13 @@ public class ReflectionQueryRepository {
     };
   }
 
+  public CursorPaginationDataFetcher<ReflectionDto> getReflectionsByProject(String handle) {
+    return (condition, orderFields, size) -> {
+      CursorPaginationDataFetcher<ReflectionDto> base = getReflections();
+      return base.fetch(condition.and(PROJECTS.HANDLE.eq(handle)), orderFields, size);
+    };
+  }
+
   public List<ReflectionDto> getReflectionsByIds(List<Long> ids) {
     if (ids.isEmpty()) {
       return List.of();
