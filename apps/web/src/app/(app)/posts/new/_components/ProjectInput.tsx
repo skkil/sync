@@ -128,11 +128,12 @@ export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
                   selectProject(project.id, project.name);
                 }}
                 className={cn(
-                  'w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-accent text-left transition-colors',
+                  'w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent text-left transition-colors',
                   projectId === project.id && 'opacity-50 cursor-not-allowed',
                 )}
               >
                 <span className="font-medium">{project.name}</span>
+                <span className="text-sm">@{project.handle}</span>
               </button>
             ))
           )}

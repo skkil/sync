@@ -12,12 +12,26 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
       """
       SELECT p
       FROM Project p
-      WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%'))
+      WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(p.handle) LIKE LOWER(CONCAT('%', :query, '%'))
       LIMIT 10
       """)
   List<Project> searchProjects(String query);
 
-  List<Project> findByTeammatesUserIdAndNameContainingIgnoreCase(Long userId, String query);
+  @Query(
+      """
+      SELECT p
+      FROM Project p
+      WHERE
+      (LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(p.handle) LIKE LOWER(CONCAT('%', :query, '%')))
+      AND EXISTS (
+       SELECT t
+       FROM Teammate t
+       WHERE
+       t.project = p AND t.user.id = :userId
+      )
+      LIMIT 10
+      """)
+  List<Project> searchMyProjects(Long userId, String query);
 
   Optional<Project> findByHandle(String handle);
 

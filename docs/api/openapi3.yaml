@@ -1299,8 +1299,9 @@ paths:
                 $ref: "#/components/schemas/SearchProjectsResponse"
               examples:
                 SearchProjects:
-                  value: "{\"projects\":[{\"id\":1,\"name\":\"Spring Boot 프로젝트\"},{\"\
-                    id\":2,\"name\":\"React 프로젝트\"}]}"
+                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
+                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
+                    ,\"name\":\"React 프로젝트\"}]}"
   /search/providers:
     get:
       tags:
@@ -1435,8 +1436,9 @@ paths:
                 $ref: "#/components/schemas/SearchProjectsResponse"
               examples:
                 SearchMyProjects:
-                  value: "{\"projects\":[{\"id\":1,\"name\":\"Spring Boot 프로젝트\"},{\"\
-                    id\":2,\"name\":\"React 프로젝트\"}]}"
+                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
+                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
+                    ,\"name\":\"React 프로젝트\"}]}"
   /users/{userId}/reflections:
     get:
       tags:
@@ -1862,27 +1864,6 @@ components:
         handle:
           type: string
           description: 프로젝트 핸들
-    SearchProjectsResponse:
-      title: SearchProjectsResponse
-      required:
-      - projects
-      type: object
-      properties:
-        projects:
-          type: array
-          description: 프로젝트 목록
-          items:
-            required:
-            - id
-            - name
-            type: object
-            properties:
-              name:
-                type: string
-                description: 프로젝트 이름
-              id:
-                type: number
-                description: 프로젝트 ID
     UploadJobApplicationFileRequest:
       title: UploadJobApplicationFileRequest
       required:
@@ -2837,6 +2818,31 @@ components:
               description:
                 type: string
                 description: 태그 설명
+    SearchProjectsResponse:
+      title: SearchProjectsResponse
+      required:
+      - projects
+      type: object
+      properties:
+        projects:
+          type: array
+          description: 프로젝트 목록
+          items:
+            required:
+            - handle
+            - id
+            - name
+            type: object
+            properties:
+              name:
+                type: string
+                description: 프로젝트 이름
+              handle:
+                type: string
+                description: 프로젝트 핸들
+              id:
+                type: number
+                description: 프로젝트 ID
     CreateCommentRequest:
       title: CreateCommentRequest
       required:

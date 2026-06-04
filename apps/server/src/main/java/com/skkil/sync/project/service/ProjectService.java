@@ -6,6 +6,7 @@ import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.exception.ProjectNotFoundException;
+import com.skkil.sync.project.mapper.ProjectMapper;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.model.Teammate;
 import com.skkil.sync.project.repository.ProjectRepository;
@@ -21,9 +22,15 @@ public class ProjectService {
 
   private final ProjectRepository projectRepository;
 
-  public ProjectService(UserDomainService userDomainService, ProjectRepository projectRepository) {
+  private final ProjectMapper projectMapper;
+
+  public ProjectService(
+      UserDomainService userDomainService,
+      ProjectRepository projectRepository,
+      ProjectMapper projectMapper) {
     this.userDomainService = userDomainService;
     this.projectRepository = projectRepository;
+    this.projectMapper = projectMapper;
   }
 
   @Transactional
@@ -62,8 +69,8 @@ public class ProjectService {
   @Transactional(readOnly = true)
   public SearchProjectsResponse searchMyProjects(Long userId, String query) {
     var projects =
-        projectRepository.findByTeammatesUserIdAndNameContainingIgnoreCase(userId, query).stream()
-            .map(project -> new SearchProjectsResponse.Project(project.getId(), project.getName()))
+        projectRepository.searchMyProjects(userId, query).stream()
+            .map(projectMapper::toSearchProjectsResponseProject)
             .toList();
 
     return new SearchProjectsResponse(projects);
@@ -73,7 +80,7 @@ public class ProjectService {
   public SearchProjectsResponse searchProjects(String query) {
     var projects =
         projectRepository.searchProjects(query).stream()
-            .map(project -> new SearchProjectsResponse.Project(project.getId(), project.getName()))
+            .map(projectMapper::toSearchProjectsResponseProject)
             .toList();
 
     return new SearchProjectsResponse(projects);
