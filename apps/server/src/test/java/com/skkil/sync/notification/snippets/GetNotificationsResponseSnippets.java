@@ -27,8 +27,7 @@ public class GetNotificationsResponseSnippets {
             Instant.parse("2026-01-01T00:00:00Z"),
             actor);
 
-    return new GetNotificationsResponse(
-        CursorPaginationResponseSnippets.of(List.of(notification)));
+    return new GetNotificationsResponse(CursorPaginationResponseSnippets.of(List.of(notification)));
   }
 
   public static ResponseFieldsSnippet getNotificationsResponseFields() {
@@ -57,10 +56,7 @@ public class GetNotificationsResponseSnippets {
                 .type(JsonFieldType.STRING)
                 .description("Actor handle")
                 .optional(),
-            fieldWithPath(".name")
-                .type(JsonFieldType.STRING)
-                .description("Actor name")
-                .optional());
+            fieldWithPath(".name").type(JsonFieldType.STRING).description("Actor name").optional());
 
     return responseFields(fields.getFieldDescriptors());
   }

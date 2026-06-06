@@ -4,15 +4,18 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
@@ -214,3 +217,211 @@ export function useGetNotifications<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Mark All Notifications As Read
+ * @summary Mark All Notifications As Read
+ */
+export type markAllNotificationsAsReadResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type markAllNotificationsAsReadResponseSuccess =
+  markAllNotificationsAsReadResponse204 & {
+    headers: Headers;
+  };
+export type markAllNotificationsAsReadResponse =
+  markAllNotificationsAsReadResponseSuccess;
+
+export const getMarkAllNotificationsAsReadUrl = () => {
+  return `/notifications/read-all`;
+};
+
+export const markAllNotificationsAsRead = async (
+  options?: RequestInit,
+): Promise<markAllNotificationsAsReadResponse> => {
+  return api<markAllNotificationsAsReadResponse>(
+    getMarkAllNotificationsAsReadUrl(),
+    {
+      ...options,
+      method: 'PATCH',
+    },
+  );
+};
+
+export const getMarkAllNotificationsAsReadMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markAllNotificationsAsRead>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof markAllNotificationsAsRead>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['markAllNotificationsAsRead'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof markAllNotificationsAsRead>>,
+    void
+  > = () => {
+    return markAllNotificationsAsRead(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MarkAllNotificationsAsReadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof markAllNotificationsAsRead>>
+>;
+
+export type MarkAllNotificationsAsReadMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Mark All Notifications As Read
+ */
+export const useMarkAllNotificationsAsRead = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof markAllNotificationsAsRead>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof markAllNotificationsAsRead>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(
+    getMarkAllNotificationsAsReadMutationOptions(options),
+    queryClient,
+  );
+};
+/**
+ * Mark Notification As Read
+ * @summary Mark Notification As Read
+ */
+export type markNotificationAsReadResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type markNotificationAsReadResponseSuccess =
+  markNotificationAsReadResponse204 & {
+    headers: Headers;
+  };
+export type markNotificationAsReadResponse =
+  markNotificationAsReadResponseSuccess;
+
+export const getMarkNotificationAsReadUrl = (notificationId: string) => {
+  return `/notifications/${notificationId}/read`;
+};
+
+export const markNotificationAsRead = async (
+  notificationId: string,
+  options?: RequestInit,
+): Promise<markNotificationAsReadResponse> => {
+  return api<markNotificationAsReadResponse>(
+    getMarkNotificationAsReadUrl(notificationId),
+    {
+      ...options,
+      method: 'PATCH',
+    },
+  );
+};
+
+export const getMarkNotificationAsReadMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markNotificationAsRead>>,
+    TError,
+    { notificationId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof markNotificationAsRead>>,
+  TError,
+  { notificationId: string },
+  TContext
+> => {
+  const mutationKey = ['markNotificationAsRead'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof markNotificationAsRead>>,
+    { notificationId: string }
+  > = (props) => {
+    const { notificationId } = props ?? {};
+
+    return markNotificationAsRead(notificationId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MarkNotificationAsReadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof markNotificationAsRead>>
+>;
+
+export type MarkNotificationAsReadMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Mark Notification As Read
+ */
+export const useMarkNotificationAsRead = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof markNotificationAsRead>>,
+      TError,
+      { notificationId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof markNotificationAsRead>>,
+  TError,
+  { notificationId: string },
+  TContext
+> => {
+  return useMutation(
+    getMarkNotificationAsReadMutationOptions(options),
+    queryClient,
+  );
+};

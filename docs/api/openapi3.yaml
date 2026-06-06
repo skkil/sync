@@ -400,7 +400,10 @@ paths:
                 $ref: "#/components/schemas/CreateJobPostingResponse"
               examples:
                 CreateJobPosting:
-                  value: "{\r\n  \"id\" : \"1\"\r\n}"
+                  value: |-
+                    {
+                      "id" : "1"
+                    }
   /companies/{companyId}/jobs/{postingId}:
     get:
       tags:
@@ -628,19 +631,36 @@ paths:
                 $ref: "#/components/schemas/GetFeedResponse"
               examples:
                 GetRecentFeed:
-                  value: "{\r\n  \"items\" : {\r\n    \"pageInfo\" : {\r\n      \"\
-                    size\" : 1,\r\n      \"hasNextPage\" : false,\r\n      \"hasPreviousPage\"\
-                    \ : false,\r\n      \"startCursor\" : \"start-cursor\",\r\n  \
-                    \    \"endCursor\" : \"end-cursor\"\r\n    },\r\n    \"nodes\"\
-                    \ : [ {\r\n      \"cursor\" : \"cursor\",\r\n      \"content\"\
-                    \ : {\r\n        \"id\" : 1,\r\n        \"slug\" : \"test-slug\"\
-                    ,\r\n        \"author\" : {\r\n          \"id\" : 1,\r\n     \
-                    \     \"handle\" : \"user_handle\",\r\n          \"name\" : \"\
-                    User Name\",\r\n          \"profileImageUrl\" : \"https://example.com/profile.jpg\"\
-                    \r\n        },\r\n        \"content\" : \"This is a feed item\
-                    \ content\",\r\n        \"likeCount\" : 10,\r\n        \"commentCount\"\
-                    \ : 5,\r\n        \"bookmarked\" : true,\r\n        \"createdAt\"\
-                    \ : \"2026-05-04T12:00:00\"\r\n      }\r\n    } ]\r\n  }\r\n}"
+                  value: |-
+                    {
+                      "items" : {
+                        "pageInfo" : {
+                          "size" : 1,
+                          "hasNextPage" : false,
+                          "hasPreviousPage" : false,
+                          "startCursor" : "start-cursor",
+                          "endCursor" : "end-cursor"
+                        },
+                        "nodes" : [ {
+                          "cursor" : "cursor",
+                          "content" : {
+                            "id" : 1,
+                            "slug" : "test-slug",
+                            "author" : {
+                              "id" : 1,
+                              "handle" : "user_handle",
+                              "name" : "User Name",
+                              "profileImageUrl" : "https://example.com/profile.jpg"
+                            },
+                            "content" : "This is a feed item content",
+                            "likeCount" : 10,
+                            "commentCount" : 5,
+                            "bookmarked" : true,
+                            "createdAt" : "2026-05-04T12:00:00"
+                          }
+                        } ]
+                      }
+                    }
   /jobs:
     get:
       tags:
@@ -701,8 +721,12 @@ paths:
                 $ref: "#/components/schemas/UploadMediaResponse"
               examples:
                 UploadMedia:
-                  value: "{\r\n  \"mediaId\" : 1,\r\n  \"uploadUrl\" : \"https://example.com/upload\"\
-                    ,\r\n  \"expiresAt\" : \"1970-01-01T00:00:00\"\r\n}"
+                  value: |-
+                    {
+                      "mediaId" : 1,
+                      "uploadUrl" : "https://example.com/upload",
+                      "expiresAt" : "1970-01-01T00:00:00"
+                    }
   /notifications:
     get:
       tags:
@@ -723,6 +747,12 @@ paths:
         required: false
         schema:
           type: string
+      - name: status
+        in: query
+        description: Notification status
+        required: false
+        schema:
+          type: string
       responses:
         "200":
           description: "200"
@@ -738,6 +768,33 @@ paths:
                     ,\"content\":{\"id\":1,\"type\":\"USER_FOLLOWED\",\"status\":\"\
                     UNREAD\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"actor\":{\"\
                     id\":1,\"handle\":\"follower\",\"name\":\"Follower User\"}}}]}}"
+  /notifications/read-all:
+    patch:
+      tags:
+      - notification
+      summary: Mark All Notifications As Read
+      description: Mark All Notifications As Read
+      operationId: MarkAllNotificationsAsRead
+      responses:
+        "204":
+          description: "204"
+  /notifications/{notificationId}/read:
+    patch:
+      tags:
+      - notification
+      summary: Mark Notification As Read
+      description: Mark Notification As Read
+      operationId: MarkNotificationAsRead
+      parameters:
+      - name: notificationId
+        in: path
+        description: Notification ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
   /preferences/me:
     get:
       tags:
@@ -1099,7 +1156,10 @@ paths:
                 $ref: "#/components/schemas/CreateReflectionResponse"
               examples:
                 CreateReflection:
-                  value: "{\r\n  \"slug\" : \"slug\"\r\n}"
+                  value: |-
+                    {
+                      "slug" : "slug"
+                    }
   /reflections/{reflectionId}:
     delete:
       tags:
@@ -1693,6 +1753,19 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
     GetProjectsResponse:
       title: GetProjectsResponse
       type: object
@@ -1757,19 +1830,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    LoginRequest:
-      title: LoginRequest
-      required:
-      - email
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: Password
-        email:
-          type: string
-          description: Email
     GetBookmarkedReflectionsResponse:
       title: GetBookmarkedReflectionsResponse
       type: object
@@ -2177,27 +2237,6 @@ components:
         mediaType:
           type: string
           description: Media Type
-    SearchReflectionsResponse:
-      title: SearchReflectionsResponse
-      required:
-      - reflections
-      type: object
-      properties:
-        reflections:
-          type: array
-          description: Reflection List
-          items:
-            required:
-            - content
-            - id
-            type: object
-            properties:
-              id:
-                type: number
-                description: Reflection ID
-              content:
-                type: string
-                description: Reflection Content
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -2254,6 +2293,27 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    SearchReflectionsResponse:
+      title: SearchReflectionsResponse
+      required:
+      - reflections
+      type: object
+      properties:
+        reflections:
+          type: array
+          description: Reflection List
+          items:
+            required:
+            - content
+            - id
+            type: object
+            properties:
+              id:
+                type: number
+                description: Reflection ID
+              content:
+                type: string
+                description: Reflection Content
     SearchResponse:
       title: SearchResponse
       required:
@@ -2887,6 +2947,44 @@ components:
         status:
           type: string
           description: Application Status
+    SearchTagsResponse:
+      title: SearchTagsResponse
+      required:
+      - tags
+      type: object
+      properties:
+        tags:
+          type: array
+          description: 태그 목록
+          items:
+            required:
+            - description
+            - name
+            - postCount
+            type: object
+            properties:
+              name:
+                type: string
+                description: 태그 이름
+              postCount:
+                type: number
+                description: 태그가 사용된 게시물 수
+              description:
+                type: string
+                description: 태그 설명
+    UpdateReflectionRequest:
+      title: UpdateReflectionRequest
+      required:
+      - content
+      type: object
+      properties:
+        experienceId:
+          type: number
+          description: Experience ID
+          nullable: true
+        content:
+          type: string
+          description: Content
     CreateReflectionRequest:
       title: CreateReflectionRequest
       required:
@@ -2920,44 +3018,6 @@ components:
             - type: boolean
             - type: string
             - type: number
-    UpdateReflectionRequest:
-      title: UpdateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        experienceId:
-          type: number
-          description: Experience ID
-          nullable: true
-        content:
-          type: string
-          description: Content
-    SearchTagsResponse:
-      title: SearchTagsResponse
-      required:
-      - tags
-      type: object
-      properties:
-        tags:
-          type: array
-          description: 태그 목록
-          items:
-            required:
-            - description
-            - name
-            - postCount
-            type: object
-            properties:
-              name:
-                type: string
-                description: 태그 이름
-              postCount:
-                type: number
-                description: 태그가 사용된 게시물 수
-              description:
-                type: string
-                description: 태그 설명
     CreateCommentRequest:
       title: CreateCommentRequest
       required:

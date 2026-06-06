@@ -14,4 +14,8 @@ export type GetNotificationsParams = {
    * Cursor notification ID
    */
   cursor?: string;
+  /**
+   * Notification status
+   */
+  status?: string;
 };

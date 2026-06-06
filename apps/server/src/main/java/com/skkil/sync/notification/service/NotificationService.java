@@ -1,7 +1,9 @@
 package com.skkil.sync.notification.service;
 
 import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
+import com.skkil.sync.notification.constant.NotificationStatus;
 import com.skkil.sync.notification.dto.response.GetNotificationsResponse;
+import com.skkil.sync.notification.exception.NotificationNotFoundException;
 import com.skkil.sync.notification.model.Notification;
 import com.skkil.sync.notification.repository.NotificationRepository;
 import com.skkil.sync.user.model.User;
@@ -21,10 +23,11 @@ public class NotificationService {
   }
 
   @Transactional(readOnly = true)
-  public GetNotificationsResponse getNotifications(Long userId, int size, Long cursor) {
+  public GetNotificationsResponse getNotifications(
+      Long userId, int size, Long cursor, @Nullable NotificationStatus status) {
     Pageable pageable = Pageable.ofSize(size);
 
-    var page = notificationRepository.findByUser(userId, pageable, cursor);
+    var page = notificationRepository.findByUser(userId, status, pageable, cursor);
     List<CursorPaginationResponse.Node<GetNotificationsResponse.Notification>> nodes =
         page.getContent().stream()
             .map(
@@ -43,6 +46,22 @@ public class NotificationService {
             .build();
 
     return new GetNotificationsResponse(new CursorPaginationResponse<>(pageInfo, nodes));
+  }
+
+  @Transactional
+  public void markAsRead(Long userId, Long notificationId) {
+    Notification notification =
+        notificationRepository
+            .findByIdAndUser_Id(notificationId, userId)
+            .orElseThrow(() -> new NotificationNotFoundException(notificationId));
+
+    notification.markAsRead();
+  }
+
+  @Transactional
+  public void markAllAsRead(Long userId) {
+    notificationRepository.updateStatusByUser(
+        userId, NotificationStatus.UNREAD, NotificationStatus.READ);
   }
 
   private GetNotificationsResponse.Notification toNotificationResponse(Notification notification) {

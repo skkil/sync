@@ -45,4 +45,8 @@ public class Notification extends BaseEntity {
     this.type = type;
     this.actor = actor;
   }
+
+  public void markAsRead() {
+    this.status = NotificationStatus.READ;
+  }
 }
