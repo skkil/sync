@@ -672,6 +672,74 @@ paths:
                       "uploadUrl" : "https://example.com/upload",
                       "expiresAt" : "1970-01-01T00:00:00"
                     }
+  /notifications:
+    get:
+      tags:
+      - notification
+      summary: Get Notifications
+      description: Get Notifications
+      operationId: GetNotifications
+      parameters:
+      - name: size
+        in: query
+        description: Page size
+        required: false
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        description: Cursor notification ID
+        required: false
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: Notification status
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetNotificationsResponse"
+              examples:
+                GetNotifications:
+                  value: "{\"notifications\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"id\":1,\"type\":\"USER_FOLLOWED\",\"status\":\"\
+                    UNREAD\",\"createdAt\":\"2026-01-01T00:00:00Z\",\"actor\":{\"\
+                    id\":1,\"handle\":\"follower\",\"name\":\"Follower User\"}}}]}}"
+  /notifications/read-all:
+    patch:
+      tags:
+      - notification
+      summary: Mark All Notifications As Read
+      description: Mark All Notifications As Read
+      operationId: MarkAllNotificationsAsRead
+      responses:
+        "204":
+          description: "204"
+  /notifications/{notificationId}/read:
+    patch:
+      tags:
+      - notification
+      summary: Mark Notification As Read
+      description: Mark Notification As Read
+      operationId: MarkNotificationAsRead
+      parameters:
+      - name: notificationId
+        in: path
+        description: Notification ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
   /preferences/me:
     get:
       tags:
@@ -1853,6 +1921,90 @@ components:
           type: string
           description: User theme preference
           nullable: true
+    GetNotificationsResponse:
+      title: GetNotificationsResponse
+      type: object
+      properties:
+        notifications:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - createdAt
+                    - id
+                    - status
+                    - type
+                    type: object
+                    properties:
+                      actor:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Actor name
+                            nullable: true
+                          handle:
+                            type: string
+                            description: Actor handle
+                            nullable: true
+                          id:
+                            type: number
+                            description: Actor user ID
+                            nullable: true
+                        description: Notification actor
+                      createdAt:
+                        type: string
+                        description: Creation timestamp
+                      id:
+                        type: number
+                        description: Notification ID
+                      type:
+                        type: string
+                        description: Notification type
+                      status:
+                        type: string
+                        description: Notification status
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     GetFeedResponse:
       title: GetFeedResponse
       type: object

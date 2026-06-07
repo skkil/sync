@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00025-add-actor-user-id-to-notifications
+      author: yooch
+      preConditions:
+        - and:
+            - tableExists:
+                tableName: notifications
+            - not:
+                columnExists:
+                  tableName: notifications
+                  columnName: actor_user_id
+      changes:
+        - addColumn:
+            tableName: notifications
+            columns:
+              - column:
+                  name: actor_user_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            baseTableName: notifications
+            baseColumnNames: actor_user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_notifications_actor_user_id_users_id
+            onDelete: SET NULL
+        - createIndex:
+            tableName: notifications
+            indexName: idx_notifications_actor_user_id
+            columns:
+              - column:
+                  name: actor_user_id

@@ -800,6 +800,43 @@
         }
       }
     },
+    "notifications": {
+      "title": "알림",
+      "description": "최근 알림 기록을 확인하고 읽음 상태를 관리하세요.",
+      "tabs": {
+        "all": "전체",
+        "unread": "안 읽음"
+      },
+      "actions": {
+        "mark-all-as-read": "모두 읽음",
+        "mark-as-read": "읽음",
+        "load-more": "더 불러오기",
+        "retry": "다시 시도"
+      },
+      "status": {
+        "UNREAD": "안 읽음"
+      },
+      "unknown-actor": "누군가",
+      "items": {
+        "USER_FOLLOWED": "{name}님이 회원님을 팔로우했습니다.",
+        "WELCOME": "sync에 오신 것을 환영합니다.",
+        "default": "새 알림이 있습니다."
+      },
+      "empty": {
+        "ALL": {
+          "title": "알림이 없습니다.",
+          "description": "새 알림이 생기면 이곳에 표시됩니다."
+        },
+        "UNREAD": {
+          "title": "읽지 않은 알림이 없습니다.",
+          "description": "새로 확인할 알림이 없습니다."
+        }
+      },
+      "error": {
+        "title": "알림을 불러오지 못했습니다.",
+        "description": "잠시 후 다시 시도해 주세요."
+      }
+    },
     "add-experience": {
       "title": {
         "EMPLOYMENT": "경력 추가",
@@ -909,6 +946,20 @@
         "jobs": "채용 공고",
         "team-building": "팀원 모집",
         "my-providers": "내가 관리하는 페이지"
+      },
+      "notifications": {
+        "label": "알림",
+        "title": "알림",
+        "empty": "새 알림이 없습니다.",
+        "error": "알림을 불러오지 못했습니다.",
+        "retry": "다시 시도",
+        "unknown-actor": "누군가",
+        "items": {
+          "USER_FOLLOWED": "{name}님이 회원님을 팔로우했습니다.",
+          "WELCOME": "sync에 오신 것을 환영합니다.",
+          "default": "새 알림이 있습니다."
+        },
+        "view-all": "전체 알림 보기"
       },
       "login": "로그인",
       "user": {

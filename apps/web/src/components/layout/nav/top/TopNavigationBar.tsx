@@ -10,6 +10,7 @@ import { useSession } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 
 import MobileNavigationMenu from './_components/MobileNavigationMenu';
+import NotificationDropdown from './_components/NotificationDropdown';
 import SearchBar from './_components/SearchBar';
 import UserAvatar from './_components/UserAvatar';
 
@@ -88,6 +89,7 @@ function TopNavigationBarDesktop({
           );
         })}
 
+        <NotificationDropdown />
         <UserAvatar />
       </div>
     </nav>
@@ -103,6 +105,7 @@ function TopNavigationBarMobile() {
 
       <div className="grow flex items-center gap-2">
         <SearchBar />
+        <NotificationDropdown />
         <MobileNavigationMenu />
       </div>
     </nav>
