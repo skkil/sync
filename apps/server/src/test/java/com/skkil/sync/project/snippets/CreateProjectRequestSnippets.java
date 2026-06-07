@@ -10,10 +10,12 @@ import org.springframework.restdocs.payload.RequestFieldsSnippet;
 public class CreateProjectRequestSnippets {
 
   public static CreateProjectRequest getCreateProjectRequest() {
-    return new CreateProjectRequest("새로운 프로젝트");
+    return new CreateProjectRequest("project-handle", "새로운 프로젝트");
   }
 
   public static RequestFieldsSnippet getCreateProjectRequestFields() {
-    return requestFields(fieldWithPath("name").type(JsonFieldType.STRING).description("프로젝트 이름"));
+    return requestFields(
+        fieldWithPath("handle").type(JsonFieldType.STRING).description("프로젝트 핸들"),
+        fieldWithPath("name").type(JsonFieldType.STRING).description("프로젝트 이름"));
   }
 }

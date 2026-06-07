@@ -3,16 +3,11 @@
 import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import { type KeyboardEvent, useRef, useState } from 'react';
-import { toast } from 'sonner';
 
-import {
-  useCreateProject,
-  useSearchProjects,
-} from '@/api/__generated__/project/project';
+import { useSearchMyProjects } from '@/api/__generated__/project/project';
 import { cn } from '@/lib/utils';
 
 const DEBOUNCE_MS = 300;
-const MIN_PROJECT_NAME_LENGTH = 6;
 
 interface ProjectInputProps {
   projectId: number | null;
@@ -32,7 +27,7 @@ export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
   const [focused, setFocused] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const { data, isFetching } = useSearchProjects(
+  const { data, isFetching } = useSearchMyProjects(
     { query: debouncedInput },
     {
       query: {
@@ -41,11 +36,8 @@ export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
     },
   );
 
-  const { mutate: createProject, isPending: isCreating } = useCreateProject();
-
   const suggestions = data?.data?.projects ?? [];
   const showDropdown = open && focused && input.trim().length > 0;
-  const canCreateProject = input.trim().length >= MIN_PROJECT_NAME_LENGTH;
 
   const isPending = input !== debouncedInput || isFetching;
 
@@ -54,25 +46,6 @@ export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
     onChange(id);
     setInput('');
     setOpen(false);
-  };
-
-  const handleCreateProject = () => {
-    if (!input.trim()) {
-      return;
-    }
-
-    createProject(
-      { data: { name: input.trim() } },
-      {
-        onSuccess: ({ data: { projectId } }) => {
-          selectProject(projectId, input.trim());
-          toast.success(t('created'));
-        },
-        onError: () => {
-          toast.error(t('create-error'));
-        },
-      },
-    );
   };
 
   const removeProject = () => {
@@ -137,30 +110,13 @@ export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
 
       {showDropdown && (
         <div className="absolute top-full left-0 right-0 z-50 mt-1 rounded-md border bg-popover shadow-md overflow-hidden min-h-10">
-          {isPending || isCreating ? (
+          {isPending ? (
             <div className="flex items-center justify-center px-3 py-3 text-sm text-muted-foreground">
-              {isCreating ? t('creating') : t('loading')}
+              {t('loading')}
             </div>
           ) : suggestions.length === 0 ? (
-            <div className="flex flex-col">
-              <div className="flex flex-col items-center justify-center px-3 py-3 text-sm text-muted-foreground">
-                <span>{t('not-found')}</span>
-
-                {canCreateProject && (
-                  <button
-                    type="button"
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      handleCreateProject();
-                    }}
-                    className="w-full flex items-center justify-center px-3 py-2 text-sm hover:underline text-left transition-colors"
-                  >
-                    <span className="font-medium text-primary">
-                      {t('create-new', { name: input.trim() })}
-                    </span>
-                  </button>
-                )}
-              </div>
+            <div className="flex flex-col items-center justify-center px-3 py-3 text-sm text-muted-foreground">
+              <span>{t('not-found')}</span>
             </div>
           ) : (
             suggestions.map((project) => (
@@ -172,11 +128,12 @@ export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
                   selectProject(project.id, project.name);
                 }}
                 className={cn(
-                  'w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-accent text-left transition-colors',
+                  'w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent text-left transition-colors',
                   projectId === project.id && 'opacity-50 cursor-not-allowed',
                 )}
               >
                 <span className="font-medium">{project.name}</span>
+                <span className="text-sm">@{project.handle}</span>
               </button>
             ))
           )}

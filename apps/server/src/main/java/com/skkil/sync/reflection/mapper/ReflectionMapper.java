@@ -12,13 +12,17 @@ public interface ReflectionMapper {
 
   @Mappings({
     @Mapping(target = "author.id", source = "authorId"),
-    @Mapping(target = "author.name", source = "authorName")
+    @Mapping(target = "author.name", source = "authorName"),
+    @Mapping(target = "project.id", source = "projectId"),
+    @Mapping(target = "project.name", source = "projectName")
   })
   GetReflectionResponse toGetReflectionResponse(ReflectionDto reflectionDto);
 
   @Mappings({
     @Mapping(target = "author.id", source = "authorId"),
-    @Mapping(target = "author.name", source = "authorName")
+    @Mapping(target = "author.name", source = "authorName"),
+    @Mapping(target = "project.id", source = "projectId"),
+    @Mapping(target = "project.name", source = "projectName")
   })
   GetReflectionsResponse.Reflection toReflectionResponse(ReflectionDto reflectionDto);
 }

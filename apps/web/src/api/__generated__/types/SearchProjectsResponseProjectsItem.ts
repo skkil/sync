@@ -8,6 +8,8 @@
 export type SearchProjectsResponseProjectsItem = {
   /** 프로젝트 이름 */
   name: string;
+  /** 프로젝트 핸들 */
+  handle: string;
   /** 프로젝트 ID */
   id: number;
 };

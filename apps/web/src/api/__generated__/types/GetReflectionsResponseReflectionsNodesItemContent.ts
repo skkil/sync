@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetReflectionsResponseReflectionsNodesItemContentAuthor } from './GetReflectionsResponseReflectionsNodesItemContentAuthor';
+import type { GetReflectionsResponseReflectionsNodesItemContentProject } from './GetReflectionsResponseReflectionsNodesItemContentProject';
 
 /**
  * Node Content
@@ -13,6 +14,7 @@ export type GetReflectionsResponseReflectionsNodesItemContent = {
   /** Creation Timestamp */
   createdAt: string;
   author?: GetReflectionsResponseReflectionsNodesItemContentAuthor;
+  project?: GetReflectionsResponseReflectionsNodesItemContentProject;
   /** Reflection ID */
   id: number;
   /** Reflection Content */

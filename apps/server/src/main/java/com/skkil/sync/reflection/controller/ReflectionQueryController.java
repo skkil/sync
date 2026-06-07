@@ -41,4 +41,11 @@ public class ReflectionQueryController {
       @PathVariable Long userId, @Validated CursorPaginationRequest pagination) {
     return reflectionQueryService.getUserReflections(userId, pagination);
   }
+
+  @GetMapping("/projects/{handle}/reflections")
+  @ResponseStatus(HttpStatus.OK)
+  public GetReflectionsResponse getReflectionsByProject(
+      @PathVariable String handle, @Validated CursorPaginationRequest pagination) {
+    return reflectionQueryService.getReflectionsByProject(handle, pagination);
+  }
 }

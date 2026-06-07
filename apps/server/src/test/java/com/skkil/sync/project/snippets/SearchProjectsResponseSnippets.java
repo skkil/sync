@@ -13,14 +13,15 @@ public class SearchProjectsResponseSnippets {
   public static SearchProjectsResponse getSearchProjectsResponse() {
     return new SearchProjectsResponse(
         List.of(
-            new SearchProjectsResponse.Project(1L, "Spring Boot 프로젝트"),
-            new SearchProjectsResponse.Project(2L, "React 프로젝트")));
+            new SearchProjectsResponse.Project(1L, "spring-boot-project", "Spring Boot 프로젝트"),
+            new SearchProjectsResponse.Project(2L, "react-project", "React 프로젝트")));
   }
 
   public static ResponseFieldsSnippet getSearchProjectsResponseFields() {
     return responseFields(
         fieldWithPath("projects").type(JsonFieldType.ARRAY).description("프로젝트 목록"),
         fieldWithPath("projects[].id").type(JsonFieldType.NUMBER).description("프로젝트 ID"),
+        fieldWithPath("projects[].handle").type(JsonFieldType.STRING).description("프로젝트 핸들"),
         fieldWithPath("projects[].name").type(JsonFieldType.STRING).description("프로젝트 이름"));
   }
 }

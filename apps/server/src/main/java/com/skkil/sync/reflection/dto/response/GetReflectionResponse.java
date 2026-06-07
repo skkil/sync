@@ -7,6 +7,7 @@ public record GetReflectionResponse(
     Long id,
     String slug,
     Author author,
+    Project project,
     String content,
     Long likeCount,
     Long commentCount,
@@ -14,4 +15,7 @@ public record GetReflectionResponse(
 
   @Builder
   public static record Author(Long id, String name) {}
+
+  @Builder
+  public static record Project(Long id, String name) {}
 }

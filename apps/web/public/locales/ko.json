@@ -9,6 +9,103 @@
         }
       }
     },
+    "projects": {
+      "my": {
+        "link": "내 프로젝트"
+      },
+      "new": {
+        "link": "새 프로젝트 만들기",
+        "title": "만들고자 하는 프로젝트에 대해 알려주세요",
+        "form": {
+          "name": {
+            "label": "이름",
+            "placeholder": "프로젝트 이름을 입력하세요"
+          },
+          "handle": {
+            "label": "핸들",
+            "placeholder": "프로젝트 핸들을 입력하세요 (예: my-project)"
+          },
+          "description": {
+            "label": "설명",
+            "placeholder": "프로젝트에 대한 간단한 설명을 입력하세요"
+          },
+          "submit": {
+            "label": "프로젝트 만들기",
+            "creating": "프로젝트 생성 중...",
+            "success": "프로젝트가 성공적으로 생성되었습니다.",
+            "error": "프로젝트 생성에 실패했습니다."
+          },
+          "errors": {
+            "required_name": "이름은 필수 항목입니다.",
+            "required_description": "설명은 필수 항목입니다.",
+            "handle_min_length": "핸들은 최소 {length}자 이상이어야 합니다.",
+            "handle_max_length": "핸들은 최대 {length}자 이하여야 합니다.",
+            "handle_invalid_characters": "핸들에는 영문자, 숫자, 밑줄만 사용할 수 있습니다.",
+            "handle_in_use": "이미 사용 중인 핸들입니다."
+          }
+        }
+      },
+      "project": {
+        "not-found": {
+          "title": "프로젝트를 찾을 수 없습니다",
+          "description": "요청하신 프로젝트가 존재하지 않거나 삭제되었습니다.",
+          "back": "홈으로 돌아가기"
+        },
+        "overview": {
+          "handle": "핸들",
+          "teammates": "팀원",
+          "loading": "프로젝트를 불러오는 중...",
+          "owner": "소유자"
+        },
+        "posts": {
+          "label": "게시물",
+          "list": {
+            "empty": "게시물이 없습니다.",
+            "end": "게시물이 더 이상 없습니다.",
+            "error": "게시물을 불러오는 중 오류가 발생했습니다."
+          }
+        },
+        "about": {
+          "label": "소개"
+        },
+        "team-building": {
+          "label": "팀 빌딩",
+          "list": {
+            "title": "제목",
+            "empty": "팀 빌딩 공고가 없습니다.",
+            "load-more": "더 불러오기",
+            "loading": "팀 빌딩 공고를 불러오는 중..."
+          }
+        },
+        "admin": {
+          "about": {
+            "label": "소개"
+          },
+          "team-building": {
+            "label": "팀 빌딩",
+            "form": {
+              "label": "새로운 팀 빌딩 공고 작성하기",
+              "title": "팀 빌딩 공고 작성",
+              "form-description": "팀 빌딩 공고에 대한 정보를 입력하세요",
+              "post-title": {
+                "label": "제목",
+                "placeholder": "팀 빌딩 공고 제목을 입력하세요"
+              },
+              "content": {
+                "label": "설명",
+                "placeholder": "팀 빌딩 공고에 대한 자세한 설명을 입력하세요"
+              },
+              "submit": {
+                "label": "공고 작성"
+              },
+              "errors": {
+                "required-title": "제목은 필수 항목입니다."
+              }
+            }
+          }
+        }
+      }
+    },
     "jobs": {
       "postings": {
         "not-found": "채용 공고를 찾을 수 없습니다.",
@@ -91,60 +188,6 @@
         }
       }
     },
-    "create-company": {
-      "title": "만들고자 하는 회사에 대해 알려주세요",
-      "form": {
-        "name": {
-          "label": "이름",
-          "placeholder": "회사 이름을 입력하세요"
-        },
-        "description": {
-          "label": "설명",
-          "placeholder": "회사에 대한 간단한 설명을 입력하세요"
-        },
-        "industry": {
-          "label": "산업",
-          "placeholder": "회사가 속한 산업을 입력하세요"
-        },
-        "submit": {
-          "label": "회사 만들기"
-        }
-      },
-      "errors": {
-        "required_name": "이름은 필수 항목입니다.",
-        "required_description": "설명은 필수 항목입니다.",
-        "required_industry": "산업은 필수 항목입니다."
-      }
-    },
-    "create-school": {
-      "title": "만들고자 하는 학교에 대해 알려주세요",
-      "form": {
-        "name": {
-          "label": "이름",
-          "placeholder": "학교 이름을 입력하세요"
-        },
-        "description": {
-          "label": "설명",
-          "placeholder": "학교에 대한 간단한 설명을 입력하세요"
-        },
-        "school-type": {
-          "label": "학교 유형",
-          "placeholder": "학교 유형을 선택하세요",
-          "types": {
-            "UNIVERSITY": "대학교",
-            "HIGH_SCHOOL": "고등학교"
-          }
-        },
-        "submit": {
-          "label": "학교 만들기"
-        }
-      },
-      "errors": {
-        "required_name": "이름은 필수 항목입니다.",
-        "required_description": "설명은 필수 항목입니다.",
-        "required_school_type": "학교 유형은 필수 항목입니다."
-      }
-    },
     "contest": {
       "about": {
         "label": "소개"
@@ -160,128 +203,7 @@
         },
         "details": {
           "back-to-occurrences": "회차 목록으로 돌아가기"
-        },
-        "create-occurrence": {
-          "label": "새 회차 만들기",
-          "title": "회차 만들기",
-          "description": "이 대회에 대한 새로운 회차를 작성하세요",
-          "form": {
-            "title": {
-              "label": "제목",
-              "placeholder": "회차 제목을 입력하세요"
-            },
-            "description": {
-              "label": "설명",
-              "placeholder": "회차에 대한 자세한 설명을 입력하세요"
-            },
-            "startDate": {
-              "label": "시작 날짜",
-              "placeholder": "회차 시작 날짜를 입력하세요"
-            },
-            "endDate": {
-              "label": "종료 날짜",
-              "placeholder": "회차 종료 날짜를 입력하세요"
-            },
-            "submit": {
-              "label": "회차 만들기"
-            },
-            "errors": {
-              "required-title": "제목은 필수 항목입니다.",
-              "required-startDate": "시작 날짜는 필수 항목입니다.",
-              "required-endDate": "종료 날짜는 필수 항목입니다.",
-              "invalid-date-range": "종료 날짜는 시작 날짜 이후여야 합니다."
-            }
-          },
-          "messages": {
-            "success": "회차가 성공적으로 생성되었습니다.",
-            "error": "회차 생성에 실패했습니다. 나중에 다시 시도하세요"
-          }
         }
-      }
-    },
-    "create-contest": {
-      "title": "만들고자 하는 대회에 대해 알려주세요",
-      "form": {
-        "name": {
-          "label": "이름",
-          "placeholder": "대회 이름을 입력하세요"
-        },
-        "description": {
-          "label": "설명",
-          "placeholder": "대회에 대한 간단한 설명을 입력하세요"
-        },
-        "host": {
-          "label": "주최 기관",
-          "placeholder": "대회를 주최하는 기관을 입력하세요"
-        },
-        "submit": {
-          "label": "대회 만들기"
-        }
-      },
-      "errors": {
-        "required_name": "이름은 필수 항목입니다.",
-        "required_description": "설명은 필수 항목입니다."
-      }
-    },
-    "project": {
-      "about": {
-        "label": "소개"
-      },
-      "team-building": {
-        "label": "팀 빌딩",
-        "list": {
-          "title": "제목",
-          "empty": "팀 빌딩 공고가 없습니다.",
-          "load-more": "더 불러오기",
-          "loading": "팀 빌딩 공고를 불러오는 중..."
-        }
-      },
-      "admin": {
-        "about": {
-          "label": "소개"
-        },
-        "team-building": {
-          "label": "팀 빌딩",
-          "form": {
-            "label": "새로운 팀 빌딩 공고 작성하기",
-            "title": "팀 빌딩 공고 작성",
-            "form-description": "팀 빌딩 공고에 대한 정보를 입력하세요",
-            "post-title": {
-              "label": "제목",
-              "placeholder": "팀 빌딩 공고 제목을 입력하세요"
-            },
-            "content": {
-              "label": "설명",
-              "placeholder": "팀 빌딩 공고에 대한 자세한 설명을 입력하세요"
-            },
-            "submit": {
-              "label": "공고 작성"
-            },
-            "errors": {
-              "required-title": "제목은 필수 항목입니다."
-            }
-          }
-        }
-      }
-    },
-    "create-project": {
-      "title": "만들고자 하는 프로젝트에 대해 알려주세요",
-      "form": {
-        "name": {
-          "label": "이름",
-          "placeholder": "프로젝트 이름을 입력하세요"
-        },
-        "description": {
-          "label": "설명",
-          "placeholder": "프로젝트에 대한 간단한 설명을 입력하세요"
-        },
-        "submit": {
-          "label": "프로젝트 만들기"
-        }
-      },
-      "errors": {
-        "required_name": "이름은 필수 항목입니다.",
-        "required_description": "설명은 필수 항목입니다."
       }
     },
     "trending-projects": {
@@ -905,10 +827,9 @@
         "placeholder": "검색..."
       },
       "menu": {
-        "bookmarks": "저장한 포스트",
-        "jobs": "채용 공고",
-        "team-building": "팀원 모집",
-        "my-providers": "내가 관리하는 페이지"
+        "bookmarks": "북마크",
+        "projects": "프로젝트",
+        "messages": "메시지"
       },
       "login": "로그인",
       "user": {

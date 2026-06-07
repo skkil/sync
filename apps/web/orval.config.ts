@@ -84,6 +84,11 @@ export default defineConfig({
               useInfinite: true,
             },
           },
+          GetReflectionsByProject: {
+            query: {
+              useInfinite: true,
+            },
+          },
         },
       },
     },

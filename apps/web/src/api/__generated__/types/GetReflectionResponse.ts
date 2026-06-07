@@ -5,12 +5,15 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetReflectionResponseAuthor } from './GetReflectionResponseAuthor';
+import type { GetReflectionResponseProject } from './GetReflectionResponseProject';
 
 export interface GetReflectionResponse {
   /** Whether the current user bookmarked this reflection */
   bookmarked: boolean;
   /** Author Information */
   author: GetReflectionResponseAuthor;
+  /** Project Information */
+  project: GetReflectionResponseProject;
   /** Number of Likes */
   likeCount: number;
   /** Reflection ID */

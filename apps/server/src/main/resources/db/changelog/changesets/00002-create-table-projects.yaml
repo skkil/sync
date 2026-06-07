@@ -29,6 +29,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: handle
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
                   name: name
                   type: VARCHAR(255)
                   constraints:

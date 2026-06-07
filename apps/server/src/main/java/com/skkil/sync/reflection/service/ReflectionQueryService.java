@@ -74,11 +74,27 @@ public class ReflectionQueryService {
     return new GetReflectionsResponse(reflections);
   }
 
+  @Transactional(readOnly = true)
+  public GetReflectionsResponse getReflectionsByProject(
+      String handle, CursorPaginationRequest pagination) {
+    var reflections =
+        paginationService
+            .paginate(
+                reflectionQueryRepository.getReflectionsByProject(handle),
+                paginationProvider,
+                pagination)
+            .map(reflectionMapper::toReflectionResponse)
+            .map(this::resolveImageUrls);
+
+    return new GetReflectionsResponse(reflections);
+  }
+
   private GetReflectionResponse resolveImageUrls(GetReflectionResponse reflection) {
     return new GetReflectionResponse(
         reflection.id(),
         reflection.slug(),
         reflection.author(),
+        reflection.project(),
         contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
         reflection.likeCount(),
         reflection.commentCount(),
@@ -90,6 +106,7 @@ public class ReflectionQueryService {
     return new GetReflectionsResponse.Reflection(
         reflection.id(),
         reflection.author(),
+        reflection.project(),
         contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
         reflection.createdAt());
   }
