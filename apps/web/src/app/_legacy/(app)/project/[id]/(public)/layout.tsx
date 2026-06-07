@@ -17,7 +17,7 @@ export default async function ProjectLayout({
   params,
 }: ProjectLayoutProps) {
   const { id } = await params;
-  const t = await getTranslations('pages.project');
+  const t = await getTranslations('pages.projects.project');
 
   const tabs: {
     id: string;

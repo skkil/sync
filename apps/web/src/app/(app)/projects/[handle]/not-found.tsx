@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/empty';
 
 export default async function ProjectNotFound() {
-  const t = await getTranslations('pages.project.not-found');
+  const t = await getTranslations('pages.projects.project.not-found');
 
   return (
     <div className="flex w-full items-center justify-center">

@@ -30,7 +30,7 @@ public class Project extends BaseEntity {
 
   @Builder
   public Project(String handle, String name) {
-    this.handle = handle == null ? Slugify.slugify(handle) : handle.trim();
+    this.handle = handle == null ? Slugify.slugify(name) : handle.trim();
     this.name = name;
   }
 

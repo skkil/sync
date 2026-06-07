@@ -14,7 +14,7 @@ interface ProjectOverviewProps {
 }
 
 export default function ProjectOverview({ handle }: ProjectOverviewProps) {
-  const t = useTranslations('pages.project.overview');
+  const t = useTranslations('pages.projects.project.overview');
 
   const { data: project, isError, error } = useGetProjectByHandle(handle);
 
@@ -52,7 +52,7 @@ export default function ProjectOverview({ handle }: ProjectOverviewProps) {
                 #{teammate.id}
                 {teammate.id === owner?.id && (
                   <span className="ml-2 text-xs font-medium text-primary">
-                    owner
+                    {t('owner')}
                   </span>
                 )}
               </li>

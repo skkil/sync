@@ -44,6 +44,66 @@
             "handle_in_use": "이미 사용 중인 핸들입니다."
           }
         }
+      },
+      "project": {
+        "not-found": {
+          "title": "프로젝트를 찾을 수 없습니다",
+          "description": "요청하신 프로젝트가 존재하지 않거나 삭제되었습니다.",
+          "back": "홈으로 돌아가기"
+        },
+        "overview": {
+          "handle": "핸들",
+          "teammates": "팀원",
+          "loading": "프로젝트를 불러오는 중...",
+          "owner": "소유자"
+        },
+        "posts": {
+          "label": "게시물",
+          "list": {
+            "empty": "게시물이 없습니다.",
+            "end": "게시물이 더 이상 없습니다.",
+            "error": "게시물을 불러오는 중 오류가 발생했습니다."
+          }
+        },
+        "about": {
+          "label": "소개"
+        },
+        "team-building": {
+          "label": "팀 빌딩",
+          "list": {
+            "title": "제목",
+            "empty": "팀 빌딩 공고가 없습니다.",
+            "load-more": "더 불러오기",
+            "loading": "팀 빌딩 공고를 불러오는 중..."
+          }
+        },
+        "admin": {
+          "about": {
+            "label": "소개"
+          },
+          "team-building": {
+            "label": "팀 빌딩",
+            "form": {
+              "label": "새로운 팀 빌딩 공고 작성하기",
+              "title": "팀 빌딩 공고 작성",
+              "form-description": "팀 빌딩 공고에 대한 정보를 입력하세요",
+              "post-title": {
+                "label": "제목",
+                "placeholder": "팀 빌딩 공고 제목을 입력하세요"
+              },
+              "content": {
+                "label": "설명",
+                "placeholder": "팀 빌딩 공고에 대한 자세한 설명을 입력하세요"
+              },
+              "submit": {
+                "label": "공고 작성"
+              },
+              "errors": {
+                "required-title": "제목은 필수 항목입니다."
+              }
+            }
+          }
+        }
       }
     },
     "jobs": {
@@ -143,65 +203,6 @@
         },
         "details": {
           "back-to-occurrences": "회차 목록으로 돌아가기"
-        }
-      }
-    },
-    "project": {
-      "not-found": {
-        "title": "프로젝트를 찾을 수 없습니다",
-        "description": "요청하신 프로젝트가 존재하지 않거나 삭제되었습니다.",
-        "back": "홈으로 돌아가기"
-      },
-      "overview": {
-        "handle": "핸들",
-        "teammates": "팀원",
-        "loading": "프로젝트를 불러오는 중..."
-      },
-      "posts": {
-        "label": "게시물",
-        "list": {
-          "empty": "게시물이 없습니다.",
-          "end": "게시물이 더 이상 없습니다.",
-          "error": "게시물을 불러오는 중 오류가 발생했습니다."
-        }
-      },
-      "about": {
-        "label": "소개"
-      },
-      "team-building": {
-        "label": "팀 빌딩",
-        "list": {
-          "title": "제목",
-          "empty": "팀 빌딩 공고가 없습니다.",
-          "load-more": "더 불러오기",
-          "loading": "팀 빌딩 공고를 불러오는 중..."
-        }
-      },
-      "admin": {
-        "about": {
-          "label": "소개"
-        },
-        "team-building": {
-          "label": "팀 빌딩",
-          "form": {
-            "label": "새로운 팀 빌딩 공고 작성하기",
-            "title": "팀 빌딩 공고 작성",
-            "form-description": "팀 빌딩 공고에 대한 정보를 입력하세요",
-            "post-title": {
-              "label": "제목",
-              "placeholder": "팀 빌딩 공고 제목을 입력하세요"
-            },
-            "content": {
-              "label": "설명",
-              "placeholder": "팀 빌딩 공고에 대한 자세한 설명을 입력하세요"
-            },
-            "submit": {
-              "label": "공고 작성"
-            },
-            "errors": {
-              "required-title": "제목은 필수 항목입니다."
-            }
-          }
         }
       }
     },

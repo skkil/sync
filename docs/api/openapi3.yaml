@@ -1873,19 +1873,6 @@ components:
         fileId:
           type: number
           description: File ID
-    CreateProjectRequest:
-      title: CreateProjectRequest
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-          description: 프로젝트 이름
-        handle:
-          type: string
-          description: 프로젝트 핸들
-          nullable: true
     GetProjectHandleAvailabilityResponse:
       title: GetProjectHandleAvailabilityResponse
       required:
@@ -2793,6 +2780,19 @@ components:
         status:
           type: string
           description: Application Status
+    CreateProjectRequest:
+      title: CreateProjectRequest
+      required:
+      - handle
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 프로젝트 이름
+        handle:
+          type: string
+          description: 프로젝트 핸들
     SearchTagsResponse:
       title: SearchTagsResponse
       required:

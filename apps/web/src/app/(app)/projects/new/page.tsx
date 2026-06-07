@@ -44,7 +44,7 @@ export default function CreateProjectPage() {
       .string()
       .min(6, { message: t('form.errors.handle_min_length', { length: 6 }) })
       .max(30, { message: t('form.errors.handle_max_length', { length: 30 }) })
-      .regex(/^[a-zA-Z0-9_]+$/, {
+      .regex(/^[a-zA-Z0-9_-]+$/, {
         message: t('form.errors.handle_invalid_characters'),
       }),
   });

@@ -15,7 +15,7 @@ public class CreateProjectRequestSnippets {
 
   public static RequestFieldsSnippet getCreateProjectRequestFields() {
     return requestFields(
-        fieldWithPath("handle").type(JsonFieldType.STRING).description("프로젝트 핸들").optional(),
+        fieldWithPath("handle").type(JsonFieldType.STRING).description("프로젝트 핸들"),
         fieldWithPath("name").type(JsonFieldType.STRING).description("프로젝트 이름"));
   }
 }

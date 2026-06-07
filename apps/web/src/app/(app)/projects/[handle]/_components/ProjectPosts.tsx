@@ -17,7 +17,7 @@ interface ProjectPostsProps {
 }
 
 export default function ProjectPosts({ handle }: ProjectPostsProps) {
-  const t = useTranslations('pages.project.posts');
+  const t = useTranslations('pages.projects.project.posts');
 
   const {
     data,
