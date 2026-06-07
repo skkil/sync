@@ -613,7 +613,9 @@ function FollowButton({ handle }: FollowButtonProps) {
   const { data: profile, isPending } = useGetProfileByHandle(handle);
 
   const invalidateProfile = () => {
-    void queryClient.invalidateQueries(getGetProfileByHandleQueryOptions(handle));
+    void queryClient.invalidateQueries(
+      getGetProfileByHandleQueryOptions(handle),
+    );
   };
 
   const { mutate: followUser, isPending: isFollowPending } =

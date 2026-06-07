@@ -43,3 +43,5 @@ export function getTemplates(locale: string): LocalizedTemplate[] {
     content: JSON.parse(template.content[locale]!) as JSON,
   }));
 }
+
+export type { LocalizedTemplate };

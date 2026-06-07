@@ -135,38 +135,4 @@ class ReflectionQueryControllerTests {
                 CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
                 GetReflectionsResponseSnippets.getReflectionsResponseFields()));
   }
-
-  @Test
-  @DisplayName("[getProjectExperienceReflections] API 문서화 테스트")
-  void getProjectExperienceReflections() throws Exception {
-    Long projectExperienceId = 1L;
-    CursorPaginationRequest pagination =
-        CursorPaginationRequestSnippets.getCursorPaginationRequest();
-    GetReflectionsResponse response = GetReflectionsResponseSnippets.getGetReflectionsResponse();
-
-    when(reflectionQueryService.getProjectExperienceReflections(projectExperienceId, pagination))
-        .thenReturn(response);
-
-    mockMvc
-        .perform(
-            get("/experiences/project/{experienceId}/reflections", projectExperienceId)
-                .queryParams(
-                    CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
-        .andExpect(status().isOk())
-        .andDo(
-            document(
-                "GetProjectExperienceReflections",
-                ResourceSnippetParameters.builder()
-                    .tag("reflection")
-                    .summary("Get Reflections")
-                    .description("Get Reflections")
-                    .responseSchema(schema("GetReflectionsResponse")),
-                null,
-                null,
-                Function.identity(),
-                pathParameters(
-                    parameterWithName("experienceId").description("Project Experience ID")),
-                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
-                GetReflectionsResponseSnippets.getReflectionsResponseFields()));
-  }
 }

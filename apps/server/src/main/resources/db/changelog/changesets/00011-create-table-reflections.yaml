@@ -7,7 +7,7 @@ databaseChangeLog:
             - tableExists:
                 tableName: users
             - tableExists:
-                tableName: project_experiences
+                tableName: projects
             - not:
                 tableExists:
                   tableName: reflections
@@ -41,7 +41,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: project_experience_id
+                  name: project_id
                   type: BIGINT
               - column:
                   name: title
@@ -58,8 +58,8 @@ databaseChangeLog:
             onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: reflections
-            baseColumnNames: project_experience_id
-            referencedTableName: project_experiences
+            baseColumnNames: project_id
+            referencedTableName: projects
             referencedColumnNames: id
-            constraintName: fk_reflections_project_experience_id
+            constraintName: fk_reflections_project_id
             onDelete: SET NULL

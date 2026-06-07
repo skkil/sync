@@ -7,10 +7,10 @@
 
 export interface UpdateReflectionRequest {
   /**
-   * Experience ID
+   * Project ID
    * @nullable
    */
-  experienceId?: number | null;
+  projectId?: number | null;
   /** Content */
   content: string;
 }

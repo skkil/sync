@@ -7,8 +7,8 @@ import {
   WarningCircleIcon,
 } from '@phosphor-icons/react';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import {
@@ -53,7 +53,9 @@ export default function Notifications() {
       }),
     getNextPageParam: (lastPage) => {
       const pageInfo = lastPage.data.notifications?.pageInfo;
-      return pageInfo?.hasNextPage ? pageInfo.endCursor || undefined : undefined;
+      return pageInfo?.hasNextPage
+        ? pageInfo.endCursor || undefined
+        : undefined;
     },
   });
 

@@ -9,7 +9,6 @@ import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.provider.company.model.Company;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.contest.model.Contest;
-import com.skkil.sync.provider.project.model.Project;
 import com.skkil.sync.provider.service.ProviderService;
 import com.skkil.sync.search.dto.response.SearchResponse;
 import com.skkil.sync.search.enums.SearchType;
@@ -60,7 +59,6 @@ class SearchServiceTests {
     assertThat(response.count().schoolCount()).isEqualTo(4L);
     assertThat(response.count().companyCount()).isEqualTo(3L);
     assertThat(response.count().contestCount()).isEqualTo(2L);
-    assertThat(response.count().projectCount()).isEqualTo(1L);
   }
 
   @Test
@@ -82,31 +80,11 @@ class SearchServiceTests {
         .containsExactly(2L, "Sync Hackathon");
   }
 
-  @Test
-  @DisplayName("[search] 프로젝트 검색 시 프로젝트 결과를 반환")
-  void search_project_returnProjectResults() {
-    String query = "platform";
-    Project project = Project.builder().name("Sync Platform").description("description").build();
-    project.setId(3L);
-
-    when(providerService.searchProviders(ProviderType.PROJECT, query, 0, 10))
-        .thenReturn(new PageImpl<>(List.of(project)));
-    stubCounts(query);
-
-    SearchResponse response = searchService.search(query, SearchType.PROJECT, pagination());
-
-    assertThat(response.results().content())
-        .singleElement()
-        .extracting(SearchResponse.Result::id, SearchResponse.Result::name)
-        .containsExactly(3L, "Sync Platform");
-  }
-
   private void stubCounts(String query) {
     when(profileService.countUsers(query)).thenReturn(5L);
     when(providerService.countProviders(ProviderType.SCHOOL, query)).thenReturn(4L);
     when(providerService.countProviders(ProviderType.COMPANY, query)).thenReturn(3L);
     when(providerService.countProviders(ProviderType.CONTEST, query)).thenReturn(2L);
-    when(providerService.countProviders(ProviderType.PROJECT, query)).thenReturn(1L);
   }
 
   private OffsetPaginationRequest pagination() {

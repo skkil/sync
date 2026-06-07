@@ -4,47 +4,147 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
-  DefinedUseInfiniteQueryResult,
   DefinedUseQueryResult,
-  InfiniteData,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
 
 import { api } from '../../../lib/server';
 import type { ErrorType } from '../../../lib/server';
-import type { GetProjectsResponse, GetTrendingProjectsParams } from '../types';
+import type {
+  CreateProjectRequest,
+  CreateProjectResponse,
+  SearchProjectsParams,
+  SearchProjectsResponse,
+} from '../types';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Get Trending Projects
- * @summary Get Trending Projects
+ * 새로운 프로젝트를 생성합니다.
+ * @summary Create Project
  */
-export type getTrendingProjectsResponse200 = {
-  data: GetProjectsResponse;
+export type createProjectResponse201 = {
+  data: CreateProjectResponse;
+  status: 201;
+};
+
+export type createProjectResponseSuccess = createProjectResponse201 & {
+  headers: Headers;
+};
+export type createProjectResponse = createProjectResponseSuccess;
+
+export const getCreateProjectUrl = () => {
+  return `/projects`;
+};
+
+export const createProject = async (
+  createProjectRequest: CreateProjectRequest,
+  options?: RequestInit,
+): Promise<createProjectResponse> => {
+  return api<createProjectResponse>(getCreateProjectUrl(), {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createProjectRequest),
+  });
+};
+
+export const getCreateProjectMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createProject>>,
+    TError,
+    { data: CreateProjectRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createProject>>,
+  TError,
+  { data: CreateProjectRequest },
+  TContext
+> => {
+  const mutationKey = ['createProject'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createProject>>,
+    { data: CreateProjectRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createProject(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createProject>>
+>;
+export type CreateProjectMutationBody = CreateProjectRequest;
+export type CreateProjectMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create Project
+ */
+export const useCreateProject = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createProject>>,
+      TError,
+      { data: CreateProjectRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createProject>>,
+  TError,
+  { data: CreateProjectRequest },
+  TContext
+> => {
+  return useMutation(getCreateProjectMutationOptions(options), queryClient);
+};
+/**
+ * 검색어로 프로젝트를 검색합니다.
+ * @summary Search Projects
+ */
+export type searchProjectsResponse200 = {
+  data: SearchProjectsResponse;
   status: 200;
 };
 
-export type getTrendingProjectsResponseSuccess =
-  getTrendingProjectsResponse200 & {
-    headers: Headers;
-  };
-export type getTrendingProjectsResponse = getTrendingProjectsResponseSuccess;
+export type searchProjectsResponseSuccess = searchProjectsResponse200 & {
+  headers: Headers;
+};
+export type searchProjectsResponse = searchProjectsResponseSuccess;
 
-export const getGetTrendingProjectsUrl = (
-  params?: GetTrendingProjectsParams,
-) => {
+export const getSearchProjectsUrl = (params: SearchProjectsParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -56,275 +156,70 @@ export const getGetTrendingProjectsUrl = (
   const stringifiedParams = normalizedParams.toString();
 
   return stringifiedParams.length > 0
-    ? `/projects/trending?${stringifiedParams}`
-    : `/projects/trending`;
+    ? `/search/projects?${stringifiedParams}`
+    : `/search/projects`;
 };
 
-export const getTrendingProjects = async (
-  params?: GetTrendingProjectsParams,
+export const searchProjects = async (
+  params: SearchProjectsParams,
   options?: RequestInit,
-): Promise<getTrendingProjectsResponse> => {
-  return api<getTrendingProjectsResponse>(getGetTrendingProjectsUrl(params), {
+): Promise<searchProjectsResponse> => {
+  return api<searchProjectsResponse>(getSearchProjectsUrl(params), {
     ...options,
     method: 'GET',
   });
 };
 
-export const getGetTrendingProjectsInfiniteQueryKey = (
-  params?: GetTrendingProjectsParams,
-) => {
-  return [
-    'infinite',
-    `/projects/trending`,
-    ...(params ? [params] : []),
-  ] as const;
+export const getSearchProjectsQueryKey = (params?: SearchProjectsParams) => {
+  return [`/search/projects`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetTrendingProjectsQueryKey = (
-  params?: GetTrendingProjectsParams,
-) => {
-  return [`/projects/trending`, ...(params ? [params] : [])] as const;
-};
-
-export const getGetTrendingProjectsInfiniteQueryOptions = <
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['after']
-  >,
+export const getSearchProjectsQueryOptions = <
+  TData = Awaited<ReturnType<typeof searchProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetTrendingProjectsParams,
+  params: SearchProjectsParams,
   options?: {
     query?: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData,
-        QueryKey,
-        GetTrendingProjectsParams['after']
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof searchProjects>>, TError, TData>
     >;
     request?: SecondParameter<typeof api>;
   },
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey =
-    queryOptions?.queryKey ?? getGetTrendingProjectsInfiniteQueryKey(params);
+  const queryKey = queryOptions?.queryKey ?? getSearchProjectsQueryKey(params);
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getTrendingProjects>>,
-    QueryKey,
-    GetTrendingProjectsParams['after']
-  > = ({ signal, pageParam }) =>
-    getTrendingProjects(
-      { ...params, after: pageParam || params?.['after'] },
-      { signal, ...requestOptions },
-    );
-
-  return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
-    Awaited<ReturnType<typeof getTrendingProjects>>,
-    TError,
-    TData,
-    QueryKey,
-    GetTrendingProjectsParams['after']
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetTrendingProjectsInfiniteQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getTrendingProjects>>
->;
-export type GetTrendingProjectsInfiniteQueryError = ErrorType<unknown>;
-
-export function useGetTrendingProjectsInfinite<
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params: undefined | GetTrendingProjectsParams,
-  options: {
-    query: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData,
-        QueryKey,
-        GetTrendingProjectsParams['after']
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTrendingProjects>>,
-          TError,
-          Awaited<ReturnType<typeof getTrendingProjects>>,
-          QueryKey
-        >,
-        'initialData'
-      >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetTrendingProjectsInfinite<
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params?: GetTrendingProjectsParams,
-  options?: {
-    query?: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData,
-        QueryKey,
-        GetTrendingProjectsParams['after']
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTrendingProjects>>,
-          TError,
-          Awaited<ReturnType<typeof getTrendingProjects>>,
-          QueryKey
-        >,
-        'initialData'
-      >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetTrendingProjectsInfinite<
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params?: GetTrendingProjectsParams,
-  options?: {
-    query?: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData,
-        QueryKey,
-        GetTrendingProjectsParams['after']
-      >
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary Get Trending Projects
- */
-
-export function useGetTrendingProjectsInfinite<
-  TData = InfiniteData<
-    Awaited<ReturnType<typeof getTrendingProjects>>,
-    GetTrendingProjectsParams['after']
-  >,
-  TError = ErrorType<unknown>,
->(
-  params?: GetTrendingProjectsParams,
-  options?: {
-    query?: Partial<
-      UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData,
-        QueryKey,
-        GetTrendingProjectsParams['after']
-      >
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetTrendingProjectsInfiniteQueryOptions(
-    params,
-    options,
-  );
-
-  const query = useInfiniteQuery(
-    queryOptions,
-    queryClient,
-  ) as UseInfiniteQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-export const getGetTrendingProjectsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getTrendingProjects>>,
-  TError = ErrorType<unknown>,
->(
-  params?: GetTrendingProjectsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData
-      >
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ?? getGetTrendingProjectsQueryKey(params);
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getTrendingProjects>>
-  > = ({ signal }) =>
-    getTrendingProjects(params, { signal, ...requestOptions });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof searchProjects>>> = ({
+    signal,
+  }) => searchProjects(params, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getTrendingProjects>>,
+    Awaited<ReturnType<typeof searchProjects>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetTrendingProjectsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getTrendingProjects>>
+export type SearchProjectsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof searchProjects>>
 >;
-export type GetTrendingProjectsQueryError = ErrorType<unknown>;
+export type SearchProjectsQueryError = ErrorType<unknown>;
 
-export function useGetTrendingProjects<
-  TData = Awaited<ReturnType<typeof getTrendingProjects>>,
+export function useSearchProjects<
+  TData = Awaited<ReturnType<typeof searchProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params: undefined | GetTrendingProjectsParams,
+  params: SearchProjectsParams,
   options: {
     query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof searchProjects>>, TError, TData>
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTrendingProjects>>,
+          Awaited<ReturnType<typeof searchProjects>>,
           TError,
-          Awaited<ReturnType<typeof getTrendingProjects>>
+          Awaited<ReturnType<typeof searchProjects>>
         >,
         'initialData'
       >;
@@ -334,24 +229,20 @@ export function useGetTrendingProjects<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetTrendingProjects<
-  TData = Awaited<ReturnType<typeof getTrendingProjects>>,
+export function useSearchProjects<
+  TData = Awaited<ReturnType<typeof searchProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetTrendingProjectsParams,
+  params: SearchProjectsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof searchProjects>>, TError, TData>
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTrendingProjects>>,
+          Awaited<ReturnType<typeof searchProjects>>,
           TError,
-          Awaited<ReturnType<typeof getTrendingProjects>>
+          Awaited<ReturnType<typeof searchProjects>>
         >,
         'initialData'
       >;
@@ -361,18 +252,14 @@ export function useGetTrendingProjects<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetTrendingProjects<
-  TData = Awaited<ReturnType<typeof getTrendingProjects>>,
+export function useSearchProjects<
+  TData = Awaited<ReturnType<typeof searchProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetTrendingProjectsParams,
+  params: SearchProjectsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof searchProjects>>, TError, TData>
     >;
     request?: SecondParameter<typeof api>;
   },
@@ -381,21 +268,17 @@ export function useGetTrendingProjects<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get Trending Projects
+ * @summary Search Projects
  */
 
-export function useGetTrendingProjects<
-  TData = Awaited<ReturnType<typeof getTrendingProjects>>,
+export function useSearchProjects<
+  TData = Awaited<ReturnType<typeof searchProjects>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetTrendingProjectsParams,
+  params: SearchProjectsParams,
   options?: {
     query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getTrendingProjects>>,
-        TError,
-        TData
-      >
+      UseQueryOptions<Awaited<ReturnType<typeof searchProjects>>, TError, TData>
     >;
     request?: SecondParameter<typeof api>;
   },
@@ -403,7 +286,7 @@ export function useGetTrendingProjects<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetTrendingProjectsQueryOptions(params, options);
+  const queryOptions = getSearchProjectsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

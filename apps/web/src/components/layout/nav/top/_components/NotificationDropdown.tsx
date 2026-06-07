@@ -1,9 +1,13 @@
 'use client';
 
-import { BellIcon, UserPlusIcon, WarningCircleIcon } from '@phosphor-icons/react';
+import {
+  BellIcon,
+  UserPlusIcon,
+  WarningCircleIcon,
+} from '@phosphor-icons/react';
 import { useQueryClient } from '@tanstack/react-query';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import {

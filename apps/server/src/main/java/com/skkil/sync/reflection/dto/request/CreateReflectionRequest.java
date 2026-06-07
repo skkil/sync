@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record CreateReflectionRequest(
-    String title, @Valid @NotNull Content content, List<String> tags) {
+    String title, @Valid @NotNull Content content, List<String> tags, Long projectId) {
 
   public static record Content(@NotBlank String text, @NotBlank String json) {}
 }

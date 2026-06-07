@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.skkil.sync.provider.company.dto.request.UpdateCompanyRequest;
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.contest.dto.request.UpdateContestRequest;
-import com.skkil.sync.provider.project.dto.request.UpdateProjectRequest;
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -17,7 +16,6 @@ import com.skkil.sync.provider.project.dto.request.UpdateProjectRequest;
   @JsonSubTypes.Type(value = UpdateSchoolRequest.class, name = ProviderType.Constants.SCHOOL),
   @JsonSubTypes.Type(value = UpdateLabRequest.class, name = ProviderType.Constants.LAB),
   @JsonSubTypes.Type(value = UpdateContestRequest.class, name = ProviderType.Constants.CONTEST),
-  @JsonSubTypes.Type(value = UpdateProjectRequest.class, name = ProviderType.Constants.PROJECT)
 })
 public interface UpdateProviderRequest {
 

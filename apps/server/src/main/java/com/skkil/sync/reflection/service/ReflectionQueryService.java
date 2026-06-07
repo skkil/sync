@@ -74,22 +74,6 @@ public class ReflectionQueryService {
     return new GetReflectionsResponse(reflections);
   }
 
-  @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#experienceId, 'EXPERIENCE', 'READ')")
-  public GetReflectionsResponse getProjectExperienceReflections(
-      Long experienceId, CursorPaginationRequest pagination) {
-    var reflections =
-        paginationService
-            .paginate(
-                reflectionQueryRepository.getReflectionsByExperience(experienceId),
-                paginationProvider,
-                pagination)
-            .map(reflectionMapper::toReflectionResponse)
-            .map(this::resolveImageUrls);
-
-    return new GetReflectionsResponse(reflections);
-  }
-
   private GetReflectionResponse resolveImageUrls(GetReflectionResponse reflection) {
     return new GetReflectionResponse(
         reflection.id(),
@@ -106,7 +90,6 @@ public class ReflectionQueryService {
     return new GetReflectionsResponse.Reflection(
         reflection.id(),
         reflection.author(),
-        reflection.project(),
         contentMediaService.resolveImageUrls(reflection.id(), reflection.content()),
         reflection.createdAt());
   }
