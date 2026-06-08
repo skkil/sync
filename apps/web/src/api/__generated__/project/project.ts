@@ -23,6 +23,7 @@ import type {
 import { api } from '../../../lib/server';
 import type { ErrorType } from '../../../lib/server';
 import type {
+  AddTeammateRequest,
   CreateProjectRequest,
   CreateProjectResponse,
   GetProjectHandleAvailabilityParams,
@@ -519,6 +520,103 @@ export function useGetProjectHandleAvailability<
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
+/**
+ * 프로젝트에 팀원을 추가합니다.
+ * @summary Add Teammate
+ */
+export type addTeammateResponse201 = {
+  data: void;
+  status: 201;
+};
+
+export type addTeammateResponseSuccess = addTeammateResponse201 & {
+  headers: Headers;
+};
+export type addTeammateResponse = addTeammateResponseSuccess;
+
+export const getAddTeammateUrl = (handle: string) => {
+  return `/projects/${handle}/teammates`;
+};
+
+export const addTeammate = async (
+  handle: string,
+  addTeammateRequest: AddTeammateRequest,
+  options?: RequestInit,
+): Promise<addTeammateResponse> => {
+  return api<addTeammateResponse>(getAddTeammateUrl(handle), {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(addTeammateRequest),
+  });
+};
+
+export const getAddTeammateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addTeammate>>,
+    TError,
+    { handle: string; data: AddTeammateRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addTeammate>>,
+  TError,
+  { handle: string; data: AddTeammateRequest },
+  TContext
+> => {
+  const mutationKey = ['addTeammate'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addTeammate>>,
+    { handle: string; data: AddTeammateRequest }
+  > = (props) => {
+    const { handle, data } = props ?? {};
+
+    return addTeammate(handle, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddTeammateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addTeammate>>
+>;
+export type AddTeammateMutationBody = AddTeammateRequest;
+export type AddTeammateMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Add Teammate
+ */
+export const useAddTeammate = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof addTeammate>>,
+      TError,
+      { handle: string; data: AddTeammateRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof addTeammate>>,
+  TError,
+  { handle: string; data: AddTeammateRequest },
+  TContext
+> => {
+  return useMutation(getAddTeammateMutationOptions(options), queryClient);
+};
 /**
  * 검색어로 프로젝트를 검색합니다.
  * @summary Search Projects

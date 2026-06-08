@@ -857,7 +857,7 @@ paths:
               examples:
                 GetProjectByHandle:
                   value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"teammates\"\
-                    :[{\"id\":1,\"isOwner\":true},{\"id\":2,\"isOwner\":false}]}"
+                    :[{\"id\":\"1\",\"isOwner\":true},{\"id\":\"2\",\"isOwner\":false}]}"
   /projects/handles/availability:
     get:
       tags:
@@ -937,6 +937,31 @@ paths:
                     ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
                     },\"project\":{\"id\":1,\"name\":\"Project\"},\"content\":\"Reflection\
                     \ Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+  /projects/{handle}/teammates:
+    post:
+      tags:
+      - project
+      summary: Add Teammate
+      description: 프로젝트에 팀원을 추가합니다.
+      operationId: AddTeammate
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddTeammateRequest"
+            examples:
+              AddTeammate:
+                value: "{\"teammateHandle\":\"john-doe\"}"
+      responses:
+        "201":
+          description: "201"
   /providers/my:
     get:
       tags:
@@ -1782,6 +1807,35 @@ components:
         email:
           type: string
           description: Email
+    GetProjectResponse:
+      title: GetProjectResponse
+      required:
+      - handle
+      - name
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - id
+            - isOwner
+            type: object
+            properties:
+              isOwner:
+                type: boolean
+                description: 오너 여부
+              id:
+                type: string
+                description: 팀원 ID
+        name:
+          type: string
+          description: 프로젝트 이름
+        handle:
+          type: string
+          description: 프로젝트 핸들
     GetBookmarkedReflectionsResponse:
       title: GetBookmarkedReflectionsResponse
       type: object
@@ -1886,35 +1940,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    GetProjectResponse:
-      title: GetProjectResponse
-      required:
-      - handle
-      - name
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - id
-            - isOwner
-            type: object
-            properties:
-              isOwner:
-                type: boolean
-                description: 오너 여부
-              id:
-                type: number
-                description: 팀원 ID
-        name:
-          type: string
-          description: 프로젝트 이름
-        handle:
-          type: string
-          description: 프로젝트 핸들
     UploadJobApplicationFileRequest:
       title: UploadJobApplicationFileRequest
       required:
@@ -2743,6 +2768,15 @@ components:
             - type: boolean
             - type: string
             - type: number
+    AddTeammateRequest:
+      title: AddTeammateRequest
+      required:
+      - teammateHandle
+      type: object
+      properties:
+        teammateHandle:
+          type: string
+          description: 추가할 팀원의 핸들
     CreateCommentResponse:
       title: CreateCommentResponse
       required:

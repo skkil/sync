@@ -9,5 +9,5 @@ export type GetProjectResponseTeammatesItem = {
   /** 오너 여부 */
   isOwner: boolean;
   /** 팀원 ID */
-  id: number;
+  id: string;
 };

@@ -63,7 +63,9 @@ public class ProjectService {
 
     var teammates =
         project.getTeammates().stream()
-            .map(t -> new GetProjectResponse.Teammate(t.getUser().getId(), t.getIsOwner()))
+            .map(
+                t ->
+                    new GetProjectResponse.Teammate(t.getUser().getId().toString(), t.getIsOwner()))
             .toList();
 
     return new GetProjectResponse(project.getHandle(), project.getName(), teammates);
