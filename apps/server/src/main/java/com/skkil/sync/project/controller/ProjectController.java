@@ -6,6 +6,7 @@ import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
+import com.skkil.sync.project.dto.response.GetProjectsResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.service.ProjectService;
 import jakarta.validation.constraints.NotNull;
@@ -43,6 +44,11 @@ public class ProjectController {
   @ResponseStatus(HttpStatus.OK)
   public GetProjectResponse getProjectByHandle(@PathVariable String handle) {
     return projectService.getProjectByHandle(handle);
+  }
+
+  @GetMapping("/users/{handle}/projects")
+  public GetProjectsResponse getProjectsByUser(@PathVariable String handle) {
+    return projectService.getProjectsByUser(handle);
   }
 
   @GetMapping("/projects/handles/availability")

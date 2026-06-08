@@ -1439,6 +1439,32 @@ paths:
                   value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
                     ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
                     ,\"name\":\"React 프로젝트\"}]}"
+  /users/{handle}/projects:
+    get:
+      tags:
+      - project
+      summary: Get Projects By User
+      description: 유저 핸들로 해당 유저의 프로젝트 목록을 조회합니다.
+      operationId: GetProjectsByUser
+      parameters:
+      - name: handle
+        in: path
+        description: 유저 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectsResponse"
+              examples:
+                GetProjectsByUser:
+                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
+                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
+                    ,\"name\":\"React 프로젝트\"}]}"
   /users/{userId}/reflections:
     get:
       tags:
@@ -1526,6 +1552,31 @@ components:
         title:
           type: string
           description: Contest Occurrence Title
+    GetProjectsResponse:
+      title: GetProjectsResponse
+      required:
+      - projects
+      type: object
+      properties:
+        projects:
+          type: array
+          description: 프로젝트 목록
+          items:
+            required:
+            - handle
+            - id
+            - name
+            type: object
+            properties:
+              name:
+                type: string
+                description: 프로젝트 이름
+              handle:
+                type: string
+                description: 프로젝트 핸들
+              id:
+                type: number
+                description: 프로젝트 ID
     GetJobApplicationsResponse:
       title: GetJobApplicationsResponse
       type: object
@@ -2180,27 +2231,6 @@ components:
         mediaType:
           type: string
           description: Media Type
-    SearchReflectionsResponse:
-      title: SearchReflectionsResponse
-      required:
-      - reflections
-      type: object
-      properties:
-        reflections:
-          type: array
-          description: Reflection List
-          items:
-            required:
-            - content
-            - id
-            type: object
-            properties:
-              id:
-                type: number
-                description: Reflection ID
-              content:
-                type: string
-                description: Reflection Content
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -2257,6 +2287,27 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    SearchReflectionsResponse:
+      title: SearchReflectionsResponse
+      required:
+      - reflections
+      type: object
+      properties:
+        reflections:
+          type: array
+          description: Reflection List
+          items:
+            required:
+            - content
+            - id
+            type: object
+            properties:
+              id:
+                type: number
+                description: Reflection ID
+              content:
+                type: string
+                description: Reflection Content
     SearchResponse:
       title: SearchResponse
       required:
@@ -2655,15 +2706,6 @@ components:
         email:
           type: string
           description: Email
-    CreateCommentResponse:
-      title: CreateCommentResponse
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: number
-          description: Created comment ID
     CreateReflectionRequest:
       title: CreateReflectionRequest
       required:
@@ -2701,6 +2743,15 @@ components:
             - type: boolean
             - type: string
             - type: number
+    CreateCommentResponse:
+      title: CreateCommentResponse
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: number
+          description: Created comment ID
     CreateJobPostingRequest:
       title: CreateJobPostingRequest
       required:

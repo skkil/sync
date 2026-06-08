@@ -28,6 +28,7 @@ import type {
   GetProjectHandleAvailabilityParams,
   GetProjectHandleAvailabilityResponse,
   GetProjectResponse,
+  GetProjectsResponse,
   SearchMyProjectsParams,
   SearchProjectsParams,
   SearchProjectsResponse,
@@ -864,6 +865,186 @@ export function useSearchMyProjects<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getSearchMyProjectsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 유저 핸들로 해당 유저의 프로젝트 목록을 조회합니다.
+ * @summary Get Projects By User
+ */
+export type getProjectsByUserResponse200 = {
+  data: GetProjectsResponse;
+  status: 200;
+};
+
+export type getProjectsByUserResponseSuccess = getProjectsByUserResponse200 & {
+  headers: Headers;
+};
+export type getProjectsByUserResponse = getProjectsByUserResponseSuccess;
+
+export const getGetProjectsByUserUrl = (handle: string) => {
+  return `/users/${handle}/projects`;
+};
+
+export const getProjectsByUser = async (
+  handle: string,
+  options?: RequestInit,
+): Promise<getProjectsByUserResponse> => {
+  return api<getProjectsByUserResponse>(getGetProjectsByUserUrl(handle), {
+    ...options,
+    method: 'GET',
+  });
+};
+
+export const getGetProjectsByUserQueryKey = (handle: string) => {
+  return [`/users/${handle}/projects`] as const;
+};
+
+export const getGetProjectsByUserQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProjectsByUser>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectsByUser>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetProjectsByUserQueryKey(handle);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProjectsByUser>>
+  > = ({ signal }) => getProjectsByUser(handle, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!handle,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getProjectsByUser>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProjectsByUserQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProjectsByUser>>
+>;
+export type GetProjectsByUserQueryError = ErrorType<unknown>;
+
+export function useGetProjectsByUser<
+  TData = Awaited<ReturnType<typeof getProjectsByUser>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectsByUser>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectsByUser>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectsByUser>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectsByUser<
+  TData = Awaited<ReturnType<typeof getProjectsByUser>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectsByUser>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectsByUser>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectsByUser>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectsByUser<
+  TData = Awaited<ReturnType<typeof getProjectsByUser>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectsByUser>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Projects By User
+ */
+
+export function useGetProjectsByUser<
+  TData = Awaited<ReturnType<typeof getProjectsByUser>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectsByUser>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetProjectsByUserQueryOptions(handle, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

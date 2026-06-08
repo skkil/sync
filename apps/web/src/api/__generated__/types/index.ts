@@ -70,6 +70,8 @@ export * from './GetProjectHandleAvailabilityParams';
 export * from './GetProjectHandleAvailabilityResponse';
 export * from './GetProjectResponse';
 export * from './GetProjectResponseTeammatesItem';
+export * from './GetProjectsResponse';
+export * from './GetProjectsResponseProjectsItem';
 export * from './GetProvidersResponse';
 export * from './GetProvidersResponseProviders';
 export * from './GetProvidersResponseProvidersNodesItem';

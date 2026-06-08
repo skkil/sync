@@ -21,12 +21,14 @@ import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
+import com.skkil.sync.project.dto.response.GetProjectsResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.service.ProjectService;
 import com.skkil.sync.project.snippets.CreateProjectRequestSnippets;
 import com.skkil.sync.project.snippets.CreateProjectResponseSnippets;
 import com.skkil.sync.project.snippets.GetProjectHandleAvailabilityResponseSnippets;
 import com.skkil.sync.project.snippets.GetProjectResponseSnippets;
+import com.skkil.sync.project.snippets.GetProjectsResponseSnippets;
 import com.skkil.sync.project.snippets.SearchProjectsResponseSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
@@ -139,6 +141,32 @@ class ProjectControllerTests {
                 Function.identity(),
                 queryParameters(parameterWithName("handle").description("확인할 프로젝트 핸들")),
                 GetProjectHandleAvailabilityResponseSnippets.getResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getProjectsByUser] API 문서화 테스트")
+  void getProjectsByUser() throws Exception {
+    String handle = "john";
+    GetProjectsResponse response = GetProjectsResponseSnippets.getGetProjectsResponse();
+
+    when(projectService.getProjectsByUser(handle)).thenReturn(response);
+
+    mockMvc
+        .perform(get("/users/{handle}/projects", handle))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetProjectsByUser",
+                ResourceSnippetParameters.builder()
+                    .tag("project")
+                    .summary("Get Projects By User")
+                    .description("유저 핸들로 해당 유저의 프로젝트 목록을 조회합니다.")
+                    .responseSchema(schema(GetProjectsResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("handle").description("유저 핸들")),
+                GetProjectsResponseSnippets.getGetProjectsResponseFields()));
   }
 
   @Test

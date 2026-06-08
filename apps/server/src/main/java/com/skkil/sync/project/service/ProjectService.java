@@ -4,6 +4,7 @@ import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
+import com.skkil.sync.project.dto.response.GetProjectsResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.exception.ProjectNotFoundException;
 import com.skkil.sync.project.mapper.ProjectMapper;
@@ -64,6 +65,18 @@ public class ProjectService {
   @Transactional(readOnly = true)
   public GetProjectHandleAvailabilityResponse isProjectHandleAvailable(String handle) {
     return new GetProjectHandleAvailabilityResponse(!projectRepository.existsByHandle(handle));
+  }
+
+  @Transactional(readOnly = true)
+  public GetProjectsResponse getProjectsByUser(String handle) {
+    User user = userDomainService.getUserByHandle(handle);
+
+    var projects =
+        projectRepository.findMyProjects(user.getId()).stream()
+            .map(projectMapper::toGetProjectsResponseProject)
+            .toList();
+
+    return new GetProjectsResponse(projects);
   }
 
   @Transactional(readOnly = true)

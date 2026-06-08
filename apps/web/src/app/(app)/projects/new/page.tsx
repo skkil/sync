@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretLeftIcon } from '@phosphor-icons/react';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -29,10 +29,13 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { isAuthenticated } from '@/lib/auth';
+import { useSession } from '@/lib/auth/client';
 
 export default function CreateProjectPage() {
   const t = useTranslations('pages.projects.new');
   const router = useRouter();
+  const { data: session } = useSession();
 
   const { mutate: createProject, isPending } = useCreateProject();
 
@@ -100,6 +103,10 @@ export default function CreateProjectPage() {
       },
     );
   };
+
+  if (!isAuthenticated(session)) {
+    redirect('/auth/login');
+  }
 
   return (
     <div className="container max-w-3xl py-8">
