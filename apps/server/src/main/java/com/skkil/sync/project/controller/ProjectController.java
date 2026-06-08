@@ -2,6 +2,7 @@ package com.skkil.sync.project.controller;
 
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.project.constants.ProjectConstants;
+import com.skkil.sync.project.dto.request.AddTeammateRequest;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
@@ -72,5 +73,14 @@ public class ProjectController {
       @AuthenticationPrincipal @NotNull AuthenticatedUser user,
       @RequestParam(required = true) String query) {
     return projectService.searchMyProjects(user.userId(), query);
+  }
+
+  @PostMapping("/projects/{handle}/teammates")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void addTeammate(
+      @AuthenticationPrincipal @NotNull AuthenticatedUser user,
+      @PathVariable String handle,
+      @RequestBody @Validated AddTeammateRequest request) {
+    projectService.addTeammate(user.userId(), handle, request);
   }
 }
