@@ -23,7 +23,7 @@ jobs:
           node-version: "20"
           cache: "pnpm"
           cache-dependency-path: ./apps/web/pnpm-lock.yaml
-      - run: ./scripts/ci/web.sh
+      - run: ./scripts/ci/build-web.sh
       - name: Check for formatting issues
         run: |
           if [[ -n $(git status --porcelain) ]]; then

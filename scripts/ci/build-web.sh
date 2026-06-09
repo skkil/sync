@@ -8,6 +8,8 @@ cd apps/web
 
 pnpm install --frozen-lockfile
 
+pnpm run orval
+
 pnpm run format
 
 pnpm run build

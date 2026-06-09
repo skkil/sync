@@ -1,0 +1,10 @@
+.gradle/
+build/classes/
+build/resources/
+build/tmp/
+gradle/
+.git/
+.gitignore
+.env
+*.md
+compose.yaml
