@@ -7,7 +7,10 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
-import { useAddTeammate } from '@/api/__generated__/project/project';
+import {
+  getGetProjectsByUserQueryOptions,
+  useAddTeammate,
+} from '@/api/__generated__/project/project';
 import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -51,7 +54,11 @@ export default function AddTeammatePopover({
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: async (_data, _variables, _onMutateResult, context) => {
+          await context.client.invalidateQueries(
+            getGetProjectsByUserQueryOptions(projectHandle),
+          );
+
           form.reset();
           setOpen(false);
         },

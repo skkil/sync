@@ -35,7 +35,7 @@ import { useSession } from '@/lib/auth/client';
 export default function CreateProjectPage() {
   const t = useTranslations('pages.projects.new');
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, isPending: isSessionPending } = useSession();
 
   const { mutate: createProject, isPending } = useCreateProject();
 
@@ -103,6 +103,10 @@ export default function CreateProjectPage() {
       },
     );
   };
+
+  if (isSessionPending) {
+    return null;
+  }
 
   if (!isAuthenticated(session)) {
     redirect('/auth/login');
