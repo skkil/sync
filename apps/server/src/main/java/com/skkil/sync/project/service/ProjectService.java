@@ -1,17 +1,21 @@
 package com.skkil.sync.project.service;
 
+import com.skkil.sync.project.dto.request.AddTeammateRequest;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
+import com.skkil.sync.project.dto.response.GetProjectsResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.exception.ProjectNotFoundException;
 import com.skkil.sync.project.mapper.ProjectMapper;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.model.Teammate;
 import com.skkil.sync.project.repository.ProjectRepository;
+import com.skkil.sync.project.repository.TeammateRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +26,18 @@ public class ProjectService {
 
   private final ProjectRepository projectRepository;
 
+  private final TeammateRepository teammateRepository;
+
   private final ProjectMapper projectMapper;
 
   public ProjectService(
       UserDomainService userDomainService,
       ProjectRepository projectRepository,
+      TeammateRepository teammateRepository,
       ProjectMapper projectMapper) {
     this.userDomainService = userDomainService;
     this.projectRepository = projectRepository;
+    this.teammateRepository = teammateRepository;
     this.projectMapper = projectMapper;
   }
 
@@ -55,7 +63,9 @@ public class ProjectService {
 
     var teammates =
         project.getTeammates().stream()
-            .map(t -> new GetProjectResponse.Teammate(t.getUser().getId(), t.getIsOwner()))
+            .map(
+                t ->
+                    new GetProjectResponse.Teammate(t.getUser().getId().toString(), t.getIsOwner()))
             .toList();
 
     return new GetProjectResponse(project.getHandle(), project.getName(), teammates);
@@ -64,6 +74,18 @@ public class ProjectService {
   @Transactional(readOnly = true)
   public GetProjectHandleAvailabilityResponse isProjectHandleAvailable(String handle) {
     return new GetProjectHandleAvailabilityResponse(!projectRepository.existsByHandle(handle));
+  }
+
+  @Transactional(readOnly = true)
+  public GetProjectsResponse getProjectsByUser(String handle) {
+    User user = userDomainService.getUserByHandle(handle);
+
+    var projects =
+        projectRepository.findMyProjects(user.getId()).stream()
+            .map(projectMapper::toGetProjectsResponseProject)
+            .toList();
+
+    return new GetProjectsResponse(projects);
   }
 
   @Transactional(readOnly = true)
@@ -84,5 +106,19 @@ public class ProjectService {
             .toList();
 
     return new SearchProjectsResponse(projects);
+  }
+
+  @Transactional
+  public void addTeammate(Long userId, String handle, AddTeammateRequest request) {
+    Project project =
+        projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
+
+    if (!teammateRepository.existsByProjectIdAndUserIdAndIsOwnerTrue(project.getId(), userId)) {
+      throw new AccessDeniedException("Only the project owner can add teammates");
+    }
+
+    User user = userDomainService.getUserByHandle(request.teammateHandle());
+    Teammate teammate = Teammate.builder().project(project).user(user).build();
+    project.addTeammate(teammate);
   }
 }

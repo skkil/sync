@@ -33,6 +33,19 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
       """)
   List<Project> searchMyProjects(Long userId, String query);
 
+  @Query(
+      """
+      SELECT p
+      FROM Project p
+      WHERE EXISTS (
+       SELECT t
+       FROM Teammate t
+       WHERE
+       t.project = p AND t.user.id = :userId
+      )
+      """)
+  List<Project> findMyProjects(Long userId);
+
   Optional<Project> findByHandle(String handle);
 
   boolean existsByHandle(String handle);

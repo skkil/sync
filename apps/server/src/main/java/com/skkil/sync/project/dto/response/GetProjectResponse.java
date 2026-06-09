@@ -4,5 +4,5 @@ import java.util.List;
 
 public record GetProjectResponse(String handle, String name, List<Teammate> teammates) {
 
-  public record Teammate(Long id, boolean isOwner) {}
+  public record Teammate(String id, boolean isOwner) {}
 }

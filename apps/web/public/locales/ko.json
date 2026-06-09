@@ -55,7 +55,19 @@
           "handle": "핸들",
           "teammates": "팀원",
           "loading": "프로젝트를 불러오는 중...",
-          "owner": "소유자"
+          "owner": "소유자",
+          "add-teammate": {
+            "trigger": "팀원 추가",
+            "title": "팀원 초대",
+            "fields": {
+              "handle": "핸들",
+              "handle-placeholder": "초대할 사용자의 핸들을 입력하세요"
+            },
+            "actions": {
+              "cancel": "취소",
+              "invite": "초대"
+            }
+          }
         },
         "posts": {
           "label": "게시물",
@@ -532,7 +544,11 @@
         }
       },
       "projects": {
-        "label": "프로젝트"
+        "label": "프로젝트",
+        "list": {
+          "empty": "프로젝트가 없습니다.",
+          "error": "프로젝트를 불러오는 중 오류가 발생했습니다."
+        }
       },
       "posts": {
         "label": "게시물",

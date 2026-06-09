@@ -15,7 +15,8 @@ public class GetProjectResponseSnippets {
         "my-project",
         "나의 프로젝트",
         List.of(
-            new GetProjectResponse.Teammate(1L, true), new GetProjectResponse.Teammate(2L, false)));
+            new GetProjectResponse.Teammate("1", true),
+            new GetProjectResponse.Teammate("2", false)));
   }
 
   public static ResponseFieldsSnippet getGetProjectResponseFields() {
@@ -23,7 +24,7 @@ public class GetProjectResponseSnippets {
         fieldWithPath("handle").type(JsonFieldType.STRING).description("프로젝트 핸들"),
         fieldWithPath("name").type(JsonFieldType.STRING).description("프로젝트 이름"),
         fieldWithPath("teammates").type(JsonFieldType.ARRAY).description("팀원 목록"),
-        fieldWithPath("teammates[].id").type(JsonFieldType.NUMBER).description("팀원 ID"),
+        fieldWithPath("teammates[].id").type(JsonFieldType.STRING).description("팀원 ID"),
         fieldWithPath("teammates[].isOwner").type(JsonFieldType.BOOLEAN).description("오너 여부"));
   }
 }
