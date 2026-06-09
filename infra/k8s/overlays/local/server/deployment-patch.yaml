@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  namespace: sync
+spec:
+  template:
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: server
+          image: sync-server:local
+          imagePullPolicy: Never

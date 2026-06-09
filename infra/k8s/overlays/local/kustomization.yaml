@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  - postgres/pvc.yaml
+  - postgres/deployment.yaml
+  - postgres/service.yaml
+  - postgres/networkpolicy.yaml
+  - postgres/externalsecret.yaml
+  - server/configmap.yaml
+  - server/externalsecret.yaml
+  - web/configmap.yaml
+  - web/externalsecret.yaml
+patches:
+  - path: server/deployment-patch.yaml
+  - path: web/deployment-patch.yaml

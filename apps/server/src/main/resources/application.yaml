@@ -81,6 +81,9 @@ app:
     webhook-url: ${SLACK_WEBHOOK_URL:}
 
 management:
+  server:
+    port: 8081
+
   observations:
     annotations:
       enabled: true
@@ -98,6 +101,12 @@ management:
     metrics:
       export:
         enabled: ${ENABLE_TELEMETRY:false}
+
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
 
   endpoints:
     web:
