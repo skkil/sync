@@ -3,7 +3,7 @@ services:
     image: localstack/localstack:4.14
     environment:
       - "DEBUG=1"
-      - "SERVICES=s3"
+      - "SERVICES=s3,secretsmanager,kms"
       - "AWS_ACCESS_KEY_ID=skkil"
       - "AWS_SECRET_ACCESS_KEY=sync"
       - "AWS_DEFAULT_REGION=us-east-1"
@@ -14,5 +14,3 @@ services:
     ports:
       - "4566:4566"
       - "4510-4559:4510-4559"
-    volumes:
-      - "./scripts/init.sh:/etc/localstack/init/ready.d/init.sh"
