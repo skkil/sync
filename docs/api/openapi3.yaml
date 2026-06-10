@@ -7,186 +7,6 @@ servers:
 - url: ""
 tags: []
 paths:
-  /admin/providers/unverified:
-    get:
-      tags:
-      - providers
-      summary: Get Unverified Providers
-      description: Get Unverified Providers
-      operationId: GetUnverifiedProviders
-      parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetProvidersResponse"
-              examples:
-                GetUnverifiedProviders:
-                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
-                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
-  /applications:
-    post:
-      tags:
-      - applications
-      summary: Create Job Application
-      description: Create Job Application
-      operationId: CreateJobApplication
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateJobApplicationRequest"
-            examples:
-              CreateJobApplication:
-                value: "{\"companyId\":\"1\",\"jobPostingId\":\"1\"}"
-      responses:
-        "201":
-          description: "201"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateJobApplicationResponse"
-              examples:
-                CreateJobApplication:
-                  value: "{\"applicationId\":1}"
-  /applications/me:
-    get:
-      tags:
-      - applications
-      summary: Get My Job Applications
-      description: Get My Job Applications
-      operationId: GetMyJobApplications
-      parameters:
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobApplicationsResponse"
-              examples:
-                GetMyJobApplications:
-                  value: "{\"applications\":{\"pageInfo\":{\"page\":1,\"size\":1,\"\
-                    hasNextPage\":true,\"hasPreviousPage\":true},\"content\":[{\"\
-                    id\":1,\"company\":{\"id\":1,\"name\":\"Company\"}}]}}"
-  /applications/{applicationId}:
-    get:
-      tags:
-      - applications
-      summary: Get Job Application
-      description: Get Job Application by ID
-      operationId: GetJobApplication
-      parameters:
-      - name: applicationId
-        in: path
-        description: Application ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobApplicationResponse"
-              examples:
-                GetJobApplication:
-                  value: "{\"id\":1,\"status\":\"APPLIED\",\"company\":{\"id\":1,\"\
-                    name\":\"Company\"},\"jobDescription\":{\"title\":\"Job Title\"\
-                    ,\"description\":\"Job Description\",\"location\":\"Location\"\
-                    },\"notes\":\"Notes\"}"
-  /applications/{applicationId}/files:
-    get:
-      tags:
-      - applications
-      summary: Get Job Application Files
-      description: Get all files for a job application
-      operationId: GetJobApplicationFiles
-      parameters:
-      - name: applicationId
-        in: path
-        description: Job Application ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobApplicationFilesResponse"
-              examples:
-                GetJobApplicationFiles:
-                  value: "{\"files\":[{\"url\":\"https://example.com/file1.pdf\"}]}"
-    post:
-      tags:
-      - applications
-      summary: Upload Job Application File
-      description: Upload a file to a job application
-      operationId: UploadJobApplicationFile
-      parameters:
-      - name: applicationId
-        in: path
-        description: Job Application ID
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UploadJobApplicationFileRequest"
-            examples:
-              UploadJobApplicationFile:
-                value: "{\"fileId\":1}"
-      responses:
-        "204":
-          description: "204"
   /auth/login:
     post:
       tags:
@@ -328,211 +148,6 @@ paths:
       responses:
         "204":
           description: "204"
-  /companies/{companyId}/jobs:
-    get:
-      tags:
-      - jobs
-      summary: Get Job Postings By Company
-      description: Get Job Postings By Company
-      operationId: GetJobPostingsByCompany
-      parameters:
-      - name: companyId
-        in: path
-        description: Company ID
-        required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobPostingsResponse"
-              examples:
-                GetJobPostingsByCompany:
-                  value: "{\"postings\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
-                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":\"1\",\"\
-                    company\":{\"id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"\
-                    Software Engineer\",\"jobDescription\":\"Job Description\",\"\
-                    location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    ,\"updatedAt\":\"1970-01-01T00:00:00\"}]}}"
-    post:
-      tags:
-      - jobs
-      summary: Create Job Posting
-      description: Create Job Posting
-      operationId: CreateJobPosting
-      parameters:
-      - name: companyId
-        in: path
-        description: Company ID
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateJobPostingRequest"
-            examples:
-              CreateJobPosting:
-                value: "{\"jobTitle\":\"Job Title\",\"jobDescription\":\"Job Description\"\
-                  ,\"location\":\"Location\"}"
-      responses:
-        "201":
-          description: "201"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateJobPostingResponse"
-              examples:
-                CreateJobPosting:
-                  value: |-
-                    {
-                      "id" : "1"
-                    }
-  /companies/{companyId}/jobs/{postingId}:
-    get:
-      tags:
-      - jobs
-      summary: Get Job Posting
-      description: Get Job Posting
-      operationId: GetJobPosting
-      parameters:
-      - name: companyId
-        in: path
-        description: Company ID
-        required: true
-        schema:
-          type: string
-      - name: postingId
-        in: path
-        description: Job Posting ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobPostingResponse"
-              examples:
-                GetJobPosting:
-                  value: "{\"id\":\"1\",\"company\":{\"id\":\"1\",\"name\":\"Company\"\
-                    },\"jobTitle\":\"Software Engineer\",\"jobDescription\":\"Job\
-                    \ Description\",\"location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    ,\"updatedAt\":\"1970-01-01T00:00:00\"}"
-  /contests/{contestId}/occurrences:
-    get:
-      tags:
-      - contests
-      summary: Get Contest Occurrences by Contest
-      description: Get Contest Occurrences by Contest
-      operationId: GetContestOccurrencesByContest
-      parameters:
-      - name: contestId
-        in: path
-        description: Contest ID
-        required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetContestOccurrencesResponse"
-              examples:
-                GetContestOccurrencesByContest:
-                  value: "{\"occurrences\":{\"pageInfo\":{\"page\":1,\"size\":1,\"\
-                    hasNextPage\":true,\"hasPreviousPage\":true},\"content\":[{\"\
-                    id\":1,\"contest\":{\"id\":1,\"name\":\"Contest Name\"},\"title\"\
-                    :\"Occurrence Title\",\"description\":\"Occurrence Description\"\
-                    }]}}"
-    post:
-      tags:
-      - contests
-      summary: Create Contest Occurrence
-      description: Create Contest Occurrence
-      operationId: CreateContestOccurrence
-      parameters:
-      - name: contestId
-        in: path
-        description: Contest ID
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateContestOccurrenceRequest"
-            examples:
-              CreateContestOccurrence:
-                value: "{\"title\":\"Title\",\"description\":\"Description\"}"
-      responses:
-        "201":
-          description: "201"
-  /contests/{contestId}/occurrences/{occurrenceId}:
-    get:
-      tags:
-      - contests
-      summary: Get Contest Occurrence
-      description: Get Contest Occurrence
-      operationId: GetContestOccurrence
-      parameters:
-      - name: contestId
-        in: path
-        description: Contest ID
-        required: true
-        schema:
-          type: string
-      - name: occurrenceId
-        in: path
-        description: Contest Occurrence ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetContestOccurrenceResponse"
-              examples:
-                GetContestOccurrence:
-                  value: "{\"id\":1,\"contest\":{\"id\":1,\"name\":\"Contest Name\"\
-                    },\"title\":\"Occurrence Title\",\"description\":\"Occurrence\
-                    \ Description\"}"
   /feed/recent:
     get:
       tags:
@@ -606,41 +221,6 @@ paths:
                         } ]
                       }
                     }
-  /jobs:
-    get:
-      tags:
-      - jobs
-      summary: Get Job Postings
-      description: Get Job Postings
-      operationId: GetJobPostings
-      parameters:
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobPostingsResponse"
-              examples:
-                GetJobPostings:
-                  value: "{\"postings\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
-                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":\"1\",\"\
-                    company\":{\"id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"\
-                    Software Engineer\",\"jobDescription\":\"Job Description\",\"\
-                    location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    ,\"updatedAt\":\"1970-01-01T00:00:00\"}]}}"
   /media:
     post:
       tags:
@@ -962,54 +542,6 @@ paths:
       responses:
         "201":
           description: "201"
-  /providers/my:
-    get:
-      tags:
-      - providers
-      summary: Get My Providers
-      description: Get My Providers
-      operationId: GetMyProviders
-      parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetProvidersResponse"
-              examples:
-                GetMyProviders:
-                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
-                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
   /reflections:
     get:
       tags:
@@ -1256,51 +788,6 @@ paths:
                     ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
                     :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
                     2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
-  /search:
-    get:
-      tags:
-      - search
-      summary: Search
-      description: Search
-      operationId: Search
-      parameters:
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
-      - name: query
-        in: query
-        description: Search Query
-        required: true
-        schema:
-          type: string
-      - name: type
-        in: query
-        description: Search Type
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SearchResponse"
-              examples:
-                Search:
-                  value: "{\"results\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
-                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":1,\"name\"\
-                    :\"Sync\"}]},\"count\":{\"userCount\":5,\"schoolCount\":4,\"companyCount\"\
-                    :3,\"contestCount\":2,\"projectCount\":1}}"
   /search/projects:
     get:
       tags:
@@ -1327,66 +814,6 @@ paths:
                   value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
                     ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
                     ,\"name\":\"React 프로젝트\"}]}"
-  /search/providers:
-    get:
-      tags:
-      - providers
-      summary: Search Providers
-      description: Search Providers
-      operationId: SearchProviders
-      parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      - name: query
-        in: query
-        description: Search Query
-        required: false
-        schema:
-          type: string
-      - name: types
-        in: query
-        description: Provider Types List
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetProvidersResponse"
-              examples:
-                SearchProviders:
-                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
-                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
   /search/reflections:
     get:
       tags:
@@ -1564,19 +991,6 @@ components:
         expiresAt:
           type: string
           description: Expiration Time
-    CreateContestOccurrenceRequest:
-      title: CreateContestOccurrenceRequest
-      required:
-      - title
-      type: object
-      properties:
-        description:
-          type: string
-          description: Contest Occurrence Description
-          nullable: true
-        title:
-          type: string
-          description: Contest Occurrence Title
     GetProjectsResponse:
       title: GetProjectsResponse
       required:
@@ -1602,60 +1016,6 @@ components:
               id:
                 type: number
                 description: 프로젝트 ID
-    GetJobApplicationsResponse:
-      title: GetJobApplicationsResponse
-      type: object
-      properties:
-        applications:
-          required:
-          - content
-          - pageInfo
-          type: object
-          properties:
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - page
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                page:
-                  type: number
-                  description: Page Number
-              description: Page Info
-            content:
-              type: array
-              description: Content
-              items:
-                required:
-                - id
-                type: object
-                properties:
-                  company:
-                    required:
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Company Name
-                      id:
-                        type: number
-                        description: Company ID
-                  id:
-                    type: number
-                    description: Application ID
     GetReflectionResponse:
       title: GetReflectionResponse
       required:
@@ -1713,87 +1073,6 @@ components:
         commentCount:
           type: number
           description: Number of Comments
-    CreateJobPostingResponse:
-      title: CreateJobPostingResponse
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: string
-          description: Job Posting ID
-    GetProvidersResponse:
-      title: GetProvidersResponse
-      type: object
-      properties:
-        providers:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - id
-                    - isMaintainer
-                    - isVerified
-                    - name
-                    - type
-                    type: object
-                    properties:
-                      isMaintainer:
-                        type: boolean
-                        description: Maintainer Status
-                      isVerified:
-                        type: boolean
-                        description: Verification Status
-                      name:
-                        type: string
-                        description: Provider Name
-                      id:
-                        type: string
-                        description: Provider ID
-                      type:
-                        type: string
-                        description: Provider Type
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     LoginRequest:
       title: LoginRequest
       required:
@@ -1940,15 +1219,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    UploadJobApplicationFileRequest:
-      title: UploadJobApplicationFileRequest
-      required:
-      - fileId
-      type: object
-      properties:
-        fileId:
-          type: number
-          description: File ID
     GetProjectHandleAvailabilityResponse:
       title: GetProjectHandleAvailabilityResponse
       required:
@@ -1958,90 +1228,6 @@ components:
         available:
           type: boolean
           description: 핸들 사용 가능 여부
-    CreateJobApplicationResponse:
-      title: CreateJobApplicationResponse
-      required:
-      - applicationId
-      type: object
-      properties:
-        applicationId:
-          type: number
-          description: Job Application ID
-    CreateJobApplicationRequest:
-      title: CreateJobApplicationRequest
-      required:
-      - companyId
-      - jobPostingId
-      type: object
-      properties:
-        companyId:
-          type: string
-          description: Company ID
-        jobPostingId:
-          type: string
-          description: Job Posting ID
-    GetContestOccurrencesResponse:
-      title: GetContestOccurrencesResponse
-      type: object
-      properties:
-        occurrences:
-          required:
-          - content
-          - pageInfo
-          type: object
-          properties:
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - page
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                page:
-                  type: number
-                  description: Page Number
-              description: Page Info
-            content:
-              type: array
-              description: Content
-              items:
-                required:
-                - id
-                - title
-                type: object
-                properties:
-                  contest:
-                    required:
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Contest Name
-                      id:
-                        type: number
-                        description: Contest ID
-                  description:
-                    type: string
-                    description: Occurrence Description
-                    nullable: true
-                  id:
-                    type: number
-                    description: Contest Occurrence ID
-                  title:
-                    type: string
-                    description: Occurrence Title
     GetReflectionsResponse:
       title: GetReflectionsResponse
       type: object
@@ -2256,6 +1442,27 @@ components:
         mediaType:
           type: string
           description: Media Type
+    SearchReflectionsResponse:
+      title: SearchReflectionsResponse
+      required:
+      - reflections
+      type: object
+      properties:
+        reflections:
+          type: array
+          description: Reflection List
+          items:
+            required:
+            - content
+            - id
+            type: object
+            properties:
+              id:
+                type: number
+                description: Reflection ID
+              content:
+                type: string
+                description: Reflection Content
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -2312,100 +1519,6 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
-    SearchReflectionsResponse:
-      title: SearchReflectionsResponse
-      required:
-      - reflections
-      type: object
-      properties:
-        reflections:
-          type: array
-          description: Reflection List
-          items:
-            required:
-            - content
-            - id
-            type: object
-            properties:
-              id:
-                type: number
-                description: Reflection ID
-              content:
-                type: string
-                description: Reflection Content
-    SearchResponse:
-      title: SearchResponse
-      required:
-      - count
-      type: object
-      properties:
-        count:
-          required:
-          - companyCount
-          - contestCount
-          - projectCount
-          - schoolCount
-          - userCount
-          type: object
-          properties:
-            projectCount:
-              type: number
-              description: Project Count
-            companyCount:
-              type: number
-              description: Company Count
-            userCount:
-              type: number
-              description: User Count
-            contestCount:
-              type: number
-              description: Contest Count
-            schoolCount:
-              type: number
-              description: School Count
-          description: Search Result Counts
-        results:
-          required:
-          - content
-          - pageInfo
-          type: object
-          properties:
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - page
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                page:
-                  type: number
-                  description: Page Number
-              description: Page Info
-            content:
-              type: array
-              description: Content
-              items:
-                required:
-                - id
-                - name
-                type: object
-                properties:
-                  name:
-                    type: string
-                    description: Result Name
-                  id:
-                    type: number
-                    description: Result ID
     UpdateCommentRequest:
       title: UpdateCommentRequest
       required:
@@ -2424,49 +1537,6 @@ components:
         slug:
           type: string
           description: Reflection Slug
-    GetJobPostingResponse:
-      title: GetJobPostingResponse
-      required:
-      - company
-      - createdAt
-      - id
-      - jobDescription
-      - jobTitle
-      - location
-      - updatedAt
-      type: object
-      properties:
-        createdAt:
-          type: string
-          description: Creation Timestamp
-        jobTitle:
-          type: string
-          description: Job Title
-        location:
-          type: string
-          description: Location
-        jobDescription:
-          type: string
-          description: Job Description
-        company:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Company Name
-            id:
-              type: string
-              description: Company ID
-          description: Company
-        id:
-          type: string
-          description: Job Posting ID
-        updatedAt:
-          type: string
-          description: Update Timestamp
     CreateProjectResponse:
       title: CreateProjectResponse
       required:
@@ -2476,99 +1546,6 @@ components:
         handle:
           type: string
           description: 생성된 프로젝트 핸들
-    GetJobApplicationFilesResponse:
-      title: GetJobApplicationFilesResponse
-      required:
-      - files
-      type: object
-      properties:
-        files:
-          type: array
-          description: List of job application files
-          items:
-            required:
-            - url
-            type: object
-            properties:
-              url:
-                type: string
-                description: File URL
-    GetJobPostingsResponse:
-      title: GetJobPostingsResponse
-      type: object
-      properties:
-        postings:
-          required:
-          - content
-          - pageInfo
-          type: object
-          properties:
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - page
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                page:
-                  type: number
-                  description: Page Number
-              description: Page Info
-            content:
-              type: array
-              description: Content
-              items:
-                required:
-                - company
-                - createdAt
-                - id
-                - jobDescription
-                - jobTitle
-                - location
-                - updatedAt
-                type: object
-                properties:
-                  createdAt:
-                    type: string
-                    description: Creation Timestamp
-                  jobTitle:
-                    type: string
-                    description: Job Title
-                  company:
-                    required:
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Company Name
-                      id:
-                        type: string
-                        description: Company ID
-                    description: Company
-                  location:
-                    type: string
-                    description: Location
-                  jobDescription:
-                    type: string
-                    description: Job Description
-                  id:
-                    type: string
-                    description: Job Posting ID
-                  updatedAt:
-                    type: string
-                    description: Update Timestamp
     GetCommentsResponse:
       title: GetCommentsResponse
       required:
@@ -2731,6 +1708,15 @@ components:
         email:
           type: string
           description: Email
+    CreateCommentResponse:
+      title: CreateCommentResponse
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: number
+          description: Created comment ID
     CreateReflectionRequest:
       title: CreateReflectionRequest
       required:
@@ -2777,32 +1763,6 @@ components:
         teammateHandle:
           type: string
           description: 추가할 팀원의 핸들
-    CreateCommentResponse:
-      title: CreateCommentResponse
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: number
-          description: Created comment ID
-    CreateJobPostingRequest:
-      title: CreateJobPostingRequest
-      required:
-      - jobDescription
-      - jobTitle
-      type: object
-      properties:
-        jobTitle:
-          type: string
-          description: Job Title
-        location:
-          type: string
-          description: Location
-          nullable: true
-        jobDescription:
-          type: string
-          description: Job Description
     UpdateReflectionRequest:
       title: UpdateReflectionRequest
       required:
@@ -2816,55 +1776,6 @@ components:
         content:
           type: string
           description: Content
-    GetJobApplicationResponse:
-      title: GetJobApplicationResponse
-      required:
-      - company
-      - id
-      - jobDescription
-      - status
-      type: object
-      properties:
-        notes:
-          type: string
-          description: Additional Notes
-          nullable: true
-        jobDescription:
-          required:
-          - description
-          - location
-          - title
-          type: object
-          properties:
-            description:
-              type: string
-              description: Job Description
-            location:
-              type: string
-              description: Job Location
-            title:
-              type: string
-              description: Job Title
-          description: Job Description Information
-        company:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Company Name
-            id:
-              type: number
-              description: Company ID
-          description: Company Information
-        id:
-          type: number
-          description: Application ID
-        status:
-          type: string
-          description: Application Status
     CreateProjectRequest:
       title: CreateProjectRequest
       required:
@@ -2962,32 +1873,3 @@ components:
               count:
                 type: number
                 description: Number of Reflections
-    GetContestOccurrenceResponse:
-      title: GetContestOccurrenceResponse
-      required:
-      - id
-      - title
-      type: object
-      properties:
-        contest:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Contest Name
-            id:
-              type: number
-              description: Contest ID
-        description:
-          type: string
-          description: Occurrence Description
-          nullable: true
-        id:
-          type: number
-          description: Contest Occurrence ID
-        title:
-          type: string
-          description: Occurrence Title

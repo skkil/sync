@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useCreateProviderMutation } from '@/features/provider/api/create-provider';
-import SelectProviders from '@/features/provider/components/SelectProviders';
 import { ProviderType } from '@/types/provider';
 
 export default function CreateContest() {
@@ -120,28 +119,6 @@ export default function CreateContest() {
                       {...field}
                       aria-invalid={fieldState.invalid}
                       placeholder={t('form.description.placeholder')}
-                    />
-                  </Field>
-                );
-              }}
-            />
-
-            <Controller
-              name="hostProviderId"
-              control={form.control}
-              render={({ field, fieldState }) => {
-                return (
-                  <Field>
-                    <div className="flex items-center justify-between">
-                      <FieldLabel>{t('form.host.label')}</FieldLabel>
-                      <FieldError errors={[fieldState.error]} />
-                    </div>
-                    <SelectProviders
-                      placeholder={t('form.host.placeholder')}
-                      onChange={({ id }) => {
-                        field.onChange(id);
-                      }}
-                      types={[ProviderType.SCHOOL, ProviderType.COMPANY]}
                     />
                   </Field>
                 );
