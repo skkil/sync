@@ -7,7 +7,10 @@ import { useEffect } from 'react';
 import { useGetProjectByHandle } from '@/api/__generated__/project/project';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSession } from '@/lib/auth/client';
 import SyncError, { ErrorCode } from '@/lib/error';
+
+import AddTeammatePopover from './AddTeammatePopover';
 
 interface ProjectOverviewProps {
   handle: string;
@@ -16,6 +19,7 @@ interface ProjectOverviewProps {
 export default function ProjectOverview({ handle }: ProjectOverviewProps) {
   const t = useTranslations('pages.projects.project.overview');
 
+  const { data: session } = useSession();
   const { data: project, isError, error } = useGetProjectByHandle(handle);
 
   useEffect(() => {
@@ -31,11 +35,15 @@ export default function ProjectOverview({ handle }: ProjectOverviewProps) {
   }
 
   const owner = project.data.teammates.find((t) => t.isOwner);
+  const isOwner = session?.user.id === owner?.id;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">{project.data.name}</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-2xl">{project.data.name}</CardTitle>
+          {isOwner && <AddTeammatePopover projectHandle={handle} />}
+        </div>
         <p className="text-sm text-muted-foreground">
           {t('handle')}: {project.data.handle}
         </p>

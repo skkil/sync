@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from './AddTeammateRequest';
 export * from './CreateCommentRequest';
 export * from './CreateCommentResponse';
 export * from './CreateProjectRequest';
@@ -36,6 +37,8 @@ export * from './GetProjectHandleAvailabilityParams';
 export * from './GetProjectHandleAvailabilityResponse';
 export * from './GetProjectResponse';
 export * from './GetProjectResponseTeammatesItem';
+export * from './GetProjectsResponse';
+export * from './GetProjectsResponseProjectsItem';
 export * from './GetRecentFeedParams';
 export * from './GetReflectionActivitiesParams';
 export * from './GetReflectionActivitiesResponse';

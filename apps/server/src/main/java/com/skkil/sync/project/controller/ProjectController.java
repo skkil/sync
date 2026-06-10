@@ -2,10 +2,12 @@ package com.skkil.sync.project.controller;
 
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.project.constants.ProjectConstants;
+import com.skkil.sync.project.dto.request.AddTeammateRequest;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
+import com.skkil.sync.project.dto.response.GetProjectsResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.service.ProjectService;
 import jakarta.validation.constraints.NotNull;
@@ -45,6 +47,11 @@ public class ProjectController {
     return projectService.getProjectByHandle(handle);
   }
 
+  @GetMapping("/users/{handle}/projects")
+  public GetProjectsResponse getProjectsByUser(@PathVariable String handle) {
+    return projectService.getProjectsByUser(handle);
+  }
+
   @GetMapping("/projects/handles/availability")
   @ResponseStatus(HttpStatus.OK)
   public GetProjectHandleAvailabilityResponse getProjectHandleAvailability(
@@ -66,5 +73,14 @@ public class ProjectController {
       @AuthenticationPrincipal @NotNull AuthenticatedUser user,
       @RequestParam(required = true) String query) {
     return projectService.searchMyProjects(user.userId(), query);
+  }
+
+  @PostMapping("/projects/{handle}/teammates")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void addTeammate(
+      @AuthenticationPrincipal @NotNull AuthenticatedUser user,
+      @PathVariable String handle,
+      @RequestBody @Validated AddTeammateRequest request) {
+    projectService.addTeammate(user.userId(), handle, request);
   }
 }
