@@ -43,6 +43,20 @@ sourceSets {
 	main {
 		java {
 			srcDirs += 'build/generated/jooq'
+			exclude '**/recruitment/**'
+			exclude '**/provider/**'
+			exclude '**/review/**'
+			exclude '**/experience/**'
+			exclude '**/message/**'
+			exclude '**/notification/**'
+		}
+	}
+	test {
+		java {
+			exclude '**/recruitment/**'
+			exclude '**/provider/**'
+			exclude '**/review/**'
+			exclude '**/experience/**'
 		}
 	}
 }
