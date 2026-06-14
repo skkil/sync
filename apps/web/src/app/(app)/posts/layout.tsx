@@ -1,4 +1,4 @@
-import { BaseLayout } from '@/components/layout/app';
+import { TripleColumnLayout } from '@/components/layout/columns';
 import LeftSidebar from '@/components/layout/sidebar/LeftSidebar';
 
 interface PostsLayoutProps {
@@ -6,5 +6,11 @@ interface PostsLayoutProps {
 }
 
 export default function PostsLayout({ children }: PostsLayoutProps) {
-  return <BaseLayout left={<LeftSidebar />}>{children}</BaseLayout>;
+  return (
+    <TripleColumnLayout
+      left={<LeftSidebar />}
+      main={children}
+      right={undefined}
+    />
+  );
 }

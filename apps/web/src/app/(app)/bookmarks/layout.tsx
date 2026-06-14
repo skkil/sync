@@ -1,4 +1,4 @@
-import { BaseLayout } from '@/components/layout/app';
+import { TripleColumnLayout } from '@/components/layout/columns';
 import LeftSidebar from '@/components/layout/sidebar/LeftSidebar';
 
 interface BookmarksLayoutProps {
@@ -6,5 +6,11 @@ interface BookmarksLayoutProps {
 }
 
 export default function BookmarksLayout({ children }: BookmarksLayoutProps) {
-  return <BaseLayout left={<LeftSidebar />}>{children}</BaseLayout>;
+  return (
+    <TripleColumnLayout
+      left={<LeftSidebar />}
+      main={children}
+      right={undefined}
+    />
+  );
 }

@@ -436,8 +436,12 @@ paths:
                 $ref: "#/components/schemas/GetProjectResponse"
               examples:
                 GetProjectByHandle:
-                  value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"teammates\"\
-                    :[{\"id\":\"1\",\"isOwner\":true},{\"id\":\"2\",\"isOwner\":false}]}"
+                  value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
+                    :\"프로젝트 설명\",\"isPublic\":false,\"teammates\":[{\"id\":\"1\",\"\
+                    isOwner\":true},{\"id\":\"2\",\"isOwner\":false}],\"hasMoreTeammates\"\
+                    :false,\"isAdmin\":true,\"isMember\":true,\"recentActivities\"\
+                    :[{\"id\":\"1\",\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\"\
+                    :\"활동 내용\"}]}"
   /projects/handles/availability:
     get:
       tags:
@@ -1086,35 +1090,6 @@ components:
         email:
           type: string
           description: Email
-    GetProjectResponse:
-      title: GetProjectResponse
-      required:
-      - handle
-      - name
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - id
-            - isOwner
-            type: object
-            properties:
-              isOwner:
-                type: boolean
-                description: 오너 여부
-              id:
-                type: string
-                description: 팀원 ID
-        name:
-          type: string
-          description: 프로젝트 이름
-        handle:
-          type: string
-          description: 프로젝트 핸들
     GetBookmarkedReflectionsResponse:
       title: GetBookmarkedReflectionsResponse
       type: object
@@ -1442,6 +1417,74 @@ components:
         mediaType:
           type: string
           description: Media Type
+    GetProjectResponse:
+      title: GetProjectResponse
+      required:
+      - handle
+      - hasMoreTeammates
+      - isAdmin
+      - isMember
+      - isPublic
+      - name
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - id
+            - isOwner
+            type: object
+            properties:
+              isOwner:
+                type: boolean
+                description: 오너 여부
+              id:
+                type: string
+                description: 팀원 ID
+        recentActivities:
+          type: array
+          description: 최근 활동 목록
+          items:
+            required:
+            - id
+            - text
+            - timestamp
+            type: object
+            properties:
+              text:
+                type: string
+                description: 활동 내용
+              id:
+                type: string
+                description: 활동 ID
+              timestamp:
+                type: string
+                description: 활동 시각
+        name:
+          type: string
+          description: 프로젝트 이름
+        isPublic:
+          type: boolean
+          description: 공개 여부
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+        handle:
+          type: string
+          description: 프로젝트 핸들
+        isMember:
+          type: boolean
+          description: 멤버 여부
+        isAdmin:
+          type: boolean
+          description: 관리자 여부
+        hasMoreTeammates:
+          type: boolean
+          description: 추가 팀원 존재 여부
     SearchReflectionsResponse:
       title: SearchReflectionsResponse
       required:
