@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,19 @@ public class PostController {
   public void updatePostSummary(
       @PathVariable Long postId, @RequestBody @Validated UpdatePostSummaryRequest request) {
     postService.updatePostSummary(postId, request);
+  }
+
+  @PutMapping("/posts/{postId}/likes")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void likePost(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long postId) {
+    postService.likePost(user.userId(), postId);
+  }
+
+  @DeleteMapping("/posts/{postId}/likes")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void unlikePost(
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable Long postId) {
+    postService.unlikePost(user.userId(), postId);
   }
 
   @DeleteMapping("/posts/{postId}")

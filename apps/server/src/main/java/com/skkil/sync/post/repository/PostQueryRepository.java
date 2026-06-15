@@ -37,7 +37,7 @@ public class PostQueryRepository {
             POSTS.CONTENT.as("content"),
             POSTS.CREATED_AT.as("createdAt"),
             POSTS.UPDATED_AT.as("updatedAt"),
-            DSL.value(0L).as("likeCount"),
+            POSTS.LIKE_COUNT.as("likeCount"),
             DSL.value(0L).as("commentCount"),
             bookmarkedField(requesterId))
         .from(POSTS)
@@ -62,7 +62,7 @@ public class PostQueryRepository {
                 POSTS.CONTENT.as("content"),
                 POSTS.CREATED_AT.as("createdAt"),
                 POSTS.UPDATED_AT.as("updatedAt"),
-                DSL.value(0L).as("likeCount"),
+                POSTS.LIKE_COUNT.as("likeCount"),
                 DSL.value(0L).as("commentCount"),
                 bookmarkedField(null))
             .from(POSTS)
@@ -107,7 +107,7 @@ public class PostQueryRepository {
                 POSTS.CONTENT.as("content"),
                 POSTS.CREATED_AT.as("createdAt"),
                 POSTS.UPDATED_AT.as("updatedAt"),
-                DSL.value(0L).as("likeCount"),
+                POSTS.LIKE_COUNT.as("likeCount"),
                 DSL.value(0L).as("commentCount"),
                 bookmarkedField(null))
             .from(POSTS)

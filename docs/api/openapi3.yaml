@@ -464,6 +464,39 @@ paths:
               examples:
                 CreateComment:
                   value: "{\"id\":1}"
+  /posts/{postId}/likes:
+    put:
+      tags:
+      - post
+      summary: Like Post
+      description: Like Post
+      operationId: LikePost
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+    delete:
+      tags:
+      - post
+      summary: Unlike Post
+      description: Unlike Post
+      operationId: UnlikePost
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
   /posts/{slug}/comments:
     get:
       tags:

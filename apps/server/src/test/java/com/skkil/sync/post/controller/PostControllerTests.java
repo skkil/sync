@@ -15,6 +15,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
@@ -120,6 +121,52 @@ class PostControllerTests {
                 Function.identity(),
                 pathParameters(parameterWithName("postId").description("Post ID")),
                 UpdatePostRequestSnippets.getUpdatePostRequestFields()));
+  }
+
+  @Test
+  @DisplayName("[likePost] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void likePost() throws Exception {
+    AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
+    doNothing().when(postService).likePost(eq(user.userId()), eq(1L));
+
+    mockMvc
+        .perform(put("/posts/{postId}/likes", 1L).with(csrf().asHeader()))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "LikePost",
+                ResourceSnippetParameters.builder()
+                    .tag("post")
+                    .summary("Like Post")
+                    .description("Like Post"),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("postId").description("Post ID"))));
+  }
+
+  @Test
+  @DisplayName("[unlikePost] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void unlikePost() throws Exception {
+    AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
+    doNothing().when(postService).unlikePost(eq(user.userId()), eq(1L));
+
+    mockMvc
+        .perform(delete("/posts/{postId}/likes", 1L).with(csrf().asHeader()))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "UnlikePost",
+                ResourceSnippetParameters.builder()
+                    .tag("post")
+                    .summary("Unlike Post")
+                    .description("Unlike Post"),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("postId").description("Post ID"))));
   }
 
   @Test
