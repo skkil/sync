@@ -715,11 +715,11 @@ paths:
               examples:
                 GetProjectByHandle:
                   value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
-                    :\"프로젝트 설명\",\"isPublic\":false,\"teammates\":[{\"id\":\"1\",\"\
-                    isOwner\":true},{\"id\":\"2\",\"isOwner\":false}],\"hasMoreTeammates\"\
-                    :false,\"isAdmin\":true,\"isMember\":true,\"recentActivities\"\
-                    :[{\"id\":\"1\",\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\"\
-                    :\"활동 내용\"}]}"
+                    :\"프로젝트 설명\",\"isPublic\":false,\"teammates\":[{\"handle\":\"\
+                    john\",\"name\":\"John Doe\",\"role\":\"ADMIN\"},{\"handle\":\"\
+                    jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"}],\"hasMoreTeammates\"\
+                    :false,\"role\":\"ADMIN\",\"recentActivities\":[{\"id\":\"1\"\
+                    ,\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\":\"활동 내용\"}]}"
   /projects/handles/availability:
     get:
       tags:
@@ -800,6 +800,31 @@ paths:
                     :{\"id\":1,\"name\":\"Project\"},\"content\":\"Post Content\"\
                     ,\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
   /projects/{handle}/teammates:
+    get:
+      tags:
+      - project
+      summary: Get Project Teammates
+      description: 프로젝트의 팀원 목록을 조회합니다.
+      operationId: GetProjectTeammates
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectTeammatesResponse"
+              examples:
+                GetProjectTeammates:
+                  value: "{\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
+                    ,\"role\":\"ADMIN\"},{\"handle\":\"jane\",\"name\":\"Jane Doe\"\
+                    ,\"role\":\"MEMBER\"}]}"
     post:
       tags:
       - project
@@ -1108,6 +1133,77 @@ components:
         commentCount:
           type: number
           description: Number of Comments
+    GetProjectResponse:
+      title: GetProjectResponse
+      required:
+      - handle
+      - hasMoreTeammates
+      - isPublic
+      - name
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
+        role:
+          type: string
+          description: 현재 사용자 역할
+          nullable: true
+          enum:
+          - ADMIN
+          - MEMBER
+        recentActivities:
+          type: array
+          description: 최근 활동 목록
+          items:
+            required:
+            - id
+            - text
+            - timestamp
+            type: object
+            properties:
+              text:
+                type: string
+                description: 활동 내용
+              id:
+                type: string
+                description: 활동 ID
+              timestamp:
+                type: string
+                description: 활동 시각
+        name:
+          type: string
+          description: 프로젝트 이름
+        isPublic:
+          type: boolean
+          description: 공개 여부
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+        handle:
+          type: string
+          description: 프로젝트 핸들
+        hasMoreTeammates:
+          type: boolean
+          description: 추가 팀원 존재 여부
     LoginRequest:
       title: LoginRequest
       required:
@@ -1121,6 +1217,34 @@ components:
         email:
           type: string
           description: Email
+    GetProjectTeammatesResponse:
+      title: GetProjectTeammatesResponse
+      required:
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+                enum:
+                - ADMIN
+                - MEMBER
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
     UpdatePostRequest:
       title: UpdatePostRequest
       required:
@@ -1278,74 +1402,6 @@ components:
         mediaType:
           type: string
           description: Media Type
-    GetProjectResponse:
-      title: GetProjectResponse
-      required:
-      - handle
-      - hasMoreTeammates
-      - isAdmin
-      - isMember
-      - isPublic
-      - name
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - id
-            - isOwner
-            type: object
-            properties:
-              isOwner:
-                type: boolean
-                description: 오너 여부
-              id:
-                type: string
-                description: 팀원 ID
-        recentActivities:
-          type: array
-          description: 최근 활동 목록
-          items:
-            required:
-            - id
-            - text
-            - timestamp
-            type: object
-            properties:
-              text:
-                type: string
-                description: 활동 내용
-              id:
-                type: string
-                description: 활동 ID
-              timestamp:
-                type: string
-                description: 활동 시각
-        name:
-          type: string
-          description: 프로젝트 이름
-        isPublic:
-          type: boolean
-          description: 공개 여부
-        description:
-          type: string
-          description: 프로젝트 설명
-          nullable: true
-        handle:
-          type: string
-          description: 프로젝트 핸들
-        isMember:
-          type: boolean
-          description: 멤버 여부
-        isAdmin:
-          type: boolean
-          description: 관리자 여부
-        hasMoreTeammates:
-          type: boolean
-          description: 추가 팀원 존재 여부
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object

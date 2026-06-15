@@ -113,7 +113,7 @@ export default function CreateProjectPage() {
   }
 
   return (
-    <div className="container max-w-3xl py-8">
+    <div>
       <form onSubmit={form.handleSubmit(formSubmitHandler)}>
         <Card>
           <CardHeader>

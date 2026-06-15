@@ -6,8 +6,10 @@
  */
 
 export type GetProjectResponseTeammatesItem = {
-  /** 오너 여부 */
-  isOwner: boolean;
-  /** 팀원 ID */
-  id: string;
+  /** 팀원 역할 */
+  role: string;
+  /** 팀원 이름 */
+  name: string;
+  /** 팀원 핸들 */
+  handle: string;
 };

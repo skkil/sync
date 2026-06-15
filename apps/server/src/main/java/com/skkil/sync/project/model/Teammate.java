@@ -4,12 +4,13 @@ import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -30,12 +31,26 @@ public class Teammate extends BaseEntity {
   @Column(name = "is_owner", nullable = false)
   private Boolean isOwner = false;
 
+  @Column(name = "role", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Role role = Role.MEMBER;
+
   protected Teammate() {}
 
-  @Builder
-  public Teammate(Project project, User user) {
+  protected Teammate(Project project, User user) {
     this.project = project;
     this.user = user;
+  }
+
+  public static Teammate owner(Project project, User user) {
+    Teammate teammate = new Teammate(project, user);
+    teammate.role = Role.ADMIN;
+    teammate.isOwner = true;
+    return teammate;
+  }
+
+  public static Teammate member(Project project, User user) {
+    return new Teammate(project, user);
   }
 
   public void setProject(Project project) {
@@ -44,5 +59,9 @@ public class Teammate extends BaseEntity {
 
   public void setOwner(boolean isOwner) {
     this.isOwner = isOwner;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
   }
 }

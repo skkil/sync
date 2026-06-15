@@ -5,11 +5,17 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetProjectResponseRecentActivitiesItem } from './GetProjectResponseRecentActivitiesItem';
+import type { GetProjectResponseRole } from './GetProjectResponseRole';
 import type { GetProjectResponseTeammatesItem } from './GetProjectResponseTeammatesItem';
 
 export interface GetProjectResponse {
   /** 팀원 목록 */
   teammates: GetProjectResponseTeammatesItem[];
+  /**
+   * 현재 사용자 역할
+   * @nullable
+   */
+  role?: GetProjectResponseRole;
   /** 최근 활동 목록 */
   recentActivities?: GetProjectResponseRecentActivitiesItem[];
   /** 프로젝트 이름 */
@@ -23,10 +29,6 @@ export interface GetProjectResponse {
   description?: string | null;
   /** 프로젝트 핸들 */
   handle: string;
-  /** 멤버 여부 */
-  isMember: boolean;
-  /** 관리자 여부 */
-  isAdmin: boolean;
   /** 추가 팀원 존재 여부 */
   hasMoreTeammates: boolean;
 }

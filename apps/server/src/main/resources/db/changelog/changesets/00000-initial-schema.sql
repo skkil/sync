@@ -98,7 +98,8 @@ CREATE TABLE projects (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     handle VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
-    description TEXT
+    description TEXT,
+    is_public BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE teammates (
@@ -108,6 +109,7 @@ CREATE TABLE teammates (
     project_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     is_owner BOOLEAN NOT NULL DEFAULT FALSE,
+    role VARCHAR(50) NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
     UNIQUE (project_id, user_id)

@@ -29,6 +29,9 @@ public class Project extends BaseEntity {
   @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
   private List<Teammate> teammates = new ArrayList<>();
 
+  @Column(name = "is_public", nullable = false)
+  private boolean isPublic = true;
+
   protected Project() {}
 
   @Builder
@@ -40,5 +43,19 @@ public class Project extends BaseEntity {
   public void addTeammate(Teammate teammate) {
     teammates.add(teammate);
     teammate.setProject(this);
+  }
+
+  public void update(String name, String description) {
+    if (name != null) {
+      this.name = name;
+    }
+
+    if (description != null) {
+      this.description = description;
+    }
+  }
+
+  public void updateHandle(String handle) {
+    this.handle = handle.trim();
   }
 }

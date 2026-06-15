@@ -1,13 +1,18 @@
 package com.skkil.sync.project.service;
 
+import com.skkil.sync.project.constants.ProjectConstants;
 import com.skkil.sync.project.dto.request.AddTeammateRequest;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
+import com.skkil.sync.project.dto.request.UpdateProjectRequest;
+import com.skkil.sync.project.dto.request.UpdateTeammateRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
+import com.skkil.sync.project.dto.response.GetProjectTeammatesResponse;
 import com.skkil.sync.project.dto.response.GetProjectsResponse;
 import com.skkil.sync.project.dto.response.SearchProjectsResponse;
 import com.skkil.sync.project.exception.ProjectNotFoundException;
+import com.skkil.sync.project.exception.TeammateNotFoundException;
 import com.skkil.sync.project.mapper.ProjectMapper;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.model.Teammate;
@@ -15,6 +20,8 @@ import com.skkil.sync.project.repository.ProjectRepository;
 import com.skkil.sync.project.repository.TeammateRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
+import java.util.List;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,9 +53,7 @@ public class ProjectService {
     Project project = Project.builder().name(request.name()).handle(request.handle()).build();
 
     User user = userDomainService.getUserReference(userId);
-    Teammate owner = Teammate.builder().project(project).user(user).build();
-    owner.setOwner(true);
-
+    Teammate owner = Teammate.owner(project, user);
     project.addTeammate(owner);
 
     project = projectRepository.save(project);
@@ -57,23 +62,49 @@ public class ProjectService {
   }
 
   @Transactional(readOnly = true)
-  public GetProjectResponse getProjectByHandle(String handle) {
+  public GetProjectResponse getProjectByHandle(Long requesterId, String handle) {
     Project project =
         projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
 
     var teammates =
-        project.getTeammates().stream()
-            .map(
-                t ->
-                    new GetProjectResponse.Teammate(t.getUser().getId().toString(), t.getIsOwner()))
+        teammateRepository
+            .findByProjectId(
+                project.getId(),
+                PageRequest.of(0, ProjectConstants.INITIAL_TEAMMATE_LOAD_LIMIT + 1))
+            .stream()
+            .map(projectMapper::toGetProjectResponseTeammate)
             .toList();
+
+    Teammate requester =
+        requesterId == null
+            ? null
+            : teammateRepository
+                .findByProjectIdAndUserId(project.getId(), requesterId)
+                .orElse(null);
 
     return GetProjectResponse.builder()
         .handle(handle)
         .name(project.getName())
         .description(project.getDescription())
+        .isPublic(project.isPublic())
         .teammates(teammates)
+        .hasMoreTeammates(teammates.size() > ProjectConstants.INITIAL_TEAMMATE_LOAD_LIMIT)
+        .role(requester != null ? requester.getRole() : null)
+        .recentActivities(List.of())
         .build();
+  }
+
+  @Transactional(readOnly = true)
+  public GetProjectTeammatesResponse getProjectTeammates(String handle) {
+    Project project =
+        projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
+
+    var teammates =
+        teammateRepository.findByProjectId(project.getId()).stream()
+            .map(projectMapper::toGetProjectTeammatesResponseTeammate)
+            .toList();
+
+    return new GetProjectTeammatesResponse(teammates);
   }
 
   @Transactional(readOnly = true)
@@ -123,7 +154,71 @@ public class ProjectService {
     }
 
     User user = userDomainService.getUserByHandle(request.teammateHandle());
-    Teammate teammate = Teammate.builder().project(project).user(user).build();
+    Teammate teammate = Teammate.member(project, user);
     project.addTeammate(teammate);
+  }
+
+  @Transactional
+  public void updateProject(Long userId, String handle, UpdateProjectRequest request) {
+    Project project =
+        projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
+
+    if (!teammateRepository.existsByProjectIdAndUserIdAndIsOwnerTrue(project.getId(), userId)) {
+      throw new AccessDeniedException("Only the project owner can update the project");
+    }
+
+    project.update(request.name(), request.description());
+
+    if (request.handle() != null) {
+      project.updateHandle(request.handle());
+    }
+  }
+
+  @Transactional
+  public void deleteProject(Long userId, String handle) {
+    Project project =
+        projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
+
+    if (!teammateRepository.existsByProjectIdAndUserIdAndIsOwnerTrue(project.getId(), userId)) {
+      throw new AccessDeniedException("Only the project owner can delete the project");
+    }
+
+    projectRepository.delete(project);
+  }
+
+  @Transactional
+  public void removeTeammate(Long userId, String projectHandle, String teammateHandle) {
+    Project project =
+        projectRepository.findByHandle(projectHandle).orElseThrow(ProjectNotFoundException::new);
+
+    if (!teammateRepository.existsByProjectIdAndUserIdAndIsOwnerTrue(project.getId(), userId)) {
+      throw new AccessDeniedException("Only the project owner can remove teammates");
+    }
+
+    if (!teammateRepository
+        .findByProjectIdAndUserHandle(project.getId(), teammateHandle)
+        .isPresent()) {
+      throw new TeammateNotFoundException();
+    }
+
+    teammateRepository.deleteByProjectIdAndUserHandle(project.getId(), teammateHandle);
+  }
+
+  @Transactional
+  public void updateTeammateRole(
+      Long userId, String projectHandle, String teammateHandle, UpdateTeammateRequest request) {
+    Project project =
+        projectRepository.findByHandle(projectHandle).orElseThrow(ProjectNotFoundException::new);
+
+    if (!teammateRepository.existsByProjectIdAndUserIdAndIsOwnerTrue(project.getId(), userId)) {
+      throw new AccessDeniedException("Only the project owner can update teammate roles");
+    }
+
+    Teammate teammate =
+        teammateRepository
+            .findByProjectIdAndUserHandle(project.getId(), teammateHandle)
+            .orElseThrow(TeammateNotFoundException::new);
+
+    teammate.setRole(request.role());
   }
 }
