@@ -23,6 +23,9 @@ public class Project extends BaseEntity {
   @Column(name = "name", nullable = false)
   private String name;
 
+  @Column(name = "description", columnDefinition = "TEXT")
+  private String description;
+
   @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
   private List<Teammate> teammates = new ArrayList<>();
 

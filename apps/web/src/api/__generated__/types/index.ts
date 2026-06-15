@@ -36,6 +36,7 @@ export * from './GetProfileResponseContacts';
 export * from './GetProjectHandleAvailabilityParams';
 export * from './GetProjectHandleAvailabilityResponse';
 export * from './GetProjectResponse';
+export * from './GetProjectResponseRecentActivitiesItem';
 export * from './GetProjectResponseTeammatesItem';
 export * from './GetProjectsResponse';
 export * from './GetProjectsResponseProjectsItem';

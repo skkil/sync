@@ -1,10 +1,11 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
 
 import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/project';
-import { getGetReflectionsByProjectInfiniteQueryOptions } from '@/api/__generated__/reflection/reflection';
+import MiniPostEditor from '@/components/post/editor/MiniPostEditor';
+import SyncError, { ErrorCode } from '@/lib/error';
 import { getQueryClient } from '@/lib/query';
 
-import ProjectOverview from './_components/ProjectOverview';
 import ProjectPosts from './_components/ProjectPosts';
 
 interface ProjectPageProps {
@@ -17,17 +18,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const { handle } = await params;
 
   const queryClient = getQueryClient();
-  await Promise.all([
-    queryClient.prefetchQuery(getGetProjectByHandleQueryOptions(handle)),
-    queryClient.prefetchInfiniteQuery(
-      getGetReflectionsByProjectInfiniteQueryOptions(handle, { first: '10' }),
-    ),
-  ]);
+
+  try {
+    await queryClient.fetchQuery(getGetProjectByHandleQueryOptions(handle));
+  } catch (error) {
+    if (error instanceof SyncError) {
+      switch (error.code) {
+        case ErrorCode.PROJECT_NOT_FOUND:
+          notFound();
+      }
+    }
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="container max-w-3xl py-8 space-y-6">
-        <ProjectOverview handle={handle} />
+        <MiniPostEditor />
         <ProjectPosts handle={handle} />
       </div>
     </HydrationBoundary>

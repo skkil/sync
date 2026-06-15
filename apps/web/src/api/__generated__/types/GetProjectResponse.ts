@@ -4,13 +4,29 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
+import type { GetProjectResponseRecentActivitiesItem } from './GetProjectResponseRecentActivitiesItem';
 import type { GetProjectResponseTeammatesItem } from './GetProjectResponseTeammatesItem';
 
 export interface GetProjectResponse {
   /** 팀원 목록 */
   teammates: GetProjectResponseTeammatesItem[];
+  /** 최근 활동 목록 */
+  recentActivities?: GetProjectResponseRecentActivitiesItem[];
   /** 프로젝트 이름 */
   name: string;
+  /** 공개 여부 */
+  isPublic: boolean;
+  /**
+   * 프로젝트 설명
+   * @nullable
+   */
+  description?: string | null;
   /** 프로젝트 핸들 */
   handle: string;
+  /** 멤버 여부 */
+  isMember: boolean;
+  /** 관리자 여부 */
+  isAdmin: boolean;
+  /** 추가 팀원 존재 여부 */
+  hasMoreTeammates: boolean;
 }

@@ -68,7 +68,12 @@ public class ProjectService {
                     new GetProjectResponse.Teammate(t.getUser().getId().toString(), t.getIsOwner()))
             .toList();
 
-    return new GetProjectResponse(project.getHandle(), project.getName(), teammates);
+    return GetProjectResponse.builder()
+        .handle(handle)
+        .name(project.getName())
+        .description(project.getDescription())
+        .teammates(teammates)
+        .build();
   }
 
   @Transactional(readOnly = true)

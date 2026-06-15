@@ -16,7 +16,6 @@ import { useCreateReflection } from '@/api/__generated__/reflection/reflection';
 import { uploadFileToS3 } from '@/api/s3';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSession } from '@/lib/auth/client';
@@ -280,131 +279,128 @@ export default function MiniPostEditor() {
   const isPostDisabled = isEmpty || isCreatingPost || isUploadingImages;
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <CardContent className="p-4">
-        <div className="flex gap-3">
-          <Avatar>
-            <AvatarImage src={session.user.image ?? undefined} />
-            <AvatarFallback>{session.user.name[0]}</AvatarFallback>
-          </Avatar>
+    <div className="w-full mx-auto">
+      <div className="flex gap-3">
+        <Avatar>
+          <AvatarImage src={session.user.image ?? undefined} />
+          <AvatarFallback>{session.user.name[0]}</AvatarFallback>
+        </Avatar>
 
-          <div className="flex-1 space-y-3">
-            <div
-              className={cn(
-                'rounded-lg border transition-all',
-                isFocused || selectedImages.length > 0
-                  ? 'border-primary h-64'
-                  : 'border-border h-32',
-              )}
-              onClick={() => editor?.commands.focus()}
-            >
-              <ScrollArea className="h-full w-full">
-                <div className="space-y-3 px-3 py-2">
-                  <EditorContent
-                    editor={editor}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    className="w-full max-w-full"
-                  />
-
-                  {selectedImages.length > 0 && (
-                    <div
-                      className={cn(
-                        'grid gap-2 overflow-hidden rounded-lg',
-                        selectedImages.length === 1
-                          ? 'grid-cols-1'
-                          : 'grid-cols-2',
-                      )}
-                    >
-                      {selectedImages.map((image) => (
-                        <div
-                          key={image.id}
-                          className={cn(
-                            'relative overflow-hidden rounded-lg border',
-                            selectedImages.length === 1
-                              ? 'bg-background'
-                              : 'aspect-video bg-muted',
-                            image.uploadError && 'border-destructive',
-                            image.isUploading && 'opacity-60',
-                          )}
-                        >
-                          {selectedImages.length === 1 ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={image.previewUrl}
-                              alt={image.file.name}
-                              className="block w-full"
-                            />
-                          ) : (
-                            <NextImage
-                              src={image.previewUrl}
-                              alt={image.file.name}
-                              fill
-                              unoptimized
-                              sizes="(max-width: 768px) 100vw, 320px"
-                              className="h-full w-full object-cover"
-                            />
-                          )}
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            size="icon-xs"
-                            className="absolute top-2 right-2 bg-background/80 hover:bg-background"
-                            aria-label="Remove image"
-                            disabled={image.isUploading}
-                            onClick={() => handleRemoveImage(image.id)}
-                          >
-                            <XIcon />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </ScrollArea>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Add images"
-                  disabled={
-                    isUploadingImages ||
-                    selectedImages.length >= MAX_IMAGE_COUNT
-                  }
-                  onClick={() => imageInputRef.current?.click()}
-                >
-                  <ImageIcon />
-                </Button>
-                <input
-                  ref={imageInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleImageChange}
+        <div className="flex-1 space-y-3">
+          <div
+            className={cn(
+              'rounded-lg border transition-all',
+              isFocused || selectedImages.length > 0
+                ? 'border-primary h-64'
+                : 'border-border h-32',
+            )}
+            onClick={() => editor?.commands.focus()}
+          >
+            <ScrollArea className="h-full w-full">
+              <div className="space-y-3 px-3 py-2">
+                <EditorContent
+                  editor={editor}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  className="w-full max-w-full"
                 />
-              </div>
-              <div className="flex items-center gap-3">
-                <Button asChild>
-                  <Link href="/posts/new">{t('post.advanced')}</Link>
-                </Button>
 
-                <Button
-                  disabled={isPostDisabled}
-                  isPending={isCreatingPost || isUploadingImages}
-                  onClick={handleSubmit}
-                >
-                  <span>{t('post.label')}</span>
-                </Button>
+                {selectedImages.length > 0 && (
+                  <div
+                    className={cn(
+                      'grid gap-2 overflow-hidden rounded-lg',
+                      selectedImages.length === 1
+                        ? 'grid-cols-1'
+                        : 'grid-cols-2',
+                    )}
+                  >
+                    {selectedImages.map((image) => (
+                      <div
+                        key={image.id}
+                        className={cn(
+                          'relative overflow-hidden rounded-lg border',
+                          selectedImages.length === 1
+                            ? 'bg-background'
+                            : 'aspect-video bg-muted',
+                          image.uploadError && 'border-destructive',
+                          image.isUploading && 'opacity-60',
+                        )}
+                      >
+                        {selectedImages.length === 1 ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={image.previewUrl}
+                            alt={image.file.name}
+                            className="block w-full"
+                          />
+                        ) : (
+                          <NextImage
+                            src={image.previewUrl}
+                            alt={image.file.name}
+                            fill
+                            unoptimized
+                            sizes="(max-width: 768px) 100vw, 320px"
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="icon-xs"
+                          className="absolute top-2 right-2 bg-background/80 hover:bg-background"
+                          aria-label="Remove image"
+                          disabled={image.isUploading}
+                          onClick={() => handleRemoveImage(image.id)}
+                        >
+                          <XIcon />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
+            </ScrollArea>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Add images"
+                disabled={
+                  isUploadingImages || selectedImages.length >= MAX_IMAGE_COUNT
+                }
+                onClick={() => imageInputRef.current?.click()}
+              >
+                <ImageIcon />
+              </Button>
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <Button asChild>
+                <Link href="/posts/new">{t('post.advanced')}</Link>
+              </Button>
+
+              <Button
+                disabled={isPostDisabled}
+                isPending={isCreatingPost || isUploadingImages}
+                onClick={handleSubmit}
+              >
+                <span>{t('post.label')}</span>
+              </Button>
             </div>
           </div>
         </div>
-      </CardContent>
+      </div>
     </div>
   );
 }
