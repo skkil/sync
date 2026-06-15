@@ -29,9 +29,7 @@ interface CommentsSectionProps {
   postId: string;
 }
 
-export default function CommentsSection({
-  postId,
-}: CommentsSectionProps) {
+export default function CommentsSection({ postId }: CommentsSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { data, isPending } = useGetPostComments(postId, {
     query: {
@@ -218,9 +216,7 @@ function CommentForm({
     mutation: {
       onSuccess: () => {
         setContent('');
-        queryClient.invalidateQueries(
-          getGetPostCommentsQueryOptions(postId),
-        );
+        queryClient.invalidateQueries(getGetPostCommentsQueryOptions(postId));
         onSuccess?.();
       },
       onError: () => toast.error('댓글을 저장하지 못했습니다.'),
@@ -284,9 +280,7 @@ function EditCommentForm({
   const { mutate, isPending } = useUpdateComment({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries(
-          getGetPostCommentsQueryOptions(postId),
-        );
+        queryClient.invalidateQueries(getGetPostCommentsQueryOptions(postId));
         onDone();
       },
       onError: () => toast.error('댓글을 수정하지 못했습니다.'),

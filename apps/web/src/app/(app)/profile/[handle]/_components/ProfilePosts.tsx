@@ -4,8 +4,8 @@ import { useIntersectionObserver } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
-import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { useGetUserPostsInfinite } from '@/api/__generated__/post/post';
+import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import type { GetPostsResponsePostsNodesItemContent } from '@/api/__generated__/types';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -117,11 +117,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
   );
 }
 
-function PostCard({
-  post,
-}: {
-  post: GetPostsResponsePostsNodesItemContent;
-}) {
+function PostCard({ post }: { post: GetPostsResponsePostsNodesItemContent }) {
   return (
     <article className="rounded-md border p-4">
       <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">

@@ -6,8 +6,8 @@ import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { useGetUserPostsInfinite } from '@/api/__generated__/post/post';
+import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -104,10 +104,7 @@ export default function Posts() {
     <div>
       <div className="space-y-4">
         {posts.map((post) => (
-          <PostCard
-            key={post.content.id}
-            post={post.content}
-          />
+          <PostCard key={post.content.id} post={post.content} />
         ))}
       </div>
 

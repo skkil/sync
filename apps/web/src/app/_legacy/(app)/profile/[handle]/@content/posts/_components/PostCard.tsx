@@ -18,9 +18,7 @@ export default function PostCard({ post }: PostCardProps) {
           <div className="flex-1 space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-semibold text-sm">
-                  {post.author?.name}
-                </p>
+                <p className="font-semibold text-sm">{post.author?.name}</p>
                 <p className="text-xs text-muted-foreground">
                   {format(new Date(post.createdAt), 'PPP')}
                 </p>

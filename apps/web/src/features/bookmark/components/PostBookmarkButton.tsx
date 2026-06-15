@@ -57,8 +57,7 @@ export default function PostBookmarkButton({
     if (slug) {
       queryClient.setQueryData<GetPostBySlugQueryResult>(
         getGetPostBySlugQueryKey(slug),
-        (data) =>
-          updatePostDetailBookmark(data, postId, nextBookmarked),
+        (data) => updatePostDetailBookmark(data, postId, nextBookmarked),
       );
     }
   };

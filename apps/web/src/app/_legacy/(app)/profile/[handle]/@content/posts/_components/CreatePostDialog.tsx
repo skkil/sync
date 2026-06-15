@@ -4,8 +4,8 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useRef, useState } from 'react';
 
-import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { useCreatePost } from '@/api/__generated__/post/post';
+import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
