@@ -45,9 +45,9 @@ export default function ProjectHeader({ handle }: ProjectHeaderProps) {
 
       <div className="flex items-center gap-2">
         {isAuthenticated(session) && <Button>Follow</Button>}
-        {project.isMember && (
+        {project.role && (
           <Button asChild>
-            <Link href={`/project/${project.handle}/settings`}>Settings</Link>
+            <Link href={`/projects/${project.handle}/settings`}>Settings</Link>
           </Button>
         )}
       </div>

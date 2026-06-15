@@ -49,7 +49,7 @@ function AboutCard({ project }: { project: GetProjectResponse }) {
       <div className="flex items-center justify-between">
         <span>About</span>
         <div>
-          {project.isAdmin && (
+          {project.role === 'ADMIN' && (
             <Button variant="ghost" size="icon">
               <GearIcon />
             </Button>
@@ -73,7 +73,7 @@ function TeammatesCard({ project }: { project: GetProjectResponse }) {
 
       <div>
         {project.teammates.map((teammate) => (
-          <div key={teammate.id}>
+          <div key={teammate.handle}>
             <Avatar>
               <AvatarFallback />
             </Avatar>

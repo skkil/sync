@@ -29,6 +29,7 @@ import type {
   GetProjectHandleAvailabilityParams,
   GetProjectHandleAvailabilityResponse,
   GetProjectResponse,
+  GetProjectTeammatesResponse,
   GetProjectsResponse,
   SearchMyProjectsParams,
   SearchProjectsParams,
@@ -511,6 +512,188 @@ export function useGetProjectHandleAvailability<
     params,
     options,
   );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 프로젝트의 팀원 목록을 조회합니다.
+ * @summary Get Project Teammates
+ */
+export type getProjectTeammatesResponse200 = {
+  data: GetProjectTeammatesResponse;
+  status: 200;
+};
+
+export type getProjectTeammatesResponseSuccess =
+  getProjectTeammatesResponse200 & {
+    headers: Headers;
+  };
+export type getProjectTeammatesResponse = getProjectTeammatesResponseSuccess;
+
+export const getGetProjectTeammatesUrl = (handle: string) => {
+  return `/projects/${handle}/teammates`;
+};
+
+export const getProjectTeammates = async (
+  handle: string,
+  options?: RequestInit,
+): Promise<getProjectTeammatesResponse> => {
+  return api<getProjectTeammatesResponse>(getGetProjectTeammatesUrl(handle), {
+    ...options,
+    method: 'GET',
+  });
+};
+
+export const getGetProjectTeammatesQueryKey = (handle: string) => {
+  return [`/projects/${handle}/teammates`] as const;
+};
+
+export const getGetProjectTeammatesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProjectTeammates>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectTeammates>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetProjectTeammatesQueryKey(handle);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProjectTeammates>>
+  > = ({ signal }) =>
+    getProjectTeammates(handle, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!handle,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getProjectTeammates>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProjectTeammatesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProjectTeammates>>
+>;
+export type GetProjectTeammatesQueryError = ErrorType<unknown>;
+
+export function useGetProjectTeammates<
+  TData = Awaited<ReturnType<typeof getProjectTeammates>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectTeammates>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectTeammates>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectTeammates>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectTeammates<
+  TData = Awaited<ReturnType<typeof getProjectTeammates>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectTeammates>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectTeammates>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectTeammates>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectTeammates<
+  TData = Awaited<ReturnType<typeof getProjectTeammates>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectTeammates>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Project Teammates
+ */
+
+export function useGetProjectTeammates<
+  TData = Awaited<ReturnType<typeof getProjectTeammates>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectTeammates>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetProjectTeammatesQueryOptions(handle, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
