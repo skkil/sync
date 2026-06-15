@@ -10,8 +10,8 @@ import { useIntersectionObserver } from '@uidotdev/usehooks';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
-import { useGetBookmarkedReflectionsInfinite } from '@/api/__generated__/bookmark/bookmark';
-import type { GetBookmarkedReflectionsResponsePostsNodesItem } from '@/api/__generated__/types';
+import { useGetBookmarkedPostsInfinite } from '@/api/__generated__/bookmark/bookmark';
+import type { GetBookmarkedPostsResponsePostsNodesItem } from '@/api/__generated__/types';
 import { buttonVariants } from '@/components/ui/button';
 import { BaseViewer } from '@/components/ui/editor';
 import {
@@ -23,14 +23,14 @@ import {
 } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
-import ReflectionBookmarkButton from '@/features/bookmark/components/ReflectionBookmarkButton';
+import PostBookmarkButton from '@/features/bookmark/components/PostBookmarkButton';
 import { cn } from '@/lib/utils';
 
 const BOOKMARKED_POST_PAGE_SIZE = '30';
 
 export default function BookmarkedPosts() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
-    useGetBookmarkedReflectionsInfinite(
+    useGetBookmarkedPostsInfinite(
       {
         first: BOOKMARKED_POST_PAGE_SIZE,
         after: '',
@@ -122,7 +122,7 @@ function PageHeader() {
 function BookmarkedPostCard({
   post,
 }: {
-  post: GetBookmarkedReflectionsResponsePostsNodesItem;
+  post: GetBookmarkedPostsResponsePostsNodesItem;
 }) {
   const {
     id,
@@ -176,8 +176,8 @@ function BookmarkedPostCard({
             보기
           </Link>
 
-          <ReflectionBookmarkButton
-            reflectionId={id}
+          <PostBookmarkButton
+            postId={id}
             slug={slug}
             bookmarked={bookmarked}
             isAuthenticated

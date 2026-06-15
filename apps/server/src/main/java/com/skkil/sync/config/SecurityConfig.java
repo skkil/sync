@@ -55,7 +55,7 @@ public class SecurityConfig {
                         HttpMethod.GET,
                         "/experiences/**",
                         "/companies/**",
-                        "/reflections/**",
+                        "/posts/**",
                         "/comments/**",
                         "/users/**",
                         "/team-building/**",

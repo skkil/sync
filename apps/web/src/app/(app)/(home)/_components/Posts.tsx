@@ -8,7 +8,7 @@ import type { GetFeedResponseItemsNodesItem } from '@/api/__generated__/types/Ge
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
-import ReflectionBookmarkButton from '@/features/bookmark/components/ReflectionBookmarkButton';
+import PostBookmarkButton from '@/features/bookmark/components/PostBookmarkButton';
 import { useSession } from '@/lib/auth/client';
 
 const FEED_PAGE_SIZE = '50';
@@ -118,8 +118,8 @@ function PostCard({
           <span>{commentCount} comments</span>
         </div>
 
-        <ReflectionBookmarkButton
-          reflectionId={id}
+        <PostBookmarkButton
+          postId={id}
           slug={slug}
           bookmarked={bookmarked}
           isAuthenticated={isAuthenticated}

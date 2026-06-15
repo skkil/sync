@@ -29,17 +29,12 @@ export default defineConfig({
           // single operation with pagination parameters, even if the operation is not intended
           // to be used as an infinite query.
           // See https://github.com/orval-labs/orval/issues/3101
-          GetReflections: {
+          GetPosts: {
             query: {
               useInfinite: true,
             },
           },
-          GetUserReflections: {
-            query: {
-              useInfinite: true,
-            },
-          },
-          GetProjectExperienceReflections: {
+          GetUserPosts: {
             query: {
               useInfinite: true,
             },
@@ -79,12 +74,12 @@ export default defineConfig({
               useInfinite: true,
             },
           },
-          GetBookmarkedReflections: {
+          GetBookmarkedPosts: {
             query: {
               useInfinite: true,
             },
           },
-          GetReflectionsByProject: {
+          GetPostsByProject: {
             query: {
               useInfinite: true,
             },

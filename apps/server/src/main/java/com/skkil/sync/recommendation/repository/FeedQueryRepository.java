@@ -1,7 +1,7 @@
 package com.skkil.sync.recommendation.repository;
 
-import static com.skkil.sync.jooq.tables.ReflectionBookmarks.REFLECTION_BOOKMARKS;
-import static com.skkil.sync.jooq.tables.Reflections.REFLECTIONS;
+import static com.skkil.sync.jooq.tables.PostBookmarks.POST_BOOKMARKS;
+import static com.skkil.sync.jooq.tables.Posts.POSTS;
 import static com.skkil.sync.jooq.tables.Users.USERS;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
@@ -20,24 +20,24 @@ public class FeedQueryRepository {
     this.dsl = dsl;
   }
 
-  public CursorPaginationDataFetcher<FeedDto> getRecentReflections(Long requesterId) {
+  public CursorPaginationDataFetcher<FeedDto> getRecentPosts(Long requesterId) {
     return (condition, orderFields, size) -> {
       return dsl.select(
-              REFLECTIONS.ID.as("id"),
-              REFLECTIONS.SLUG.as("slug"),
-              REFLECTIONS.AUTHOR_ID.as("authorId"),
+              POSTS.ID.as("id"),
+              POSTS.SLUG.as("slug"),
+              POSTS.AUTHOR_ID.as("authorId"),
               USERS.HANDLE.as("authorHandle"),
               USERS.FULL_NAME.as("authorName"),
               USERS.PROFILE_IMAGE_ID.as("authorProfileImageId"),
-              REFLECTIONS.CONTENT.as("content"),
+              POSTS.CONTENT.as("content"),
               DSL.value(0).as("likeCount"),
               DSL.value(0).as("commentCount"),
               bookmarkedField(requesterId),
-              REFLECTIONS.CREATED_AT.as("createdAt"),
-              REFLECTIONS.UPDATED_AT.as("updatedAt"))
-          .from(REFLECTIONS)
+              POSTS.CREATED_AT.as("createdAt"),
+              POSTS.UPDATED_AT.as("updatedAt"))
+          .from(POSTS)
           .join(USERS)
-          .on(REFLECTIONS.AUTHOR_ID.eq(USERS.ID))
+          .on(POSTS.AUTHOR_ID.eq(USERS.ID))
           .where(condition)
           .orderBy(orderFields)
           .limit(size)
@@ -53,9 +53,9 @@ public class FeedQueryRepository {
     return DSL.field(
             DSL.exists(
                 DSL.selectOne()
-                    .from(REFLECTION_BOOKMARKS)
-                    .where(REFLECTION_BOOKMARKS.REFLECTION_ID.eq(REFLECTIONS.ID))
-                    .and(REFLECTION_BOOKMARKS.USER_ID.eq(requesterId))))
+                    .from(POST_BOOKMARKS)
+                    .where(POST_BOOKMARKS.POST_ID.eq(POSTS.ID))
+                    .and(POST_BOOKMARKS.USER_ID.eq(requesterId))))
         .as("bookmarked");
   }
 }

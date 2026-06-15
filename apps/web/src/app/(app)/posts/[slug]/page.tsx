@@ -1,7 +1,7 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
-import { getGetReflectionCommentsQueryOptions } from '@/api/__generated__/comment/comment';
-import { getGetReflectionBySlugQueryOptions } from '@/api/__generated__/reflection/reflection';
+import { getGetPostCommentsQueryOptions } from '@/api/__generated__/comment/comment';
+import { getGetPostBySlugQueryOptions } from '@/api/__generated__/post/post';
 import { getQueryClient } from '@/lib/query';
 
 import PostComments from './_components/PostComments';
@@ -17,8 +17,8 @@ export default async function Post({ params }: PostProps) {
   const { slug } = await params;
 
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(getGetReflectionBySlugQueryOptions(slug));
-  await queryClient.prefetchQuery(getGetReflectionCommentsQueryOptions(slug));
+  await queryClient.prefetchQuery(getGetPostBySlugQueryOptions(slug));
+  await queryClient.prefetchQuery(getGetPostCommentsQueryOptions(slug));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

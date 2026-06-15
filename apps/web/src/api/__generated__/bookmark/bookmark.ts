@@ -27,31 +27,28 @@ import type {
 import { api } from '../../../lib/server';
 import type { ErrorType } from '../../../lib/server';
 import type {
-  GetBookmarkedReflectionsParams,
-  GetBookmarkedReflectionsResponse,
+  GetBookmarkedPostsParams,
+  GetBookmarkedPostsResponse,
 } from '../types';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Get Bookmarked Reflections
- * @summary Get Bookmarked Reflections
+ * Get Bookmarked Posts
+ * @summary Get Bookmarked Posts
  */
-export type getBookmarkedReflectionsResponse200 = {
-  data: GetBookmarkedReflectionsResponse;
+export type getBookmarkedPostsResponse200 = {
+  data: GetBookmarkedPostsResponse;
   status: 200;
 };
 
-export type getBookmarkedReflectionsResponseSuccess =
-  getBookmarkedReflectionsResponse200 & {
+export type getBookmarkedPostsResponseSuccess =
+  getBookmarkedPostsResponse200 & {
     headers: Headers;
   };
-export type getBookmarkedReflectionsResponse =
-  getBookmarkedReflectionsResponseSuccess;
+export type getBookmarkedPostsResponse = getBookmarkedPostsResponseSuccess;
 
-export const getGetBookmarkedReflectionsUrl = (
-  params?: GetBookmarkedReflectionsParams,
-) => {
+export const getGetBookmarkedPostsUrl = (params?: GetBookmarkedPostsParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -63,55 +60,48 @@ export const getGetBookmarkedReflectionsUrl = (
   const stringifiedParams = normalizedParams.toString();
 
   return stringifiedParams.length > 0
-    ? `/bookmarks/reflections?${stringifiedParams}`
-    : `/bookmarks/reflections`;
+    ? `/bookmarks/posts?${stringifiedParams}`
+    : `/bookmarks/posts`;
 };
 
-export const getBookmarkedReflections = async (
-  params?: GetBookmarkedReflectionsParams,
+export const getBookmarkedPosts = async (
+  params?: GetBookmarkedPostsParams,
   options?: RequestInit,
-): Promise<getBookmarkedReflectionsResponse> => {
-  return api<getBookmarkedReflectionsResponse>(
-    getGetBookmarkedReflectionsUrl(params),
-    {
-      ...options,
-      method: 'GET',
-    },
-  );
+): Promise<getBookmarkedPostsResponse> => {
+  return api<getBookmarkedPostsResponse>(getGetBookmarkedPostsUrl(params), {
+    ...options,
+    method: 'GET',
+  });
 };
 
-export const getGetBookmarkedReflectionsInfiniteQueryKey = (
-  params?: GetBookmarkedReflectionsParams,
+export const getGetBookmarkedPostsInfiniteQueryKey = (
+  params?: GetBookmarkedPostsParams,
 ) => {
-  return [
-    'infinite',
-    `/bookmarks/reflections`,
-    ...(params ? [params] : []),
-  ] as const;
+  return ['infinite', `/bookmarks/posts`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetBookmarkedReflectionsQueryKey = (
-  params?: GetBookmarkedReflectionsParams,
+export const getGetBookmarkedPostsQueryKey = (
+  params?: GetBookmarkedPostsParams,
 ) => {
-  return [`/bookmarks/reflections`, ...(params ? [params] : [])] as const;
+  return [`/bookmarks/posts`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetBookmarkedReflectionsInfiniteQueryOptions = <
+export const getGetBookmarkedPostsInfiniteQueryOptions = <
   TData = InfiniteData<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>,
-    GetBookmarkedReflectionsParams['after']
+    Awaited<ReturnType<typeof getBookmarkedPosts>>,
+    GetBookmarkedPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params?: GetBookmarkedReflectionsParams,
+  params?: GetBookmarkedPostsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData,
         QueryKey,
-        GetBookmarkedReflectionsParams['after']
+        GetBookmarkedPostsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -120,56 +110,55 @@ export const getGetBookmarkedReflectionsInfiniteQueryOptions = <
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ??
-    getGetBookmarkedReflectionsInfiniteQueryKey(params);
+    queryOptions?.queryKey ?? getGetBookmarkedPostsInfiniteQueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>,
+    Awaited<ReturnType<typeof getBookmarkedPosts>>,
     QueryKey,
-    GetBookmarkedReflectionsParams['after']
+    GetBookmarkedPostsParams['after']
   > = ({ signal, pageParam }) =>
-    getBookmarkedReflections(
+    getBookmarkedPosts(
       { ...params, after: pageParam || params?.['after'] },
       { signal, ...requestOptions },
     );
 
   return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>,
+    Awaited<ReturnType<typeof getBookmarkedPosts>>,
     TError,
     TData,
     QueryKey,
-    GetBookmarkedReflectionsParams['after']
+    GetBookmarkedPostsParams['after']
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetBookmarkedReflectionsInfiniteQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getBookmarkedReflections>>
+export type GetBookmarkedPostsInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBookmarkedPosts>>
 >;
-export type GetBookmarkedReflectionsInfiniteQueryError = ErrorType<unknown>;
+export type GetBookmarkedPostsInfiniteQueryError = ErrorType<unknown>;
 
-export function useGetBookmarkedReflectionsInfinite<
+export function useGetBookmarkedPostsInfinite<
   TData = InfiniteData<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>,
-    GetBookmarkedReflectionsParams['after']
+    Awaited<ReturnType<typeof getBookmarkedPosts>>,
+    GetBookmarkedPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params: undefined | GetBookmarkedReflectionsParams,
+  params: undefined | GetBookmarkedPostsParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData,
         QueryKey,
-        GetBookmarkedReflectionsParams['after']
+        GetBookmarkedPostsParams['after']
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getBookmarkedReflections>>,
+          Awaited<ReturnType<typeof getBookmarkedPosts>>,
           TError,
-          Awaited<ReturnType<typeof getBookmarkedReflections>>,
+          Awaited<ReturnType<typeof getBookmarkedPosts>>,
           QueryKey
         >,
         'initialData'
@@ -180,29 +169,29 @@ export function useGetBookmarkedReflectionsInfinite<
 ): DefinedUseInfiniteQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetBookmarkedReflectionsInfinite<
+export function useGetBookmarkedPostsInfinite<
   TData = InfiniteData<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>,
-    GetBookmarkedReflectionsParams['after']
+    Awaited<ReturnType<typeof getBookmarkedPosts>>,
+    GetBookmarkedPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params?: GetBookmarkedReflectionsParams,
+  params?: GetBookmarkedPostsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData,
         QueryKey,
-        GetBookmarkedReflectionsParams['after']
+        GetBookmarkedPostsParams['after']
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getBookmarkedReflections>>,
+          Awaited<ReturnType<typeof getBookmarkedPosts>>,
           TError,
-          Awaited<ReturnType<typeof getBookmarkedReflections>>,
+          Awaited<ReturnType<typeof getBookmarkedPosts>>,
           QueryKey
         >,
         'initialData'
@@ -213,22 +202,22 @@ export function useGetBookmarkedReflectionsInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetBookmarkedReflectionsInfinite<
+export function useGetBookmarkedPostsInfinite<
   TData = InfiniteData<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>,
-    GetBookmarkedReflectionsParams['after']
+    Awaited<ReturnType<typeof getBookmarkedPosts>>,
+    GetBookmarkedPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params?: GetBookmarkedReflectionsParams,
+  params?: GetBookmarkedPostsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData,
         QueryKey,
-        GetBookmarkedReflectionsParams['after']
+        GetBookmarkedPostsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -238,25 +227,25 @@ export function useGetBookmarkedReflectionsInfinite<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get Bookmarked Reflections
+ * @summary Get Bookmarked Posts
  */
 
-export function useGetBookmarkedReflectionsInfinite<
+export function useGetBookmarkedPostsInfinite<
   TData = InfiniteData<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>,
-    GetBookmarkedReflectionsParams['after']
+    Awaited<ReturnType<typeof getBookmarkedPosts>>,
+    GetBookmarkedPostsParams['after']
   >,
   TError = ErrorType<unknown>,
 >(
-  params?: GetBookmarkedReflectionsParams,
+  params?: GetBookmarkedPostsParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData,
         QueryKey,
-        GetBookmarkedReflectionsParams['after']
+        GetBookmarkedPostsParams['after']
       >
     >;
     request?: SecondParameter<typeof api>;
@@ -265,7 +254,7 @@ export function useGetBookmarkedReflectionsInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetBookmarkedReflectionsInfiniteQueryOptions(
+  const queryOptions = getGetBookmarkedPostsInfiniteQueryOptions(
     params,
     options,
   );
@@ -280,15 +269,15 @@ export function useGetBookmarkedReflectionsInfinite<
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
-export const getGetBookmarkedReflectionsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getBookmarkedReflections>>,
+export const getGetBookmarkedPostsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBookmarkedPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetBookmarkedReflectionsParams,
+  params?: GetBookmarkedPostsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData
       >
@@ -299,43 +288,42 @@ export const getGetBookmarkedReflectionsQueryOptions = <
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetBookmarkedReflectionsQueryKey(params);
+    queryOptions?.queryKey ?? getGetBookmarkedPostsQueryKey(params);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>
-  > = ({ signal }) =>
-    getBookmarkedReflections(params, { signal, ...requestOptions });
+    Awaited<ReturnType<typeof getBookmarkedPosts>>
+  > = ({ signal }) => getBookmarkedPosts(params, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getBookmarkedReflections>>,
+    Awaited<ReturnType<typeof getBookmarkedPosts>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetBookmarkedReflectionsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getBookmarkedReflections>>
+export type GetBookmarkedPostsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBookmarkedPosts>>
 >;
-export type GetBookmarkedReflectionsQueryError = ErrorType<unknown>;
+export type GetBookmarkedPostsQueryError = ErrorType<unknown>;
 
-export function useGetBookmarkedReflections<
-  TData = Awaited<ReturnType<typeof getBookmarkedReflections>>,
+export function useGetBookmarkedPosts<
+  TData = Awaited<ReturnType<typeof getBookmarkedPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params: undefined | GetBookmarkedReflectionsParams,
+  params: undefined | GetBookmarkedPostsParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getBookmarkedReflections>>,
+          Awaited<ReturnType<typeof getBookmarkedPosts>>,
           TError,
-          Awaited<ReturnType<typeof getBookmarkedReflections>>
+          Awaited<ReturnType<typeof getBookmarkedPosts>>
         >,
         'initialData'
       >;
@@ -345,24 +333,24 @@ export function useGetBookmarkedReflections<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetBookmarkedReflections<
-  TData = Awaited<ReturnType<typeof getBookmarkedReflections>>,
+export function useGetBookmarkedPosts<
+  TData = Awaited<ReturnType<typeof getBookmarkedPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetBookmarkedReflectionsParams,
+  params?: GetBookmarkedPostsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getBookmarkedReflections>>,
+          Awaited<ReturnType<typeof getBookmarkedPosts>>,
           TError,
-          Awaited<ReturnType<typeof getBookmarkedReflections>>
+          Awaited<ReturnType<typeof getBookmarkedPosts>>
         >,
         'initialData'
       >;
@@ -372,15 +360,15 @@ export function useGetBookmarkedReflections<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetBookmarkedReflections<
-  TData = Awaited<ReturnType<typeof getBookmarkedReflections>>,
+export function useGetBookmarkedPosts<
+  TData = Awaited<ReturnType<typeof getBookmarkedPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetBookmarkedReflectionsParams,
+  params?: GetBookmarkedPostsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData
       >
@@ -392,18 +380,18 @@ export function useGetBookmarkedReflections<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get Bookmarked Reflections
+ * @summary Get Bookmarked Posts
  */
 
-export function useGetBookmarkedReflections<
-  TData = Awaited<ReturnType<typeof getBookmarkedReflections>>,
+export function useGetBookmarkedPosts<
+  TData = Awaited<ReturnType<typeof getBookmarkedPosts>>,
   TError = ErrorType<unknown>,
 >(
-  params?: GetBookmarkedReflectionsParams,
+  params?: GetBookmarkedPostsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getBookmarkedReflections>>,
+        Awaited<ReturnType<typeof getBookmarkedPosts>>,
         TError,
         TData
       >
@@ -414,7 +402,7 @@ export function useGetBookmarkedReflections<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetBookmarkedReflectionsQueryOptions(params, options);
+  const queryOptions = getGetBookmarkedPostsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -425,55 +413,51 @@ export function useGetBookmarkedReflections<
 }
 
 /**
- * Bookmark Reflection
- * @summary Bookmark Reflection
+ * Bookmark Post
+ * @summary Bookmark Post
  */
-export type bookmarkReflectionResponse200 = {
+export type bookmarkPostResponse200 = {
   data: void;
   status: 200;
 };
 
-export type bookmarkReflectionResponseSuccess =
-  bookmarkReflectionResponse200 & {
-    headers: Headers;
-  };
-export type bookmarkReflectionResponse = bookmarkReflectionResponseSuccess;
+export type bookmarkPostResponseSuccess = bookmarkPostResponse200 & {
+  headers: Headers;
+};
+export type bookmarkPostResponse = bookmarkPostResponseSuccess;
 
-export const getBookmarkReflectionUrl = (reflectionId: string) => {
-  return `/reflections/${reflectionId}/bookmarks`;
+export const getBookmarkPostUrl = (postId: string) => {
+  return `/posts/${postId}/bookmarks`;
 };
 
-export const bookmarkReflection = async (
-  reflectionId: string,
+export const bookmarkPost = async (
+  postId: string,
   options?: RequestInit,
-): Promise<bookmarkReflectionResponse> => {
-  return api<bookmarkReflectionResponse>(
-    getBookmarkReflectionUrl(reflectionId),
-    {
-      ...options,
-      method: 'POST',
-    },
-  );
+): Promise<bookmarkPostResponse> => {
+  return api<bookmarkPostResponse>(getBookmarkPostUrl(postId), {
+    ...options,
+    method: 'POST',
+  });
 };
 
-export const getBookmarkReflectionMutationOptions = <
+export const getBookmarkPostMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof bookmarkReflection>>,
+    Awaited<ReturnType<typeof bookmarkPost>>,
     TError,
-    { reflectionId: string },
+    { postId: string },
     TContext
   >;
   request?: SecondParameter<typeof api>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof bookmarkReflection>>,
+  Awaited<ReturnType<typeof bookmarkPost>>,
   TError,
-  { reflectionId: string },
+  { postId: string },
   TContext
 > => {
-  const mutationKey = ['bookmarkReflection'];
+  const mutationKey = ['bookmarkPost'];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -483,101 +467,94 @@ export const getBookmarkReflectionMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof bookmarkReflection>>,
-    { reflectionId: string }
+    Awaited<ReturnType<typeof bookmarkPost>>,
+    { postId: string }
   > = (props) => {
-    const { reflectionId } = props ?? {};
+    const { postId } = props ?? {};
 
-    return bookmarkReflection(reflectionId, requestOptions);
+    return bookmarkPost(postId, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type BookmarkReflectionMutationResult = NonNullable<
-  Awaited<ReturnType<typeof bookmarkReflection>>
+export type BookmarkPostMutationResult = NonNullable<
+  Awaited<ReturnType<typeof bookmarkPost>>
 >;
 
-export type BookmarkReflectionMutationError = ErrorType<unknown>;
+export type BookmarkPostMutationError = ErrorType<unknown>;
 
 /**
- * @summary Bookmark Reflection
+ * @summary Bookmark Post
  */
-export const useBookmarkReflection = <
+export const useBookmarkPost = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof bookmarkReflection>>,
+      Awaited<ReturnType<typeof bookmarkPost>>,
       TError,
-      { reflectionId: string },
+      { postId: string },
       TContext
     >;
     request?: SecondParameter<typeof api>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof bookmarkReflection>>,
+  Awaited<ReturnType<typeof bookmarkPost>>,
   TError,
-  { reflectionId: string },
+  { postId: string },
   TContext
 > => {
-  return useMutation(
-    getBookmarkReflectionMutationOptions(options),
-    queryClient,
-  );
+  return useMutation(getBookmarkPostMutationOptions(options), queryClient);
 };
 /**
- * Unbookmark Reflection
- * @summary Unbookmark Reflection
+ * Unbookmark Post
+ * @summary Unbookmark Post
  */
-export type unbookmarkReflectionResponse204 = {
+export type unbookmarkPostResponse204 = {
   data: void;
   status: 204;
 };
 
-export type unbookmarkReflectionResponseSuccess =
-  unbookmarkReflectionResponse204 & {
-    headers: Headers;
-  };
-export type unbookmarkReflectionResponse = unbookmarkReflectionResponseSuccess;
+export type unbookmarkPostResponseSuccess = unbookmarkPostResponse204 & {
+  headers: Headers;
+};
+export type unbookmarkPostResponse = unbookmarkPostResponseSuccess;
 
-export const getUnbookmarkReflectionUrl = (reflectionId: string) => {
-  return `/reflections/${reflectionId}/bookmarks`;
+export const getUnbookmarkPostUrl = (postId: string) => {
+  return `/posts/${postId}/bookmarks`;
 };
 
-export const unbookmarkReflection = async (
-  reflectionId: string,
+export const unbookmarkPost = async (
+  postId: string,
   options?: RequestInit,
-): Promise<unbookmarkReflectionResponse> => {
-  return api<unbookmarkReflectionResponse>(
-    getUnbookmarkReflectionUrl(reflectionId),
-    {
-      ...options,
-      method: 'DELETE',
-    },
-  );
+): Promise<unbookmarkPostResponse> => {
+  return api<unbookmarkPostResponse>(getUnbookmarkPostUrl(postId), {
+    ...options,
+    method: 'DELETE',
+  });
 };
 
-export const getUnbookmarkReflectionMutationOptions = <
+export const getUnbookmarkPostMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof unbookmarkReflection>>,
+    Awaited<ReturnType<typeof unbookmarkPost>>,
     TError,
-    { reflectionId: string },
+    { postId: string },
     TContext
   >;
   request?: SecondParameter<typeof api>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof unbookmarkReflection>>,
+  Awaited<ReturnType<typeof unbookmarkPost>>,
   TError,
-  { reflectionId: string },
+  { postId: string },
   TContext
 > => {
-  const mutationKey = ['unbookmarkReflection'];
+  const mutationKey = ['unbookmarkPost'];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -587,48 +564,45 @@ export const getUnbookmarkReflectionMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof unbookmarkReflection>>,
-    { reflectionId: string }
+    Awaited<ReturnType<typeof unbookmarkPost>>,
+    { postId: string }
   > = (props) => {
-    const { reflectionId } = props ?? {};
+    const { postId } = props ?? {};
 
-    return unbookmarkReflection(reflectionId, requestOptions);
+    return unbookmarkPost(postId, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type UnbookmarkReflectionMutationResult = NonNullable<
-  Awaited<ReturnType<typeof unbookmarkReflection>>
+export type UnbookmarkPostMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unbookmarkPost>>
 >;
 
-export type UnbookmarkReflectionMutationError = ErrorType<unknown>;
+export type UnbookmarkPostMutationError = ErrorType<unknown>;
 
 /**
- * @summary Unbookmark Reflection
+ * @summary Unbookmark Post
  */
-export const useUnbookmarkReflection = <
+export const useUnbookmarkPost = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof unbookmarkReflection>>,
+      Awaited<ReturnType<typeof unbookmarkPost>>,
       TError,
-      { reflectionId: string },
+      { postId: string },
       TContext
     >;
     request?: SecondParameter<typeof api>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof unbookmarkReflection>>,
+  Awaited<ReturnType<typeof unbookmarkPost>>,
   TError,
-  { reflectionId: string },
+  { postId: string },
   TContext
 > => {
-  return useMutation(
-    getUnbookmarkReflectionMutationOptions(options),
-    queryClient,
-  );
+  return useMutation(getUnbookmarkPostMutationOptions(options), queryClient);
 };

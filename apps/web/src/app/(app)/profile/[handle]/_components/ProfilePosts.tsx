@@ -4,9 +4,9 @@ import { useIntersectionObserver } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
+import { useGetUserPostsInfinite } from '@/api/__generated__/post/post';
 import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
-import { useGetUserReflectionsInfinite } from '@/api/__generated__/reflection/reflection';
-import type { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__generated__/types';
+import type { GetPostsResponsePostsNodesItemContent } from '@/api/__generated__/types';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
@@ -35,7 +35,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
     isFetchingNextPage,
     isPending: isPostsPending,
     isError: isPostsError,
-  } = useGetUserReflectionsInfinite(
+  } = useGetUserPostsInfinite(
     userId ?? '',
     {
       first: POSTS_PAGE_SIZE,
@@ -45,7 +45,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
       query: {
         enabled: !!userId,
         getNextPageParam: (lastPage) => {
-          const pageInfo = lastPage.data.reflections?.pageInfo;
+          const pageInfo = lastPage.data.posts?.pageInfo;
           return pageInfo?.hasNextPage
             ? (pageInfo.endCursor ?? undefined)
             : undefined;
@@ -67,7 +67,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
   }, [entry?.isIntersecting, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const posts =
-    data?.pages.flatMap((page) => page.data.reflections?.nodes ?? []) ?? [];
+    data?.pages.flatMap((page) => page.data.posts?.nodes ?? []) ?? [];
 
   const isPending = isProfilePending || (!!userId && isPostsPending);
   const isError = isProfileError || isPostsError;
@@ -117,11 +117,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
   );
 }
 
-function PostCard({
-  post,
-}: {
-  post: GetReflectionsResponseReflectionsNodesItemContent;
-}) {
+function PostCard({ post }: { post: GetPostsResponsePostsNodesItemContent }) {
   return (
     <article className="rounded-md border p-4">
       <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">

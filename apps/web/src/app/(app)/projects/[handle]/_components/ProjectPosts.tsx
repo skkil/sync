@@ -4,8 +4,8 @@ import { useIntersectionObserver } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
-import { useGetReflectionsByProjectInfinite } from '@/api/__generated__/reflection/reflection';
-import type { GetReflectionsResponseReflectionsNodesItemContent } from '@/api/__generated__/types';
+import { useGetPostsByProjectInfinite } from '@/api/__generated__/post/post';
+import type { GetPostsResponsePostsNodesItemContent } from '@/api/__generated__/types';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
@@ -26,13 +26,13 @@ export default function ProjectPosts({ handle }: ProjectPostsProps) {
     isFetchingNextPage,
     isPending,
     isError,
-  } = useGetReflectionsByProjectInfinite(
+  } = useGetPostsByProjectInfinite(
     handle,
     { first: PAGE_SIZE },
     {
       query: {
         getNextPageParam: (lastPage) => {
-          const pageInfo = lastPage.data.reflections?.pageInfo;
+          const pageInfo = lastPage.data.posts?.pageInfo;
           return pageInfo?.hasNextPage
             ? (pageInfo.endCursor ?? undefined)
             : undefined;
@@ -42,7 +42,7 @@ export default function ProjectPosts({ handle }: ProjectPostsProps) {
   );
 
   const posts =
-    data?.pages.flatMap((page) => page.data.reflections?.nodes ?? []) ?? [];
+    data?.pages.flatMap((page) => page.data.posts?.nodes ?? []) ?? [];
 
   const [ref, entry] = useIntersectionObserver({
     threshold: 0.2,
@@ -99,11 +99,7 @@ export default function ProjectPosts({ handle }: ProjectPostsProps) {
   );
 }
 
-function PostCard({
-  post,
-}: {
-  post: GetReflectionsResponseReflectionsNodesItemContent;
-}) {
+function PostCard({ post }: { post: GetPostsResponsePostsNodesItemContent }) {
   return (
     <article className="rounded-md border p-4">
       <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">

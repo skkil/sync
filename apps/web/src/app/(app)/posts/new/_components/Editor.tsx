@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useCreateReflection } from '@/api/__generated__/reflection/reflection';
+import { useCreatePost } from '@/api/__generated__/post/post';
 import { Button } from '@/components/ui/button';
 import { CommandsExtension } from '@/components/ui/editor/extensions/commands';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -24,7 +24,7 @@ export default function Editor() {
   const locale = useLocale();
   const router = useRouter();
 
-  const { mutate: createPost } = useCreateReflection();
+  const { mutate: createPost } = useCreatePost();
 
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState<string[]>([]);
@@ -58,6 +58,7 @@ export default function Editor() {
       {
         data: {
           title,
+          type: 'LONG',
           tags,
           projectId,
           content: {

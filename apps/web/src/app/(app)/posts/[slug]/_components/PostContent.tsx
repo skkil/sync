@@ -6,7 +6,7 @@ import {
   HeartIcon,
 } from '@phosphor-icons/react';
 
-import { useGetReflectionBySlug } from '@/api/__generated__/reflection/reflection';
+import { useGetPostBySlug } from '@/api/__generated__/post/post';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/card';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
-import ReflectionBookmarkButton from '@/features/bookmark/components/ReflectionBookmarkButton';
+import PostBookmarkButton from '@/features/bookmark/components/PostBookmarkButton';
 import { useSession } from '@/lib/auth/client';
 
 interface PostContentProps {
@@ -28,7 +28,7 @@ interface PostContentProps {
 export default function PostContent({ slug }: PostContentProps) {
   const { data: session } = useSession();
   const isAuthenticated = session === undefined ? undefined : !!session?.user;
-  const { data, isPending } = useGetReflectionBySlug(slug);
+  const { data, isPending } = useGetPostBySlug(slug);
 
   if (isPending) {
     return <Skeleton className="h-96 w-full" />;
@@ -80,8 +80,8 @@ export default function PostContent({ slug }: PostContentProps) {
           </Button>
         </div>
 
-        <ReflectionBookmarkButton
-          reflectionId={post.id}
+        <PostBookmarkButton
+          postId={post.id}
           slug={post.slug}
           bookmarked={post.bookmarked}
           isAuthenticated={isAuthenticated}

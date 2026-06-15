@@ -2,7 +2,7 @@ package com.skkil.sync.comment.mapper;
 
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
 import com.skkil.sync.comment.model.Comment;
-import com.skkil.sync.reflection.model.Reflection;
+import com.skkil.sync.post.model.Post;
 import java.util.List;
 import java.util.Map;
 import org.mapstruct.Mapper;
@@ -11,20 +11,18 @@ import org.mapstruct.Mapper;
 public interface CommentMapper {
 
   default GetCommentsResponse toGetCommentsResponse(
-      Reflection reflection,
+      Post post,
       List<Comment> comments,
       Map<Long, List<Comment>> replies,
       Map<Long, String> profileImageUrls) {
     return new GetCommentsResponse(
         comments.stream()
-            .map(
-                comment ->
-                    toGetCommentsResponseComment(reflection, comment, replies, profileImageUrls))
+            .map(comment -> toGetCommentsResponseComment(post, comment, replies, profileImageUrls))
             .toList());
   }
 
   default GetCommentsResponse.Comment toGetCommentsResponseComment(
-      Reflection reflection,
+      Post post,
       Comment comment,
       Map<Long, List<Comment>> replies,
       Map<Long, String> profileImageUrls) {
@@ -36,13 +34,12 @@ public interface CommentMapper {
             .handle(comment.getAuthor().getHandle())
             .name(comment.getAuthor().getFullName())
             .profileImageUrl(profileImage)
-            .isPostAuthor(comment.getAuthor().equals(reflection.getAuthor()))
+            .isPostAuthor(comment.getAuthor().equals(post.getAuthor()))
             .build();
 
     List<GetCommentsResponse.Comment> commentReplies =
         replies.getOrDefault(comment.getId(), List.of()).stream()
-            .map(
-                reply -> toGetCommentsResponseComment(reflection, reply, replies, profileImageUrls))
+            .map(reply -> toGetCommentsResponseComment(post, reply, replies, profileImageUrls))
             .toList();
 
     return new GetCommentsResponse.Comment(

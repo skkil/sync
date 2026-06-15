@@ -4,7 +4,7 @@ import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { useMemo, useState } from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 
-import { useGetReflectionActivities } from '@/api/__generated__/reflection/reflection';
+import { useGetPostActivities } from '@/api/__generated__/post/post';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
@@ -16,7 +16,7 @@ export default function Streaks({ handle }: StreaksProps) {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
-  const { data } = useGetReflectionActivities(handle, {
+  const { data } = useGetPostActivities(handle, {
     year: selectedYear.toString(),
   });
 

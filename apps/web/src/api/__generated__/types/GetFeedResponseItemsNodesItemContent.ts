@@ -21,7 +21,7 @@ export type GetFeedResponseItemsNodesItemContent = {
   id: number;
   /** Content */
   content: string;
-  /** Reflection Slug */
+  /** Post Slug */
   slug: string;
   /** Comment Count */
   commentCount: number;
