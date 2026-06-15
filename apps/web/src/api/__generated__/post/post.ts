@@ -840,6 +840,194 @@ export function useGetPostBySlug<
 }
 
 /**
+ * Like Post
+ * @summary Like Post
+ */
+export type likePostResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type likePostResponseSuccess = likePostResponse204 & {
+  headers: Headers;
+};
+export type likePostResponse = likePostResponseSuccess;
+
+export const getLikePostUrl = (postId: string) => {
+  return `/posts/${postId}/likes`;
+};
+
+export const likePost = async (
+  postId: string,
+  options?: RequestInit,
+): Promise<likePostResponse> => {
+  return api<likePostResponse>(getLikePostUrl(postId), {
+    ...options,
+    method: 'PUT',
+  });
+};
+
+export const getLikePostMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof likePost>>,
+    TError,
+    { postId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof likePost>>,
+  TError,
+  { postId: string },
+  TContext
+> => {
+  const mutationKey = ['likePost'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof likePost>>,
+    { postId: string }
+  > = (props) => {
+    const { postId } = props ?? {};
+
+    return likePost(postId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type LikePostMutationResult = NonNullable<
+  Awaited<ReturnType<typeof likePost>>
+>;
+
+export type LikePostMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Like Post
+ */
+export const useLikePost = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof likePost>>,
+      TError,
+      { postId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof likePost>>,
+  TError,
+  { postId: string },
+  TContext
+> => {
+  return useMutation(getLikePostMutationOptions(options), queryClient);
+};
+/**
+ * Unlike Post
+ * @summary Unlike Post
+ */
+export type unlikePostResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type unlikePostResponseSuccess = unlikePostResponse204 & {
+  headers: Headers;
+};
+export type unlikePostResponse = unlikePostResponseSuccess;
+
+export const getUnlikePostUrl = (postId: string) => {
+  return `/posts/${postId}/likes`;
+};
+
+export const unlikePost = async (
+  postId: string,
+  options?: RequestInit,
+): Promise<unlikePostResponse> => {
+  return api<unlikePostResponse>(getUnlikePostUrl(postId), {
+    ...options,
+    method: 'DELETE',
+  });
+};
+
+export const getUnlikePostMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unlikePost>>,
+    TError,
+    { postId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unlikePost>>,
+  TError,
+  { postId: string },
+  TContext
+> => {
+  const mutationKey = ['unlikePost'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unlikePost>>,
+    { postId: string }
+  > = (props) => {
+    const { postId } = props ?? {};
+
+    return unlikePost(postId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnlikePostMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unlikePost>>
+>;
+
+export type UnlikePostMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Unlike Post
+ */
+export const useUnlikePost = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof unlikePost>>,
+      TError,
+      { postId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof unlikePost>>,
+  TError,
+  { postId: string },
+  TContext
+> => {
+  return useMutation(getUnlikePostMutationOptions(options), queryClient);
+};
+/**
  * Get Post Activities
  * @summary Get Post Activities
  */

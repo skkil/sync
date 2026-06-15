@@ -10,6 +10,7 @@ import com.skkil.sync.post.exception.PostNotFoundException;
 import com.skkil.sync.post.model.Post;
 import com.skkil.sync.post.model.PostMediaFile;
 import com.skkil.sync.post.model.PostSummary;
+import com.skkil.sync.post.repository.PostLikeRepository;
 import com.skkil.sync.post.repository.PostMediaFileRepository;
 import com.skkil.sync.post.repository.PostRepository;
 import com.skkil.sync.post.repository.PostSummaryRepository;
@@ -37,6 +38,7 @@ public class PostService {
   private final PostRepository postRepository;
   private final PostMediaFileRepository postMediaFileRepository;
   private final PostSummaryRepository postSummaryRepository;
+  private final PostLikeRepository postLikeRepository;
 
   public PostService(
       UserDomainService userDomainService,
@@ -46,6 +48,7 @@ public class PostService {
       PostRepository postRepository,
       PostMediaFileRepository postMediaFileRepository,
       PostSummaryRepository postSummaryRepository,
+      PostLikeRepository postLikeRepository,
       ApplicationEventPublisher eventPublisher) {
     this.userDomainService = userDomainService;
     this.projectDomainService = projectDomainService;
@@ -54,6 +57,7 @@ public class PostService {
     this.postRepository = postRepository;
     this.postMediaFileRepository = postMediaFileRepository;
     this.postSummaryRepository = postSummaryRepository;
+    this.postLikeRepository = postLikeRepository;
     this.eventPublisher = eventPublisher;
   }
 
@@ -127,6 +131,18 @@ public class PostService {
 
     summary.updateSummary(request.summary());
     postSummaryRepository.save(summary);
+  }
+
+  @Transactional
+  @PreAuthorize("hasPermission(#postId, 'POST', 'READ')")
+  public void likePost(Long userId, Long postId) {
+    postLikeRepository.insertAndIncrementIfAbsent(userId, postId);
+  }
+
+  @Transactional
+  @PreAuthorize("hasPermission(#postId, 'POST', 'READ')")
+  public void unlikePost(Long userId, Long postId) {
+    postLikeRepository.deleteAndDecrementIfPresent(userId, postId);
   }
 
   @Transactional

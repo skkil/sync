@@ -46,6 +46,9 @@ public class Post extends BaseEntity {
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
+  @Column(name = "like_count", nullable = false)
+  private int likeCount = 0;
+
   @OneToMany(
       mappedBy = "post",
       fetch = FetchType.LAZY,
