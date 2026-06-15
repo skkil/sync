@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetReflectionComments } from '@/api/__generated__/comment/comment';
+import { useGetPostComments } from '@/api/__generated__/comment/comment';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -9,7 +9,7 @@ interface PostCommentsProps {
 }
 
 export default function PostComments({ slug }: PostCommentsProps) {
-  const { data, isPending } = useGetReflectionComments(slug);
+  const { data, isPending } = useGetPostComments(slug);
 
   if (isPending) {
     return <Skeleton className="h-96 w-full" />;

@@ -12,7 +12,7 @@ import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useUploadMedia } from '@/api/__generated__/media/media';
-import { useCreateReflection } from '@/api/__generated__/reflection/reflection';
+import { useCreatePost } from '@/api/__generated__/post/post';
 import { uploadFileToS3 } from '@/api/s3';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -74,7 +74,7 @@ export default function MiniPostEditor() {
   const { data: session, isPending: isSessionPending } = useSession();
 
   const { mutate: createPost, isPending: isCreatingPost } =
-    useCreateReflection();
+    useCreatePost();
   const { mutateAsync: uploadMedia } = useUploadMedia();
 
   const [isFocused, setIsFocused] = useState(false);

@@ -42,7 +42,7 @@ public class FeedService {
   public GetFeedResponse getRecentFeed(Long requesterId, CursorPaginationRequest pagination) {
     var feedItems =
         paginationService.paginate(
-            feedQueryRepository.getRecentReflections(requesterId), paginationProvider, pagination);
+            feedQueryRepository.getRecentPosts(requesterId), paginationProvider, pagination);
 
     List<Long> profileImageIds = new ArrayList<>();
 

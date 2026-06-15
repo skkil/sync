@@ -10,8 +10,8 @@ import com.skkil.sync.comment.mapper.CommentMapper;
 import com.skkil.sync.comment.model.Comment;
 import com.skkil.sync.comment.repository.CommentRepository;
 import com.skkil.sync.media.service.domain.MediaDomainService;
-import com.skkil.sync.reflection.model.Reflection;
-import com.skkil.sync.reflection.service.ReflectionDomainService;
+import com.skkil.sync.post.model.Post;
+import com.skkil.sync.post.service.PostDomainService;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
 import java.util.ArrayList;
@@ -26,29 +26,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
 
   private final CommentRepository commentRepository;
-  private final ReflectionDomainService reflectionDomainService;
+  private final PostDomainService postDomainService;
   private final UserDomainService userDomainService;
   private final MediaDomainService mediaDomainService;
   private final CommentMapper commentMapper;
 
   public CommentService(
       CommentRepository commentRepository,
-      ReflectionDomainService reflectionDomainService,
+      PostDomainService postDomainService,
       UserDomainService userDomainService,
       MediaDomainService mediaDomainService,
       CommentMapper commentMapper) {
     this.commentRepository = commentRepository;
-    this.reflectionDomainService = reflectionDomainService;
+    this.postDomainService = postDomainService;
     this.userDomainService = userDomainService;
     this.mediaDomainService = mediaDomainService;
     this.commentMapper = commentMapper;
   }
 
   @Transactional(readOnly = true)
-  public GetCommentsResponse getReflectionComments(String slug) {
-    Reflection reflection = reflectionDomainService.getReflectionBySlug(slug);
+  public GetCommentsResponse getPostComments(String slug) {
+    Post post = postDomainService.getPostBySlug(slug);
 
-    List<Comment> comments = commentRepository.findByReflection(reflection);
+    List<Comment> comments = commentRepository.findByPost(post);
 
     List<Comment> roots = new ArrayList<>();
     Map<Long, List<Comment>> replies = new HashMap<>();
@@ -71,14 +71,14 @@ public class CommentService {
       }
     }
 
-    return commentMapper.toGetCommentsResponse(reflection, roots, replies, profileImageUrls);
+    return commentMapper.toGetCommentsResponse(post, roots, replies, profileImageUrls);
   }
 
   @Transactional
   public CreateCommentResponse createComment(
-      Long authorId, Long reflectionId, CreateCommentRequest request) {
+      Long authorId, Long postId, CreateCommentRequest request) {
     User author = userDomainService.getUserReference(authorId);
-    Reflection reflection = reflectionDomainService.getReflection(reflectionId);
+    Post post = postDomainService.getPost(postId);
 
     Comment parent = null;
     if (request.parentId() != null) {
@@ -91,7 +91,7 @@ public class CommentService {
         throw new InvalidCommentException("Replies cannot have replies.");
       }
 
-      if (!reflectionId.equals(parent.getReflection().getId())) {
+      if (!postId.equals(parent.getPost().getId())) {
         throw new InvalidCommentException("Reply target must match parent comment target.");
       }
     }
@@ -99,7 +99,7 @@ public class CommentService {
     Comment comment =
         Comment.builder()
             .author(author)
-            .reflection(reflection)
+            .post(post)
             .parent(parent)
             .content(request.content())
             .build();

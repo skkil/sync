@@ -1,7 +1,7 @@
 package com.skkil.sync.comment.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
-import com.skkil.sync.reflection.model.Reflection;
+import com.skkil.sync.post.model.Post;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +24,7 @@ public class Comment extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id", nullable = false)
-  private Reflection reflection;
+  private Post post;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_id")
@@ -39,9 +39,9 @@ public class Comment extends BaseEntity {
   protected Comment() {}
 
   @Builder
-  public Comment(User author, Reflection reflection, Comment parent, String content) {
+  public Comment(User author, Post post, Comment parent, String content) {
     this.author = author;
-    this.reflection = reflection;
+    this.post = post;
     this.parent = parent;
     this.content = content;
   }
