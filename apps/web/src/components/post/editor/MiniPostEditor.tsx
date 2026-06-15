@@ -73,8 +73,7 @@ export default function MiniPostEditor() {
 
   const { data: session, isPending: isSessionPending } = useSession();
 
-  const { mutate: createPost, isPending: isCreatingPost } =
-    useCreatePost();
+  const { mutate: createPost, isPending: isCreatingPost } = useCreatePost();
   const { mutateAsync: uploadMedia } = useUploadMedia();
 
   const [isFocused, setIsFocused] = useState(false);
@@ -262,6 +261,7 @@ export default function MiniPostEditor() {
     createPost(
       {
         data: {
+          type: 'SHORT',
           content: {
             text: editor.getText(),
             json: JSON.stringify(contentJson),

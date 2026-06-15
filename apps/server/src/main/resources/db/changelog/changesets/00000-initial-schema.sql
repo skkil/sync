@@ -121,6 +121,7 @@ CREATE TABLE posts (
     author_id BIGINT NOT NULL,
     project_id BIGINT,
     title VARCHAR(255),
+    post_type VARCHAR(50) NOT NULL,
     content TEXT,
     FOREIGN KEY(author_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY(project_id) REFERENCES projects (id) ON DELETE

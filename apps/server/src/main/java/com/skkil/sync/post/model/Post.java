@@ -8,6 +8,8 @@ import com.skkil.sync.user.model.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -36,6 +38,10 @@ public class Post extends BaseEntity {
 
   @Column(name = "title")
   private String title;
+
+  @Column(name = "post_type", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PostType type;
 
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;

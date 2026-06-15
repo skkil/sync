@@ -58,6 +58,7 @@ export default function Editor() {
       {
         data: {
           title,
+          type: 'LONG',
           tags,
           projectId,
           content: {

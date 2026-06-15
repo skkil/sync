@@ -11,6 +11,7 @@ export * from './CreateCommentResponse';
 export * from './CreatePostRequest';
 export * from './CreatePostRequestContent';
 export * from './CreatePostRequestTagsItem';
+export * from './CreatePostRequestType';
 export * from './CreatePostResponse';
 export * from './CreateProjectRequest';
 export * from './CreateProjectResponse';

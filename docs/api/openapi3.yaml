@@ -314,9 +314,10 @@ paths:
               $ref: "#/components/schemas/CreatePostRequest"
             examples:
               CreatePost:
-                value: "{\"title\":\"title\",\"content\":{\"text\":\"This is a post\
-                  \ content.\",\"json\":\"{\\\"text\\\": \\\"This is a post content.\\\
-                  \"}\"},\"tags\":[\"java\",\"spring\"],\"projectId\":1}"
+                value: "{\"title\":\"title\",\"type\":\"SHORT\",\"content\":{\"text\"\
+                  :\"This is a post content.\",\"json\":\"{\\\"text\\\": \\\"This\
+                  \ is a post content.\\\"}\"},\"tags\":[\"java\",\"spring\"],\"projectId\"\
+                  :1}"
       responses:
         "201":
           description: "201"
@@ -1109,43 +1110,6 @@ components:
         available:
           type: boolean
           description: 핸들 사용 가능 여부
-    CreatePostRequest:
-      title: CreatePostRequest
-      required:
-      - content
-      type: object
-      properties:
-        title:
-          type: string
-          description: Title
-          nullable: true
-        projectId:
-          type: number
-          description: 프로젝트 ID
-          nullable: true
-        content:
-          required:
-          - json
-          - text
-          type: object
-          properties:
-            json:
-              type: string
-              description: JSON Content
-            text:
-              type: string
-              description: Text Content
-          description: Content
-        tags:
-          type: array
-          description: 태그 목록
-          nullable: true
-          items:
-            oneOf:
-            - type: object
-            - type: boolean
-            - type: string
-            - type: number
     GetFeedResponse:
       title: GetFeedResponse
       type: object
@@ -1502,6 +1466,51 @@ components:
         content:
           type: string
           description: Comment content
+    CreatePostRequest:
+      title: CreatePostRequest
+      required:
+      - content
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Post Type
+          enum:
+          - SHORT
+          - LONG
+          - QUESTION
+        title:
+          type: string
+          description: Title
+          nullable: true
+        projectId:
+          type: number
+          description: 프로젝트 ID
+          nullable: true
+        content:
+          required:
+          - json
+          - text
+          type: object
+          properties:
+            json:
+              type: string
+              description: JSON Content
+            text:
+              type: string
+              description: Text Content
+          description: Content
+        tags:
+          type: array
+          description: 태그 목록
+          nullable: true
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
     CreateProjectResponse:
       title: CreateProjectResponse
       required:

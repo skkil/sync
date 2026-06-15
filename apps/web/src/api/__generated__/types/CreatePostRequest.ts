@@ -6,8 +6,11 @@
  */
 import type { CreatePostRequestContent } from './CreatePostRequestContent';
 import type { CreatePostRequestTagsItem } from './CreatePostRequestTagsItem';
+import type { CreatePostRequestType } from './CreatePostRequestType';
 
 export interface CreatePostRequest {
+  /** Post Type */
+  type: CreatePostRequestType;
   /**
    * Title
    * @nullable
