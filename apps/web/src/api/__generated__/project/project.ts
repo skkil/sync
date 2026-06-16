@@ -34,6 +34,7 @@ import type {
   SearchMyProjectsParams,
   SearchProjectsParams,
   SearchProjectsResponse,
+  UpdateProjectRequest,
 } from '../types';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -318,6 +319,106 @@ export function useGetProjectByHandle<
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
+/**
+ * 프로젝트 정보를 수정합니다.
+ * @summary Update Project
+ */
+export type updateProjectResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type updateProjectResponseSuccess = updateProjectResponse204 & {
+  headers: Headers;
+};
+export type updateProjectResponse = updateProjectResponseSuccess;
+
+export const getUpdateProjectUrl = (handle: string) => {
+  return `/projects/${handle}`;
+};
+
+export const updateProject = async (
+  handle: string,
+  updateProjectRequest: UpdateProjectRequest,
+  options?: RequestInit,
+): Promise<updateProjectResponse> => {
+  return api<updateProjectResponse>(getUpdateProjectUrl(handle), {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updateProjectRequest),
+  });
+};
+
+export const getUpdateProjectMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateProject>>,
+    TError,
+    { handle: string; data: UpdateProjectRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateProject>>,
+  TError,
+  { handle: string; data: UpdateProjectRequest },
+  TContext
+> => {
+  const mutationKey = ['updateProject'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateProject>>,
+    { handle: string; data: UpdateProjectRequest }
+  > = (props) => {
+    const { handle, data } = props ?? {};
+
+    return updateProject(handle, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateProject>>
+>;
+export type UpdateProjectMutationBody = UpdateProjectRequest;
+export type UpdateProjectMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update Project
+ */
+export const useUpdateProject = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateProject>>,
+      TError,
+      { handle: string; data: UpdateProjectRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateProject>>,
+  TError,
+  { handle: string; data: UpdateProjectRequest },
+  TContext
+> => {
+  return useMutation(getUpdateProjectMutationOptions(options), queryClient);
+};
 /**
  * 프로젝트 핸들의 사용 가능 여부를 확인합니다.
  * @summary Get Project Handle Availability

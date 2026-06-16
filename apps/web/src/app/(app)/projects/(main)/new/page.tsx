@@ -29,6 +29,8 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Textarea } from '@/components/ui/textarea';
 import { isAuthenticated } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
 
@@ -50,6 +52,8 @@ export default function CreateProjectPage() {
       .regex(/^[a-zA-Z0-9_-]+$/, {
         message: t('form.errors.handle_invalid_characters'),
       }),
+    description: z.string().optional(),
+    isPublic: z.boolean(),
   });
 
   type CreateProjectFormValues = z.infer<typeof CreateProjectFormSchema>;
@@ -60,6 +64,8 @@ export default function CreateProjectPage() {
     defaultValues: {
       name: '',
       handle: '',
+      description: '',
+      isPublic: true,
     },
   });
 
@@ -91,7 +97,14 @@ export default function CreateProjectPage() {
 
   const formSubmitHandler = async (values: CreateProjectFormValues) => {
     createProject(
-      { data: { name: values.name, handle: values.handle } },
+      {
+        data: {
+          name: values.name,
+          handle: values.handle,
+          description: values.description || null,
+          isPublic: values.isPublic,
+        },
+      },
       {
         onSuccess: ({ data: { handle } }) => {
           toast.success(t('form.submit.success'));
@@ -162,6 +175,60 @@ export default function CreateProjectPage() {
                       aria-invalid={fieldState.invalid}
                       placeholder={t('form.handle.placeholder')}
                     />
+                  </Field>
+                )}
+              />
+              <Controller
+                name="description"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <div className="flex items-center justify-between">
+                      <FieldLabel>{t('form.description.label')}</FieldLabel>
+                      <FieldError errors={[fieldState.error]} />
+                    </div>
+                    <Textarea
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      placeholder={t('form.description.placeholder')}
+                    />
+                  </Field>
+                )}
+              />
+              <Controller
+                name="isPublic"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel>{t('form.visibility.label')}</FieldLabel>
+                    <RadioGroup
+                      value={field.value ? 'public' : 'private'}
+                      onValueChange={(v) => field.onChange(v === 'public')}
+                      className="mt-1"
+                    >
+                      <label className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[[data-state=checked]]:border-primary">
+                        <RadioGroupItem value="public" className="mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium">
+                            {t('form.visibility.public')}
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            {t('form.visibility.public_description')}
+                          </p>
+                        </div>
+                      </label>
+                      <label className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[[data-state=checked]]:border-primary">
+                        <RadioGroupItem value="private" className="mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium">
+                            {t('form.visibility.private')}
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            {t('form.visibility.private_description')}
+                          </p>
+                        </div>
+                      </label>
+                    </RadioGroup>
                   </Field>
                 )}
               />

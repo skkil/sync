@@ -17,6 +17,7 @@ public class GetProjectResponseSnippets {
         .handle("my-project")
         .name("나의 프로젝트")
         .description("프로젝트 설명")
+        .website("https://example.com")
         .teammates(
             List.of(
                 new GetProjectResponse.Teammate("john", "John Doe", Role.ADMIN),
@@ -33,6 +34,7 @@ public class GetProjectResponseSnippets {
         fieldWithPath("handle").type(JsonFieldType.STRING).description("프로젝트 핸들"),
         fieldWithPath("name").type(JsonFieldType.STRING).description("프로젝트 이름"),
         fieldWithPath("description").type(JsonFieldType.STRING).optional().description("프로젝트 설명"),
+        fieldWithPath("website").type(JsonFieldType.STRING).optional().description("프로젝트 웹사이트"),
         fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("공개 여부"),
         fieldWithPath("teammates").type(JsonFieldType.ARRAY).description("팀원 목록"),
         fieldWithPath("teammates[].handle").type(JsonFieldType.STRING).description("팀원 핸들"),

@@ -9,6 +9,7 @@ public record GetProjectResponse(
     String handle,
     String name,
     String description,
+    String website,
     boolean isPublic,
     List<Teammate> teammates,
     boolean hasMoreTeammates,

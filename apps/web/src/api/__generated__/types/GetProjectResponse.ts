@@ -12,6 +12,11 @@ export interface GetProjectResponse {
   /** 팀원 목록 */
   teammates: GetProjectResponseTeammatesItem[];
   /**
+   * 프로젝트 웹사이트
+   * @nullable
+   */
+  website?: string | null;
+  /**
    * 현재 사용자 역할
    * @nullable
    */

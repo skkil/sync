@@ -5,16 +5,15 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export interface CreateProjectRequest {
-  /** 프로젝트 이름 */
-  name: string;
-  /** 공개 여부 */
-  isPublic: boolean;
+export interface UpdateProjectRequest {
+  /**
+   * 프로젝트 웹사이트 URL
+   * @nullable
+   */
+  website?: string | null;
   /**
    * 프로젝트 설명
    * @nullable
    */
   description?: string | null;
-  /** 프로젝트 핸들 */
-  handle: string;
 }
