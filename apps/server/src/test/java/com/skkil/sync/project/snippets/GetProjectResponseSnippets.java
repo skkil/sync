@@ -19,8 +19,10 @@ public class GetProjectResponseSnippets {
         .description("프로젝트 설명")
         .teammates(
             List.of(
-                new GetProjectResponse.Teammate("john", "John Doe", Role.ADMIN),
-                new GetProjectResponse.Teammate("jane", "Jane Doe", Role.MEMBER)))
+                new GetProjectResponse.Teammate(
+                    "john", "John Doe", Role.ADMIN, "https://example.com/john.png"),
+                new GetProjectResponse.Teammate(
+                    "jane", "Jane Doe", Role.MEMBER, "https://example.com/jane.png")))
         .hasMoreTeammates(false)
         .role(Role.ADMIN)
         .recentActivities(
@@ -38,6 +40,10 @@ public class GetProjectResponseSnippets {
         fieldWithPath("teammates[].handle").type(JsonFieldType.STRING).description("팀원 핸들"),
         fieldWithPath("teammates[].name").type(JsonFieldType.STRING).description("팀원 이름"),
         fieldWithPath("teammates[].role").type(JsonFieldType.STRING).description("팀원 역할"),
+        fieldWithPath("teammates[].profileImageUrl")
+            .type(JsonFieldType.STRING)
+            .description("팀원 프로필 이미지 URL")
+            .optional(),
         fieldWithPath("hasMoreTeammates").type(JsonFieldType.BOOLEAN).description("추가 팀원 존재 여부"),
         fieldWithPath("role")
             .type(RestDocsUtils.ENUM_TYPE)

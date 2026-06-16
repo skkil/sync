@@ -716,10 +716,12 @@ paths:
                 GetProjectByHandle:
                   value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
                     :\"프로젝트 설명\",\"isPublic\":false,\"teammates\":[{\"handle\":\"\
-                    john\",\"name\":\"John Doe\",\"role\":\"ADMIN\"},{\"handle\":\"\
-                    jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"}],\"hasMoreTeammates\"\
-                    :false,\"role\":\"ADMIN\",\"recentActivities\":[{\"id\":\"1\"\
-                    ,\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\":\"활동 내용\"}]}"
+                    john\",\"name\":\"John Doe\",\"role\":\"ADMIN\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},{\"handle\":\"jane\",\"name\"\
+                    :\"Jane Doe\",\"role\":\"MEMBER\",\"profileImageUrl\":\"https://example.com/jane.png\"\
+                    }],\"hasMoreTeammates\":false,\"role\":\"ADMIN\",\"recentActivities\"\
+                    :[{\"id\":\"1\",\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\"\
+                    :\"활동 내용\"}]}"
   /projects/handles/availability:
     get:
       tags:
@@ -823,8 +825,9 @@ paths:
               examples:
                 GetProjectTeammates:
                   value: "{\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
-                    ,\"role\":\"ADMIN\"},{\"handle\":\"jane\",\"name\":\"Jane Doe\"\
-                    ,\"role\":\"MEMBER\"}]}"
+                    ,\"role\":\"ADMIN\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },{\"handle\":\"jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"\
+                    ,\"profileImageUrl\":\"https://example.com/jane.png\"}]}"
     post:
       tags:
       - project
@@ -1133,6 +1136,19 @@ components:
         commentCount:
           type: number
           description: Number of Comments
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
     GetProjectResponse:
       title: GetProjectResponse
       required:
@@ -1162,6 +1178,10 @@ components:
               handle:
                 type: string
                 description: 팀원 핸들
+              profileImageUrl:
+                type: string
+                description: 팀원 프로필 이미지 URL
+                nullable: true
         role:
           type: string
           description: 현재 사용자 역할
@@ -1204,47 +1224,6 @@ components:
         hasMoreTeammates:
           type: boolean
           description: 추가 팀원 존재 여부
-    LoginRequest:
-      title: LoginRequest
-      required:
-      - email
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: Password
-        email:
-          type: string
-          description: Email
-    GetProjectTeammatesResponse:
-      title: GetProjectTeammatesResponse
-      required:
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - handle
-            - name
-            - role
-            type: object
-            properties:
-              role:
-                type: string
-                description: 팀원 역할
-                enum:
-                - ADMIN
-                - MEMBER
-              name:
-                type: string
-                description: 팀원 이름
-              handle:
-                type: string
-                description: 팀원 핸들
     UpdatePostRequest:
       title: UpdatePostRequest
       required:
@@ -1458,6 +1437,38 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    GetProjectTeammatesResponse:
+      title: GetProjectTeammatesResponse
+      required:
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+                enum:
+                - ADMIN
+                - MEMBER
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
+              profileImageUrl:
+                type: string
+                description: 팀원 프로필 이미지 URL
+                nullable: true
     GetPostsResponse:
       title: GetPostsResponse
       type: object

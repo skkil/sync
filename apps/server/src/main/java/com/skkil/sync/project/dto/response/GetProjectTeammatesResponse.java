@@ -7,5 +7,5 @@ import lombok.Builder;
 public record GetProjectTeammatesResponse(List<Teammate> teammates) {
 
   @Builder
-  public record Teammate(String handle, String name, Role role) {}
+  public record Teammate(String handle, String name, Role role, String profileImageUrl) {}
 }

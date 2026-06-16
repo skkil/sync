@@ -16,7 +16,7 @@ public record GetProjectResponse(
     List<Activity> recentActivities) {
 
   @Builder
-  public record Teammate(String handle, String name, Role role) {}
+  public record Teammate(String handle, String name, Role role, String profileImageUrl) {}
 
   public record Activity(String id, String timestamp, String text) {}
 }

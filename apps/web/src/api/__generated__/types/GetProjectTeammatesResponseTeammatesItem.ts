@@ -13,4 +13,9 @@ export type GetProjectTeammatesResponseTeammatesItem = {
   name: string;
   /** 팀원 핸들 */
   handle: string;
+  /**
+   * 팀원 프로필 이미지 URL
+   * @nullable
+   */
+  profileImageUrl?: string | null;
 };
