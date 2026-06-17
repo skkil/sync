@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GearIcon } from '@phosphor-icons/react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -13,7 +14,6 @@ import {
   useUpdateProject,
 } from '@/api/__generated__/project/project';
 import { GetProjectResponse } from '@/api/__generated__/types';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -31,6 +31,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { UserAvatarHoverCard } from '@/components/user/UserAvatarHoverCard';
 
 interface LeftSidebarProps {
   handle: string;
@@ -62,7 +63,6 @@ export default function LeftSidebar({ handle }: LeftSidebarProps) {
   );
 }
 
-// TODO
 function LeftSidebarSkeleton() {
   return null;
 }
@@ -219,14 +219,27 @@ function AboutCard({ project }: { project: GetProjectResponse }) {
 function TeammatesCard({ project }: { project: GetProjectResponse }) {
   return (
     <div>
-      <div className="mb-2">Teammates</div>
+      <div className="mb-2 flex items-center justify-between">
+        <span>Teammates</span>
+        <div>
+          {project.role === 'ADMIN' && (
+            <Button variant="ghost" size="icon" asChild>
+              <Link href={`/projects/${project.handle}/settings/teammates`}>
+                <GearIcon />
+              </Link>
+            </Button>
+          )}
+        </div>
+      </div>
 
       <div>
         {project.teammates.map((teammate) => (
           <div key={teammate.handle}>
-            <Avatar>
-              <AvatarFallback />
-            </Avatar>
+            <UserAvatarHoverCard
+              handle={teammate.handle}
+              name={teammate.name}
+              imageUrl={teammate.profileImageUrl ?? undefined}
+            />
           </div>
         ))}
         {project.hasMoreTeammates && <span>And more...</span>}

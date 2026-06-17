@@ -19,11 +19,13 @@ public class GetProjectTeammatesResponseSnippets {
                 .handle("john")
                 .name("John Doe")
                 .role(Role.ADMIN)
+                .profileImageUrl("https://example.com/john.png")
                 .build(),
             GetProjectTeammatesResponse.Teammate.builder()
                 .handle("jane")
                 .name("Jane Doe")
                 .role(Role.MEMBER)
+                .profileImageUrl("https://example.com/jane.png")
                 .build()));
   }
 
@@ -35,6 +37,10 @@ public class GetProjectTeammatesResponseSnippets {
         fieldWithPath("teammates[].role")
             .type(RestDocsUtils.ENUM_TYPE)
             .description("팀원 역할")
-            .attributes(RestDocsUtils.getEnumAttributes(Role.class)));
+            .attributes(RestDocsUtils.getEnumAttributes(Role.class)),
+        fieldWithPath("teammates[].profileImageUrl")
+            .type(JsonFieldType.STRING)
+            .description("팀원 프로필 이미지 URL")
+            .optional());
   }
 }

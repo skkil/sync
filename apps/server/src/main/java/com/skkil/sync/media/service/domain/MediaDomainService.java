@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,5 +97,25 @@ public class MediaDomainService {
     }
 
     return mediaIdToUrl;
+  }
+
+  @Transactional(readOnly = true)
+  public <T> Map<Long, URL> generatePublicGetUrls(
+      List<T> items, Function<T, Media> mediaExtractor) {
+    Map<Long, URL> result = new HashMap<>();
+    for (T item : items) {
+      if (item == null) {
+        continue;
+      }
+
+      Media media = mediaExtractor.apply(item);
+      if (media == null) {
+        continue;
+      }
+
+      result.put(media.getId(), generatePublicGetUrl(media));
+    }
+
+    return result;
   }
 }

@@ -718,10 +718,11 @@ paths:
                   value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
                     :\"프로젝트 설명\",\"website\":\"https://example.com\",\"isPublic\"\
                     :false,\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
-                    ,\"role\":\"ADMIN\"},{\"handle\":\"jane\",\"name\":\"Jane Doe\"\
-                    ,\"role\":\"MEMBER\"}],\"hasMoreTeammates\":false,\"role\":\"\
-                    ADMIN\",\"recentActivities\":[{\"id\":\"1\",\"timestamp\":\"2024-01-01T00:00:00Z\"\
-                    ,\"text\":\"활동 내용\"}]}"
+                    ,\"role\":\"ADMIN\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },{\"handle\":\"jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"\
+                    ,\"profileImageUrl\":\"https://example.com/jane.png\"}],\"hasMoreTeammates\"\
+                    :false,\"role\":\"ADMIN\",\"recentActivities\":[{\"id\":\"1\"\
+                    ,\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\":\"활동 내용\"}]}"
     patch:
       tags:
       - project
@@ -850,8 +851,9 @@ paths:
               examples:
                 GetProjectTeammates:
                   value: "{\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
-                    ,\"role\":\"ADMIN\"},{\"handle\":\"jane\",\"name\":\"Jane Doe\"\
-                    ,\"role\":\"MEMBER\"}]}"
+                    ,\"role\":\"ADMIN\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },{\"handle\":\"jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"\
+                    ,\"profileImageUrl\":\"https://example.com/jane.png\"}]}"
     post:
       tags:
       - project
@@ -1173,34 +1175,6 @@ components:
         email:
           type: string
           description: Email
-    GetProjectTeammatesResponse:
-      title: GetProjectTeammatesResponse
-      required:
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - handle
-            - name
-            - role
-            type: object
-            properties:
-              role:
-                type: string
-                description: 팀원 역할
-                enum:
-                - ADMIN
-                - MEMBER
-              name:
-                type: string
-                description: 팀원 이름
-              handle:
-                type: string
-                description: 팀원 핸들
     UpdatePostRequest:
       title: UpdatePostRequest
       required:
@@ -1345,6 +1319,85 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
+    GetProjectResponse:
+      title: GetProjectResponse
+      required:
+      - handle
+      - hasMoreTeammates
+      - isPublic
+      - name
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
+              profileImageUrl:
+                type: string
+                description: 팀원 프로필 이미지 URL
+                nullable: true
+        website:
+          type: string
+          description: 프로젝트 웹사이트
+          nullable: true
+        role:
+          type: string
+          description: 현재 사용자 역할
+          nullable: true
+          enum:
+          - ADMIN
+          - MEMBER
+        recentActivities:
+          type: array
+          description: 최근 활동 목록
+          items:
+            required:
+            - id
+            - text
+            - timestamp
+            type: object
+            properties:
+              text:
+                type: string
+                description: 활동 내용
+              id:
+                type: string
+                description: 활동 ID
+              timestamp:
+                type: string
+                description: 활동 시각
+        name:
+          type: string
+          description: 프로젝트 이름
+        isPublic:
+          type: boolean
+          description: 공개 여부
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+        handle:
+          type: string
+          description: 프로젝트 핸들
+        hasMoreTeammates:
+          type: boolean
+          description: 추가 팀원 존재 여부
     UpdateUserPreferencesRequest:
       title: UpdateUserPreferencesRequest
       type: object
@@ -1447,6 +1500,38 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
+    GetProjectTeammatesResponse:
+      title: GetProjectTeammatesResponse
+      required:
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+                enum:
+                - ADMIN
+                - MEMBER
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
+              profileImageUrl:
+                type: string
+                description: 팀원 프로필 이미지 URL
+                nullable: true
     GetPostsResponse:
       title: GetPostsResponse
       type: object
@@ -1665,81 +1750,6 @@ components:
               updatedAt:
                 type: string
                 description: Update timestamp
-    GetProjectResponse:
-      title: GetProjectResponse
-      required:
-      - handle
-      - hasMoreTeammates
-      - isPublic
-      - name
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - handle
-            - name
-            - role
-            type: object
-            properties:
-              role:
-                type: string
-                description: 팀원 역할
-              name:
-                type: string
-                description: 팀원 이름
-              handle:
-                type: string
-                description: 팀원 핸들
-        website:
-          type: string
-          description: 프로젝트 웹사이트
-          nullable: true
-        role:
-          type: string
-          description: 현재 사용자 역할
-          nullable: true
-          enum:
-          - ADMIN
-          - MEMBER
-        recentActivities:
-          type: array
-          description: 최근 활동 목록
-          items:
-            required:
-            - id
-            - text
-            - timestamp
-            type: object
-            properties:
-              text:
-                type: string
-                description: 활동 내용
-              id:
-                type: string
-                description: 활동 ID
-              timestamp:
-                type: string
-                description: 활동 시각
-        name:
-          type: string
-          description: 프로젝트 이름
-        isPublic:
-          type: boolean
-          description: 공개 여부
-        description:
-          type: string
-          description: 프로젝트 설명
-          nullable: true
-        handle:
-          type: string
-          description: 프로젝트 핸들
-        hasMoreTeammates:
-          type: boolean
-          description: 추가 팀원 존재 여부
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:

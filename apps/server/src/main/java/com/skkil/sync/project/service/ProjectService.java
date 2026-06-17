@@ -1,5 +1,6 @@
 package com.skkil.sync.project.service;
 
+import com.skkil.sync.media.service.domain.MediaDomainService;
 import com.skkil.sync.project.constants.ProjectConstants;
 import com.skkil.sync.project.dto.request.AddTeammateRequest;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
@@ -20,7 +21,9 @@ import com.skkil.sync.project.repository.ProjectRepository;
 import com.skkil.sync.project.repository.TeammateRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -37,15 +40,19 @@ public class ProjectService {
 
   private final ProjectMapper projectMapper;
 
+  private final MediaDomainService mediaDomainService;
+
   public ProjectService(
       UserDomainService userDomainService,
       ProjectRepository projectRepository,
       TeammateRepository teammateRepository,
-      ProjectMapper projectMapper) {
+      ProjectMapper projectMapper,
+      MediaDomainService mediaDomainService) {
     this.userDomainService = userDomainService;
     this.projectRepository = projectRepository;
     this.teammateRepository = teammateRepository;
     this.projectMapper = projectMapper;
+    this.mediaDomainService = mediaDomainService;
   }
 
   @Transactional
@@ -72,13 +79,16 @@ public class ProjectService {
     Project project =
         projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
 
-    var teammates =
-        teammateRepository
-            .findByProjectId(
-                project.getId(),
-                PageRequest.of(0, ProjectConstants.INITIAL_TEAMMATE_LOAD_LIMIT + 1))
-            .stream()
-            .map(projectMapper::toGetProjectResponseTeammate)
+    List<Teammate> teammates =
+        teammateRepository.findByProjectId(
+            project.getId(), PageRequest.of(0, ProjectConstants.INITIAL_TEAMMATE_LOAD_LIMIT + 1));
+
+    Map<Long, URL> profileImageUrls =
+        mediaDomainService.generatePublicGetUrls(teammates, t -> t.getUser().getProfileImage());
+
+    var teammatesDto =
+        teammates.stream()
+            .map(t -> projectMapper.toGetProjectResponseTeammate(t, profileImageUrls))
             .toList();
 
     Teammate requester =
@@ -94,7 +104,7 @@ public class ProjectService {
         .description(project.getDescription())
         .website(project.getWebsite())
         .isPublic(project.isPublic())
-        .teammates(teammates)
+        .teammates(teammatesDto)
         .hasMoreTeammates(teammates.size() > ProjectConstants.INITIAL_TEAMMATE_LOAD_LIMIT)
         .role(requester != null ? requester.getRole() : null)
         .recentActivities(List.of())
@@ -106,12 +116,17 @@ public class ProjectService {
     Project project =
         projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
 
-    var teammates =
-        teammateRepository.findByProjectId(project.getId()).stream()
-            .map(projectMapper::toGetProjectTeammatesResponseTeammate)
+    List<Teammate> teammates = teammateRepository.findByProjectId(project.getId());
+
+    Map<Long, URL> profileImageUrls =
+        mediaDomainService.generatePublicGetUrls(teammates, t -> t.getUser().getProfileImage());
+
+    var teammatesDto =
+        teammates.stream()
+            .map(t -> projectMapper.toGetProjectTeammatesResponseTeammate(t, profileImageUrls))
             .toList();
 
-    return new GetProjectTeammatesResponse(teammates);
+    return new GetProjectTeammatesResponse(teammatesDto);
   }
 
   @Transactional(readOnly = true)
