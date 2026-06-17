@@ -57,7 +57,13 @@ public class ProjectService {
 
   @Transactional
   public CreateProjectResponse createProject(Long userId, CreateProjectRequest request) {
-    Project project = Project.builder().name(request.name()).handle(request.handle()).build();
+    Project project =
+        Project.builder()
+            .name(request.name())
+            .handle(request.handle())
+            .description(request.description())
+            .isPublic(request.isPublic())
+            .build();
 
     User user = userDomainService.getUserReference(userId);
     Teammate owner = Teammate.owner(project, user);
@@ -96,6 +102,7 @@ public class ProjectService {
         .handle(handle)
         .name(project.getName())
         .description(project.getDescription())
+        .website(project.getWebsite())
         .isPublic(project.isPublic())
         .teammates(teammatesDto)
         .hasMoreTeammates(teammates.size() > ProjectConstants.INITIAL_TEAMMATE_LOAD_LIMIT)
@@ -182,11 +189,7 @@ public class ProjectService {
       throw new AccessDeniedException("Only the project owner can update the project");
     }
 
-    project.update(request.name(), request.description());
-
-    if (request.handle() != null) {
-      project.updateHandle(request.handle());
-    }
+    project.update(request.description(), request.website());
   }
 
   @Transactional

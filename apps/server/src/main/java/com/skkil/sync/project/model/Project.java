@@ -26,6 +26,9 @@ public class Project extends BaseEntity {
   @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 
+  @Column(name = "website_url")
+  private String website;
+
   @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
   private List<Teammate> teammates = new ArrayList<>();
 
@@ -35,9 +38,14 @@ public class Project extends BaseEntity {
   protected Project() {}
 
   @Builder
-  public Project(String handle, String name) {
+  public Project(String handle, String name, String description, boolean isPublic) {
     this.handle = handle == null ? Slugify.slugify(name) : handle.trim();
     this.name = name;
+    this.isPublic = isPublic;
+
+    if (description != null) {
+      this.description = description;
+    }
   }
 
   public void addTeammate(Teammate teammate) {
@@ -45,13 +53,13 @@ public class Project extends BaseEntity {
     teammate.setProject(this);
   }
 
-  public void update(String name, String description) {
-    if (name != null) {
-      this.name = name;
-    }
-
+  public void update(String description, String website) {
     if (description != null) {
       this.description = description;
+    }
+
+    if (website != null) {
+      this.website = website;
     }
   }
 
