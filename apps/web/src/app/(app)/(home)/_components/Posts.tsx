@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import { useGetRecentFeedInfinite } from '@/api/__generated__/feed/feed';
 import type { GetFeedResponseItemsNodesItem } from '@/api/__generated__/types/GetFeedResponseItemsNodesItem';
-import { BaseViewer } from '@/components/ui/editor';
+import { BaseViewer } from '@/components/feature/post';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import PostBookmarkButton from '@/features/bookmark/components/PostBookmarkButton';

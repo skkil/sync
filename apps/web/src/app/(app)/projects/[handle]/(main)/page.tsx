@@ -2,7 +2,7 @@ import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 
 import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/project';
-import MiniPostEditor from '@/components/post/editor/MiniPostEditor';
+import MiniPostEditor from '@/components/feature/post/editor/MiniPostEditor';
 import SyncError, { ErrorCode } from '@/lib/error';
 import { getQueryClient } from '@/lib/query';
 

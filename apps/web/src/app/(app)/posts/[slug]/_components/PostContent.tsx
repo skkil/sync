@@ -7,6 +7,7 @@ import {
 } from '@phosphor-icons/react';
 
 import { useGetPostBySlug } from '@/api/__generated__/post/post';
+import { BaseViewer } from '@/components/feature/post';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,7 +17,6 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import PostBookmarkButton from '@/features/bookmark/components/PostBookmarkButton';
 import { useSession } from '@/lib/auth/client';

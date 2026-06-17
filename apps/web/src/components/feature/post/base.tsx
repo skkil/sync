@@ -1,3 +1,4 @@
+// TODO: Need to remove this file
 import {
   CodeIcon,
   TextBolderIcon,
@@ -23,13 +24,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import {
-  Toolbar,
-  ToolbarGroup,
-} from '@/components/ui/editor/primitives/toolbar';
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip';
-import { PostImage } from './extensions/post-image';
+import { PostImage } from './editor/extensions/post-image';
+import { Toolbar, ToolbarGroup } from './editor/primitives/toolbar';
 
 interface PostImageNode {
   src: string;

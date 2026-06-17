@@ -9,15 +9,14 @@ import { useState } from 'react';
 
 import { useCreatePost } from '@/api/__generated__/post/post';
 import { Button } from '@/components/ui/button';
-import { CommandsExtension } from '@/components/ui/editor/extensions/commands';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { getTemplates } from '@/features/editor/templates';
 
-import { EditorBubbleMenu } from './EditorBubbleMenu';
-import { EditorTemplates } from './EditorTemplates';
-import { ProjectInput } from './ProjectInput';
-import { TagInput } from './TagInput';
+import { EditorBubbleMenu } from './components/EditorBubbleMenu';
+import { EditorTemplates } from './components/EditorTemplates';
+import { ProjectInput } from './components/ProjectInput';
+import { TagInput } from './components/TagInput';
+import { CommandsExtension } from './extensions/commands';
 
 export default function Editor() {
   const t = useTranslations('components.editor');
@@ -46,8 +45,6 @@ export default function Editor() {
       setIsEditorEmpty(editor.isEmpty);
     },
   });
-
-  const templates = getTemplates(locale);
 
   const handleSubmit = () => {
     if (!editor) {
@@ -90,7 +87,7 @@ export default function Editor() {
           {editor && <EditorBubbleMenu editor={editor} />}
           {isEditorEmpty && (
             <EditorTemplates
-              templates={templates}
+              locale={locale}
               onSelect={(template) => {
                 setTitle(template.title);
                 editor?.commands.setContent(template.content);

@@ -12,8 +12,8 @@ import { useEffect } from 'react';
 
 import { useGetBookmarkedPostsInfinite } from '@/api/__generated__/bookmark/bookmark';
 import type { GetBookmarkedPostsResponsePostsNodesItem } from '@/api/__generated__/types';
+import { BaseViewer } from '@/components/feature/post';
 import { buttonVariants } from '@/components/ui/button';
-import { BaseViewer } from '@/components/ui/editor';
 import {
   Empty,
   EmptyDescription,

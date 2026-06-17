@@ -1,11 +1,10 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import PostEditor from '@/components/feature/post/editor/PostEditor';
 import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
 
-import Editor from './_components/Editor';
-
-export default async function PostEditor() {
+export default async function CreatePostPage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -20,7 +19,7 @@ export default async function PostEditor() {
 
   return (
     <div className="h-full">
-      <Editor />
+      <PostEditor />
     </div>
   );
 }

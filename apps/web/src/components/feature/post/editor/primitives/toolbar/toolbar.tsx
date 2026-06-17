@@ -2,11 +2,12 @@
 
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 
-import { Separator } from '@/components/ui/editor/primitives/separator';
-import '@/components/ui/editor/primitives/toolbar/toolbar.scss';
 import { useComposedRef } from '@/hooks/use-composed-ref';
 import { useMenuNavigation } from '@/hooks/use-menu-navigation';
 import { cn } from '@/lib/tiptap-utils';
+
+import { Separator } from '../separator';
+import './toolbar.scss';
 
 type BaseProps = React.HTMLAttributes<HTMLDivElement>;
 

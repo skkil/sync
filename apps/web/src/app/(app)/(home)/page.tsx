@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import MiniPostEditor from '@/components/post/editor/MiniPostEditor';
+import MiniPostEditor from '@/components/feature/post/editor/MiniPostEditor';
 import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
 
 import Posts from './_components/Posts';

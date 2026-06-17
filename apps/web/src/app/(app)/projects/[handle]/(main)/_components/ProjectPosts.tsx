@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 
 import { useGetPostsByProjectInfinite } from '@/api/__generated__/post/post';
 import type { GetPostsResponsePostsNodesItemContent } from '@/api/__generated__/types';
-import { BaseViewer } from '@/components/ui/editor';
+import { BaseViewer } from '@/components/feature/post';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 
