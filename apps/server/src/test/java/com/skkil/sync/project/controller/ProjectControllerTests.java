@@ -12,6 +12,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,6 +22,7 @@ import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.project.dto.request.AddTeammateRequest;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
+import com.skkil.sync.project.dto.request.UpdateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
@@ -36,6 +38,7 @@ import com.skkil.sync.project.snippets.GetProjectResponseSnippets;
 import com.skkil.sync.project.snippets.GetProjectTeammatesResponseSnippets;
 import com.skkil.sync.project.snippets.GetProjectsResponseSnippets;
 import com.skkil.sync.project.snippets.SearchProjectsResponseSnippets;
+import com.skkil.sync.project.snippets.UpdateProjectRequestSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -283,5 +286,35 @@ class ProjectControllerTests {
                 Function.identity(),
                 pathParameters(parameterWithName("handle").description("프로젝트 핸들")),
                 AddTeammateRequestSnippets.getAddTeammateRequestFields()));
+  }
+
+  @Test
+  @DisplayName("[updateProject] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void updateProject() throws Exception {
+    String projectHandle = "my-project";
+    UpdateProjectRequest request = UpdateProjectRequestSnippets.getUpdateProjectRequest();
+
+    doNothing().when(projectService).updateProject(anyLong(), anyString(), eq(request));
+
+    mockMvc
+        .perform(
+            patch("/projects/{handle}", projectHandle)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(request)))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "UpdateProject",
+                ResourceSnippetParameters.builder()
+                    .tag("project")
+                    .summary("Update Project")
+                    .description("프로젝트 정보를 수정합니다.")
+                    .requestSchema(schema(UpdateProjectRequest.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("handle").description("프로젝트 핸들")),
+                UpdateProjectRequestSnippets.getUpdateProjectRequestFields()));
   }
 }

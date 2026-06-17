@@ -680,7 +680,8 @@ paths:
               $ref: "#/components/schemas/CreateProjectRequest"
             examples:
               CreateProject:
-                value: "{\"handle\":\"project-handle\",\"name\":\"새로운 프로젝트\"}"
+                value: "{\"handle\":\"project-handle\",\"name\":\"새로운 프로젝트\",\"description\"\
+                  :\"프로젝트 설명\",\"isPublic\":true}"
       responses:
         "201":
           description: "201"
@@ -715,11 +716,37 @@ paths:
               examples:
                 GetProjectByHandle:
                   value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
-                    :\"프로젝트 설명\",\"isPublic\":false,\"teammates\":[{\"handle\":\"\
-                    john\",\"name\":\"John Doe\",\"role\":\"ADMIN\"},{\"handle\":\"\
-                    jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"}],\"hasMoreTeammates\"\
-                    :false,\"role\":\"ADMIN\",\"recentActivities\":[{\"id\":\"1\"\
-                    ,\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\":\"활동 내용\"}]}"
+                    :\"프로젝트 설명\",\"website\":\"https://example.com\",\"isPublic\"\
+                    :false,\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
+                    ,\"role\":\"ADMIN\"},{\"handle\":\"jane\",\"name\":\"Jane Doe\"\
+                    ,\"role\":\"MEMBER\"}],\"hasMoreTeammates\":false,\"role\":\"\
+                    ADMIN\",\"recentActivities\":[{\"id\":\"1\",\"timestamp\":\"2024-01-01T00:00:00Z\"\
+                    ,\"text\":\"활동 내용\"}]}"
+    patch:
+      tags:
+      - project
+      summary: Update Project
+      description: 프로젝트 정보를 수정합니다.
+      operationId: UpdateProject
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+            examples:
+              UpdateProject:
+                value: "{\"description\":\"프로젝트 설명입니다.\",\"website\":\"https://example.com\"\
+                  }"
+      responses:
+        "204":
+          description: "204"
   /projects/handles/availability:
     get:
       tags:
@@ -1133,77 +1160,6 @@ components:
         commentCount:
           type: number
           description: Number of Comments
-    GetProjectResponse:
-      title: GetProjectResponse
-      required:
-      - handle
-      - hasMoreTeammates
-      - isPublic
-      - name
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - handle
-            - name
-            - role
-            type: object
-            properties:
-              role:
-                type: string
-                description: 팀원 역할
-              name:
-                type: string
-                description: 팀원 이름
-              handle:
-                type: string
-                description: 팀원 핸들
-        role:
-          type: string
-          description: 현재 사용자 역할
-          nullable: true
-          enum:
-          - ADMIN
-          - MEMBER
-        recentActivities:
-          type: array
-          description: 최근 활동 목록
-          items:
-            required:
-            - id
-            - text
-            - timestamp
-            type: object
-            properties:
-              text:
-                type: string
-                description: 활동 내용
-              id:
-                type: string
-                description: 활동 ID
-              timestamp:
-                type: string
-                description: 활동 시각
-        name:
-          type: string
-          description: 프로젝트 이름
-        isPublic:
-          type: boolean
-          description: 공개 여부
-        description:
-          type: string
-          description: 프로젝트 설명
-          nullable: true
-        handle:
-          type: string
-          description: 프로젝트 핸들
-        hasMoreTeammates:
-          type: boolean
-          description: 추가 팀원 존재 여부
     LoginRequest:
       title: LoginRequest
       required:
@@ -1267,6 +1223,27 @@ components:
         available:
           type: boolean
           description: 핸들 사용 가능 여부
+    CreateProjectRequest:
+      title: CreateProjectRequest
+      required:
+      - handle
+      - isPublic
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 프로젝트 이름
+        isPublic:
+          type: boolean
+          description: 공개 여부
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+        handle:
+          type: string
+          description: 프로젝트 핸들
     GetFeedResponse:
       title: GetFeedResponse
       type: object
@@ -1375,6 +1352,18 @@ components:
         theme:
           type: string
           description: User theme preference
+          nullable: true
+    UpdateProjectRequest:
+      title: UpdateProjectRequest
+      type: object
+      properties:
+        website:
+          type: string
+          description: 프로젝트 웹사이트 URL
+          nullable: true
+        description:
+          type: string
+          description: 프로젝트 설명
           nullable: true
     CreatePostResponse:
       title: CreatePostResponse
@@ -1676,6 +1665,81 @@ components:
               updatedAt:
                 type: string
                 description: Update timestamp
+    GetProjectResponse:
+      title: GetProjectResponse
+      required:
+      - handle
+      - hasMoreTeammates
+      - isPublic
+      - name
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
+        website:
+          type: string
+          description: 프로젝트 웹사이트
+          nullable: true
+        role:
+          type: string
+          description: 현재 사용자 역할
+          nullable: true
+          enum:
+          - ADMIN
+          - MEMBER
+        recentActivities:
+          type: array
+          description: 최근 활동 목록
+          items:
+            required:
+            - id
+            - text
+            - timestamp
+            type: object
+            properties:
+              text:
+                type: string
+                description: 활동 내용
+              id:
+                type: string
+                description: 활동 ID
+              timestamp:
+                type: string
+                description: 활동 시각
+        name:
+          type: string
+          description: 프로젝트 이름
+        isPublic:
+          type: boolean
+          description: 공개 여부
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+        handle:
+          type: string
+          description: 프로젝트 핸들
+        hasMoreTeammates:
+          type: boolean
+          description: 추가 팀원 존재 여부
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:
@@ -1935,19 +1999,6 @@ components:
               content:
                 type: string
                 description: Post Content
-    CreateProjectRequest:
-      title: CreateProjectRequest
-      required:
-      - handle
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-          description: 프로젝트 이름
-        handle:
-          type: string
-          description: 프로젝트 핸들
     SearchTagsResponse:
       title: SearchTagsResponse
       required:

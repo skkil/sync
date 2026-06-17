@@ -79,6 +79,7 @@ export * from './UpdateCommentRequest';
 export * from './UpdatePostRequest';
 export * from './UpdateProfileRequest';
 export * from './UpdateProfileRequestContacts';
+export * from './UpdateProjectRequest';
 export * from './UpdateUserPreferencesRequest';
 export * from './UploadMediaRequest';
 export * from './UploadMediaResponse';

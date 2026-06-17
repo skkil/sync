@@ -99,6 +99,7 @@ CREATE TABLE projects (
     handle VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     description TEXT,
+    website_url VARCHAR(255),
     is_public BOOLEAN NOT NULL DEFAULT TRUE
 );
 
