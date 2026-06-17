@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
-interface UserAvatarHoverCardProps {
+interface ProfileHoverCardProps {
   handle: string;
   name: string;
   imageUrl?: string;
@@ -20,13 +20,13 @@ interface UserAvatarHoverCardProps {
   size?: 'default' | 'sm' | 'lg';
 }
 
-export function UserAvatarHoverCard({
+export function ProfileHoverCard({
   handle,
   name,
   imageUrl,
   className,
   size = 'default',
-}: UserAvatarHoverCardProps) {
+}: ProfileHoverCardProps) {
   const [open, setOpen] = React.useState(false);
   const closeTimer = React.useRef<ReturnType<typeof setTimeout>>(null);
 
