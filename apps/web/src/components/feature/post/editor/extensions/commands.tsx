@@ -1,5 +1,10 @@
 import { computePosition, flip, shift } from '@floating-ui/react';
-import { TextBIcon, TextHTwoIcon, TextItalicIcon } from '@phosphor-icons/react';
+import {
+  ImageIcon,
+  TextBIcon,
+  TextHTwoIcon,
+  TextItalicIcon,
+} from '@phosphor-icons/react';
 import { TextHOneIcon } from '@phosphor-icons/react/dist/ssr';
 import { Extension, ReactRenderer, posToDOMRect } from '@tiptap/react';
 import type { Editor, Range } from '@tiptap/react';
@@ -19,6 +24,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
+import { NodeType } from './nodes';
+
 const MAX_COMMAND_QUERY_LENGTH = 6;
 
 interface CommandsItemProps {
@@ -26,6 +33,59 @@ interface CommandsItemProps {
   icon: React.ReactNode;
   command: (props: { editor: Editor; range: Range }) => void;
 }
+
+const commands: CommandsItemProps[] = [
+  {
+    name: 'h1',
+    icon: <TextHOneIcon />,
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setNode('heading', { level: 1 })
+        .run();
+    },
+  },
+  {
+    name: 'h2',
+    icon: <TextHTwoIcon />,
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setNode('heading', { level: 2 })
+        .run();
+    },
+  },
+  {
+    name: 'bold',
+    icon: <TextBIcon />,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setMark('bold').run();
+    },
+  },
+  {
+    name: 'italic',
+    icon: <TextItalicIcon />,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setMark('italic').run();
+    },
+  },
+  {
+    name: 'image',
+    icon: <ImageIcon />,
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .deleteRange(range)
+        .insertContent([{ type: NodeType.Image }, { type: 'paragraph' }])
+        .joinForward()
+        .run();
+    },
+  },
+];
 
 interface CommandsExtensionOptions {
   suggestion: Partial<SuggestionOptions<CommandsItemProps>>;
@@ -41,58 +101,7 @@ export const CommandsExtension = Extension.create<CommandsExtensionOptions>({
           props.command({ editor, range });
         },
         items({ query }) {
-          return (
-            [
-              {
-                name: 'h1',
-                icon: <TextHOneIcon />,
-                command: ({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setNode('heading', { level: 1 })
-                    .run();
-                },
-              },
-              {
-                name: 'h2',
-                icon: <TextHTwoIcon />,
-                command: ({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setNode('heading', { level: 2 })
-                    .run();
-                },
-              },
-              {
-                name: 'bold',
-                icon: <TextBIcon />,
-                command: ({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setMark('bold')
-                    .run();
-                },
-              },
-              {
-                name: 'italic',
-                icon: <TextItalicIcon />,
-                command: ({ editor, range }) => {
-                  editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setMark('italic')
-                    .run();
-                },
-              },
-            ] satisfies CommandsItemProps[]
-          )
+          return commands
             .filter((item) => {
               return item.name.startsWith(query.toLowerCase());
             })

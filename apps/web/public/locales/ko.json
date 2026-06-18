@@ -886,6 +886,10 @@
           "title": "기울임",
           "description": ""
         },
+        "image": {
+          "title": "이미지",
+          "description": ""
+        },
         "ignore": {
           "title": "/ 를 입력하기"
         }

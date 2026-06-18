@@ -14,6 +14,8 @@ import { BubbleMenu } from '@tiptap/react/menus';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
+import { NodeType } from '../extensions/nodes';
+
 interface EditorBubbleMenuProps {
   editor: ReturnType<typeof useEditor>;
 }
@@ -63,6 +65,17 @@ export function EditorBubbleMenu({ editor }: EditorBubbleMenuProps) {
     <BubbleMenu
       editor={editor}
       className="flex items-center gap-0.5 rounded-lg border bg-popover p-1 shadow-lg"
+      shouldShow={({ editor, view }) => {
+        if (!view.hasFocus()) {
+          return false;
+        }
+
+        if (editor.isActive(NodeType.Image)) {
+          return false;
+        }
+
+        return true;
+      }}
     >
       {buttons.map((btn, i) =>
         btn === null ? (

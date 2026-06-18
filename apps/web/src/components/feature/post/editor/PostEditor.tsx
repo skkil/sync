@@ -17,6 +17,7 @@ import { EditorTemplates } from './components/EditorTemplates';
 import { ProjectInput } from './components/ProjectInput';
 import { TagInput } from './components/TagInput';
 import { CommandsExtension } from './extensions/commands';
+import { ImageNode } from './extensions/nodes/image';
 
 export default function Editor() {
   const t = useTranslations('components.editor');
@@ -38,6 +39,7 @@ export default function Editor() {
       }),
       CharacterCount,
       CommandsExtension,
+      ImageNode,
     ],
     content: '',
     immediatelyRender: false,
