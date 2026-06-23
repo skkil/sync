@@ -96,6 +96,7 @@ public class PostQueryService {
   private GetPostsResponse.Post resolveImageUrls(GetPostsResponse.Post post) {
     return new GetPostsResponse.Post(
         post.id(),
+        post.slug(),
         post.author(),
         post.project(),
         contentMediaService.resolveImageUrls(post.id(), post.content()),

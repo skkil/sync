@@ -1,10 +1,13 @@
 'use client';
 
+import { ArrowSquareOutIcon } from '@phosphor-icons/react';
 import { useIntersectionObserver } from '@uidotdev/usehooks';
+import Link from 'next/link';
 import { useEffect } from 'react';
 
 import { useGetRecentFeedInfinite } from '@/api/__generated__/feed/feed';
 import type { GetFeedResponseItemsNodesItem } from '@/api/__generated__/types/GetFeedResponseItemsNodesItem';
+import { buttonVariants } from '@/components/ui/button';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
@@ -118,12 +121,26 @@ function PostCard({
           <span>{commentCount} comments</span>
         </div>
 
-        <PostBookmarkButton
-          postId={id}
-          slug={slug}
-          bookmarked={bookmarked}
-          isAuthenticated={isAuthenticated}
-        />
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/posts/${slug}`}
+            className={buttonVariants({
+              variant: 'ghost',
+              size: 'sm',
+              className: 'gap-1.5',
+            })}
+          >
+            <ArrowSquareOutIcon />
+            보기
+          </Link>
+
+          <PostBookmarkButton
+            postId={id}
+            slug={slug}
+            bookmarked={bookmarked}
+            isAuthenticated={isAuthenticated}
+          />
+        </div>
       </div>
     </div>
   );

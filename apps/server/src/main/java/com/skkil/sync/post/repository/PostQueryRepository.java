@@ -7,11 +7,13 @@ import static com.skkil.sync.jooq.tables.Users.USERS;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
 import com.skkil.sync.post.dto.data.PostDto;
+import com.skkil.sync.post.model.PostVisibility;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -43,9 +45,9 @@ public class PostQueryRepository {
         .from(POSTS)
         .join(USERS)
         .on(POSTS.AUTHOR_ID.eq(USERS.ID))
-        .join(PROJECTS)
+        .leftJoin(PROJECTS)
         .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
-        .where(POSTS.SLUG.eq(slug))
+        .where(POSTS.SLUG.eq(slug).and(visibleCondition()))
         .fetchOptional()
         .map(record -> record.into(PostDto.class));
   }
@@ -68,9 +70,9 @@ public class PostQueryRepository {
             .from(POSTS)
             .join(USERS)
             .on(POSTS.AUTHOR_ID.eq(USERS.ID))
-            .join(PROJECTS)
+            .leftJoin(PROJECTS)
             .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
-            .where(condition)
+            .where(condition.and(visibleCondition()))
             .orderBy(orderFields)
             .limit(size)
             .fetchInto(PostDto.class);
@@ -113,9 +115,9 @@ public class PostQueryRepository {
             .from(POSTS)
             .join(USERS)
             .on(POSTS.AUTHOR_ID.eq(USERS.ID))
-            .join(PROJECTS)
+            .leftJoin(PROJECTS)
             .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
-            .where(POSTS.ID.in(ids))
+            .where(POSTS.ID.in(ids).and(visibleCondition()))
             .fetchInto(PostDto.class)
             .stream()
             .collect(Collectors.toMap(PostDto::id, Function.identity()));
@@ -135,5 +137,9 @@ public class PostQueryRepository {
                     .where(POST_BOOKMARKS.POST_ID.eq(POSTS.ID))
                     .and(POST_BOOKMARKS.USER_ID.eq(requesterId))))
         .as("bookmarked");
+  }
+
+  private Condition visibleCondition() {
+    return POSTS.VISIBILITY.eq(PostVisibility.VISIBLE.name());
   }
 }

@@ -9,6 +9,35 @@
         }
       }
     },
+    "posts": {
+      "report": {
+        "trigger": "신고",
+        "title": "포스트 신고",
+        "fields": {
+          "reason": "신고 사유",
+          "description": "상세 설명",
+          "description-placeholder": "신고 내용을 입력하세요"
+        },
+        "reasons": {
+          "SPAM": "스팸",
+          "HARASSMENT": "괴롭힘",
+          "HATE": "혐오 표현",
+          "SEXUAL": "성적 콘텐츠",
+          "VIOLENCE": "폭력적 콘텐츠",
+          "MISINFORMATION": "허위 정보",
+          "OTHER": "기타"
+        },
+        "actions": {
+          "cancel": "취소",
+          "submit": "신고"
+        },
+        "messages": {
+          "login-required": "로그인이 필요합니다.",
+          "success": "신고가 접수되었습니다.",
+          "error": "신고 접수에 실패했습니다."
+        }
+      }
+    },
     "projects": {
       "my": {
         "link": "내 프로젝트"
@@ -774,6 +803,50 @@
       }
     },
     "admin": {
+      "post-reports": {
+        "title": "신고 큐",
+        "empty": "신고가 없습니다.",
+        "table": {
+          "post": "포스트",
+          "reporter": "신고자",
+          "reason": "사유",
+          "status": "상태",
+          "createdAt": "접수 시각",
+          "actions": "처리"
+        },
+        "reasons": {
+          "SPAM": "스팸",
+          "HARASSMENT": "괴롭힘",
+          "HATE": "혐오 표현",
+          "SEXUAL": "성적 콘텐츠",
+          "VIOLENCE": "폭력적 콘텐츠",
+          "MISINFORMATION": "허위 정보",
+          "OTHER": "기타"
+        },
+        "statuses": {
+          "PENDING": "대기",
+          "RESOLVED": "처리됨",
+          "DISMISSED": "기각"
+        },
+        "actions": {
+          "dismiss": "기각",
+          "hide": "숨김",
+          "cancel": "취소",
+          "previous": "이전",
+          "next": "다음",
+          "dismiss-note": "관리자가 신고를 기각했습니다."
+        },
+        "hide-dialog": {
+          "title": "포스트 숨김 처리",
+          "hiddenReason": "숨김 사유",
+          "resolutionNote": "처리 메모"
+        },
+        "messages": {
+          "dismiss-success": "신고를 기각했습니다.",
+          "hide-success": "포스트를 숨김 처리했습니다.",
+          "review-error": "신고 처리에 실패했습니다."
+        }
+      },
       "unverified-providers": {
         "title": "검증되지 않은 기관",
         "description": "기관을 검토하고 검증하세요",
@@ -895,6 +968,10 @@
         "content": "/ 를 입력하여 명령어를 사용하거나 텍스트를 입력하세요"
       },
       "submit": "게시하기",
+      "messages": {
+        "create-success": "게시글이 작성되었습니다.",
+        "create-error": "게시글 작성에 실패했습니다."
+      },
       "toolbar": {
         "bold": {
           "tooltip": "굵기 적용"

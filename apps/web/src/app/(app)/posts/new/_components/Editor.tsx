@@ -6,6 +6,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { useCreatePost } from '@/api/__generated__/post/post';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ export default function Editor() {
   const locale = useLocale();
   const router = useRouter();
 
-  const { mutate: createPost } = useCreatePost();
+  const { mutate: createPost, isPending } = useCreatePost();
 
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState<string[]>([]);
@@ -69,7 +70,11 @@ export default function Editor() {
       },
       {
         onSuccess: ({ data: { slug } }) => {
+          toast.success(t('messages.create-success'));
           router.push(`/posts/${slug}`);
+        },
+        onError: () => {
+          toast.error(t('messages.create-error'));
         },
       },
     );
@@ -111,7 +116,9 @@ export default function Editor() {
         />
         <TagInput tags={tags} onChange={setTags} />
         <div className="flex justify-end">
-          <Button onClick={handleSubmit}>{t('submit')}</Button>
+          <Button onClick={handleSubmit} isPending={isPending}>
+            {t('submit')}
+          </Button>
         </div>
       </div>
     </div>

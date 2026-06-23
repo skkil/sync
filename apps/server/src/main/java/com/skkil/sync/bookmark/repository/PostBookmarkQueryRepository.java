@@ -6,6 +6,7 @@ import static com.skkil.sync.jooq.tables.Users.USERS;
 
 import com.skkil.sync.bookmark.dto.data.BookmarkedPostDto;
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
+import com.skkil.sync.post.model.PostVisibility;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
@@ -41,7 +42,10 @@ public class PostBookmarkQueryRepository {
             .on(POST_BOOKMARKS.POST_ID.eq(POSTS.ID))
             .join(USERS)
             .on(POSTS.AUTHOR_ID.eq(USERS.ID))
-            .where(condition.and(POST_BOOKMARKS.USER_ID.eq(userId)))
+            .where(
+                condition
+                    .and(POST_BOOKMARKS.USER_ID.eq(userId))
+                    .and(POSTS.VISIBILITY.eq(PostVisibility.VISIBLE.name())))
             .orderBy(orderFields)
             .limit(size)
             .fetchInto(BookmarkedPostDto.class);

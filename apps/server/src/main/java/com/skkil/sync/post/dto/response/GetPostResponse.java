@@ -1,13 +1,16 @@
 package com.skkil.sync.post.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
+import org.jspecify.annotations.Nullable;
 
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record GetPostResponse(
     Long id,
     String slug,
     Author author,
-    Project project,
+    @Nullable Project project,
     String content,
     Long likeCount,
     Long commentCount,

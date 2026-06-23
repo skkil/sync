@@ -11,18 +11,38 @@ import org.mapstruct.Mappings;
 public interface PostMapper {
 
   @Mappings({
-    @Mapping(target = "author.id", source = "authorId"),
-    @Mapping(target = "author.name", source = "authorName"),
-    @Mapping(target = "project.id", source = "projectId"),
-    @Mapping(target = "project.name", source = "projectName")
+    @Mapping(target = "author", expression = "java(toGetPostAuthor(postDto))"),
+    @Mapping(target = "project", expression = "java(toGetPostProject(postDto))")
   })
   GetPostResponse toGetPostResponse(PostDto postDto);
 
   @Mappings({
-    @Mapping(target = "author.id", source = "authorId"),
-    @Mapping(target = "author.name", source = "authorName"),
-    @Mapping(target = "project.id", source = "projectId"),
-    @Mapping(target = "project.name", source = "projectName")
+    @Mapping(target = "author", expression = "java(toPostAuthor(postDto))"),
+    @Mapping(target = "project", expression = "java(toPostProject(postDto))")
   })
   GetPostsResponse.Post toPostResponse(PostDto postDto);
+
+  default GetPostResponse.Author toGetPostAuthor(PostDto postDto) {
+    return new GetPostResponse.Author(postDto.authorId(), postDto.authorName());
+  }
+
+  default GetPostResponse.Project toGetPostProject(PostDto postDto) {
+    if (postDto.projectId() == null) {
+      return null;
+    }
+
+    return new GetPostResponse.Project(postDto.projectId(), postDto.projectName());
+  }
+
+  default GetPostsResponse.Author toPostAuthor(PostDto postDto) {
+    return new GetPostsResponse.Author(postDto.authorId(), postDto.authorName());
+  }
+
+  default GetPostsResponse.Project toPostProject(PostDto postDto) {
+    if (postDto.projectId() == null) {
+      return null;
+    }
+
+    return new GetPostsResponse.Project(postDto.projectId(), postDto.projectName());
+  }
 }

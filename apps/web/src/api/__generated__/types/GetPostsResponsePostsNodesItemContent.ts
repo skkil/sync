@@ -14,9 +14,12 @@ export type GetPostsResponsePostsNodesItemContent = {
   /** Creation Timestamp */
   createdAt: string;
   author?: GetPostsResponsePostsNodesItemContentAuthor;
+  /** Project Information */
   project?: GetPostsResponsePostsNodesItemContentProject;
   /** Post ID */
   id: number;
   /** Post Content */
   content: string;
+  /** Post Slug */
+  slug: string;
 };

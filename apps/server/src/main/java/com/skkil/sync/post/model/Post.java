@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -49,6 +50,20 @@ public class Post extends BaseEntity {
   @Column(name = "like_count", nullable = false)
   private int likeCount = 0;
 
+  @Column(name = "visibility", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PostVisibility visibility = PostVisibility.VISIBLE;
+
+  @Column(name = "hidden_at")
+  private Instant hiddenAt;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "hidden_by")
+  private User hiddenBy;
+
+  @Column(name = "hidden_reason", columnDefinition = "TEXT")
+  private String hiddenReason;
+
   @OneToMany(
       mappedBy = "post",
       fetch = FetchType.LAZY,
@@ -59,11 +74,13 @@ public class Post extends BaseEntity {
   protected Post() {}
 
   @Builder
-  public Post(String slug, User author, Project project, String title, String content) {
+  public Post(
+      String slug, User author, Project project, String title, PostType type, String content) {
     this.slug = slug;
     this.author = author;
     this.project = project;
     this.title = title;
+    this.type = type == null ? PostType.SHORT : type;
     this.content = content;
   }
 
@@ -89,5 +106,16 @@ public class Post extends BaseEntity {
 
   public void unlinkProject() {
     this.project = null;
+  }
+
+  public boolean isVisible() {
+    return visibility == PostVisibility.VISIBLE;
+  }
+
+  public void hide(User reviewer, String reason) {
+    this.visibility = PostVisibility.HIDDEN;
+    this.hiddenBy = reviewer;
+    this.hiddenReason = reason;
+    this.hiddenAt = Instant.now();
   }
 }

@@ -19,7 +19,12 @@ public class GetPostsResponseSnippets {
 
     GetPostsResponse.Post post =
         new GetPostsResponse.Post(
-            1L, author, project, "Post Content", DateTimeTestUtils.defaultTestLocalDateTime());
+            1L,
+            "test-slug",
+            author,
+            project,
+            "Post Content",
+            DateTimeTestUtils.defaultTestLocalDateTime());
 
     return new GetPostsResponse(CursorPaginationResponseSnippets.of(List.of(post)));
   }
@@ -32,7 +37,12 @@ public class GetPostsResponseSnippets {
         fields.andWithPrefix(
             "posts.nodes[].content",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Post ID"),
+            fieldWithPath(".slug").type(JsonFieldType.STRING).description("Post Slug"),
             fieldWithPath(".content").type(JsonFieldType.STRING).description("Post Content"),
+            fieldWithPath(".project")
+                .type(JsonFieldType.OBJECT)
+                .description("Project Information")
+                .optional(),
             fieldWithPath(".createdAt")
                 .type(JsonFieldType.STRING)
                 .description("Creation Timestamp"));
@@ -46,8 +56,11 @@ public class GetPostsResponseSnippets {
     fields =
         fields.andWithPrefix(
             "posts.nodes[].content.project",
-            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Project ID"),
-            fieldWithPath(".name").type(JsonFieldType.STRING).description("Project Name"));
+            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Project ID").optional(),
+            fieldWithPath(".name")
+                .type(JsonFieldType.STRING)
+                .description("Project Name")
+                .optional());
 
     return responseFields(fields.getFieldDescriptors());
   }

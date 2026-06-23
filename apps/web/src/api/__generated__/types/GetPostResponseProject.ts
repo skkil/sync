@@ -9,8 +9,14 @@
  * Project Information
  */
 export type GetPostResponseProject = {
-  /** Project Name */
-  name: string;
-  /** Project ID */
-  id: number;
+  /**
+   * Project Name
+   * @nullable
+   */
+  name?: string | null;
+  /**
+   * Project ID
+   * @nullable
+   */
+  id?: number | null;
 };

@@ -1,12 +1,15 @@
 'use client';
 
+import { ArrowSquareOutIcon } from '@phosphor-icons/react';
 import { useIntersectionObserver } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useEffect } from 'react';
 
 import { useGetUserPostsInfinite } from '@/api/__generated__/post/post';
 import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import type { GetPostsResponsePostsNodesItemContent } from '@/api/__generated__/types';
+import { buttonVariants } from '@/components/ui/button';
 import { BaseViewer } from '@/components/ui/editor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
@@ -124,7 +127,23 @@ function PostCard({ post }: { post: GetPostsResponsePostsNodesItemContent }) {
         <span>{new Date(post.createdAt).toLocaleDateString()}</span>
       </div>
 
-      <BaseViewer content={post.content} />
+      <div className="mb-4">
+        <BaseViewer content={post.content} />
+      </div>
+
+      <div className="flex justify-end">
+        <Link
+          href={`/posts/${post.slug}`}
+          className={buttonVariants({
+            variant: 'ghost',
+            size: 'sm',
+            className: 'gap-1.5',
+          })}
+        >
+          <ArrowSquareOutIcon />
+          보기
+        </Link>
+      </div>
     </article>
   );
 }

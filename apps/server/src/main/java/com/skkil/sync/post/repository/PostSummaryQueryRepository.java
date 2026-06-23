@@ -5,6 +5,7 @@ import static com.skkil.sync.jooq.tables.Posts.POSTS;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
 import com.skkil.sync.post.dto.data.SummaryDto;
+import com.skkil.sync.post.model.PostVisibility;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
@@ -29,7 +30,10 @@ public class PostSummaryQueryRepository {
             .from(POSTS)
             .leftJoin(POST_SUMMARIES)
             .on(POSTS.ID.eq(POST_SUMMARIES.ID))
-            .where(condition.and(POSTS.AUTHOR_ID.eq(authorId)))
+            .where(
+                condition
+                    .and(POSTS.AUTHOR_ID.eq(authorId))
+                    .and(POSTS.VISIBILITY.eq(PostVisibility.VISIBLE.name())))
             .orderBy(orderFields)
             .limit(size)
             .fetchInto(SummaryDto.class);

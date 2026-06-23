@@ -78,6 +78,7 @@ public class PostService {
             .slug(slug)
             .author(author)
             .title(request.title())
+            .type(request.type())
             .content(preparedContent.content());
 
     if (request.projectId() != null) {
