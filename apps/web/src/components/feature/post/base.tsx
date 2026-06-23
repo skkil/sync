@@ -1,37 +1,17 @@
 // TODO: Need to remove this file
-import {
-  CodeIcon,
-  TextBolderIcon,
-  TextItalicIcon,
-  TextStrikethroughIcon,
-  TextUnderlineIcon,
-} from '@phosphor-icons/react';
 import { EditorContent, type JSONContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useTranslations } from 'next-intl';
-import {
-  type MouseEvent,
-  forwardRef,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import { type MouseEvent, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 import { PostImage } from './editor/extensions/post-image';
-import { Toolbar, ToolbarGroup } from './editor/primitives/toolbar';
 
 interface PostImageNode {
   src: string;
@@ -208,94 +188,4 @@ function PostImageGallery({ images }: { images: PostImageNode[] }) {
   );
 }
 
-interface BaseEditorRef {
-  save: () => string;
-  clear: () => void;
-}
-
-interface BaseEditorProps {
-  content?: string;
-}
-
-const BaseEditor = forwardRef<BaseEditorRef, BaseEditorProps>(
-  ({ content = '' }, ref) => {
-    const t = useTranslations('components.editor');
-
-    const editor = useEditor({
-      extensions: [StarterKit, PostImage],
-      content: parseContent(content),
-      immediatelyRender: false,
-    });
-
-    useImperativeHandle(ref, () => ({
-      save: () => {
-        return JSON.stringify(editor ? editor.getJSON() : '');
-      },
-      clear: () => {
-        if (editor) {
-          editor.commands.clearContent();
-        }
-      },
-    }));
-
-    const buttons = [
-      {
-        id: 'bold',
-        icon: <TextBolderIcon />,
-        onClick: () => editor?.chain().focus().toggleBold().run(),
-      },
-      {
-        id: 'italic',
-        icon: <TextItalicIcon />,
-        onClick: () => editor?.chain().focus().toggleItalic().run(),
-      },
-      {
-        id: 'underline',
-        icon: <TextUnderlineIcon />,
-        onClick: () => editor?.chain().focus().toggleUnderline().run(),
-      },
-      {
-        id: 'strikethrough',
-        icon: <TextStrikethroughIcon />,
-        onClick: () => editor?.chain().focus().toggleStrike().run(),
-      },
-      {
-        id: 'code',
-        icon: <CodeIcon />,
-        onClick: () => editor?.chain().focus().toggleCodeBlock().run(),
-      },
-    ];
-
-    return (
-      <div className="w-full h-full">
-        <Toolbar variant="fixed">
-          <ToolbarGroup>
-            {buttons.map((button) => (
-              <Tooltip key={button.id}>
-                <TooltipTrigger asChild>
-                  <Button
-                    tabIndex={-1}
-                    variant="ghost"
-                    disabled={!editor}
-                    onClick={button.onClick}
-                  >
-                    {button.icon}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {t(`toolbar.${button.id}.tooltip`)}
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </ToolbarGroup>
-        </Toolbar>
-
-        <EditorContent autoFocus editor={editor} className="p-2" />
-      </div>
-    );
-  },
-);
-BaseEditor.displayName = 'BaseEditor';
-
-export { BaseEditor, BaseViewer };
-export type { BaseEditorRef };
+export { BaseViewer };

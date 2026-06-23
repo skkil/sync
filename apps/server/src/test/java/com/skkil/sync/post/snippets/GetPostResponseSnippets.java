@@ -4,6 +4,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.skkil.sync.post.dto.response.GetPostResponse;
+import java.util.List;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
@@ -16,12 +17,18 @@ public class GetPostResponseSnippets {
     GetPostResponse.Project project =
         GetPostResponse.Project.builder().id(1L).name("Project Name").build();
 
+    GetPostResponse.Media media =
+        GetPostResponse.Media.builder().id(1L).url("https://example.com/media.png").build();
+
+    GetPostResponse.Content content =
+        GetPostResponse.Content.builder().json("Post Content").media(List.of(media)).build();
+
     return GetPostResponse.builder()
         .id(1L)
         .slug("test-slug")
         .author(author)
         .project(project)
-        .content("Post Content")
+        .content(content)
         .likeCount(1L)
         .commentCount(1L)
         .bookmarked(true)
@@ -38,7 +45,13 @@ public class GetPostResponseSnippets {
         fieldWithPath("project").type(JsonFieldType.OBJECT).description("Project Information"),
         fieldWithPath("project.id").type(JsonFieldType.NUMBER).description("Project ID"),
         fieldWithPath("project.name").type(JsonFieldType.STRING).description("Project Name"),
-        fieldWithPath("content").type(JsonFieldType.STRING).description("Post Content"),
+        fieldWithPath("content").type(JsonFieldType.OBJECT).description("Post Content"),
+        fieldWithPath("content.json").type(JsonFieldType.STRING).description("Post Content JSON"),
+        fieldWithPath("content.media")
+            .type(JsonFieldType.ARRAY)
+            .description("Media attached to the post"),
+        fieldWithPath("content.media[].id").type(JsonFieldType.NUMBER).description("Media ID"),
+        fieldWithPath("content.media[].url").type(JsonFieldType.STRING).description("Media URL"),
         fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("Number of Likes"),
         fieldWithPath("commentCount").type(JsonFieldType.NUMBER).description("Number of Comments"),
         fieldWithPath("bookmarked")

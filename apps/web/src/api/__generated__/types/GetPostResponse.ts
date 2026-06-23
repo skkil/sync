@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetPostResponseAuthor } from './GetPostResponseAuthor';
+import type { GetPostResponseContent } from './GetPostResponseContent';
 import type { GetPostResponseProject } from './GetPostResponseProject';
 
 export interface GetPostResponse {
@@ -19,7 +20,7 @@ export interface GetPostResponse {
   /** Post ID */
   id: number;
   /** Post Content */
-  content: string;
+  content: GetPostResponseContent;
   /** Post Slug */
   slug: string;
   /** Number of Comments */

@@ -1,5 +1,6 @@
 package com.skkil.sync.post.dto.response;
 
+import java.util.List;
 import lombok.Builder;
 
 @Builder
@@ -8,7 +9,7 @@ public record GetPostResponse(
     String slug,
     Author author,
     Project project,
-    String content,
+    Content content,
     Long likeCount,
     Long commentCount,
     boolean bookmarked) {
@@ -18,4 +19,10 @@ public record GetPostResponse(
 
   @Builder
   public static record Project(Long id, String name) {}
+
+  @Builder
+  public static record Content(String json, List<Media> media) {}
+
+  @Builder
+  public static record Media(Long id, String url) {}
 }

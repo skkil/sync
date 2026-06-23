@@ -15,7 +15,7 @@ public class CreatePostRequestSnippets {
   public static CreatePostRequest getCreatePostRequest() {
     CreatePostRequest.Content content =
         new CreatePostRequest.Content(
-            "This is a post content.", "{\"text\": \"This is a post content.\"}");
+            "This is a post content.", "{\"text\": \"This is a post content.\"}", List.of(1L, 2L));
 
     return CreatePostRequest.builder()
         .title("title")
@@ -36,6 +36,10 @@ public class CreatePostRequestSnippets {
         fieldWithPath("content").type(JsonFieldType.OBJECT).description("Content"),
         fieldWithPath("content.text").type(JsonFieldType.STRING).description("Text Content"),
         fieldWithPath("content.json").type(JsonFieldType.STRING).description("JSON Content"),
+        fieldWithPath("content.mediaIds")
+            .type(JsonFieldType.ARRAY)
+            .description("사용된 미디어 ID 목록")
+            .optional(),
         fieldWithPath("tags").type(JsonFieldType.ARRAY).description("태그 목록").optional(),
         fieldWithPath("projectId").type(JsonFieldType.NUMBER).description("프로젝트 ID").optional());
   }

@@ -316,8 +316,8 @@ paths:
               CreatePost:
                 value: "{\"title\":\"title\",\"type\":\"SHORT\",\"content\":{\"text\"\
                   :\"This is a post content.\",\"json\":\"{\\\"text\\\": \\\"This\
-                  \ is a post content.\\\"}\"},\"tags\":[\"java\",\"spring\"],\"projectId\"\
-                  :1}"
+                  \ is a post content.\\\"}\",\"mediaIds\":[1,2]},\"tags\":[\"java\"\
+                  ,\"spring\"],\"projectId\":1}"
       responses:
         "201":
           description: "201"
@@ -397,8 +397,9 @@ paths:
                 GetPostBySlug:
                   value: "{\"id\":1,\"slug\":\"test-slug\",\"author\":{\"id\":1,\"\
                     name\":\"Author Name\"},\"project\":{\"id\":1,\"name\":\"Project\
-                    \ Name\"},\"content\":\"Post Content\",\"likeCount\":1,\"commentCount\"\
-                    :1,\"bookmarked\":true}"
+                    \ Name\"},\"content\":{\"json\":\"Post Content\",\"media\":[{\"\
+                    id\":1,\"url\":\"https://example.com/media.png\"}]},\"likeCount\"\
+                    :1,\"commentCount\":1,\"bookmarked\":true}"
   /posts/{postId}/bookmarks:
     post:
       tags:
@@ -1105,63 +1106,6 @@ components:
               id:
                 type: number
                 description: 프로젝트 ID
-    GetPostResponse:
-      title: GetPostResponse
-      required:
-      - author
-      - bookmarked
-      - commentCount
-      - content
-      - id
-      - likeCount
-      - project
-      - slug
-      type: object
-      properties:
-        bookmarked:
-          type: boolean
-          description: Whether the current user bookmarked this post
-        author:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Author Name
-            id:
-              type: number
-              description: Author User ID
-          description: Author Information
-        project:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Project Name
-            id:
-              type: number
-              description: Project ID
-          description: Project Information
-        likeCount:
-          type: number
-          description: Number of Likes
-        id:
-          type: number
-          description: Post ID
-        content:
-          type: string
-          description: Post Content
-        slug:
-          type: string
-          description: Post Slug
-        commentCount:
-          type: number
-          description: Number of Comments
     LoginRequest:
       title: LoginRequest
       required:
@@ -1398,6 +1342,85 @@ components:
         hasMoreTeammates:
           type: boolean
           description: 추가 팀원 존재 여부
+    GetPostResponse:
+      title: GetPostResponse
+      required:
+      - author
+      - bookmarked
+      - commentCount
+      - content
+      - id
+      - likeCount
+      - project
+      - slug
+      type: object
+      properties:
+        bookmarked:
+          type: boolean
+          description: Whether the current user bookmarked this post
+        author:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Author Name
+            id:
+              type: number
+              description: Author User ID
+          description: Author Information
+        project:
+          required:
+          - id
+          - name
+          type: object
+          properties:
+            name:
+              type: string
+              description: Project Name
+            id:
+              type: number
+              description: Project ID
+          description: Project Information
+        likeCount:
+          type: number
+          description: Number of Likes
+        id:
+          type: number
+          description: Post ID
+        content:
+          required:
+          - json
+          - media
+          type: object
+          properties:
+            json:
+              type: string
+              description: Post Content JSON
+            media:
+              type: array
+              description: Media attached to the post
+              items:
+                required:
+                - id
+                - url
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: Media ID
+                  url:
+                    type: string
+                    description: Media URL
+          description: Post Content
+        slug:
+          type: string
+          description: Post Slug
+        commentCount:
+          type: number
+          description: Number of Comments
     UpdateUserPreferencesRequest:
       title: UpdateUserPreferencesRequest
       type: object
@@ -1620,15 +1643,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    UpdateCommentRequest:
-      title: UpdateCommentRequest
-      required:
-      - content
-      type: object
-      properties:
-        content:
-          type: string
-          description: Comment content
     CreatePostRequest:
       title: CreatePostRequest
       required:
@@ -1660,6 +1674,16 @@ components:
             json:
               type: string
               description: JSON Content
+            mediaIds:
+              type: array
+              description: 사용된 미디어 ID 목록
+              nullable: true
+              items:
+                oneOf:
+                - type: object
+                - type: boolean
+                - type: string
+                - type: number
             text:
               type: string
               description: Text Content
@@ -1674,6 +1698,15 @@ components:
             - type: boolean
             - type: string
             - type: number
+    UpdateCommentRequest:
+      title: UpdateCommentRequest
+      required:
+      - content
+      type: object
+      properties:
+        content:
+          type: string
+          description: Comment content
     CreateProjectResponse:
       title: CreateProjectResponse
       required:
