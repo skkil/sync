@@ -4,8 +4,8 @@ import { getGetPostCommentsQueryOptions } from '@/api/__generated__/comment/comm
 import { getGetPostBySlugQueryOptions } from '@/api/__generated__/post/post';
 import { getQueryClient } from '@/lib/query';
 
+import PostCardContainer from './_components/PostCardContainer';
 import PostComments from './_components/PostComments';
-import PostContent from './_components/PostContent';
 
 interface PostProps {
   params: Promise<{
@@ -22,7 +22,7 @@ export default async function Post({ params }: PostProps) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <PostContent slug={slug} />
+      <PostCardContainer slug={slug} />
       <PostComments slug={slug} />
     </HydrationBoundary>
   );

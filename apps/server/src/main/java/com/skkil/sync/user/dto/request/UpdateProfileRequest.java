@@ -11,7 +11,7 @@ import lombok.Builder;
 public record UpdateProfileRequest(
     @Size(min = 1, max = 255) String name,
     @ValidUsername @Size(min = Handle.MIN_LENGTH, max = Handle.MAX_LENGTH) String handle,
-    Long profileImageId,
+    String profileImageId,
     Boolean removeProfileImage,
     Boolean isOnboarded,
     @Size(max = 1000) String bio,

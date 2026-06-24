@@ -5,8 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
 import { useGetPostsByProjectInfinite } from '@/api/__generated__/post/post';
-import type { GetPostsResponsePostsNodesItemContent } from '@/api/__generated__/types';
-import { BaseViewer } from '@/components/feature/post';
+import PostPreview from '@/components/feature/post/viewer/PostPreview';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -76,7 +75,16 @@ export default function ProjectPosts({ handle }: ProjectPostsProps) {
         <>
           <div className="space-y-4">
             {posts.map((post) => (
-              <PostCard key={post.content.id} post={post.content} />
+              <PostPreview
+                key={post.content.id}
+                id={post.content.id}
+                author={post.content.author ?? { id: 0, name: '' }}
+                project={post.content.project}
+                content={{ json: post.content.content, media: [] }}
+                likeCount={0}
+                commentCount={0}
+                bookmarked={false}
+              />
             ))}
           </div>
 
@@ -96,19 +104,6 @@ export default function ProjectPosts({ handle }: ProjectPostsProps) {
         </>
       )}
     </section>
-  );
-}
-
-function PostCard({ post }: { post: GetPostsResponsePostsNodesItemContent }) {
-  return (
-    <article className="rounded-md border p-4">
-      <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        {post.author && <span>{post.author.name}</span>}
-        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-      </div>
-
-      <BaseViewer content={post.content} />
-    </article>
   );
 }
 

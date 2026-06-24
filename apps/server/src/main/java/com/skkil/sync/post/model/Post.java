@@ -59,12 +59,14 @@ public class Post extends BaseEntity {
   protected Post() {}
 
   @Builder
-  public Post(String slug, User author, Project project, String title, String content) {
+  public Post(
+      String slug, User author, Project project, String title, String content, PostType type) {
     this.slug = slug;
     this.author = author;
     this.project = project;
     this.title = title;
     this.content = content;
+    this.type = type;
   }
 
   public void updateContent(String content) {

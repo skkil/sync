@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const STAGE = process.env.STAGE;
+
 const nextConfig: NextConfig = {
   rewrites: async () => {
     return [
@@ -9,6 +11,16 @@ const nextConfig: NextConfig = {
         destination: '/profile/:handle/:path*',
       },
     ];
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4566',
+        pathname: '/**',
+      },
+    ],
   },
 };
 

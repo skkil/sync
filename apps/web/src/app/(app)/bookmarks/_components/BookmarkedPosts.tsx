@@ -1,19 +1,11 @@
 'use client';
 
-import {
-  ArrowSquareOutIcon,
-  BookmarkSimpleIcon,
-  ChatCircleIcon,
-  HeartIcon,
-} from '@phosphor-icons/react';
+import { BookmarkSimpleIcon } from '@phosphor-icons/react';
 import { useIntersectionObserver } from '@uidotdev/usehooks';
-import Link from 'next/link';
 import { useEffect } from 'react';
 
 import { useGetBookmarkedPostsInfinite } from '@/api/__generated__/bookmark/bookmark';
-import type { GetBookmarkedPostsResponsePostsNodesItem } from '@/api/__generated__/types';
-import { BaseViewer } from '@/components/feature/post';
-import { buttonVariants } from '@/components/ui/button';
+import PostPreview from '@/components/feature/post/viewer/PostPreview';
 import {
   Empty,
   EmptyDescription,
@@ -23,8 +15,6 @@ import {
 } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
-import PostBookmarkButton from '@/features/bookmark/components/PostBookmarkButton';
-import { cn } from '@/lib/utils';
 
 const BOOKMARKED_POST_PAGE_SIZE = '30';
 
@@ -92,7 +82,15 @@ export default function BookmarkedPosts() {
       ) : (
         <div className="space-y-4">
           {posts.map((post) => (
-            <BookmarkedPostCard key={post.content.id} post={post} />
+            <PostPreview
+              key={post.content.id}
+              id={post.content.id}
+              author={post.content.author ?? { id: 0, name: '' }}
+              content={{ json: post.content.content, media: [] }}
+              likeCount={post.content.likeCount}
+              commentCount={post.content.commentCount}
+              bookmarked={post.content.bookmarked}
+            />
           ))}
         </div>
       )}
@@ -116,75 +114,6 @@ function PageHeader() {
         북마크한 포스트를 최근 저장순으로 확인하세요.
       </p>
     </div>
-  );
-}
-
-function BookmarkedPostCard({
-  post,
-}: {
-  post: GetBookmarkedPostsResponsePostsNodesItem;
-}) {
-  const {
-    id,
-    slug,
-    content,
-    createdAt,
-    bookmarkedAt,
-    author,
-    likeCount,
-    commentCount,
-    bookmarked,
-  } = post.content;
-
-  return (
-    <article className="rounded-md border p-4">
-      <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        {author && (
-          <span className="font-medium text-foreground">{author.name}</span>
-        )}
-        <span>•</span>
-        <span>{new Date(createdAt).toLocaleDateString()}</span>
-        <span>•</span>
-        <span>저장 {new Date(bookmarkedAt).toLocaleDateString()}</span>
-      </div>
-
-      <div className="mb-4">
-        <BaseViewer content={content} />
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-4 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
-            <HeartIcon />
-            {likeCount}
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <ChatCircleIcon />
-            {commentCount}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/posts/${slug}`}
-            className={cn(
-              buttonVariants({ variant: 'ghost', size: 'sm' }),
-              'gap-1.5',
-            )}
-          >
-            <ArrowSquareOutIcon />
-            보기
-          </Link>
-
-          <PostBookmarkButton
-            postId={id}
-            slug={slug}
-            bookmarked={bookmarked}
-            isAuthenticated
-          />
-        </div>
-      </div>
-    </article>
   );
 }
 

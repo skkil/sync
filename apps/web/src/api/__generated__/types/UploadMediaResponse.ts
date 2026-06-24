@@ -9,7 +9,7 @@ export interface UploadMediaResponse {
   /** Pre-signed Upload URL */
   uploadUrl: string;
   /** Media ID */
-  mediaId: number;
+  mediaId: string;
   /** Expiration Time */
   expiresAt: string;
 }

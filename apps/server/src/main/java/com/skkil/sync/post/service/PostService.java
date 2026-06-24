@@ -79,6 +79,7 @@ public class PostService {
         Post.builder()
             .slug(slug)
             .author(author)
+            .type(request.type())
             .title(request.title())
             .content(request.content().json());
 

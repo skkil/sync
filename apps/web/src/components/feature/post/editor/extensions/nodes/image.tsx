@@ -19,7 +19,7 @@ import { cn } from '@/lib/tiptap-utils';
 
 import { NodeType } from '.';
 
-type ImageNodeAttributes = {
+export type ImageNodeAttributes = {
   src: string | null;
   status: 'none' | 'loaded' | 'uploading' | 'uploaded' | 'error';
   mediaId: string | null;
@@ -169,6 +169,7 @@ function ImageNodeComponent({
                   status === 'uploading' && 'blur-sm brightness-75',
                   status === 'error' && 'opacity-25',
                 )}
+                unoptimized
               />
             )}
 

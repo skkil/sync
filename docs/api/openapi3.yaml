@@ -248,7 +248,7 @@ paths:
                 UploadMedia:
                   value: |-
                     {
-                      "mediaId" : 1,
+                      "mediaId" : "1",
                       "uploadUrl" : "https://example.com/upload",
                       "expiresAt" : "1970-01-01T00:00:00"
                     }
@@ -600,10 +600,10 @@ paths:
             examples:
               UpdateProfile:
                 value: "{\"name\":\"name\",\"handle\":\"username\",\"profileImageId\"\
-                  :1,\"removeProfileImage\":false,\"isOnboarded\":true,\"bio\":\"\
-                  bio\",\"profession\":\"profession\",\"contacts\":{\"custom\":\"\
-                  https://example.com\",\"linkedin\":\"linkedinUser\",\"github\":\"\
-                  githubUser\",\"instagram\":\"instagramUser\",\"twitter\":\"twitterUser\"\
+                  :\"1\",\"removeProfileImage\":false,\"isOnboarded\":true,\"bio\"\
+                  :\"bio\",\"profession\":\"profession\",\"contacts\":{\"custom\"\
+                  :\"https://example.com\",\"linkedin\":\"linkedinUser\",\"github\"\
+                  :\"githubUser\",\"instagram\":\"instagramUser\",\"twitter\":\"twitterUser\"\
                   }}"
       responses:
         "204":
@@ -1064,23 +1064,6 @@ paths:
                     ,\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
 components:
   schemas:
-    UploadMediaResponse:
-      title: UploadMediaResponse
-      required:
-      - expiresAt
-      - mediaId
-      - uploadUrl
-      type: object
-      properties:
-        uploadUrl:
-          type: string
-          description: Pre-signed Upload URL
-        mediaId:
-          type: number
-          description: Media ID
-        expiresAt:
-          type: string
-          description: Expiration Time
     GetProjectsResponse:
       title: GetProjectsResponse
       required:
@@ -1106,6 +1089,79 @@ components:
               id:
                 type: number
                 description: 프로젝트 ID
+    UpdateProfileRequest:
+      title: UpdateProfileRequest
+      type: object
+      properties:
+        profession:
+          type: string
+          description: Profession
+          nullable: true
+        profileImageId:
+          type: string
+          description: Profile Image ID
+          nullable: true
+        name:
+          type: string
+          description: Full Name
+          nullable: true
+        bio:
+          type: string
+          description: Bio
+          nullable: true
+        handle:
+          type: string
+          description: Handle
+          nullable: true
+        removeProfileImage:
+          type: boolean
+          description: Remove Profile Image
+          nullable: true
+        contacts:
+          type: object
+          properties:
+            twitter:
+              type: string
+              description: Twitter Username
+              nullable: true
+            github:
+              type: string
+              description: GitHub Username
+              nullable: true
+            custom:
+              type: string
+              description: Custom Contact
+              nullable: true
+            instagram:
+              type: string
+              description: Instagram Username
+              nullable: true
+            linkedin:
+              type: string
+              description: LinkedIn Username
+              nullable: true
+          description: Contacts
+        isOnboarded:
+          type: boolean
+          description: Is Onboarded
+          nullable: true
+    UploadMediaResponse:
+      title: UploadMediaResponse
+      required:
+      - expiresAt
+      - mediaId
+      - uploadUrl
+      type: object
+      properties:
+        uploadUrl:
+          type: string
+          description: Pre-signed Upload URL
+        mediaId:
+          type: string
+          description: Media ID
+        expiresAt:
+          type: string
+          description: Expiration Time
     LoginRequest:
       title: LoginRequest
       required:
@@ -1467,62 +1523,6 @@ components:
         mediaType:
           type: string
           description: Media Type
-    UpdateProfileRequest:
-      title: UpdateProfileRequest
-      type: object
-      properties:
-        profession:
-          type: string
-          description: Profession
-          nullable: true
-        profileImageId:
-          type: number
-          description: Profile Image ID
-          nullable: true
-        name:
-          type: string
-          description: Full Name
-          nullable: true
-        bio:
-          type: string
-          description: Bio
-          nullable: true
-        handle:
-          type: string
-          description: Handle
-          nullable: true
-        removeProfileImage:
-          type: boolean
-          description: Remove Profile Image
-          nullable: true
-        contacts:
-          type: object
-          properties:
-            twitter:
-              type: string
-              description: Twitter Username
-              nullable: true
-            github:
-              type: string
-              description: GitHub Username
-              nullable: true
-            custom:
-              type: string
-              description: Custom Contact
-              nullable: true
-            instagram:
-              type: string
-              description: Instagram Username
-              nullable: true
-            linkedin:
-              type: string
-              description: LinkedIn Username
-              nullable: true
-          description: Contacts
-        isOnboarded:
-          type: boolean
-          description: Is Onboarded
-          nullable: true
     GetProjectTeammatesResponse:
       title: GetProjectTeammatesResponse
       required:

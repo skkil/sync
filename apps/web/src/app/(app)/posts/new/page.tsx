@@ -1,12 +1,23 @@
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+'use client';
 
+import { redirect, useRouter } from 'next/navigation';
+
+import { useCreatePost } from '@/api/__generated__/post/post';
+import { CreatePostRequestType } from '@/api/__generated__/types/CreatePostRequestType';
 import PostEditor from '@/components/feature/post/editor/PostEditor';
-import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
+import { isAuthenticated, isOnboarded } from '@/lib/auth';
+import { useSession } from '@/lib/auth/client';
 
-export default async function CreatePostPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
+export default function CreatePostPage() {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const { mutate: createPost } = useCreatePost({
+    mutation: {
+      onSuccess: ({ data }) => {
+        router.push(`/posts/${data.slug}`);
+      },
+    },
   });
 
   if (isAuthenticated(session) && !isOnboarded(session)) {
@@ -19,7 +30,23 @@ export default async function CreatePostPage() {
 
   return (
     <div className="h-full">
-      <PostEditor />
+      <PostEditor
+        onSubmit={({ title, tags, projectId, content }) => {
+          createPost({
+            data: {
+              type: CreatePostRequestType.Long,
+              title,
+              projectId,
+              tags,
+              content: {
+                json: content.json,
+                text: content.text,
+                mediaIds: content.media.map((media) => media.id),
+              },
+            },
+          });
+        }}
+      />
     </div>
   );
 }

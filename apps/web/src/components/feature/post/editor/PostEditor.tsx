@@ -4,10 +4,8 @@ import { CharacterCount, Placeholder } from '@tiptap/extensions';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useLocale, useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useCreatePost } from '@/api/__generated__/post/post';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -18,13 +16,27 @@ import { ProjectInput } from './components/ProjectInput';
 import { TagInput } from './components/TagInput';
 import { CommandsExtension } from './extensions/commands';
 import { ImageNode } from './extensions/nodes/image';
+import { serialize } from './utils/serializer';
 
-export default function Editor() {
+interface PostEditorProps {
+  onSubmit: (data: {
+    title: string;
+    type: string;
+    tags: string[];
+    projectId: number | null;
+    content: {
+      json: string;
+      text: string;
+      media: {
+        id: string;
+      }[];
+    };
+  }) => void;
+}
+
+export default function PostEditor({ onSubmit }: PostEditorProps) {
   const t = useTranslations('components.editor');
   const locale = useLocale();
-  const router = useRouter();
-
-  const { mutate: createPost } = useCreatePost();
 
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState<string[]>([]);
@@ -53,25 +65,13 @@ export default function Editor() {
       return;
     }
 
-    createPost(
-      {
-        data: {
-          title,
-          type: 'LONG',
-          tags,
-          projectId,
-          content: {
-            json: JSON.stringify(editor.getJSON()),
-            text: editor.getText(),
-          },
-        },
-      },
-      {
-        onSuccess: ({ data: { slug } }) => {
-          router.push(`/posts/${slug}`);
-        },
-      },
-    );
+    onSubmit({
+      title,
+      type: 'LONG',
+      tags,
+      projectId,
+      content: serialize(editor),
+    });
   };
 
   return (
