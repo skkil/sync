@@ -1,15 +1,24 @@
 'use client';
 
-import { redirect, useRouter } from 'next/navigation';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
 
 import { useCreatePost } from '@/api/__generated__/post/post';
-import { CreatePostRequestType } from '@/api/__generated__/types/CreatePostRequestType';
 import PostEditor from '@/components/feature/post/editor/PostEditor';
+import { PostType } from '@/features/post/constants/post-type';
 import { isAuthenticated, isOnboarded } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
 
+function getInitialPostType(value: string | null): PostType {
+  if (value === PostType.Short || value === PostType.Question) {
+    return value;
+  }
+
+  return PostType.Long;
+}
+
 export default function CreatePostPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
 
   const { mutate: createPost } = useCreatePost({
@@ -31,10 +40,11 @@ export default function CreatePostPage() {
   return (
     <div className="h-full">
       <PostEditor
-        onSubmit={({ title, tags, projectId, content }) => {
+        type={getInitialPostType(searchParams.get('type'))}
+        onSubmit={({ title, type, tags, projectId, content }) => {
           createPost({
             data: {
-              type: CreatePostRequestType.Long,
+              type,
               title,
               projectId,
               tags,

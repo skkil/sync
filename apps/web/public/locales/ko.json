@@ -845,6 +845,13 @@
     }
   },
   "components": {
+    "post": {
+      "type": {
+        "SHORT": "TIL",
+        "LONG": "블로그",
+        "QUESTION": "질문"
+      }
+    },
     "navigation": {
       "search": {
         "placeholder": "검색..."

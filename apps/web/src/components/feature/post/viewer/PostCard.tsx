@@ -15,13 +15,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { PostType } from '@/features/post/constants/post-type';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
 import { deserialize } from '../editor/utils/serializer';
 import { PostCardActions } from './components/PostCardActions';
+import { PostTypeBadge } from './components/PostTypeBadge';
 
 interface PostCardProps {
   id: number;
+  type: PostType;
   author: GetPostResponse['author'];
   project?: GetPostResponse['project'];
   content: GetPostResponse['content'];
@@ -32,6 +35,7 @@ interface PostCardProps {
 
 export default function PostCard({
   id,
+  type,
   author,
   project,
   content,
@@ -49,11 +53,16 @@ export default function PostCard({
   return (
     <Card>
       <CardHeader>
-        <PostCardHeader author={author} project={project} />
+        <PostCardHeader type={type} author={author} project={project} />
       </CardHeader>
 
-      <CardContent className="space-y-3">
-        <EditorContent editor={editor} />
+      <CardContent
+        className={type === PostType.Short ? 'space-y-3' : 'space-y-4'}
+      >
+        <EditorContent
+          editor={editor}
+          className={type === PostType.Long ? 'line-clamp-4' : undefined}
+        />
         <PostCardActions
           postId={id}
           likeCount={likeCount}
@@ -66,9 +75,11 @@ export default function PostCard({
 }
 
 function PostCardHeader({
+  type,
   author,
   project,
 }: {
+  type: PostType;
   author: GetPostResponse['author'];
   project?: GetPostResponse['project'];
 }) {
@@ -83,6 +94,8 @@ function PostCardHeader({
             @{author.name} · 2h
           </span>
         </div>
+
+        <PostTypeBadge type={type} />
 
         {project?.name && <Badge variant="secondary">{project.name}</Badge>}
       </div>

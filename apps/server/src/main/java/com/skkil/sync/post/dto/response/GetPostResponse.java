@@ -1,11 +1,13 @@
 package com.skkil.sync.post.dto.response;
 
+import com.skkil.sync.post.model.PostType;
 import java.util.List;
 import lombok.Builder;
 
 @Builder
 public record GetPostResponse(
     Long id,
+    PostType type,
     String slug,
     Author author,
     Project project,

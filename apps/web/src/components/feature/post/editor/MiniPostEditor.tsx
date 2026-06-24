@@ -13,16 +13,20 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PostType } from '@/features/post/constants/post-type';
 import { useSession } from '@/lib/auth/client';
 
 export default function MiniPostEditor() {
   const t = useTranslations('pages.home.post-editor');
+  const tType = useTranslations('components.post.type');
   const router = useRouter();
 
   const { data: session, isPending: isSessionPending } = useSession();
 
   const { mutate: createPost, isPending: isCreatingPost } = useCreatePost();
 
+  const [postType, setPostType] = useState<PostType>(PostType.Short);
   const [isEmpty, setIsEmpty] = useState(true);
 
   const editor = useEditor({
@@ -63,10 +67,15 @@ export default function MiniPostEditor() {
       return;
     }
 
+    if (postType !== PostType.Short) {
+      router.push(`/posts/new?type=${postType}`);
+      return;
+    }
+
     createPost(
       {
         data: {
-          type: 'SHORT',
+          type: postType,
           content: {
             text: editor.getText(),
             json: JSON.stringify(editor.getJSON()),
@@ -92,6 +101,19 @@ export default function MiniPostEditor() {
         </Avatar>
 
         <div className="flex-1 space-y-3">
+          <Tabs
+            value={postType}
+            onValueChange={(value) => setPostType(value as PostType)}
+          >
+            <TabsList>
+              {Object.values(PostType).map((type) => (
+                <TabsTrigger key={type} value={type}>
+                  {tType(type)}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+
           <div
             className="h-32 rounded-lg border border-border transition-colors focus-within:border-primary"
             onClick={() => editor?.commands.focus()}
@@ -113,7 +135,11 @@ export default function MiniPostEditor() {
               isPending={isCreatingPost}
               onClick={handleSubmit}
             >
-              <span>{t('post.label')}</span>
+              <span>
+                {postType === PostType.Short
+                  ? t('post.label')
+                  : t('post.advanced')}
+              </span>
             </Button>
           </div>
         </div>

@@ -3,7 +3,9 @@ package com.skkil.sync.post.snippets;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
+import com.skkil.sync.common.util.restdocs.RestDocsUtils;
 import com.skkil.sync.post.dto.response.GetPostResponse;
+import com.skkil.sync.post.model.PostType;
 import java.util.List;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
@@ -25,6 +27,7 @@ public class GetPostResponseSnippets {
 
     return GetPostResponse.builder()
         .id(1L)
+        .type(PostType.SHORT)
         .slug("test-slug")
         .author(author)
         .project(project)
@@ -38,6 +41,10 @@ public class GetPostResponseSnippets {
   public static ResponseFieldsSnippet getPostResponseFields() {
     return responseFields(
         fieldWithPath("id").type(JsonFieldType.NUMBER).description("Post ID"),
+        fieldWithPath("type")
+            .type(RestDocsUtils.ENUM_TYPE)
+            .description("Post Type")
+            .attributes(RestDocsUtils.getEnumAttributes(PostType.class)),
         fieldWithPath("slug").type(JsonFieldType.STRING).description("Post Slug"),
         fieldWithPath("author").type(JsonFieldType.OBJECT).description("Author Information"),
         fieldWithPath("author.id").type(JsonFieldType.NUMBER).description("Author User ID"),

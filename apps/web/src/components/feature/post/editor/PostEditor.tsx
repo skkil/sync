@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { PostType } from '@/features/post/constants/post-type';
 
 import { EditorBubbleMenu } from './components/EditorBubbleMenu';
 import { EditorTemplates } from './components/EditorTemplates';
@@ -19,9 +20,10 @@ import { ImageNode } from './extensions/nodes/image';
 import { serialize } from './utils/serializer';
 
 interface PostEditorProps {
+  type: PostType;
   onSubmit: (data: {
     title: string;
-    type: string;
+    type: PostType;
     tags: string[];
     projectId: number | null;
     content: {
@@ -34,7 +36,7 @@ interface PostEditorProps {
   }) => void;
 }
 
-export default function PostEditor({ onSubmit }: PostEditorProps) {
+export default function PostEditor({ type, onSubmit }: PostEditorProps) {
   const t = useTranslations('components.editor');
   const locale = useLocale();
 
@@ -67,7 +69,7 @@ export default function PostEditor({ onSubmit }: PostEditorProps) {
 
     onSubmit({
       title,
-      type: 'LONG',
+      type,
       tags,
       projectId,
       content: serialize(editor),

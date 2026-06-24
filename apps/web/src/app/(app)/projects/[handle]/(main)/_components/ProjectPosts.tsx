@@ -8,6 +8,7 @@ import { useGetPostsByProjectInfinite } from '@/api/__generated__/post/post';
 import PostPreview from '@/components/feature/post/viewer/PostPreview';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
+import { PostType } from '@/features/post/constants/post-type';
 
 const PAGE_SIZE = '10';
 
@@ -78,6 +79,7 @@ export default function ProjectPosts({ handle }: ProjectPostsProps) {
               <PostPreview
                 key={post.content.id}
                 id={post.content.id}
+                type={post.content.type as PostType}
                 author={post.content.author ?? { id: 0, name: '' }}
                 project={post.content.project}
                 content={{ json: post.content.content, media: [] }}

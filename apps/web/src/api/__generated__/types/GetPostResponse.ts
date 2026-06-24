@@ -7,6 +7,7 @@
 import type { GetPostResponseAuthor } from './GetPostResponseAuthor';
 import type { GetPostResponseContent } from './GetPostResponseContent';
 import type { GetPostResponseProject } from './GetPostResponseProject';
+import type { GetPostResponseType } from './GetPostResponseType';
 
 export interface GetPostResponse {
   /** Whether the current user bookmarked this post */
@@ -19,6 +20,8 @@ export interface GetPostResponse {
   likeCount: number;
   /** Post ID */
   id: number;
+  /** Post Type */
+  type: GetPostResponseType;
   /** Post Content */
   content: GetPostResponseContent;
   /** Post Slug */

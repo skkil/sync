@@ -15,13 +15,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { PostType } from '@/features/post/constants/post-type';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
 import { deserialize } from '../editor/utils/serializer';
 import { PostCardActions } from './components/PostCardActions';
+import { PostTypeBadge } from './components/PostTypeBadge';
 
 interface PostPreviewProps {
   id: number;
+  type?: PostType;
   author: GetPostResponse['author'];
   project?: GetPostResponse['project'];
   content: GetPostResponse['content'];
@@ -32,6 +35,7 @@ interface PostPreviewProps {
 
 export default function PostPreview({
   id,
+  type,
   author,
   project,
   content,
@@ -49,11 +53,14 @@ export default function PostPreview({
   return (
     <Card>
       <CardHeader>
-        <PostPreviewHeader author={author} project={project} />
+        <PostPreviewHeader type={type} author={author} project={project} />
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <EditorContent editor={editor} />
+        <EditorContent
+          editor={editor}
+          className={type === PostType.Long ? 'line-clamp-6' : undefined}
+        />
         <PostCardActions
           postId={id}
           likeCount={likeCount}
@@ -66,9 +73,11 @@ export default function PostPreview({
 }
 
 function PostPreviewHeader({
+  type,
   author,
   project,
 }: {
+  type?: PostType;
   author: GetPostResponse['author'];
   project?: GetPostResponse['project'];
 }) {
@@ -87,6 +96,8 @@ function PostPreviewHeader({
             @{author.name} · 2h
           </span>
         </div>
+
+        {type && <PostTypeBadge type={type} />}
 
         {project?.name && <Badge variant="secondary">{project.name}</Badge>}
       </div>

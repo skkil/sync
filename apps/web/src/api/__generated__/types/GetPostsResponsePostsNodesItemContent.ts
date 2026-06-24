@@ -6,6 +6,7 @@
  */
 import type { GetPostsResponsePostsNodesItemContentAuthor } from './GetPostsResponsePostsNodesItemContentAuthor';
 import type { GetPostsResponsePostsNodesItemContentProject } from './GetPostsResponsePostsNodesItemContentProject';
+import type { GetPostsResponsePostsNodesItemContentType } from './GetPostsResponsePostsNodesItemContentType';
 
 /**
  * Node Content
@@ -17,6 +18,8 @@ export type GetPostsResponsePostsNodesItemContent = {
   project?: GetPostsResponsePostsNodesItemContentProject;
   /** Post ID */
   id: number;
+  /** Post Type */
+  type: GetPostsResponsePostsNodesItemContentType;
   /** Post Content */
   content: string;
 };
