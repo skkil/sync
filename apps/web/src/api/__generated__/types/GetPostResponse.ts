@@ -10,6 +10,8 @@ import type { GetPostResponseProject } from './GetPostResponseProject';
 import type { GetPostResponseType } from './GetPostResponseType';
 
 export interface GetPostResponse {
+  /** Creation Timestamp */
+  createdAt: string;
   /** Whether the current user bookmarked this post */
   bookmarked: boolean;
   /** Author Information */

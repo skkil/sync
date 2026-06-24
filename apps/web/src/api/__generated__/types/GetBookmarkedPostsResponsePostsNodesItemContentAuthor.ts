@@ -5,6 +5,9 @@
  * OpenAPI spec version: 0.0.1
  */
 
+/**
+ * Author Information
+ */
 export type GetBookmarkedPostsResponsePostsNodesItemContentAuthor = {
   /** Author Name */
   name: string;

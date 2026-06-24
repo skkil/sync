@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { RelativeTime } from '@/components/ui/relative-time';
 import { PostType } from '@/features/post/constants/post-type';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
@@ -31,6 +32,7 @@ interface PostCardProps {
   likeCount: number;
   commentCount: number;
   bookmarked: boolean;
+  createdAt: string;
 }
 
 export default function PostCard({
@@ -42,6 +44,7 @@ export default function PostCard({
   likeCount,
   commentCount,
   bookmarked,
+  createdAt,
 }: PostCardProps) {
   const editor = useEditor({
     extensions: [StarterKit, ImageNode],
@@ -53,7 +56,12 @@ export default function PostCard({
   return (
     <Card>
       <CardHeader>
-        <PostCardHeader type={type} author={author} project={project} />
+        <PostCardHeader
+          type={type}
+          author={author}
+          project={project}
+          createdAt={createdAt}
+        />
       </CardHeader>
 
       <CardContent
@@ -78,20 +86,22 @@ function PostCardHeader({
   type,
   author,
   project,
+  createdAt,
 }: {
   type: PostType;
   author: GetPostResponse['author'];
   project?: GetPostResponse['project'];
+  createdAt: string;
 }) {
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-2">
-        <ProfileHoverCard handle={author.name} name={author.name} size="sm" />
+        <ProfileHoverCard handle={author.handle} name={author.name} size="sm" />
 
         <div className="flex flex-col">
           <span className="text-sm font-semibold">{author.name}</span>
           <span className="text-muted-foreground text-xs">
-            @{author.name} · 2h
+            @{author.handle} · <RelativeTime date={createdAt} />
           </span>
         </div>
 

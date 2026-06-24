@@ -13,8 +13,8 @@ import org.mapstruct.Mappings;
 public interface PostMapper {
 
   @Mappings({
-    @Mapping(target = "author.id", source = "post.authorId"),
     @Mapping(target = "author.name", source = "post.authorName"),
+    @Mapping(target = "author.handle", source = "post.authorHandle"),
     @Mapping(target = "project.id", source = "post.projectId"),
     @Mapping(target = "project.name", source = "post.projectName"),
     @Mapping(target = "content", expression = "java(toContent(post, media))")
@@ -28,8 +28,8 @@ public interface PostMapper {
   GetPostResponse.Content toContent(PostDto post, List<MediaDto> media);
 
   @Mappings({
-    @Mapping(target = "author.id", source = "authorId"),
     @Mapping(target = "author.name", source = "authorName"),
+    @Mapping(target = "author.handle", source = "authorHandle"),
     @Mapping(target = "project.id", source = "projectId"),
     @Mapping(target = "project.name", source = "projectName")
   })

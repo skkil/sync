@@ -105,6 +105,7 @@ public class PostQueryRepository {
         POSTS.SLUG.as("slug"),
         POSTS.AUTHOR_ID.as("authorId"),
         USERS.FULL_NAME.as("authorName"),
+        USERS.HANDLE.as("authorHandle"),
         PROJECTS.ID.as("projectId"),
         PROJECTS.NAME.as("projectName"),
         POSTS.CONTENT.as("content"),

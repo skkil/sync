@@ -298,9 +298,10 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"type\":\"SHORT\",\"author\":{\"id\":1,\"name\":\"\
-                    User\"},\"project\":{\"id\":1,\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    :{\"id\":1,\"slug\":\"slug\",\"type\":\"SHORT\",\"author\":{\"\
+                    name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"id\"\
+                    :1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :\"1970-01-01T00:00:00\"}}]}}"
     post:
       tags:
       - post
@@ -396,10 +397,11 @@ paths:
               examples:
                 GetPostBySlug:
                   value: "{\"id\":1,\"type\":\"SHORT\",\"slug\":\"test-slug\",\"author\"\
-                    :{\"id\":1,\"name\":\"Author Name\"},\"project\":{\"id\":1,\"\
-                    name\":\"Project Name\"},\"content\":{\"json\":\"Post Content\"\
-                    ,\"media\":[{\"id\":1,\"url\":\"https://example.com/media.png\"\
-                    }]},\"likeCount\":1,\"commentCount\":1,\"bookmarked\":true}"
+                    :{\"name\":\"Author Name\",\"handle\":\"author-handle\"},\"project\"\
+                    :{\"id\":1,\"name\":\"Project Name\"},\"content\":{\"json\":\"\
+                    Post Content\",\"media\":[{\"id\":1,\"url\":\"https://example.com/media.png\"\
+                    }]},\"likeCount\":1,\"commentCount\":1,\"bookmarked\":true,\"\
+                    createdAt\":\"2026-06-24T13:37:38.872224015\"}"
   /posts/{postId}/bookmarks:
     post:
       tags:
@@ -825,9 +827,10 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"type\":\"SHORT\",\"author\":{\"id\":1,\"name\":\"\
-                    User\"},\"project\":{\"id\":1,\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    :{\"id\":1,\"slug\":\"slug\",\"type\":\"SHORT\",\"author\":{\"\
+                    name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"id\"\
+                    :1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :\"1970-01-01T00:00:00\"}}]}}"
   /projects/{handle}/teammates:
     get:
       tags:
@@ -1059,9 +1062,10 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"type\":\"SHORT\",\"author\":{\"id\":1,\"name\":\"\
-                    User\"},\"project\":{\"id\":1,\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    :{\"id\":1,\"slug\":\"slug\",\"type\":\"SHORT\",\"author\":{\"\
+                    name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"id\"\
+                    :1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :\"1970-01-01T00:00:00\"}}]}}"
 components:
   schemas:
     GetProjectsResponse:
@@ -1188,102 +1192,6 @@ components:
         content:
           type: string
           description: Content
-    GetPostsResponse:
-      title: GetPostsResponse
-      type: object
-      properties:
-        posts:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - content
-                    - createdAt
-                    - id
-                    - type
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Creation Timestamp
-                      author:
-                        required:
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          id:
-                            type: number
-                            description: Author User ID
-                      project:
-                        required:
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Project Name
-                          id:
-                            type: number
-                            description: Project ID
-                      id:
-                        type: number
-                        description: Post ID
-                      type:
-                        type: string
-                        description: Post Type
-                        enum:
-                        - SHORT
-                        - LONG
-                        - QUESTION
-                      content:
-                        type: string
-                        description: Post Content
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     GetProjectHandleAvailabilityResponse:
       title: GetProjectHandleAvailabilityResponse
       required:
@@ -1314,107 +1222,6 @@ components:
         handle:
           type: string
           description: 프로젝트 핸들
-    GetFeedResponse:
-      title: GetFeedResponse
-      type: object
-      properties:
-        items:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - bookmarked
-                    - commentCount
-                    - content
-                    - createdAt
-                    - id
-                    - likeCount
-                    - slug
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Created At
-                      author:
-                        required:
-                        - handle
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          handle:
-                            type: string
-                            description: Author Handle
-                          id:
-                            type: number
-                            description: Author ID
-                          profileImageUrl:
-                            type: string
-                            description: Author Profile Image URL
-                            nullable: true
-                      bookmarked:
-                        type: boolean
-                        description: Whether the current user bookmarked this feed
-                          item
-                      likeCount:
-                        type: number
-                        description: Like Count
-                      id:
-                        type: number
-                        description: Feed Item ID
-                      content:
-                        type: string
-                        description: Content
-                      slug:
-                        type: string
-                        description: Post Slug
-                      commentCount:
-                        type: number
-                        description: Comment Count
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     GetProjectResponse:
       title: GetProjectResponse
       required:
@@ -1540,6 +1347,112 @@ components:
         mediaType:
           type: string
           description: Media Type
+    GetBookmarkedPostsResponse:
+      title: GetBookmarkedPostsResponse
+      type: object
+      properties:
+        posts:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - author
+                    - bookmarked
+                    - bookmarkedAt
+                    - commentCount
+                    - content
+                    - createdAt
+                    - id
+                    - likeCount
+                    - slug
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Created At
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                          id:
+                            type: number
+                            description: Author ID
+                          profileImageUrl:
+                            type: string
+                            description: Author Profile Image URL
+                            nullable: true
+                        description: Author Information
+                      bookmarked:
+                        type: boolean
+                        description: Whether the current user bookmarked this post
+                      likeCount:
+                        type: number
+                        description: Like Count
+                      id:
+                        type: number
+                        description: Post ID
+                      bookmarkedAt:
+                        type: string
+                        description: Bookmarked At
+                      content:
+                        type: string
+                        description: Content
+                      slug:
+                        type: string
+                        description: Post Slug
+                      commentCount:
+                        type: number
+                        description: Comment Count
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     GetProjectTeammatesResponse:
       title: GetProjectTeammatesResponse
       required:
@@ -1572,6 +1485,109 @@ components:
                 type: string
                 description: 팀원 프로필 이미지 URL
                 nullable: true
+    GetFeedResponse:
+      title: GetFeedResponse
+      type: object
+      properties:
+        items:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - author
+                    - bookmarked
+                    - commentCount
+                    - content
+                    - createdAt
+                    - id
+                    - likeCount
+                    - slug
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Created At
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                          id:
+                            type: number
+                            description: Author ID
+                          profileImageUrl:
+                            type: string
+                            description: Author Profile Image URL
+                            nullable: true
+                        description: Author Information
+                      bookmarked:
+                        type: boolean
+                        description: Whether the current user bookmarked this feed
+                          item
+                      likeCount:
+                        type: number
+                        description: Like Count
+                      id:
+                        type: number
+                        description: Feed Item ID
+                      content:
+                        type: string
+                        description: Content
+                      slug:
+                        type: string
+                        description: Post Slug
+                      commentCount:
+                        type: number
+                        description: Comment Count
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     CreatePostRequest:
       title: CreatePostRequest
       required:
@@ -1825,8 +1841,8 @@ components:
         id:
           type: number
           description: Created comment ID
-    GetBookmarkedPostsResponse:
-      title: GetBookmarkedPostsResponse
+    GetPostsResponse:
+      title: GetPostsResponse
       type: object
       properties:
         posts:
@@ -1849,23 +1865,20 @@ components:
                     description: Node Cursor
                   content:
                     required:
-                    - bookmarked
-                    - bookmarkedAt
-                    - commentCount
+                    - author
                     - content
                     - createdAt
                     - id
-                    - likeCount
                     - slug
+                    - type
                     type: object
                     properties:
                       createdAt:
                         type: string
-                        description: Created At
+                        description: Creation Timestamp
                       author:
                         required:
                         - handle
-                        - id
                         - name
                         type: object
                         properties:
@@ -1875,34 +1888,36 @@ components:
                           handle:
                             type: string
                             description: Author Handle
+                        description: Author Information
+                      project:
+                        required:
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Project Name
                           id:
                             type: number
-                            description: Author ID
-                          profileImageUrl:
-                            type: string
-                            description: Author Profile Image URL
-                            nullable: true
-                      bookmarked:
-                        type: boolean
-                        description: Whether the current user bookmarked this post
-                      likeCount:
-                        type: number
-                        description: Like Count
+                            description: Project ID
+                        description: Project Information
                       id:
                         type: number
                         description: Post ID
-                      bookmarkedAt:
+                      type:
                         type: string
-                        description: Bookmarked At
+                        description: Post Type
+                        enum:
+                        - SHORT
+                        - LONG
+                        - QUESTION
                       content:
                         type: string
-                        description: Content
+                        description: Post Content
                       slug:
                         type: string
                         description: Post Slug
-                      commentCount:
-                        type: number
-                        description: Comment Count
                     description: Node Content
             pageInfo:
               required:
@@ -1929,27 +1944,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    GetPostActivitiesResponse:
-      title: GetPostActivitiesResponse
-      required:
-      - activities
-      type: object
-      properties:
-        activities:
-          type: array
-          description: List of Activities
-          items:
-            required:
-            - count
-            - date
-            type: object
-            properties:
-              date:
-                type: string
-                description: Activity Date
-              count:
-                type: number
-                description: Number of Posts
     GetPostResponse:
       title: GetPostResponse
       required:
@@ -1957,6 +1951,7 @@ components:
       - bookmarked
       - commentCount
       - content
+      - createdAt
       - id
       - likeCount
       - project
@@ -1964,21 +1959,24 @@ components:
       - type
       type: object
       properties:
+        createdAt:
+          type: string
+          description: Creation Timestamp
         bookmarked:
           type: boolean
           description: Whether the current user bookmarked this post
         author:
           required:
-          - id
+          - handle
           - name
           type: object
           properties:
             name:
               type: string
               description: Author Name
-            id:
-              type: number
-              description: Author User ID
+            handle:
+              type: string
+              description: Author Handle
           description: Author Information
         project:
           required:
@@ -2037,6 +2035,27 @@ components:
         commentCount:
           type: number
           description: Number of Comments
+    GetPostActivitiesResponse:
+      title: GetPostActivitiesResponse
+      required:
+      - activities
+      type: object
+      properties:
+        activities:
+          type: array
+          description: List of Activities
+          items:
+            required:
+            - count
+            - date
+            type: object
+            properties:
+              date:
+                type: string
+                description: Activity Date
+              count:
+                type: number
+                description: Number of Posts
     SearchPostsResponse:
       title: SearchPostsResponse
       required:

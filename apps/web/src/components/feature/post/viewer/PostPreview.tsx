@@ -3,6 +3,7 @@
 import { DotsThreeIcon } from '@phosphor-icons/react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { redirect } from 'next/navigation';
 
 import type { GetPostResponse } from '@/api/__generated__/types';
 import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
@@ -15,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { RelativeTime } from '@/components/ui/relative-time';
 import { PostType } from '@/features/post/constants/post-type';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
@@ -24,6 +26,7 @@ import { PostTypeBadge } from './components/PostTypeBadge';
 
 interface PostPreviewProps {
   id: number;
+  slug: string;
   type?: PostType;
   author: GetPostResponse['author'];
   project?: GetPostResponse['project'];
@@ -31,10 +34,12 @@ interface PostPreviewProps {
   likeCount: number;
   commentCount: number;
   bookmarked: boolean;
+  createdAt: string;
 }
 
 export default function PostPreview({
   id,
+  slug,
   type,
   author,
   project,
@@ -42,6 +47,7 @@ export default function PostPreview({
   likeCount,
   commentCount,
   bookmarked,
+  createdAt,
 }: PostPreviewProps) {
   const editor = useEditor({
     extensions: [StarterKit, ImageNode],
@@ -50,10 +56,19 @@ export default function PostPreview({
     immediatelyRender: false,
   });
 
+  const handleClickCard = () => {
+    redirect(`/posts/${slug}`);
+  };
+
   return (
-    <Card>
+    <Card onClick={handleClickCard}>
       <CardHeader>
-        <PostPreviewHeader type={type} author={author} project={project} />
+        <PostPreviewHeader
+          type={type}
+          author={author}
+          project={project}
+          createdAt={createdAt}
+        />
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -76,16 +91,18 @@ function PostPreviewHeader({
   type,
   author,
   project,
+  createdAt,
 }: {
   type?: PostType;
   author: GetPostResponse['author'];
   project?: GetPostResponse['project'];
+  createdAt: string;
 }) {
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-2">
         <ProfileHoverCard
-          handle={author.name}
+          handle={author.handle}
           name={author.name}
           size="default"
         />
@@ -93,7 +110,7 @@ function PostPreviewHeader({
         <div className="flex flex-col">
           <span className="text-sm font-semibold">{author.name}</span>
           <span className="text-muted-foreground text-xs">
-            @{author.name} · 2h
+            @{author.handle} · <RelativeTime date={createdAt} />
           </span>
         </div>
 

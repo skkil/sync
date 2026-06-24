@@ -9,6 +9,7 @@ public record PostDto(
     String slug,
     Long authorId,
     String authorName,
+    String authorHandle,
     Long projectId,
     String projectName,
     String content,

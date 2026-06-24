@@ -61,11 +61,13 @@ export default function Posts() {
           <PostPreview
             key={post.content.id}
             id={post.content.id}
-            author={post.content.author ?? { id: 0, name: '' }}
+            slug={post.content.slug}
+            author={post.content.author}
             content={{ json: post.content.content, media: [] }}
             likeCount={post.content.likeCount}
             commentCount={post.content.commentCount}
             bookmarked={post.content.bookmarked}
+            createdAt={post.content.createdAt}
           />
         ))}
       </div>

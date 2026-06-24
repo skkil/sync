@@ -28,6 +28,7 @@ export default function PostCardContainer({ slug }: PostCardContainerProps) {
       likeCount={post.likeCount}
       commentCount={post.commentCount}
       bookmarked={post.bookmarked}
+      createdAt={post.createdAt}
     />
   );
 }

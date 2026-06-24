@@ -1,6 +1,7 @@
 package com.skkil.sync.post.dto.response;
 
 import com.skkil.sync.post.model.PostType;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 
@@ -14,10 +15,11 @@ public record GetPostResponse(
     Content content,
     Long likeCount,
     Long commentCount,
-    boolean bookmarked) {
+    boolean bookmarked,
+    LocalDateTime createdAt) {
 
   @Builder
-  public static record Author(Long id, String name) {}
+  public static record Author(String name, String handle) {}
 
   @Builder
   public static record Project(Long id, String name) {}

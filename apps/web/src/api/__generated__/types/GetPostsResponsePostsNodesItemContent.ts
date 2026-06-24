@@ -14,7 +14,9 @@ import type { GetPostsResponsePostsNodesItemContentType } from './GetPostsRespon
 export type GetPostsResponsePostsNodesItemContent = {
   /** Creation Timestamp */
   createdAt: string;
-  author?: GetPostsResponsePostsNodesItemContentAuthor;
+  /** Author Information */
+  author: GetPostsResponsePostsNodesItemContentAuthor;
+  /** Project Information */
   project?: GetPostsResponsePostsNodesItemContentProject;
   /** Post ID */
   id: number;
@@ -22,4 +24,6 @@ export type GetPostsResponsePostsNodesItemContent = {
   type: GetPostsResponsePostsNodesItemContentType;
   /** Post Content */
   content: string;
+  /** Post Slug */
+  slug: string;
 };

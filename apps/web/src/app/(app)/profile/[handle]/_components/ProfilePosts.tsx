@@ -97,6 +97,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
               <PostPreview
                 key={post.content.id}
                 id={post.content.id}
+                slug={post.content.slug}
                 type={post.content.type as PostType}
                 author={post.content.author ?? { id: 0, name: '' }}
                 project={post.content.project}
@@ -104,6 +105,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
                 likeCount={0}
                 commentCount={0}
                 bookmarked={false}
+                createdAt={post.content.createdAt}
               />
             ))}
           </div>
