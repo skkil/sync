@@ -1,5 +1,6 @@
 package com.skkil.sync.bookmark.service;
 
+import com.skkil.sync.bookmark.dto.data.BookmarkedPostDto;
 import com.skkil.sync.bookmark.dto.response.GetBookmarkedPostsResponse;
 import com.skkil.sync.bookmark.mapper.PostBookmarkMapper;
 import com.skkil.sync.bookmark.repository.PostBookmarkQueryRepository;
@@ -7,10 +8,6 @@ import com.skkil.sync.bookmark.repository.pagination.BookmarkedPostCursorPaginat
 import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
 import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.media.service.domain.MediaDomainService;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,21 +37,16 @@ public class PostBookmarkQueryService {
   public GetBookmarkedPostsResponse getBookmarkedPosts(
       Long userId, CursorPaginationRequest pagination) {
     var bookmarkedPosts =
-        paginationService.paginate(
-            postBookmarkQueryRepository.getBookmarkedPosts(userId), paginationProvider, pagination);
+        paginationService
+            .paginate(
+                postBookmarkQueryRepository.getBookmarkedPosts(userId),
+                paginationProvider,
+                pagination)
+            .mapWithLookup(
+                BookmarkedPostDto::authorProfileImageId,
+                mediaDomainService::generatePublicGetUrls,
+                postBookmarkMapper::toBookmarkedPostResponse);
 
-    List<Long> profileImageIds = new ArrayList<>();
-    for (var bookmarkedPost : bookmarkedPosts) {
-      if (bookmarkedPost.authorProfileImageId() != null) {
-        profileImageIds.add(bookmarkedPost.authorProfileImageId());
-      }
-    }
-
-    Map<Long, URL> profileImageUrls = mediaDomainService.generatePublicGetUrls(profileImageIds);
-
-    return new GetBookmarkedPostsResponse(
-        bookmarkedPosts.map(
-            bookmarkedPost ->
-                postBookmarkMapper.toBookmarkedPostResponse(bookmarkedPost, profileImageUrls)));
+    return new GetBookmarkedPostsResponse(bookmarkedPosts);
   }
 }

@@ -17,7 +17,21 @@ public record CursorPaginationRequest(
           "Cannot specify both 'first' and 'last' parameters.");
     }
 
+    if (first != null && before != null) {
+      throw new InvalidPaginationParametersException(
+          "Cannot specify 'before' when using 'first'. Use 'last' and 'before' together.");
+    }
+
+    if (last != null && after != null) {
+      throw new InvalidPaginationParametersException(
+          "Cannot specify 'after' when using 'last'. Use 'first' and 'after' together.");
+    }
+
     if (first == null && last == null) {
+      if (before != null) {
+        throw new InvalidPaginationParametersException("'before' must be used with 'last'.");
+      }
+
       first = PaginationDefaultValues.DEFAULT_PAGE_SIZE;
     }
   }

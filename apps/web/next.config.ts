@@ -1,8 +1,6 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const STAGE = process.env.STAGE;
-
 const nextConfig: NextConfig = {
   rewrites: async () => {
     return [
