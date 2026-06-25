@@ -6,7 +6,6 @@ import {
   TrashIcon,
 } from '@phosphor-icons/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -20,6 +19,7 @@ import {
 import type { GetCommentsResponseCommentsItem } from '@/api/__generated__/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { RelativeTime } from '@/components/ui/relative-time';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useSession } from '@/lib/auth/client';
@@ -137,9 +137,7 @@ function CommentRow({
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">{authorLabel}</p>
               <p className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(comment.createdAt), {
-                  addSuffix: true,
-                })}
+                <RelativeTime date={comment.createdAt} />
               </p>
             </div>
 

@@ -49,7 +49,8 @@ public class GetBookmarkedPostsResponseSnippets {
                 .type(JsonFieldType.BOOLEAN)
                 .description("Whether the current user bookmarked this post"),
             fieldWithPath(".createdAt").type(JsonFieldType.STRING).description("Created At"),
-            fieldWithPath(".bookmarkedAt").type(JsonFieldType.STRING).description("Bookmarked At"));
+            fieldWithPath(".bookmarkedAt").type(JsonFieldType.STRING).description("Bookmarked At"),
+            fieldWithPath(".author").type(JsonFieldType.OBJECT).description("Author Information"));
 
     fields =
         fields.andWithPrefix(

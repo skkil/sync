@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.SelectFieldOrAsterisk;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
@@ -27,23 +28,11 @@ public class PostQueryRepository {
   }
 
   public Optional<PostDto> getPostBySlug(Long requesterId, String slug) {
-    return dsl.select(
-            POSTS.ID.as("id"),
-            POSTS.SLUG.as("slug"),
-            POSTS.AUTHOR_ID.as("authorId"),
-            USERS.FULL_NAME.as("authorName"),
-            PROJECTS.ID.as("projectId"),
-            PROJECTS.NAME.as("projectName"),
-            POSTS.CONTENT.as("content"),
-            POSTS.CREATED_AT.as("createdAt"),
-            POSTS.UPDATED_AT.as("updatedAt"),
-            POSTS.LIKE_COUNT.as("likeCount"),
-            DSL.value(0L).as("commentCount"),
-            bookmarkedField(requesterId))
+    return dsl.select(post(requesterId))
         .from(POSTS)
         .join(USERS)
         .on(POSTS.AUTHOR_ID.eq(USERS.ID))
-        .join(PROJECTS)
+        .leftJoin(PROJECTS)
         .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
         .where(POSTS.SLUG.eq(slug))
         .fetchOptional()
@@ -52,23 +41,11 @@ public class PostQueryRepository {
 
   public CursorPaginationDataFetcher<PostDto> getPosts() {
     return (condition, orderFields, size) ->
-        dsl.select(
-                POSTS.ID.as("id"),
-                POSTS.SLUG.as("slug"),
-                POSTS.AUTHOR_ID.as("authorId"),
-                USERS.FULL_NAME.as("authorName"),
-                PROJECTS.ID.as("projectId"),
-                PROJECTS.NAME.as("projectName"),
-                POSTS.CONTENT.as("content"),
-                POSTS.CREATED_AT.as("createdAt"),
-                POSTS.UPDATED_AT.as("updatedAt"),
-                POSTS.LIKE_COUNT.as("likeCount"),
-                DSL.value(0L).as("commentCount"),
-                bookmarkedField(null))
+        dsl.select(post(null))
             .from(POSTS)
             .join(USERS)
             .on(POSTS.AUTHOR_ID.eq(USERS.ID))
-            .join(PROJECTS)
+            .leftJoin(PROJECTS)
             .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
             .where(condition)
             .orderBy(orderFields)
@@ -97,23 +74,11 @@ public class PostQueryRepository {
 
     Map<Long, PostDto> byId =
         dsl
-            .select(
-                POSTS.ID.as("id"),
-                POSTS.SLUG.as("slug"),
-                POSTS.AUTHOR_ID.as("authorId"),
-                USERS.FULL_NAME.as("authorName"),
-                PROJECTS.ID.as("projectId"),
-                PROJECTS.NAME.as("projectName"),
-                POSTS.CONTENT.as("content"),
-                POSTS.CREATED_AT.as("createdAt"),
-                POSTS.UPDATED_AT.as("updatedAt"),
-                POSTS.LIKE_COUNT.as("likeCount"),
-                DSL.value(0L).as("commentCount"),
-                bookmarkedField(null))
+            .select(post(null))
             .from(POSTS)
             .join(USERS)
             .on(POSTS.AUTHOR_ID.eq(USERS.ID))
-            .join(PROJECTS)
+            .leftJoin(PROJECTS)
             .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
             .where(POSTS.ID.in(ids))
             .fetchInto(PostDto.class)
@@ -123,17 +88,31 @@ public class PostQueryRepository {
     return ids.stream().map(byId::get).filter(dto -> dto != null).toList();
   }
 
-  private Field<Boolean> bookmarkedField(Long requesterId) {
-    if (requesterId == null) {
-      return DSL.value(false).as("bookmarked");
-    }
+  private List<SelectFieldOrAsterisk> post(Long requesterId) {
+    Field<Boolean> bookmarked =
+        requesterId == null
+            ? DSL.value(false)
+            : DSL.field(
+                DSL.exists(
+                    DSL.selectOne()
+                        .from(POST_BOOKMARKS)
+                        .where(POST_BOOKMARKS.POST_ID.eq(POSTS.ID))
+                        .and(POST_BOOKMARKS.USER_ID.eq(requesterId))));
 
-    return DSL.field(
-            DSL.exists(
-                DSL.selectOne()
-                    .from(POST_BOOKMARKS)
-                    .where(POST_BOOKMARKS.POST_ID.eq(POSTS.ID))
-                    .and(POST_BOOKMARKS.USER_ID.eq(requesterId))))
-        .as("bookmarked");
+    return List.of(
+        POSTS.ID.as("id"),
+        POSTS.POST_TYPE.as("type"),
+        POSTS.SLUG.as("slug"),
+        POSTS.AUTHOR_ID.as("authorId"),
+        USERS.FULL_NAME.as("authorName"),
+        USERS.HANDLE.as("authorHandle"),
+        PROJECTS.ID.as("projectId"),
+        PROJECTS.NAME.as("projectName"),
+        POSTS.CONTENT.as("content"),
+        POSTS.CREATED_AT.as("createdAt"),
+        POSTS.UPDATED_AT.as("updatedAt"),
+        POSTS.LIKE_COUNT.as("likeCount"),
+        DSL.value(0L).as("commentCount"),
+        bookmarked.as("bookmarked"));
   }
 }

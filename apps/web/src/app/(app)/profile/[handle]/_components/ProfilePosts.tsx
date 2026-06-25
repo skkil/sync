@@ -6,10 +6,10 @@ import { useEffect } from 'react';
 
 import { useGetUserPostsInfinite } from '@/api/__generated__/post/post';
 import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
-import type { GetPostsResponsePostsNodesItemContent } from '@/api/__generated__/types';
-import { BaseViewer } from '@/components/ui/editor';
+import PostPreview from '@/components/feature/post/viewer/PostPreview';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
+import { PostType } from '@/features/post/constants/post-type';
 
 const POSTS_PAGE_SIZE = '10';
 
@@ -94,7 +94,19 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
         <>
           <div className="space-y-4">
             {posts.map((post) => (
-              <PostCard key={post.content.id} post={post.content} />
+              <PostPreview
+                key={post.content.id}
+                id={post.content.id}
+                slug={post.content.slug}
+                type={post.content.type as PostType}
+                author={post.content.author ?? { id: 0, name: '' }}
+                project={post.content.project}
+                content={{ json: post.content.content, media: [] }}
+                likeCount={0}
+                commentCount={0}
+                bookmarked={false}
+                createdAt={post.content.createdAt}
+              />
             ))}
           </div>
 
@@ -114,18 +126,6 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
         </>
       )}
     </section>
-  );
-}
-
-function PostCard({ post }: { post: GetPostsResponsePostsNodesItemContent }) {
-  return (
-    <article className="rounded-md border p-4">
-      <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-      </div>
-
-      <BaseViewer content={post.content} />
-    </article>
   );
 }
 

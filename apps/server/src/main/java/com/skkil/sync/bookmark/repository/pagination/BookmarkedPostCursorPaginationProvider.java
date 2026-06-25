@@ -4,15 +4,14 @@ import static com.skkil.sync.jooq.tables.PostBookmarks.POST_BOOKMARKS;
 
 import com.skkil.sync.bookmark.dto.data.BookmarkedPostCursor;
 import com.skkil.sync.bookmark.dto.data.BookmarkedPostDto;
-import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationProvider;
+import com.skkil.sync.common.util.pagination.keyset.KeysetCursorPaginationProvider;
+import com.skkil.sync.common.util.pagination.keyset.KeysetField;
 import java.util.List;
-import org.jooq.Condition;
-import org.jooq.OrderField;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BookmarkedPostCursorPaginationProvider
-    implements CursorPaginationProvider<BookmarkedPostDto, BookmarkedPostCursor> {
+    extends KeysetCursorPaginationProvider<BookmarkedPostDto, BookmarkedPostCursor> {
 
   @Override
   public Class<BookmarkedPostCursor> getCursorClass() {
@@ -20,37 +19,10 @@ public class BookmarkedPostCursorPaginationProvider
   }
 
   @Override
-  public Condition getNextCondition(BookmarkedPostCursor cursor) {
-    return POST_BOOKMARKS
-        .CREATED_AT
-        .lt(cursor.bookmarkedAt())
-        .or(
-            POST_BOOKMARKS
-                .CREATED_AT
-                .eq(cursor.bookmarkedAt())
-                .and(POST_BOOKMARKS.ID.lt(cursor.bookmarkId())));
-  }
-
-  @Override
-  public Condition getPreviousCondition(BookmarkedPostCursor cursor) {
-    return POST_BOOKMARKS
-        .CREATED_AT
-        .gt(cursor.bookmarkedAt())
-        .or(
-            POST_BOOKMARKS
-                .CREATED_AT
-                .eq(cursor.bookmarkedAt())
-                .and(POST_BOOKMARKS.ID.gt(cursor.bookmarkId())));
-  }
-
-  @Override
-  public List<OrderField<?>> getOrderFields() {
-    return List.of(POST_BOOKMARKS.CREATED_AT.desc(), POST_BOOKMARKS.ID.desc());
-  }
-
-  @Override
-  public List<OrderField<?>> getReversedOrderFields() {
-    return List.of(POST_BOOKMARKS.CREATED_AT.asc(), POST_BOOKMARKS.ID.asc());
+  protected List<KeysetField<BookmarkedPostCursor, ?>> getKeysetFields() {
+    return List.of(
+        KeysetField.desc(POST_BOOKMARKS.CREATED_AT, BookmarkedPostCursor::bookmarkedAt),
+        KeysetField.desc(POST_BOOKMARKS.ID, BookmarkedPostCursor::bookmarkId));
   }
 
   @Override

@@ -108,7 +108,7 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
 
       <DropdownMenuContent align={align}>
         <DropdownMenuGroup>
-          {menu.map((item, index) => {
+          {menu.map((item) => {
             const Icon = item.icon;
 
             if (item.isAdmin && session.user.role !== 'ADMIN') {
@@ -116,7 +116,7 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
             }
 
             return (
-              <DropdownMenuItem key={index} onClick={item.onClick}>
+              <DropdownMenuItem key={item.label} onClick={item.onClick}>
                 <Icon />
                 {item.label}
               </DropdownMenuItem>

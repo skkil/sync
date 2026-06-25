@@ -27,8 +27,8 @@ public class CursorConverter {
       String json = objectMapper.writeValueAsString(cursor.getFields());
       return Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
     } catch (Exception e) {
-      log.debug("Failed to encode cursor: {}", cursor, e);
-      throw new InvalidPaginationParametersException("Failed to encode cursor: " + cursor);
+      log.warn("Failed to encode cursor: {}", cursor, e);
+      throw new InvalidPaginationParametersException("invalid cursor");
     }
   }
 
@@ -43,7 +43,7 @@ public class CursorConverter {
       return objectMapper.readValue(json, type);
     } catch (Exception e) {
       log.debug("Failed to decode cursor: {}", str, e);
-      throw new InvalidPaginationParametersException("Invalid cursor format: " + str);
+      throw new InvalidPaginationParametersException("invalid cursor");
     }
   }
 }

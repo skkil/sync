@@ -5,6 +5,9 @@
  * OpenAPI spec version: 0.0.1
  */
 
+/**
+ * Project Information
+ */
 export type GetPostsResponsePostsNodesItemContentProject = {
   /** Project Name */
   name: string;

@@ -1,6 +1,7 @@
 package com.skkil.sync.post.service;
 
 import com.skkil.sync.common.util.text.Slugify;
+import com.skkil.sync.media.model.Media;
 import com.skkil.sync.post.dto.request.CreatePostRequest;
 import com.skkil.sync.post.dto.request.UpdatePostRequest;
 import com.skkil.sync.post.dto.request.UpdatePostSummaryRequest;
@@ -20,6 +21,7 @@ import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -70,15 +72,16 @@ public class PostService {
             ? String.format("%s-%d", author.getHandle(), System.currentTimeMillis())
             : Slugify.slugify(request.title());
 
-    PostContentMediaService.PreparedContent preparedContent =
-        contentMediaService.prepareContentForCreate(authorId, request.content().json());
+    List<Media> mediaFiles =
+        contentMediaService.resolveMediaFilesForCreate(authorId, request.content().mediaIds());
 
     Post.PostBuilder postBuilder =
         Post.builder()
             .slug(slug)
             .author(author)
+            .type(request.type())
             .title(request.title())
-            .content(preparedContent.content());
+            .content(request.content().json());
 
     if (request.projectId() != null) {
       Project project = projectDomainService.getProject(request.projectId());
@@ -90,8 +93,8 @@ public class PostService {
 
     post = postRepository.save(post);
 
-    for (int i = 0; i < preparedContent.mediaFiles().size(); i++) {
-      postMediaFileRepository.save(new PostMediaFile(post, preparedContent.mediaFiles().get(i), i));
+    for (int i = 0; i < mediaFiles.size(); i++) {
+      postMediaFileRepository.save(new PostMediaFile(post, mediaFiles.get(i), i));
     }
 
     postRepository.incrementActivityCount(

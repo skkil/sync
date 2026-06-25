@@ -4,6 +4,7 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
+import type { CreatePostRequestContentMediaIdsItem } from './CreatePostRequestContentMediaIdsItem';
 
 /**
  * Content
@@ -11,6 +12,11 @@
 export type CreatePostRequestContent = {
   /** JSON Content */
   json: string;
+  /**
+   * 사용된 미디어 ID 목록
+   * @nullable
+   */
+  mediaIds?: CreatePostRequestContentMediaIdsItem[] | null;
   /** Text Content */
   text: string;
 };

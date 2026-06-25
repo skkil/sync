@@ -11,6 +11,6 @@
 export type GetPostResponseAuthor = {
   /** Author Name */
   name: string;
-  /** Author User ID */
-  id: number;
+  /** Author Handle */
+  handle: string;
 };

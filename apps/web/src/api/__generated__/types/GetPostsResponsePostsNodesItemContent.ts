@@ -6,6 +6,7 @@
  */
 import type { GetPostsResponsePostsNodesItemContentAuthor } from './GetPostsResponsePostsNodesItemContentAuthor';
 import type { GetPostsResponsePostsNodesItemContentProject } from './GetPostsResponsePostsNodesItemContentProject';
+import type { GetPostsResponsePostsNodesItemContentType } from './GetPostsResponsePostsNodesItemContentType';
 
 /**
  * Node Content
@@ -13,10 +14,16 @@ import type { GetPostsResponsePostsNodesItemContentProject } from './GetPostsRes
 export type GetPostsResponsePostsNodesItemContent = {
   /** Creation Timestamp */
   createdAt: string;
-  author?: GetPostsResponsePostsNodesItemContentAuthor;
+  /** Author Information */
+  author: GetPostsResponsePostsNodesItemContentAuthor;
+  /** Project Information */
   project?: GetPostsResponsePostsNodesItemContentProject;
   /** Post ID */
   id: number;
+  /** Post Type */
+  type: GetPostsResponsePostsNodesItemContentType;
   /** Post Content */
   content: string;
+  /** Post Slug */
+  slug: string;
 };

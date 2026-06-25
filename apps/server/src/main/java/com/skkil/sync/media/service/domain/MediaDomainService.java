@@ -118,4 +118,38 @@ public class MediaDomainService {
 
     return result;
   }
+
+  @Transactional(readOnly = true)
+  public <T> Map<Long, URL> generatePresignedGetUrls(List<Media> medias) {
+    Map<Long, URL> result = new HashMap<>();
+    for (Media media : medias) {
+      if (media == null) {
+        continue;
+      }
+
+      result.put(media.getId(), generatePresignedGetUrl(media));
+    }
+
+    return result;
+  }
+
+  @Transactional(readOnly = true)
+  public <T> Map<Long, URL> generatePresignedGetUrls(
+      List<T> items, Function<T, Media> mediaExtractor) {
+    Map<Long, URL> result = new HashMap<>();
+    for (T item : items) {
+      if (item == null) {
+        continue;
+      }
+
+      Media media = mediaExtractor.apply(item);
+      if (media == null) {
+        continue;
+      }
+
+      result.put(media.getId(), generatePresignedGetUrl(media));
+    }
+
+    return result;
+  }
 }
