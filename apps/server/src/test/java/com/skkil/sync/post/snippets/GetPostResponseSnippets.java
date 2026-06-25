@@ -4,10 +4,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.skkil.sync.common.util.restdocs.RestDocsUtils;
+import com.skkil.sync.common.util.time.DateTimeTestUtils;
 import com.skkil.sync.post.dto.response.GetPostResponse;
 import com.skkil.sync.post.model.PostType;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
@@ -37,7 +36,7 @@ public class GetPostResponseSnippets {
         .likeCount(1L)
         .commentCount(1L)
         .bookmarked(true)
-        .createdAt(LocalDateTime.now(ZoneOffset.UTC))
+        .createdAt(DateTimeTestUtils.defaultTestLocalDateTime())
         .build();
   }
 
