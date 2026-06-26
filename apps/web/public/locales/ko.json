@@ -918,6 +918,13 @@
     }
   },
   "components": {
+    "post": {
+      "type": {
+        "SHORT": "TIL",
+        "LONG": "블로그",
+        "QUESTION": "질문"
+      }
+    },
     "navigation": {
       "search": {
         "placeholder": "검색..."
@@ -957,6 +964,10 @@
         },
         "italic": {
           "title": "기울임",
+          "description": ""
+        },
+        "image": {
+          "title": "이미지",
           "description": ""
         },
         "ignore": {

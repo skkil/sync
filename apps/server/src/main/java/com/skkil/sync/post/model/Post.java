@@ -75,7 +75,7 @@ public class Post extends BaseEntity {
 
   @Builder
   public Post(
-      String slug, User author, Project project, String title, PostType type, String content) {
+      String slug, User author, Project project, String title, String content, PostType type) {
     this.slug = slug;
     this.author = author;
     this.project = project;

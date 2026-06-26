@@ -1,13 +1,32 @@
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+'use client';
 
-import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
 
-import Editor from './_components/Editor';
+import { useCreatePost } from '@/api/__generated__/post/post';
+import PostEditor from '@/components/feature/post/editor/PostEditor';
+import { PostType } from '@/features/post/constants/post-type';
+import { isAuthenticated, isOnboarded } from '@/lib/auth';
+import { useSession } from '@/lib/auth/client';
 
-export default async function PostEditor() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
+function getInitialPostType(value: string | null): PostType {
+  if (value === PostType.Short || value === PostType.Question) {
+    return value;
+  }
+
+  return PostType.Long;
+}
+
+export default function CreatePostPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data: session } = useSession();
+
+  const { mutate: createPost } = useCreatePost({
+    mutation: {
+      onSuccess: ({ data }) => {
+        router.push(`/posts/${data.slug}`);
+      },
+    },
   });
 
   if (isAuthenticated(session) && !isOnboarded(session)) {
@@ -20,7 +39,24 @@ export default async function PostEditor() {
 
   return (
     <div className="h-full">
-      <Editor />
+      <PostEditor
+        type={getInitialPostType(searchParams.get('type'))}
+        onSubmit={({ title, type, tags, projectId, content }) => {
+          createPost({
+            data: {
+              type,
+              title,
+              projectId,
+              tags,
+              content: {
+                json: content.json,
+                text: content.text,
+                mediaIds: content.media.map((media) => media.id),
+              },
+            },
+          });
+        }}
+      />
     </div>
   );
 }

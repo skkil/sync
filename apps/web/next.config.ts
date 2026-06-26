@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4566',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 const withNextIntl = createNextIntlPlugin('./src/lib/i18n.ts');

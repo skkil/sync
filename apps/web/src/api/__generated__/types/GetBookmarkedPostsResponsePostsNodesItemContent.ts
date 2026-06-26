@@ -12,7 +12,8 @@ import type { GetBookmarkedPostsResponsePostsNodesItemContentAuthor } from './Ge
 export type GetBookmarkedPostsResponsePostsNodesItemContent = {
   /** Created At */
   createdAt: string;
-  author?: GetBookmarkedPostsResponsePostsNodesItemContentAuthor;
+  /** Author Information */
+  author: GetBookmarkedPostsResponsePostsNodesItemContentAuthor;
   /** Whether the current user bookmarked this post */
   bookmarked: boolean;
   /** Like Count */

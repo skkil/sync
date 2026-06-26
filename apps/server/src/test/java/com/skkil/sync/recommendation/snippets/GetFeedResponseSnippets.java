@@ -47,7 +47,8 @@ public class GetFeedResponseSnippets {
             fieldWithPath(".bookmarked")
                 .type(JsonFieldType.BOOLEAN)
                 .description("Whether the current user bookmarked this feed item"),
-            fieldWithPath(".createdAt").type(JsonFieldType.STRING).description("Created At"));
+            fieldWithPath(".createdAt").type(JsonFieldType.STRING).description("Created At"),
+            fieldWithPath(".author").type(JsonFieldType.OBJECT).description("Author Information"));
 
     fields =
         fields.andWithPrefix(

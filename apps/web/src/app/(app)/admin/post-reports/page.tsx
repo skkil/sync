@@ -6,6 +6,8 @@ import {
   FunnelIcon,
 } from '@phosphor-icons/react';
 import { useQueryClient } from '@tanstack/react-query';
+import { EditorContent, JSONContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -18,6 +20,8 @@ import {
 } from '@/api/__generated__/post-report/post-report';
 import type { GetPostReportsResponseReportsContentItem } from '@/api/__generated__/types/GetPostReportsResponseReportsContentItem';
 import { ReviewPostReportRequestResolution } from '@/api/__generated__/types/ReviewPostReportRequestResolution';
+import { ImageNode } from '@/components/feature/post/editor/extensions/nodes/image';
+import { deserialize } from '@/components/feature/post/editor/utils/serializer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,7 +31,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { BaseViewer } from '@/components/ui/editor';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -190,7 +193,7 @@ export default function AdminPostReportsPage() {
                       )}
                       {report.post?.content && (
                         <div className="line-clamp-3 text-muted-foreground">
-                          <BaseViewer content={report.post.content} />
+                          <PostContentPreview content={report.post.content} />
                         </div>
                       )}
                     </div>
@@ -337,4 +340,47 @@ function formatDate(value: string) {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(value));
+}
+
+function PostContentPreview({ content }: { content: string }) {
+  const editor = useEditor({
+    extensions: [StarterKit, ImageNode],
+    content: toEditorContent(content),
+    editable: false,
+    immediatelyRender: false,
+  });
+
+  return <EditorContent editor={editor} />;
+}
+
+function toEditorContent(content: string): JSONContent {
+  try {
+    const parsed = JSON.parse(content) as JSONContent;
+    if (parsed.type) {
+      return deserialize(content, []);
+    }
+  } catch {
+    return textContent(content);
+  }
+
+  return textContent(content);
+}
+
+function textContent(content: string): JSONContent {
+  return {
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        content: content
+          ? [
+              {
+                type: 'text',
+                text: content,
+              },
+            ]
+          : [],
+      },
+    ],
+  };
 }

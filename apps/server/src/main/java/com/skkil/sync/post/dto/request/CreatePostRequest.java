@@ -15,5 +15,5 @@ public record CreatePostRequest(
     List<String> tags,
     Long projectId) {
 
-  public static record Content(@NotBlank String text, @NotBlank String json) {}
+  public static record Content(String text, @NotBlank String json, List<Long> mediaIds) {}
 }

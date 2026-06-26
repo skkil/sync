@@ -5,9 +5,12 @@
  * OpenAPI spec version: 0.0.1
  */
 
+/**
+ * Author Information
+ */
 export type GetPostsResponsePostsNodesItemContentAuthor = {
   /** Author Name */
   name: string;
-  /** Author User ID */
-  id: number;
+  /** Author Handle */
+  handle: string;
 };

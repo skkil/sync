@@ -14,6 +14,7 @@ import {
   useUpdateProject,
 } from '@/api/__generated__/project/project';
 import { GetProjectResponse } from '@/api/__generated__/types';
+import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -31,7 +32,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import { UserAvatarHoverCard } from '@/components/user/UserAvatarHoverCard';
 
 interface LeftSidebarProps {
   handle: string;
@@ -235,7 +235,7 @@ function TeammatesCard({ project }: { project: GetProjectResponse }) {
       <div>
         {project.teammates.map((teammate) => (
           <div key={teammate.handle}>
-            <UserAvatarHoverCard
+            <ProfileHoverCard
               handle={teammate.handle}
               name={teammate.name}
               imageUrl={teammate.profileImageUrl ?? undefined}

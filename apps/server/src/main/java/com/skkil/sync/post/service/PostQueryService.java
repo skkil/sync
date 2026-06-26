@@ -42,8 +42,7 @@ public class PostQueryService {
     var posts =
         paginationService
             .paginate(postQueryRepository.getPosts(), paginationProvider, pagination)
-            .map(postMapper::toPostResponse)
-            .map(this::resolveImageUrls);
+            .map(postMapper::toPostResponse);
 
     return new GetPostsResponse(posts);
   }
@@ -55,7 +54,9 @@ public class PostQueryService {
             .getPostBySlug(requesterId, slug)
             .orElseThrow(() -> new PostNotFoundException(slug));
 
-    return resolveImageUrls(postMapper.toGetPostResponse(post));
+    var media = contentMediaService.getMediaFilesForPost(post.id());
+
+    return postMapper.toGetPostResponse(post, media);
   }
 
   @Transactional(readOnly = true)
@@ -64,8 +65,7 @@ public class PostQueryService {
     var posts =
         paginationService
             .paginate(postQueryRepository.getPostsByUser(userId), paginationProvider, pagination)
-            .map(postMapper::toPostResponse)
-            .map(this::resolveImageUrls);
+            .map(postMapper::toPostResponse);
 
     return new GetPostsResponse(posts);
   }
@@ -75,31 +75,8 @@ public class PostQueryService {
     var posts =
         paginationService
             .paginate(postQueryRepository.getPostsByProject(handle), paginationProvider, pagination)
-            .map(postMapper::toPostResponse)
-            .map(this::resolveImageUrls);
+            .map(postMapper::toPostResponse);
 
     return new GetPostsResponse(posts);
-  }
-
-  private GetPostResponse resolveImageUrls(GetPostResponse post) {
-    return new GetPostResponse(
-        post.id(),
-        post.slug(),
-        post.author(),
-        post.project(),
-        contentMediaService.resolveImageUrls(post.id(), post.content()),
-        post.likeCount(),
-        post.commentCount(),
-        post.bookmarked());
-  }
-
-  private GetPostsResponse.Post resolveImageUrls(GetPostsResponse.Post post) {
-    return new GetPostsResponse.Post(
-        post.id(),
-        post.slug(),
-        post.author(),
-        post.project(),
-        contentMediaService.resolveImageUrls(post.id(), post.content()),
-        post.createdAt());
   }
 }
