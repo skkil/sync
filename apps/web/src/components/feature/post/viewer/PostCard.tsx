@@ -135,8 +135,7 @@ function PostCardHeader({
             <DropdownMenuItem>Copy link</DropdownMenuItem>
             <DropdownMenuItem
               variant="destructive"
-              onSelect={(event) => {
-                event.preventDefault();
+              onSelect={() => {
                 setReportOpen(true);
               }}
             >

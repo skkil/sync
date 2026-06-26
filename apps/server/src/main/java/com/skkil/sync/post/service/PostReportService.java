@@ -19,6 +19,7 @@ import com.skkil.sync.post.repository.PostReportRepository;
 import com.skkil.sync.post.repository.PostRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,8 +54,12 @@ public class PostReportService {
     }
 
     User reporter = userDomainService.getUserReference(reporterId);
-    postReportRepository.save(
-        new PostReport(post, reporter, request.reason(), request.description()));
+    try {
+      postReportRepository.saveAndFlush(
+          new PostReport(post, reporter, request.reason(), request.description()));
+    } catch (DataIntegrityViolationException e) {
+      throw new PostReportAlreadyExistsException(postId, reporterId, e);
+    }
   }
 
   @Transactional(readOnly = true)

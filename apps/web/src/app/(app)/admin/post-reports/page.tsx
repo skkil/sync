@@ -359,6 +359,9 @@ function toEditorContent(content: string): JSONContent {
     if (parsed.type) {
       return deserialize(content, []);
     }
+    if (typeof parsed.text === 'string') {
+      return textContent(parsed.text);
+    }
   } catch {
     return textContent(content);
   }

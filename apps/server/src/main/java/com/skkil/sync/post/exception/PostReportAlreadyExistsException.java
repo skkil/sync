@@ -8,7 +8,15 @@ import org.springframework.http.HttpStatusCode;
 public class PostReportAlreadyExistsException extends SyncException {
 
   public PostReportAlreadyExistsException(Long postId, Long reporterId) {
-    super(String.format("User %d already reported post %d.", reporterId, postId));
+    super(message(postId, reporterId));
+  }
+
+  public PostReportAlreadyExistsException(Long postId, Long reporterId, Throwable cause) {
+    super(message(postId, reporterId), cause);
+  }
+
+  private static String message(Long postId, Long reporterId) {
+    return String.format("User %d already reported post %d.", reporterId, postId);
   }
 
   @Override
