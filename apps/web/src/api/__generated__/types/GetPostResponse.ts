@@ -17,7 +17,7 @@ export interface GetPostResponse {
   /** Author Information */
   author: GetPostResponseAuthor;
   /** Project Information */
-  project: GetPostResponseProject;
+  project?: GetPostResponseProject;
   /** Number of Likes */
   likeCount: number;
   /** Post ID */

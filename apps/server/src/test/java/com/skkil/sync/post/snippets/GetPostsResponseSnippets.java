@@ -22,7 +22,7 @@ public class GetPostsResponseSnippets {
     GetPostsResponse.Post post =
         new GetPostsResponse.Post(
             1L,
-            "slug",
+            "test-slug",
             PostType.SHORT,
             author,
             project,
@@ -46,14 +46,14 @@ public class GetPostsResponseSnippets {
                 .description("Post Type")
                 .attributes(RestDocsUtils.getEnumAttributes(PostType.class)),
             fieldWithPath(".content").type(JsonFieldType.STRING).description("Post Content"),
-            fieldWithPath(".createdAt")
-                .type(JsonFieldType.STRING)
-                .description("Creation Timestamp"),
-            fieldWithPath(".author").type(JsonFieldType.OBJECT).description("Author Information"),
             fieldWithPath(".project")
                 .type(JsonFieldType.OBJECT)
                 .description("Project Information")
-                .optional());
+                .optional(),
+            fieldWithPath(".createdAt")
+                .type(JsonFieldType.STRING)
+                .description("Creation Timestamp"),
+            fieldWithPath(".author").type(JsonFieldType.OBJECT).description("Author Information"));
 
     fields =
         fields.andWithPrefix(
@@ -64,8 +64,11 @@ public class GetPostsResponseSnippets {
     fields =
         fields.andWithPrefix(
             "posts.nodes[].content.project",
-            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Project ID"),
-            fieldWithPath(".name").type(JsonFieldType.STRING).description("Project Name"));
+            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Project ID").optional(),
+            fieldWithPath(".name")
+                .type(JsonFieldType.STRING)
+                .description("Project Name")
+                .optional());
 
     return responseFields(fields.getFieldDescriptors());
   }

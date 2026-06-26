@@ -1,8 +1,10 @@
 'use client';
 
-import { DotsThreeIcon } from '@phosphor-icons/react';
+import { DotsThreeIcon, SirenIcon } from '@phosphor-icons/react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import type { GetPostResponse } from '@/api/__generated__/types';
 import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
@@ -22,6 +24,7 @@ import { ImageNode } from '../editor/extensions/nodes/image';
 import { deserialize } from '../editor/utils/serializer';
 import { PostCardActions } from './components/PostCardActions';
 import { PostTypeBadge } from './components/PostTypeBadge';
+import { ReportPostDialog } from './components/ReportPostDialog';
 
 interface PostCardProps {
   id: number;
@@ -57,6 +60,7 @@ export default function PostCard({
     <Card>
       <CardHeader>
         <PostCardHeader
+          postId={id}
           type={type}
           author={author}
           project={project}
@@ -83,46 +87,71 @@ export default function PostCard({
 }
 
 function PostCardHeader({
+  postId,
   type,
   author,
   project,
   createdAt,
 }: {
+  postId: number;
   type: PostType;
   author: GetPostResponse['author'];
   project?: GetPostResponse['project'];
   createdAt: string;
 }) {
-  return (
-    <div className="flex items-start justify-between">
-      <div className="flex items-center gap-2">
-        <ProfileHoverCard handle={author.handle} name={author.name} size="sm" />
+  const t = useTranslations('pages.posts.report');
+  const [reportOpen, setReportOpen] = useState(false);
 
-        <div className="flex flex-col">
-          <span className="text-sm font-semibold">{author.name}</span>
-          <span className="text-muted-foreground text-xs">
-            @{author.handle} · <RelativeTime date={createdAt} />
-          </span>
+  return (
+    <>
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-2">
+          <ProfileHoverCard
+            handle={author.handle}
+            name={author.name}
+            size="sm"
+          />
+
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold">{author.name}</span>
+            <span className="text-muted-foreground text-xs">
+              @{author.handle} · <RelativeTime date={createdAt} />
+            </span>
+          </div>
+
+          <PostTypeBadge type={type} />
+
+          {project?.name && <Badge variant="secondary">{project.name}</Badge>}
         </div>
 
-        <PostTypeBadge type={type} />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon-sm" aria-label="Post options">
+              <DotsThreeIcon weight="bold" />
+            </Button>
+          </DropdownMenuTrigger>
 
-        {project?.name && <Badge variant="secondary">{project.name}</Badge>}
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Copy link</DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onSelect={() => {
+                setReportOpen(true);
+              }}
+            >
+              <SirenIcon />
+              {t('trigger')}
+            </DropdownMenuItem>
+            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon-sm" aria-label="Post options">
-            <DotsThreeIcon weight="bold" />
-          </Button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>Copy link</DropdownMenuItem>
-          <DropdownMenuItem>Report</DropdownMenuItem>
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+      <ReportPostDialog
+        postId={postId}
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+      />
+    </>
   );
 }

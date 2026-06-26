@@ -16,7 +16,8 @@ public interface PostSearchRepository extends Repository<PostEmbedding, Long> {
       value =
           """
           SELECT r.id FROM posts r
-          WHERE r.content ILIKE '%' || :query || '%'
+          WHERE r.visibility = 'VISIBLE'
+          AND r.content ILIKE '%' || :query || '%'
           ORDER BY similarity(r.content, :query) DESC
           LIMIT :n
           """,

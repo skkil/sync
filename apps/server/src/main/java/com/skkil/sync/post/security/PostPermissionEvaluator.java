@@ -34,7 +34,7 @@ public class PostPermissionEvaluator implements CustomPermissionEvaluator {
     }
 
     return switch (permission) {
-      case READ -> true;
+      case READ -> post.isVisible();
       case EDIT -> canEdit(user, post);
       case DELETE -> canDelete(user, post);
 

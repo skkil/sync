@@ -13,10 +13,8 @@ import org.mapstruct.Mappings;
 public interface PostMapper {
 
   @Mappings({
-    @Mapping(target = "author.name", source = "post.authorName"),
-    @Mapping(target = "author.handle", source = "post.authorHandle"),
-    @Mapping(target = "project.id", source = "post.projectId"),
-    @Mapping(target = "project.name", source = "post.projectName"),
+    @Mapping(target = "author", expression = "java(toGetPostAuthor(post))"),
+    @Mapping(target = "project", expression = "java(toGetPostProject(post))"),
     @Mapping(target = "content", expression = "java(toContent(post, media))")
   })
   GetPostResponse toGetPostResponse(PostDto post, List<MediaDto> media);
@@ -28,10 +26,32 @@ public interface PostMapper {
   GetPostResponse.Content toContent(PostDto post, List<MediaDto> media);
 
   @Mappings({
-    @Mapping(target = "author.name", source = "authorName"),
-    @Mapping(target = "author.handle", source = "authorHandle"),
-    @Mapping(target = "project.id", source = "projectId"),
-    @Mapping(target = "project.name", source = "projectName")
+    @Mapping(target = "author", expression = "java(toPostAuthor(postDto))"),
+    @Mapping(target = "project", expression = "java(toPostProject(postDto))")
   })
   GetPostsResponse.Post toPostResponse(PostDto postDto);
+
+  default GetPostResponse.Author toGetPostAuthor(PostDto postDto) {
+    return new GetPostResponse.Author(postDto.authorName(), postDto.authorHandle());
+  }
+
+  default GetPostResponse.Project toGetPostProject(PostDto postDto) {
+    if (postDto.projectId() == null) {
+      return null;
+    }
+
+    return new GetPostResponse.Project(postDto.projectId(), postDto.projectName());
+  }
+
+  default GetPostsResponse.Author toPostAuthor(PostDto postDto) {
+    return new GetPostsResponse.Author(postDto.authorName(), postDto.authorHandle());
+  }
+
+  default GetPostsResponse.Project toPostProject(PostDto postDto) {
+    if (postDto.projectId() == null) {
+      return null;
+    }
+
+    return new GetPostsResponse.Project(postDto.projectId(), postDto.projectName());
+  }
 }

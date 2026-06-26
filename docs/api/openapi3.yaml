@@ -7,6 +7,77 @@ servers:
 - url: ""
 tags: []
 paths:
+  /admin/post-reports:
+    get:
+      tags:
+      - post-report
+      summary: Get Post Reports
+      description: 관리자 신고 큐를 조회합니다.
+      operationId: GetPostReports
+      parameters:
+      - name: status
+        in: query
+        description: 신고 상태
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page (Integer)
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Page Size (Integer)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPostReportsResponse"
+              examples:
+                GetPostReports:
+                  value: "{\"reports\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
+                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":1,\"post\"\
+                    :{\"id\":1,\"slug\":\"reported-post\",\"title\":\"신고된 포스트\",\"\
+                    content\":\"{\\\"text\\\":\\\"신고된 포스트 내용\\\"}\",\"visibility\"\
+                    :\"HIDDEN\"},\"reporter\":{\"id\":2,\"handle\":\"reporter\",\"\
+                    name\":\"신고자\"},\"reason\":\"SPAM\",\"description\":\"광고성 게시글입\
+                    니다.\",\"status\":\"RESOLVED\",\"createdAt\":\"1970-01-01T00:00:00Z\"\
+                    ,\"reviewedBy\":{\"id\":3,\"handle\":\"admin\",\"name\":\"관리자\"\
+                    },\"reviewedAt\":\"1970-01-01T00:00:00Z\",\"resolutionNote\":\"\
+                    스팸으로 판단했습니다.\"}]}}"
+  /admin/post-reports/{reportId}:
+    patch:
+      tags:
+      - post-report
+      summary: Review Post Report
+      description: 관리자가 신고를 기각하거나 포스트 숨김으로 처리합니다.
+      operationId: ReviewPostReport
+      parameters:
+      - name: reportId
+        in: path
+        description: 신고 ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewPostReportRequest"
+            examples:
+              ReviewPostReport:
+                value: "{\"resolution\":\"HIDE_POST\",\"resolutionNote\":\"스팸으로 판단\
+                  했습니다.\",\"hiddenReason\":\"부적절한 광고성 게시글입니다.\"}"
+      responses:
+        "204":
+          description: "204"
   /auth/login:
     post:
       tags:
@@ -298,9 +369,9 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"slug\":\"slug\",\"type\":\"SHORT\",\"author\":{\"\
-                    name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"id\"\
-                    :1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
+                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
+                    id\":1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
                     :\"1970-01-01T00:00:00\"}}]}}"
     post:
       tags:
@@ -500,6 +571,31 @@ paths:
       responses:
         "204":
           description: "204"
+  /posts/{postId}/reports:
+    post:
+      tags:
+      - post-report
+      summary: Report Post
+      description: 부적절한 포스트를 신고합니다.
+      operationId: ReportPost
+      parameters:
+      - name: postId
+        in: path
+        description: 포스트 ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportPostRequest"
+            examples:
+              ReportPost:
+                value: "{\"reason\":\"SPAM\",\"description\":\"광고성 게시글입니다.\"}"
+      responses:
+        "201":
+          description: "201"
   /posts/{slug}/comments:
     get:
       tags:
@@ -827,9 +923,9 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"slug\":\"slug\",\"type\":\"SHORT\",\"author\":{\"\
-                    name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"id\"\
-                    :1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
+                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
+                    id\":1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
                     :\"1970-01-01T00:00:00\"}}]}}"
   /projects/{handle}/teammates:
     get:
@@ -1062,9 +1158,9 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"slug\":\"slug\",\"type\":\"SHORT\",\"author\":{\"\
-                    name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"id\"\
-                    :1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
+                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
+                    id\":1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
                     :\"1970-01-01T00:00:00\"}}]}}"
 components:
   schemas:
@@ -1652,6 +1748,148 @@ components:
         content:
           type: string
           description: Comment content
+    GetPostReportsResponse:
+      title: GetPostReportsResponse
+      type: object
+      properties:
+        reports:
+          required:
+          - content
+          - pageInfo
+          type: object
+          properties:
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - page
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                page:
+                  type: number
+                  description: Page Number
+              description: Page Info
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - createdAt
+                - id
+                - reason
+                - status
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                    description: 신고 생성 시각
+                  reason:
+                    type: string
+                    description: 신고 사유
+                  post:
+                    required:
+                    - content
+                    - id
+                    - slug
+                    - visibility
+                    type: object
+                    properties:
+                      visibility:
+                        type: string
+                        description: 포스트 노출 상태
+                      id:
+                        type: number
+                        description: 포스트 ID
+                      title:
+                        type: string
+                        description: 포스트 제목
+                        nullable: true
+                      content:
+                        type: string
+                        description: 포스트 본문
+                      slug:
+                        type: string
+                        description: 포스트 슬러그
+                  reviewedAt:
+                    type: string
+                    description: 검토 시각
+                    nullable: true
+                  description:
+                    type: string
+                    description: 신고 상세 설명
+                    nullable: true
+                  reporter:
+                    required:
+                    - handle
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 신고자 이름
+                      handle:
+                        type: string
+                        description: 신고자 핸들
+                      id:
+                        type: number
+                        description: 신고자 ID
+                  id:
+                    type: number
+                    description: 신고 ID
+                  reviewedBy:
+                    required:
+                    - handle
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 검토자 이름
+                      handle:
+                        type: string
+                        description: 검토자 핸들
+                      id:
+                        type: number
+                        description: 검토자 ID
+                  resolutionNote:
+                    type: string
+                    description: 관리자 처리 메모
+                    nullable: true
+                  status:
+                    type: string
+                    description: 신고 상태
+    ReviewPostReportRequest:
+      title: ReviewPostReportRequest
+      required:
+      - resolution
+      type: object
+      properties:
+        hiddenReason:
+          type: string
+          description: 포스트 숨김 사유
+          nullable: true
+        resolutionNote:
+          type: string
+          description: 관리자 처리 메모
+          nullable: true
+        resolution:
+          type: string
+          description: 처리 방식
+          enum:
+          - DISMISS
+          - HIDE_POST
     CreateProjectResponse:
       title: CreateProjectResponse
       required:
@@ -1841,109 +2079,6 @@ components:
         id:
           type: number
           description: Created comment ID
-    GetPostsResponse:
-      title: GetPostsResponse
-      type: object
-      properties:
-        posts:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - author
-                    - content
-                    - createdAt
-                    - id
-                    - slug
-                    - type
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Creation Timestamp
-                      author:
-                        required:
-                        - handle
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          handle:
-                            type: string
-                            description: Author Handle
-                        description: Author Information
-                      project:
-                        required:
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Project Name
-                          id:
-                            type: number
-                            description: Project ID
-                        description: Project Information
-                      id:
-                        type: number
-                        description: Post ID
-                      type:
-                        type: string
-                        description: Post Type
-                        enum:
-                        - SHORT
-                        - LONG
-                        - QUESTION
-                      content:
-                        type: string
-                        description: Post Content
-                      slug:
-                        type: string
-                        description: Post Slug
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     GetPostResponse:
       title: GetPostResponse
       required:
@@ -1954,7 +2089,6 @@ components:
       - createdAt
       - id
       - likeCount
-      - project
       - slug
       - type
       type: object
@@ -1979,17 +2113,16 @@ components:
               description: Author Handle
           description: Author Information
         project:
-          required:
-          - id
-          - name
           type: object
           properties:
             name:
               type: string
               description: Project Name
+              nullable: true
             id:
               type: number
               description: Project ID
+              nullable: true
           description: Project Information
         likeCount:
           type: number
@@ -2056,6 +2189,27 @@ components:
               count:
                 type: number
                 description: Number of Posts
+    ReportPostRequest:
+      title: ReportPostRequest
+      required:
+      - reason
+      type: object
+      properties:
+        reason:
+          type: string
+          description: 신고 사유
+          enum:
+          - SPAM
+          - HARASSMENT
+          - HATE
+          - SEXUAL
+          - VIOLENCE
+          - MISINFORMATION
+          - OTHER
+        description:
+          type: string
+          description: 신고 상세 설명
+          nullable: true
     SearchPostsResponse:
       title: SearchPostsResponse
       required:
@@ -2077,6 +2231,108 @@ components:
               content:
                 type: string
                 description: Post Content
+    GetPostsResponse:
+      title: GetPostsResponse
+      type: object
+      properties:
+        posts:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - author
+                    - content
+                    - createdAt
+                    - id
+                    - slug
+                    - type
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Creation Timestamp
+                      author:
+                        required:
+                        - handle
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                        description: Author Information
+                      project:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Project Name
+                            nullable: true
+                          id:
+                            type: number
+                            description: Project ID
+                            nullable: true
+                        description: Project Information
+                      id:
+                        type: number
+                        description: Post ID
+                      type:
+                        type: string
+                        description: Post Type
+                        enum:
+                        - SHORT
+                        - LONG
+                        - QUESTION
+                      content:
+                        type: string
+                        description: Post Content
+                      slug:
+                        type: string
+                        description: Post Slug
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     SearchTagsResponse:
       title: SearchTagsResponse
       required:

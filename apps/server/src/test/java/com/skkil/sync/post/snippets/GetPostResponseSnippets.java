@@ -51,9 +51,15 @@ public class GetPostResponseSnippets {
         fieldWithPath("author").type(JsonFieldType.OBJECT).description("Author Information"),
         fieldWithPath("author.name").type(JsonFieldType.STRING).description("Author Name"),
         fieldWithPath("author.handle").type(JsonFieldType.STRING).description("Author Handle"),
-        fieldWithPath("project").type(JsonFieldType.OBJECT).description("Project Information"),
-        fieldWithPath("project.id").type(JsonFieldType.NUMBER).description("Project ID"),
-        fieldWithPath("project.name").type(JsonFieldType.STRING).description("Project Name"),
+        fieldWithPath("project")
+            .type(JsonFieldType.OBJECT)
+            .description("Project Information")
+            .optional(),
+        fieldWithPath("project.id").type(JsonFieldType.NUMBER).description("Project ID").optional(),
+        fieldWithPath("project.name")
+            .type(JsonFieldType.STRING)
+            .description("Project Name")
+            .optional(),
         fieldWithPath("content").type(JsonFieldType.OBJECT).description("Post Content"),
         fieldWithPath("content.json").type(JsonFieldType.STRING).description("Post Content JSON"),
         fieldWithPath("content.media")

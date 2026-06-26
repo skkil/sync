@@ -2,6 +2,7 @@ package com.skkil.sync.post.dto.data;
 
 import com.skkil.sync.post.model.PostType;
 import java.time.LocalDateTime;
+import org.jspecify.annotations.Nullable;
 
 public record PostDto(
     Long id,
@@ -10,8 +11,8 @@ public record PostDto(
     Long authorId,
     String authorName,
     String authorHandle,
-    Long projectId,
-    String projectName,
+    @Nullable Long projectId,
+    @Nullable String projectName,
     String content,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,

@@ -99,7 +99,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
                 id={post.content.id}
                 slug={post.content.slug}
                 type={post.content.type as PostType}
-                author={post.content.author ?? { id: 0, name: '' }}
+                author={post.content.author}
                 project={post.content.project}
                 content={{ json: post.content.content, media: [] }}
                 likeCount={0}
