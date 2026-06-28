@@ -6,10 +6,14 @@ import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
 
 import Posts from './_components/Posts';
 
-export default async function Home() {
+export default async function Feed() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
+  if (!isAuthenticated(session)) {
+    redirect('/auth/login');
+  }
 
   if (isAuthenticated(session) && !isOnboarded(session)) {
     redirect('/onboarding');
@@ -17,7 +21,9 @@ export default async function Home() {
 
   return (
     <div>
-      <div>{isAuthenticated(session) && <MiniPostEditor />}</div>
+      <div>
+        <MiniPostEditor />
+      </div>
       <div>
         <Posts />
       </div>
