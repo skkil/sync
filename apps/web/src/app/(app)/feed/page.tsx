@@ -15,7 +15,7 @@ export default async function Feed() {
     redirect('/auth/login');
   }
 
-  if (isAuthenticated(session) && !isOnboarded(session)) {
+  if (!isOnboarded(session)) {
     redirect('/onboarding');
   }
 

@@ -65,7 +65,7 @@ export default async function LandingPage() {
     >
       <AnnouncementBar
         text={t('announcement.text')}
-        link={t('announcement.link')}
+        linkLabel={t('announcement.link')}
       />
       <MarketingHeader t={t} />
 
@@ -192,7 +192,13 @@ export default async function LandingPage() {
   );
 }
 
-function AnnouncementBar({ text, link }: { text: string; link: string }) {
+function AnnouncementBar({
+  text,
+  linkLabel,
+}: {
+  text: string;
+  linkLabel: string;
+}) {
   return (
     <div className="border-b bg-foreground text-background">
       <Link
@@ -201,7 +207,7 @@ function AnnouncementBar({ text, link }: { text: string; link: string }) {
       >
         <span>{text}</span>
         <span className="inline-flex items-center gap-1 text-primary">
-          {link}
+          {linkLabel}
           <ArrowRightIcon className="size-3" />
         </span>
       </Link>
