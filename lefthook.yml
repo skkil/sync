@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    format-server:
+      root: apps/server
+      glob: "apps/server/src/**/*.{java,gradle}"
+      run: ./gradlew spotlessApply
+    format-web:
+      root: apps/web
+      glob: "apps/web/src/**/*.{ts,tsx,js,jsx,css}"
+      run: pnpm prettier --write {staged_files} && git add {staged_files}

@@ -1,11 +1,19 @@
 'use client';
 
-import { BuildingsIcon, UserIcon } from '@phosphor-icons/react';
+import {
+  BuildingOfficeIcon,
+  BuildingsIcon,
+  LightbulbIcon,
+  TrophyIcon,
+  UserIcon,
+} from '@phosphor-icons/react';
+import { keepPreviousData } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import { useSearch } from '@/api/__generated__/search/search';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,10 +25,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { SearchType, useSearchQuery } from '@/features/search/api/search';
 import { url } from '@/util/server';
 
-type SearchCategory = 'user' | 'school';
+type SearchCategory = 'user' | 'school' | 'company' | 'contest' | 'project';
+type SearchType = 'USER' | 'SCHOOL' | 'COMPANY' | 'CONTEST' | 'PROJECT';
 
 const SearchCategories = (
   t: ReturnType<typeof useTranslations>,
@@ -33,17 +41,38 @@ const SearchCategories = (
 }[] => [
   {
     id: 'user',
-    type: SearchType.USER,
+    type: 'USER',
     urlPrefix: 'profile',
     label: t('filters.people'),
     icon: <UserIcon />,
   },
   {
     id: 'school',
-    type: SearchType.SCHOOL,
+    type: 'SCHOOL',
     urlPrefix: 'school',
     label: t('filters.schools'),
     icon: <BuildingsIcon />,
+  },
+  {
+    id: 'company',
+    type: 'COMPANY',
+    urlPrefix: 'company',
+    label: t('filters.companies'),
+    icon: <BuildingOfficeIcon />,
+  },
+  {
+    id: 'contest',
+    type: 'CONTEST',
+    urlPrefix: 'contest',
+    label: t('filters.contests'),
+    icon: <TrophyIcon />,
+  },
+  {
+    id: 'project',
+    type: 'PROJECT',
+    urlPrefix: 'project',
+    label: t('filters.projects'),
+    icon: <LightbulbIcon />,
   },
 ];
 
@@ -56,23 +85,34 @@ export default function Search() {
 
   const categories = useMemo(() => SearchCategories(t), [t]);
   const category = getSearchCategory(searchParams.get('c'));
+  const searchKey = `${query}:${category}`;
 
-  const [page, setPage] = useState(0);
+  const [pageState, setPageState] = useState({ searchKey: '', page: 0 });
+  const page = pageState.searchKey === searchKey ? pageState.page : 0;
+  const setPage = (nextPage: number) => {
+    setPageState({ searchKey, page: nextPage });
+  };
 
-  const { data: searchResults } = useSearchQuery({
-    query,
-    type: categories.find((c) => c.id === category)?.type || SearchType.USER,
-    page,
-    size: 25,
-  });
+  const { data: searchResponse } = useSearch(
+    {
+      query,
+      type: categories.find((c) => c.id === category)?.type || 'USER',
+      page: String(page),
+      size: '25',
+    },
+    {
+      query: {
+        placeholderData: keepPreviousData,
+        enabled: query.trim().length > 0,
+      },
+    },
+  );
+  const searchResults = searchResponse?.data;
 
-  useEffect(() => {
-    setPage(0);
-  }, [query, category]);
-
-  const hasPreviousPage = page > 0;
-  const hasNextPage =
-    searchResults && page < searchResults.results.page.totalPages - 1;
+  const hasPreviousPage =
+    searchResults?.results?.pageInfo.hasPreviousPage ?? false;
+  const hasNextPage = searchResults?.results?.pageInfo.hasNextPage ?? false;
+  const showPagination = hasPreviousPage || hasNextPage;
 
   const handleCategoryChange = (c: SearchCategory) => {
     router.push(
@@ -129,7 +169,7 @@ export default function Search() {
         }
 
         <div className="min-h-120">
-          {searchResults && searchResults.results.content.length > 0 ? (
+          {searchResults && searchResults.results?.content.length ? (
             searchResults.results.content.map((result) => (
               <Link
                 key={result.id}
@@ -163,14 +203,12 @@ export default function Search() {
           )}
         </div>
 
-        {searchResults && searchResults.results.page.totalPages > 1 && (
+        {searchResults && showPagination && (
           <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  className={
-                    hasPreviousPage ? '' : 'pointer-events-none opacity-50'
-                  }
+                  disabled={!hasPreviousPage}
                   onClick={() => {
                     if (hasPreviousPage) {
                       setPage(page - 1);
@@ -179,25 +217,15 @@ export default function Search() {
                 />
               </PaginationItem>
 
-              {Array.from({
-                length: searchResults.results.page.totalPages || 0,
-              }).map((_, index) => (
-                <PaginationItem key={index}>
-                  <PaginationLink
-                    isActive={page === index}
-                    onClick={() => setPage(index)}
-                    aria-current={page === index ? 'page' : undefined}
-                  >
-                    {index + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
+              <PaginationItem>
+                <PaginationLink isActive aria-current="page">
+                  {page + 1}
+                </PaginationLink>
+              </PaginationItem>
 
               <PaginationItem>
                 <PaginationNext
-                  className={
-                    hasNextPage ? '' : 'pointer-events-none opacity-50'
-                  }
+                  disabled={!hasNextPage}
                   onClick={() => {
                     if (hasNextPage) {
                       setPage(page + 1);
@@ -219,13 +247,25 @@ function getSearchCategory(category: string | null): SearchCategory {
       return 'user';
     case 'school':
       return 'school';
+    case 'company':
+      return 'company';
+    case 'contest':
+      return 'contest';
+    case 'project':
+      return 'project';
     default:
       return 'user';
   }
 }
 
 function getSearchCount(
-  count: { userCount: number; schoolCount: number },
+  count: {
+    userCount: number;
+    schoolCount: number;
+    companyCount: number;
+    contestCount: number;
+    projectCount: number;
+  },
   category: SearchCategory,
 ) {
   switch (category) {
@@ -233,6 +273,12 @@ function getSearchCount(
       return count.userCount;
     case 'school':
       return count.schoolCount;
+    case 'company':
+      return count.companyCount;
+    case 'contest':
+      return count.contestCount;
+    case 'project':
+      return count.projectCount;
     default:
       return 0;
   }

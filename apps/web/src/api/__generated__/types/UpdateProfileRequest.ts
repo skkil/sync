@@ -16,7 +16,7 @@ export interface UpdateProfileRequest {
    * Profile Image ID
    * @nullable
    */
-  profileImageId?: number | null;
+  profileImageId?: string | null;
   /**
    * Full Name
    * @nullable

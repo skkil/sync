@@ -4,7 +4,8 @@ public enum PermissionEvaluatorType {
   PROFILE("PROFILE"),
   PROVIDER("PROVIDER"),
   EXPERIENCE("EXPERIENCE"),
-  REFLECTION("REFLECTION"),
+  POST("POST"),
+  COMMENT("COMMENT"),
   JOB_APPLICATION("JOB_APPLICATION");
 
   private final String value;

@@ -43,6 +43,20 @@ sourceSets {
 	main {
 		java {
 			srcDirs += 'build/generated/jooq'
+			exclude '**/recruitment/**'
+			exclude '**/provider/**'
+			exclude '**/review/**'
+			exclude '**/experience/**'
+			exclude '**/message/**'
+			exclude '**/notification/**'
+		}
+	}
+	test {
+		java {
+			exclude '**/recruitment/**'
+			exclude '**/provider/**'
+			exclude '**/review/**'
+			exclude '**/experience/**'
 		}
 	}
 }
@@ -90,6 +104,7 @@ dependencies {
 	implementation "io.opentelemetry.instrumentation:opentelemetry-log4j-appender-2.17:2.26.1-alpha"
 	implementation platform("org.springframework.ai:spring-ai-bom:2.0.0-M3")
 	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+	implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
 	implementation 'org.bouncycastle:bcprov-jdk18on:1.82'
 	implementation platform('io.awspring.cloud:spring-cloud-aws-dependencies:4.0.0-RC1')
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
@@ -144,7 +159,6 @@ dependencies {
 
 tasks.withType(JavaCompile) {
 	options.compilerArgs += [
-		'-Xlint:deprecation',
 		'-Xlint:rawtypes',
 		'-Xlint:unchecked',
 		'-Werror',
@@ -256,7 +270,7 @@ jooq {
 	}
 }
 
-def db = new PostgreSQLContainer('postgres:18-alpine')
+def db = new PostgreSQLContainer('pgvector/pgvector:pg18')
 
 tasks.register("startDatabase") {
 	doLast {

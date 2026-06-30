@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 
 import { useGetTeamBuildingPostsByProjectInfinite } from '@/api/__generated__/team-building/team-building';
 import { Button } from '@/components/ui/button';
+import CommentsSection from '@/features/comment/components/CommentsSection';
 
 const TEAM_BUILDING_POSTS_PAGE_SIZE = '20';
 
@@ -44,8 +45,19 @@ export default function TeamBuildingPostList({
   return (
     <div className="space-y-4">
       {posts.map((post) => (
-        <div key={post.content.id} className="rounded-lg border p-4">
-          {post.content.title}
+        <div key={post.content.id} className="space-y-3 rounded-lg border p-4">
+          <div>
+            <h3 className="font-medium">{post.content.title}</h3>
+            {post.content.content && (
+              <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">
+                {post.content.content}
+              </p>
+            )}
+          </div>
+          <CommentsSection
+            targetType="TEAM_BUILDING_POST"
+            targetId={post.content.id}
+          />
         </div>
       ))}
 

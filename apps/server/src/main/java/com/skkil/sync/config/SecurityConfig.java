@@ -55,13 +55,14 @@ public class SecurityConfig {
                         HttpMethod.GET,
                         "/experiences/**",
                         "/companies/**",
-                        "/reflections/**",
+                        "/posts/**",
+                        "/comments/**",
                         "/users/**",
                         "/team-building/**",
                         "/projects/**",
                         "/contests/**")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/providers/**")
+                    .requestMatchers(HttpMethod.POST, "/providers/**", "/projects/**")
                     .authenticated()
                     .requestMatchers(
                         "/users/**",

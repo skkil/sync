@@ -6,7 +6,7 @@ bash scripts/setup/web.sh
 
 cd apps/web
 
-pnpm install
+pnpm install --frozen-lockfile
 
 pnpm run format
 

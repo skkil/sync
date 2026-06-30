@@ -25,7 +25,7 @@ export type Experience = {
     }
 );
 
-export interface Reflection {
+export interface Post {
   id: string;
   content: string;
   createdAt: Date;

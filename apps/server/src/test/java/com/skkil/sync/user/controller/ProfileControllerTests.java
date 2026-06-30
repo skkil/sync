@@ -160,7 +160,7 @@ class ProfileControllerTests {
         UpdateProfileRequest.builder()
             .name("name")
             .handle("username")
-            .profileImageId(1L)
+            .profileImageId("1")
             .removeProfileImage(false)
             .isOnboarded(true)
             .bio("bio")
@@ -222,7 +222,7 @@ class ProfileControllerTests {
         fieldWithPath("name").type(JsonFieldType.STRING).description("Full Name").optional(),
         fieldWithPath("handle").type(JsonFieldType.STRING).description("Handle").optional(),
         fieldWithPath("profileImageId")
-            .type(JsonFieldType.NUMBER)
+            .type(JsonFieldType.STRING)
             .description("Profile Image ID")
             .optional(),
         fieldWithPath("removeProfileImage")

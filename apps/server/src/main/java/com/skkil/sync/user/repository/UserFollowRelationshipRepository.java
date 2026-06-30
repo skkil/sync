@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserFollowRelationshipRepository
     extends JpaRepository<UserFollowRelationship, Long> {
 
-  @EntityGraph(attributePaths = {"followee", "followee.currentProvider"})
+  @EntityGraph(attributePaths = {"followee"})
   List<UserFollowRelationship> findByFollower(User follower);
 
   @Query(

@@ -1,6 +1,11 @@
 'use client';
 
-import { ChatCircleDotsIcon } from '@phosphor-icons/react';
+import {
+  BookmarkSimpleIcon,
+  ChatCircleDotsIcon,
+  ProjectorScreenChartIcon,
+} from '@phosphor-icons/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -40,7 +45,26 @@ function TopNavigationBarDesktop({
   path: string;
   isAuthenticated: boolean;
 }) {
+  const t = useTranslations('components.navigation');
+
   const tabs = [
+    {
+      id: 'bookmarks',
+      href: '/bookmarks',
+      icon: <BookmarkSimpleIcon />,
+      highlight: () => {
+        return path.startsWith('/bookmarks');
+      },
+      authenticated: true,
+    },
+    {
+      id: 'projects',
+      href: '/projects',
+      icon: <ProjectorScreenChartIcon />,
+      highlight: () => {
+        return path.startsWith('/projects');
+      },
+    },
     {
       id: 'messages',
       href: '/messages',
@@ -70,11 +94,16 @@ function TopNavigationBarDesktop({
             <Link
               key={tab.id}
               href={tab.href}
-              className={cn(tab.highlight() ? '' : 'text-foreground/80')}
+              className={cn(
+                'flex flex-col items-center justify-center',
+                tab.highlight() ? '' : 'text-foreground/80',
+              )}
             >
               <Button variant="ghost" size="icon">
                 {tab.icon}
               </Button>
+
+              <span className="text-xs">{t(`menu.${tab.id}`)}</span>
             </Link>
           );
         })}

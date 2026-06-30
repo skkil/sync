@@ -4,8 +4,9 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetProjectsResponseProjects } from './GetProjectsResponseProjects';
+import type { GetProjectsResponseProjectsItem } from './GetProjectsResponseProjectsItem';
 
 export interface GetProjectsResponse {
-  projects?: GetProjectsResponseProjects;
+  /** 프로젝트 목록 */
+  projects: GetProjectsResponseProjectsItem[];
 }

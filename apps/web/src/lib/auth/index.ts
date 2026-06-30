@@ -112,3 +112,13 @@ export const auth = betterAuth({
     },
   ],
 });
+
+type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
+
+export function isAuthenticated(session: Session) {
+  return session !== null && session.user !== null;
+}
+
+export function isOnboarded(session: Session) {
+  return session !== null && session.user !== null && session.user.isOnboarded;
+}

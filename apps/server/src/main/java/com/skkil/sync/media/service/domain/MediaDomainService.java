@@ -8,6 +8,10 @@ import io.awspring.cloud.s3.S3Template;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,5 +85,71 @@ public class MediaDomainService {
     } catch (IOException e) {
       throw new RuntimeException("Failed to get media URL", e);
     }
+  }
+
+  @Transactional(readOnly = true)
+  public Map<Long, URL> generatePublicGetUrls(List<Long> mediaIds) {
+    List<Media> medias = mediaRepository.findAllByIdIn(mediaIds);
+
+    Map<Long, URL> mediaIdToUrl = new HashMap<>();
+    for (Media media : medias) {
+      mediaIdToUrl.put(media.getId(), generatePublicGetUrl(media));
+    }
+
+    return mediaIdToUrl;
+  }
+
+  @Transactional(readOnly = true)
+  public <T> Map<Long, URL> generatePublicGetUrls(
+      List<T> items, Function<T, Media> mediaExtractor) {
+    Map<Long, URL> result = new HashMap<>();
+    for (T item : items) {
+      if (item == null) {
+        continue;
+      }
+
+      Media media = mediaExtractor.apply(item);
+      if (media == null) {
+        continue;
+      }
+
+      result.put(media.getId(), generatePublicGetUrl(media));
+    }
+
+    return result;
+  }
+
+  @Transactional(readOnly = true)
+  public <T> Map<Long, URL> generatePresignedGetUrls(List<Media> medias) {
+    Map<Long, URL> result = new HashMap<>();
+    for (Media media : medias) {
+      if (media == null) {
+        continue;
+      }
+
+      result.put(media.getId(), generatePresignedGetUrl(media));
+    }
+
+    return result;
+  }
+
+  @Transactional(readOnly = true)
+  public <T> Map<Long, URL> generatePresignedGetUrls(
+      List<T> items, Function<T, Media> mediaExtractor) {
+    Map<Long, URL> result = new HashMap<>();
+    for (T item : items) {
+      if (item == null) {
+        continue;
+      }
+
+      Media media = mediaExtractor.apply(item);
+      if (media == null) {
+        continue;
+      }
+
+      result.put(media.getId(), generatePresignedGetUrl(media));
+    }
+
+    return result;
   }
 }

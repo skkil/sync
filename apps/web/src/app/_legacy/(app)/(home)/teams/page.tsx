@@ -14,6 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import CommentsSection from '@/features/comment/components/CommentsSection';
 
 const TEAM_BUILDING_PAGE_SIZE = '50';
 
@@ -85,31 +86,39 @@ function TeamBuildingPostCard({
 }: {
   post: GetTeamBuildingPostsResponsePostsNodesItem;
 }) {
-  const { title, project } = post.content;
+  const { id, title, project } = post.content;
 
   return (
-    <div className="flex items-center gap-4 p-2 rounded-md hover:bg-muted">
-      <Avatar>
-        <AvatarFallback></AvatarFallback>
-      </Avatar>
+    <div className="rounded-md p-2 hover:bg-muted">
+      <div className="flex items-center gap-4">
+        <Avatar>
+          <AvatarFallback></AvatarFallback>
+        </Avatar>
 
-      <div>
         <div>
-          <Tooltip>
-            <TooltipTrigger>
-              <Link
-                href={`/projects/${project.id}`}
-                className="text-sm font-medium text-muted-foreground"
-              >
-                {project.name}
-              </Link>
-            </TooltipTrigger>
+          <div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={`/projects/${project.id}`}
+                  className="text-sm font-medium text-muted-foreground"
+                >
+                  {project.name}
+                </Link>
+              </TooltipTrigger>
 
-            <TooltipContent align="start">{project.description}</TooltipContent>
-          </Tooltip>
+              <TooltipContent align="start">
+                {project.description}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+
+          <h3>{title}</h3>
         </div>
+      </div>
 
-        <h3>{title}</h3>
+      <div className="mt-3">
+        <CommentsSection targetType="TEAM_BUILDING_POST" targetId={id} />
       </div>
     </div>
   );

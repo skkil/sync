@@ -1,14 +1,14 @@
-import CreateReflectionDialog from './_components/CreateReflectionDialog';
-import Reflections from './_components/Reflections';
+import CreatePostDialog from './_components/CreatePostDialog';
+import Posts from './_components/Posts';
 
 export default function ProfilePosts() {
   return (
     <div>
       <div className="flex justify-end mb-4">
-        <CreateReflectionDialog />
+        <CreatePostDialog />
       </div>
 
-      <Reflections />
+      <Posts />
     </div>
   );
 }

@@ -3,7 +3,9 @@
 @import 'shadcn/tailwind.css';
 
 @import './_keyframe-animations.scss';
-@import './_variables.scss';
+@import './tiptap.scss';
+
+@import 'react-calendar-heatmap/dist/styles.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -74,7 +76,7 @@
   --chart-3: oklch(0.7 0.15 162);
   --chart-4: oklch(0.6 0.13 163);
   --chart-5: oklch(0.51 0.1 166);
-  --radius: 0.875rem;
+  --radius: 0rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.6 0.13 163);
@@ -83,6 +85,14 @@
   --sidebar-accent-foreground: oklch(0.98 0.02 166);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Basic colors */
+  --white: #ffffff;
+  --black: oklch(0.145 0 0);
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .dark {
@@ -117,6 +127,12 @@
   --sidebar-accent-foreground: oklch(0.26 0.05 173);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Basic colors for dark mode */
+  --black: #000000;
+
+  /* Shadow for dark mode */
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
 }
 
 @layer base {
