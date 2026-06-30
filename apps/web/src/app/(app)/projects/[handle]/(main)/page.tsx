@@ -2,7 +2,6 @@ import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 
 import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/project';
-import MiniPostEditor from '@/components/feature/post/editor/MiniPostEditor';
 import SyncError, { ErrorCode } from '@/lib/error';
 import { getQueryClient } from '@/lib/query';
 
@@ -33,7 +32,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="container max-w-3xl py-8 space-y-6">
-        <MiniPostEditor />
         <ProjectPosts handle={handle} />
       </div>
     </HydrationBoundary>

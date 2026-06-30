@@ -976,7 +976,12 @@
       },
       "placeholders": {
         "title": "제목을 입력하세요",
-        "content": "/ 를 입력하여 명령어를 사용하거나 텍스트를 입력하세요"
+        "content": "/ 를 입력하여 명령어를 사용하거나 텍스트를 입력하세요",
+        "title-long": "제목을 입력하세요",
+        "title-question": "질문을 입력하세요",
+        "content-short": "오늘 배운 것을 간단히 적어보세요",
+        "content-long": "/ 를 입력하여 명령어를 사용하거나 텍스트를 입력하세요",
+        "content-question": "질문에 대한 자세한 내용을 입력하세요"
       },
       "submit": "게시하기",
       "messages": {

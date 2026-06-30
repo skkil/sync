@@ -19,16 +19,35 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useCurrentProject } from '@/hooks/use-current-project';
+import { useSession } from '@/lib/auth/client';
 
 export default function ProjectSwitcher() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
 
+  const { data: session } = useSession();
   const { currentProject, setCurrentProject } = useCurrentProject();
-  const { data } = useSearchMyProjects({ query });
+  const { data } = useSearchMyProjects(
+    { query },
+    { query: { enabled: !!session } },
+  );
 
   const projects = data?.data.projects ?? [];
+
+  if (!session) {
+    return (
+      <Button
+        variant="ghost"
+        className="flex items-center gap-1 px-2 h-8 text-sm font-medium text-muted-foreground"
+        aria-label="내 프로젝트"
+        disabled
+      >
+        프로젝트
+        <CaretDownIcon size={12} className="shrink-0" />
+      </Button>
+    );
+  }
 
   return (
     <Popover
