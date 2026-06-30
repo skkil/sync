@@ -7,87 +7,20 @@ servers:
 - url: ""
 tags: []
 paths:
-  /admin/providers/unverified:
+  /admin/post-reports:
     get:
       tags:
-      - providers
-      summary: Get Unverified Providers
-      description: Get Unverified Providers
-      operationId: GetUnverifiedProviders
+      - post-report
+      summary: Get Post Reports
+      description: 관리자 신고 큐를 조회합니다.
+      operationId: GetPostReports
       parameters:
-      - name: first
+      - name: status
         in: query
-        description: Number of items to return from the beginning of the list
+        description: 신고 상태
         required: false
         schema:
           type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetProvidersResponse"
-              examples:
-                GetUnverifiedProviders:
-                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
-                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
-  /applications:
-    post:
-      tags:
-      - applications
-      summary: Create Job Application
-      description: Create Job Application
-      operationId: CreateJobApplication
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateJobApplicationRequest"
-            examples:
-              CreateJobApplication:
-                value: "{\"companyId\":\"1\",\"jobPostingId\":\"1\"}"
-      responses:
-        "201":
-          description: "201"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateJobApplicationResponse"
-              examples:
-                CreateJobApplication:
-                  value: "{\"applicationId\":1}"
-  /applications/me:
-    get:
-      tags:
-      - applications
-      summary: Get My Job Applications
-      description: Get My Job Applications
-      operationId: GetMyJobApplications
-      parameters:
       - name: page
         in: query
         description: Page (Integer)
@@ -106,73 +39,30 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetJobApplicationsResponse"
+                $ref: "#/components/schemas/GetPostReportsResponse"
               examples:
-                GetMyJobApplications:
-                  value: "{\"applications\":{\"pageInfo\":{\"page\":1,\"size\":1,\"\
-                    hasNextPage\":true,\"hasPreviousPage\":true},\"content\":[{\"\
-                    id\":1,\"company\":{\"id\":1,\"name\":\"Company\"}}]}}"
-  /applications/{applicationId}:
-    get:
+                GetPostReports:
+                  value: "{\"reports\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
+                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":1,\"post\"\
+                    :{\"id\":1,\"slug\":\"reported-post\",\"title\":\"신고된 포스트\",\"\
+                    content\":\"{\\\"text\\\":\\\"신고된 포스트 내용\\\"}\",\"visibility\"\
+                    :\"HIDDEN\"},\"reporter\":{\"id\":2,\"handle\":\"reporter\",\"\
+                    name\":\"신고자\"},\"reason\":\"SPAM\",\"description\":\"광고성 게시글입\
+                    니다.\",\"status\":\"RESOLVED\",\"createdAt\":\"1970-01-01T00:00:00Z\"\
+                    ,\"reviewedBy\":{\"id\":3,\"handle\":\"admin\",\"name\":\"관리자\"\
+                    },\"reviewedAt\":\"1970-01-01T00:00:00Z\",\"resolutionNote\":\"\
+                    스팸으로 판단했습니다.\"}]}}"
+  /admin/post-reports/{reportId}:
+    patch:
       tags:
-      - applications
-      summary: Get Job Application
-      description: Get Job Application by ID
-      operationId: GetJobApplication
+      - post-report
+      summary: Review Post Report
+      description: 관리자가 신고를 기각하거나 포스트 숨김으로 처리합니다.
+      operationId: ReviewPostReport
       parameters:
-      - name: applicationId
+      - name: reportId
         in: path
-        description: Application ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobApplicationResponse"
-              examples:
-                GetJobApplication:
-                  value: "{\"id\":1,\"status\":\"APPLIED\",\"company\":{\"id\":1,\"\
-                    name\":\"Company\"},\"jobDescription\":{\"title\":\"Job Title\"\
-                    ,\"description\":\"Job Description\",\"location\":\"Location\"\
-                    },\"notes\":\"Notes\"}"
-  /applications/{applicationId}/files:
-    get:
-      tags:
-      - applications
-      summary: Get Job Application Files
-      description: Get all files for a job application
-      operationId: GetJobApplicationFiles
-      parameters:
-      - name: applicationId
-        in: path
-        description: Job Application ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobApplicationFilesResponse"
-              examples:
-                GetJobApplicationFiles:
-                  value: "{\"files\":[{\"url\":\"https://example.com/file1.pdf\"}]}"
-    post:
-      tags:
-      - applications
-      summary: Upload Job Application File
-      description: Upload a file to a job application
-      operationId: UploadJobApplicationFile
-      parameters:
-      - name: applicationId
-        in: path
-        description: Job Application ID
+        description: 신고 ID
         required: true
         schema:
           type: string
@@ -180,10 +70,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UploadJobApplicationFileRequest"
+              $ref: "#/components/schemas/ReviewPostReportRequest"
             examples:
-              UploadJobApplicationFile:
-                value: "{\"fileId\":1}"
+              ReviewPostReport:
+                value: "{\"resolution\":\"HIDE_POST\",\"resolutionNote\":\"스팸으로 판단\
+                  했습니다.\",\"hiddenReason\":\"부적절한 광고성 게시글입니다.\"}"
       responses:
         "204":
           description: "204"
@@ -235,13 +126,13 @@ paths:
       responses:
         "204":
           description: "204"
-  /bookmarks/reflections:
+  /bookmarks/posts:
     get:
       tags:
       - bookmark
-      summary: Get Bookmarked Reflections
-      description: Get Bookmarked Reflections
-      operationId: GetBookmarkedReflections
+      summary: Get Bookmarked Posts
+      description: Get Bookmarked Posts
+      operationId: GetBookmarkedPosts
       parameters:
       - name: first
         in: query
@@ -275,18 +166,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetBookmarkedReflectionsResponse"
+                $ref: "#/components/schemas/GetBookmarkedPostsResponse"
               examples:
-                GetBookmarkedReflections:
+                GetBookmarkedPosts:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
                     :{\"id\":1,\"slug\":\"test-slug\",\"author\":{\"id\":1,\"handle\"\
                     :\"user_handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
                     https://example.com/profile.jpg\"},\"content\":\"This is a bookmarked\
-                    \ reflection content\",\"likeCount\":10,\"commentCount\":5,\"\
-                    bookmarked\":true,\"createdAt\":\"2026-05-04T12:00:00\",\"bookmarkedAt\"\
-                    :\"2026-05-05T12:00:00\"}}]}}"
+                    \ post content\",\"likeCount\":10,\"commentCount\":5,\"bookmarked\"\
+                    :true,\"createdAt\":\"2026-05-04T12:00:00\",\"bookmarkedAt\":\"\
+                    2026-05-05T12:00:00\"}}]}}"
   /comments/{commentId}:
     delete:
       tags:
@@ -328,211 +219,6 @@ paths:
       responses:
         "204":
           description: "204"
-  /companies/{companyId}/jobs:
-    get:
-      tags:
-      - jobs
-      summary: Get Job Postings By Company
-      description: Get Job Postings By Company
-      operationId: GetJobPostingsByCompany
-      parameters:
-      - name: companyId
-        in: path
-        description: Company ID
-        required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobPostingsResponse"
-              examples:
-                GetJobPostingsByCompany:
-                  value: "{\"postings\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
-                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":\"1\",\"\
-                    company\":{\"id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"\
-                    Software Engineer\",\"jobDescription\":\"Job Description\",\"\
-                    location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    ,\"updatedAt\":\"1970-01-01T00:00:00\"}]}}"
-    post:
-      tags:
-      - jobs
-      summary: Create Job Posting
-      description: Create Job Posting
-      operationId: CreateJobPosting
-      parameters:
-      - name: companyId
-        in: path
-        description: Company ID
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateJobPostingRequest"
-            examples:
-              CreateJobPosting:
-                value: "{\"jobTitle\":\"Job Title\",\"jobDescription\":\"Job Description\"\
-                  ,\"location\":\"Location\"}"
-      responses:
-        "201":
-          description: "201"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateJobPostingResponse"
-              examples:
-                CreateJobPosting:
-                  value: |-
-                    {
-                      "id" : "1"
-                    }
-  /companies/{companyId}/jobs/{postingId}:
-    get:
-      tags:
-      - jobs
-      summary: Get Job Posting
-      description: Get Job Posting
-      operationId: GetJobPosting
-      parameters:
-      - name: companyId
-        in: path
-        description: Company ID
-        required: true
-        schema:
-          type: string
-      - name: postingId
-        in: path
-        description: Job Posting ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobPostingResponse"
-              examples:
-                GetJobPosting:
-                  value: "{\"id\":\"1\",\"company\":{\"id\":\"1\",\"name\":\"Company\"\
-                    },\"jobTitle\":\"Software Engineer\",\"jobDescription\":\"Job\
-                    \ Description\",\"location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    ,\"updatedAt\":\"1970-01-01T00:00:00\"}"
-  /contests/{contestId}/occurrences:
-    get:
-      tags:
-      - contests
-      summary: Get Contest Occurrences by Contest
-      description: Get Contest Occurrences by Contest
-      operationId: GetContestOccurrencesByContest
-      parameters:
-      - name: contestId
-        in: path
-        description: Contest ID
-        required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetContestOccurrencesResponse"
-              examples:
-                GetContestOccurrencesByContest:
-                  value: "{\"occurrences\":{\"pageInfo\":{\"page\":1,\"size\":1,\"\
-                    hasNextPage\":true,\"hasPreviousPage\":true},\"content\":[{\"\
-                    id\":1,\"contest\":{\"id\":1,\"name\":\"Contest Name\"},\"title\"\
-                    :\"Occurrence Title\",\"description\":\"Occurrence Description\"\
-                    }]}}"
-    post:
-      tags:
-      - contests
-      summary: Create Contest Occurrence
-      description: Create Contest Occurrence
-      operationId: CreateContestOccurrence
-      parameters:
-      - name: contestId
-        in: path
-        description: Contest ID
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateContestOccurrenceRequest"
-            examples:
-              CreateContestOccurrence:
-                value: "{\"title\":\"Title\",\"description\":\"Description\"}"
-      responses:
-        "201":
-          description: "201"
-  /contests/{contestId}/occurrences/{occurrenceId}:
-    get:
-      tags:
-      - contests
-      summary: Get Contest Occurrence
-      description: Get Contest Occurrence
-      operationId: GetContestOccurrence
-      parameters:
-      - name: contestId
-        in: path
-        description: Contest ID
-        required: true
-        schema:
-          type: string
-      - name: occurrenceId
-        in: path
-        description: Contest Occurrence ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetContestOccurrenceResponse"
-              examples:
-                GetContestOccurrence:
-                  value: "{\"id\":1,\"contest\":{\"id\":1,\"name\":\"Contest Name\"\
-                    },\"title\":\"Occurrence Title\",\"description\":\"Occurrence\
-                    \ Description\"}"
   /feed/recent:
     get:
       tags:
@@ -606,41 +292,6 @@ paths:
                         } ]
                       }
                     }
-  /jobs:
-    get:
-      tags:
-      - jobs
-      summary: Get Job Postings
-      description: Get Job Postings
-      operationId: GetJobPostings
-      parameters:
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetJobPostingsResponse"
-              examples:
-                GetJobPostings:
-                  value: "{\"postings\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
-                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":\"1\",\"\
-                    company\":{\"id\":\"1\",\"name\":\"Company\"},\"jobTitle\":\"\
-                    Software Engineer\",\"jobDescription\":\"Job Description\",\"\
-                    location\":\"Location\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    ,\"updatedAt\":\"1970-01-01T00:00:00\"}]}}"
   /media:
     post:
       tags:
@@ -668,10 +319,316 @@ paths:
                 UploadMedia:
                   value: |-
                     {
-                      "mediaId" : 1,
+                      "mediaId" : "1",
                       "uploadUrl" : "https://example.com/upload",
                       "expiresAt" : "1970-01-01T00:00:00"
                     }
+  /posts:
+    get:
+      tags:
+      - post
+      summary: Get Posts
+      description: Get Posts
+      operationId: GetPosts
+      parameters:
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPostsResponse"
+              examples:
+                GetPosts:
+                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
+                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
+                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
+                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
+                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
+                    id\":1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :\"1970-01-01T00:00:00\"}}]}}"
+    post:
+      tags:
+      - post
+      summary: Create Post
+      description: Create Post
+      operationId: CreatePost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePostRequest"
+            examples:
+              CreatePost:
+                value: "{\"title\":\"title\",\"type\":\"SHORT\",\"content\":{\"text\"\
+                  :\"This is a post content.\",\"json\":\"{\\\"text\\\": \\\"This\
+                  \ is a post content.\\\"}\",\"mediaIds\":[1,2]},\"tags\":[\"java\"\
+                  ,\"spring\"],\"projectId\":1}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePostResponse"
+              examples:
+                CreatePost:
+                  value: |-
+                    {
+                      "slug" : "slug"
+                    }
+  /posts/{postId}:
+    delete:
+      tags:
+      - post
+      summary: Delete Post
+      description: Delete Post
+      operationId: DeletePost
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+    patch:
+      tags:
+      - post
+      summary: Update Post
+      description: Update Post
+      operationId: UpdatePost
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePostRequest"
+            examples:
+              UpdatePost:
+                value: "{\"projectId\":1,\"content\":\"This is a post content.\"}"
+      responses:
+        "204":
+          description: "204"
+  /posts/{slug}:
+    get:
+      tags:
+      - post
+      summary: Get Post By Slug
+      description: Get Post By Slug
+      operationId: GetPostBySlug
+      parameters:
+      - name: slug
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPostResponse"
+              examples:
+                GetPostBySlug:
+                  value: "{\"id\":1,\"type\":\"SHORT\",\"slug\":\"test-slug\",\"author\"\
+                    :{\"name\":\"Author Name\",\"handle\":\"author-handle\"},\"project\"\
+                    :{\"id\":1,\"name\":\"Project Name\"},\"content\":{\"json\":\"\
+                    Post Content\",\"media\":[{\"id\":1,\"url\":\"https://example.com/media.png\"\
+                    }]},\"likeCount\":1,\"commentCount\":1,\"bookmarked\":true,\"\
+                    createdAt\":\"1970-01-01T00:00:00\"}"
+  /posts/{postId}/bookmarks:
+    post:
+      tags:
+      - bookmark
+      summary: Bookmark Post
+      description: Bookmark Post
+      operationId: BookmarkPost
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+    delete:
+      tags:
+      - bookmark
+      summary: Unbookmark Post
+      description: Unbookmark Post
+      operationId: UnbookmarkPost
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /posts/{postId}/comments:
+    post:
+      tags:
+      - comment
+      summary: Create Comment
+      description: Create Comment
+      operationId: CreateComment
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+            examples:
+              CreateComment:
+                value: "{\"parentId\":1,\"content\":\"Comment content\"}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCommentResponse"
+              examples:
+                CreateComment:
+                  value: "{\"id\":1}"
+  /posts/{postId}/likes:
+    put:
+      tags:
+      - post
+      summary: Like Post
+      description: Like Post
+      operationId: LikePost
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+    delete:
+      tags:
+      - post
+      summary: Unlike Post
+      description: Unlike Post
+      operationId: UnlikePost
+      parameters:
+      - name: postId
+        in: path
+        description: Post ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /posts/{postId}/reports:
+    post:
+      tags:
+      - post-report
+      summary: Report Post
+      description: 부적절한 포스트를 신고합니다.
+      operationId: ReportPost
+      parameters:
+      - name: postId
+        in: path
+        description: 포스트 ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportPostRequest"
+            examples:
+              ReportPost:
+                value: "{\"reason\":\"SPAM\",\"description\":\"광고성 게시글입니다.\"}"
+      responses:
+        "201":
+          description: "201"
+  /posts/{slug}/comments:
+    get:
+      tags:
+      - comment
+      summary: Get Post Comments
+      description: Get Post Comments
+      operationId: GetPostComments
+      parameters:
+      - name: slug
+        in: path
+        description: Post Slug
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCommentsResponse"
+              examples:
+                GetPostComments:
+                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
+                    :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
+                    http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
+                    :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
+                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
+                    author\":{\"id\":1,\"handle\":\"user-handle\",\"name\":\"User\
+                    \ Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
+                    ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
+                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
+                    2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
   /preferences/me:
     get:
       tags:
@@ -741,10 +698,10 @@ paths:
             examples:
               UpdateProfile:
                 value: "{\"name\":\"name\",\"handle\":\"username\",\"profileImageId\"\
-                  :1,\"removeProfileImage\":false,\"isOnboarded\":true,\"bio\":\"\
-                  bio\",\"profession\":\"profession\",\"contacts\":{\"custom\":\"\
-                  https://example.com\",\"linkedin\":\"linkedinUser\",\"github\":\"\
-                  githubUser\",\"instagram\":\"instagramUser\",\"twitter\":\"twitterUser\"\
+                  :\"1\",\"removeProfileImage\":false,\"isOnboarded\":true,\"bio\"\
+                  :\"bio\",\"profession\":\"profession\",\"contacts\":{\"custom\"\
+                  :\"https://example.com\",\"linkedin\":\"linkedinUser\",\"github\"\
+                  :\"githubUser\",\"instagram\":\"instagramUser\",\"twitter\":\"twitterUser\"\
                   }}"
       responses:
         "204":
@@ -777,13 +734,13 @@ paths:
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
                     ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
                     :false,\"role\":\"USER\",\"contacts\":null}"
-  /profiles/{handle}/reflections/activities:
+  /profiles/{handle}/posts/activities:
     get:
       tags:
-      - reflection
-      summary: Get Reflection Activities
-      description: Get Reflection Activities
-      operationId: GetReflectionActivities
+      - post
+      summary: Get Post Activities
+      description: Get Post Activities
+      operationId: GetPostActivities
       parameters:
       - name: handle
         in: path
@@ -803,9 +760,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetReflectionActivitiesResponse"
+                $ref: "#/components/schemas/GetPostActivitiesResponse"
               examples:
-                GetReflectionActivities:
+                GetPostActivities:
                   value: "{\"activities\":[{\"date\":\"2024-01-01\",\"count\":5},{\"\
                     date\":\"2024-01-02\",\"count\":3}]}"
   /projects:
@@ -822,7 +779,8 @@ paths:
               $ref: "#/components/schemas/CreateProjectRequest"
             examples:
               CreateProject:
-                value: "{\"name\":\"새로운 프로젝트\"}"
+                value: "{\"handle\":\"project-handle\",\"name\":\"새로운 프로젝트\",\"description\"\
+                  :\"프로젝트 설명\",\"isPublic\":true}"
       responses:
         "201":
           description: "201"
@@ -832,161 +790,48 @@ paths:
                 $ref: "#/components/schemas/CreateProjectResponse"
               examples:
                 CreateProject:
-                  value: "{\"projectId\":1}"
-  /providers/my:
+                  value: "{\"handle\":\"my-project\"}"
+  /projects/{handle}:
     get:
       tags:
-      - providers
-      summary: Get My Providers
-      description: Get My Providers
-      operationId: GetMyProviders
+      - project
+      summary: Get Project By Handle
+      description: 핸들로 프로젝트를 조회합니다.
+      operationId: GetProjectByHandle
       parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetProvidersResponse"
-              examples:
-                GetMyProviders:
-                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
-                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
-  /reflections:
-    get:
-      tags:
-      - reflection
-      summary: Get Reflections
-      description: Get Reflections
-      operationId: GetReflections
-      parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetReflectionsResponse"
-              examples:
-                GetReflections:
-                  value: "{\"reflections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
-                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }}]}}"
-    post:
-      tags:
-      - reflection
-      summary: Create Reflection
-      description: Create Reflection
-      operationId: CreateReflection
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateReflectionRequest"
-            examples:
-              CreateReflection:
-                value: "{\"title\":\"title\",\"content\":{\"text\":\"This is a reflection\
-                  \ content.\",\"json\":\"{\\\"text\\\": \\\"This is a reflection\
-                  \ content.\\\"}\"},\"tags\":[\"java\",\"spring\"],\"projectId\"\
-                  :1}"
-      responses:
-        "201":
-          description: "201"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateReflectionResponse"
-              examples:
-                CreateReflection:
-                  value: |-
-                    {
-                      "slug" : "slug"
-                    }
-  /reflections/{reflectionId}:
-    delete:
-      tags:
-      - reflection
-      summary: Delete Reflection
-      description: Delete Reflection
-      operationId: DeleteReflection
-      parameters:
-      - name: reflectionId
+      - name: handle
         in: path
-        description: Reflection ID
+        description: 프로젝트 핸들
         required: true
         schema:
           type: string
       responses:
-        "204":
-          description: "204"
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectResponse"
+              examples:
+                GetProjectByHandle:
+                  value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
+                    :\"프로젝트 설명\",\"website\":\"https://example.com\",\"isPublic\"\
+                    :false,\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
+                    ,\"role\":\"ADMIN\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },{\"handle\":\"jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"\
+                    ,\"profileImageUrl\":\"https://example.com/jane.png\"}],\"hasMoreTeammates\"\
+                    :false,\"role\":\"ADMIN\",\"recentActivities\":[{\"id\":\"1\"\
+                    ,\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\":\"활동 내용\"}]}"
     patch:
       tags:
-      - reflection
-      summary: Update Reflection
-      description: Update Reflection
-      operationId: UpdateReflection
+      - project
+      summary: Update Project
+      description: 프로젝트 정보를 수정합니다.
+      operationId: UpdateProject
       parameters:
-      - name: reflectionId
+      - name: handle
         in: path
-        description: Reflection ID
+        description: 프로젝트 핸들
         required: true
         schema:
           type: string
@@ -994,25 +839,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateReflectionRequest"
+              $ref: "#/components/schemas/UpdateProjectRequest"
             examples:
-              UpdateReflection:
-                value: "{\"projectId\":1,\"content\":\"This is a reflection content.\"\
+              UpdateProject:
+                value: "{\"description\":\"프로젝트 설명입니다.\",\"website\":\"https://example.com\"\
                   }"
       responses:
         "204":
           description: "204"
-  /reflections/{slug}:
+  /projects/handles/availability:
     get:
       tags:
-      - reflection
-      summary: Get Reflection By Slug
-      description: Get Reflection By Slug
-      operationId: GetReflectionBySlug
+      - project
+      summary: Get Project Handle Availability
+      description: 프로젝트 핸들의 사용 가능 여부를 확인합니다.
+      operationId: GetProjectHandleAvailability
       parameters:
-      - name: slug
-        in: path
-        description: ""
+      - name: handle
+        in: query
+        description: 확인할 프로젝트 핸들
         required: true
         schema:
           type: string
@@ -1022,56 +867,103 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetReflectionResponse"
+                $ref: "#/components/schemas/GetProjectHandleAvailabilityResponse"
               examples:
-                GetReflectionBySlug:
-                  value: "{\"id\":1,\"slug\":\"test-slug\",\"author\":{\"id\":1,\"\
-                    name\":\"Author Name\"},\"content\":\"Reflection Content\",\"\
-                    likeCount\":1,\"commentCount\":1,\"bookmarked\":true}"
-  /reflections/{reflectionId}/bookmarks:
-    post:
+                GetProjectHandleAvailability:
+                  value: "{\"available\":true}"
+  /projects/{handle}/posts:
+    get:
       tags:
-      - bookmark
-      summary: Bookmark Reflection
-      description: Bookmark Reflection
-      operationId: BookmarkReflection
+      - post
+      summary: Get Posts By Project
+      description: Get Posts By Project
+      operationId: GetPostsByProject
       parameters:
-      - name: reflectionId
+      - name: handle
         in: path
-        description: Reflection ID
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPostsResponse"
+              examples:
+                GetPostsByProject:
+                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
+                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
+                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
+                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
+                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
+                    id\":1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :\"1970-01-01T00:00:00\"}}]}}"
+  /projects/{handle}/teammates:
+    get:
+      tags:
+      - project
+      summary: Get Project Teammates
+      description: 프로젝트의 팀원 목록을 조회합니다.
+      operationId: GetProjectTeammates
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
         required: true
         schema:
           type: string
       responses:
         "200":
           description: "200"
-    delete:
-      tags:
-      - bookmark
-      summary: Unbookmark Reflection
-      description: Unbookmark Reflection
-      operationId: UnbookmarkReflection
-      parameters:
-      - name: reflectionId
-        in: path
-        description: Reflection ID
-        required: true
-        schema:
-          type: string
-      responses:
-        "204":
-          description: "204"
-  /reflections/{reflectionId}/comments:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectTeammatesResponse"
+              examples:
+                GetProjectTeammates:
+                  value: "{\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
+                    ,\"role\":\"ADMIN\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },{\"handle\":\"jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"\
+                    ,\"profileImageUrl\":\"https://example.com/jane.png\"}]}"
     post:
       tags:
-      - comment
-      summary: Create Comment
-      description: Create Comment
-      operationId: CreateComment
+      - project
+      summary: Add Teammate
+      description: 프로젝트에 팀원을 추가합니다.
+      operationId: AddTeammate
       parameters:
-      - name: reflectionId
+      - name: handle
         in: path
-        description: Reflection ID
+        description: 프로젝트 핸들
         required: true
         schema:
           type: string
@@ -1079,82 +971,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateCommentRequest"
+              $ref: "#/components/schemas/AddTeammateRequest"
             examples:
-              CreateComment:
-                value: "{\"parentId\":1,\"content\":\"Comment content\"}"
+              AddTeammate:
+                value: "{\"teammateHandle\":\"john-doe\"}"
       responses:
         "201":
           description: "201"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateCommentResponse"
-              examples:
-                CreateComment:
-                  value: "{\"id\":1}"
-  /reflections/{slug}/comments:
+  /search/posts:
     get:
       tags:
-      - comment
-      summary: Get Reflection Comments
-      description: Get Reflection Comments
-      operationId: GetReflectionComments
+      - post
+      summary: Search Posts
+      description: Search Posts by query string
+      operationId: SearchPosts
       parameters:
-      - name: slug
-        in: path
-        description: Reflection Slug
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetCommentsResponse"
-              examples:
-                GetReflectionComments:
-                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
-                    :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
-                    http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
-                    :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
-                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
-                    author\":{\"id\":1,\"handle\":\"user-handle\",\"name\":\"User\
-                    \ Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
-                    ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
-                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
-                    2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
-  /search:
-    get:
-      tags:
-      - search
-      summary: Search
-      description: Search
-      operationId: Search
-      parameters:
-      - name: page
-        in: query
-        description: Page (Integer)
-        required: false
-        schema:
-          type: string
-      - name: size
-        in: query
-        description: Page Size (Integer)
-        required: true
-        schema:
-          type: string
       - name: query
         in: query
-        description: Search Query
-        required: true
-        schema:
-          type: string
-      - name: type
-        in: query
-        description: Search Type
+        description: Search query (1-100 characters)
         required: true
         schema:
           type: string
@@ -1164,13 +998,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SearchResponse"
+                $ref: "#/components/schemas/SearchPostsResponse"
               examples:
-                Search:
-                  value: "{\"results\":{\"pageInfo\":{\"page\":1,\"size\":1,\"hasNextPage\"\
-                    :true,\"hasPreviousPage\":true},\"content\":[{\"id\":1,\"name\"\
-                    :\"Sync\"}]},\"count\":{\"userCount\":5,\"schoolCount\":4,\"companyCount\"\
-                    :3,\"contestCount\":2,\"projectCount\":1}}"
+                SearchPosts:
+                  value: "{\"posts\":[{\"id\":1,\"content\":\"Post Content\"}]}"
   /search/projects:
     get:
       tags:
@@ -1194,93 +1025,9 @@ paths:
                 $ref: "#/components/schemas/SearchProjectsResponse"
               examples:
                 SearchProjects:
-                  value: "{\"projects\":[{\"id\":1,\"name\":\"Spring Boot 프로젝트\"},{\"\
-                    id\":2,\"name\":\"React 프로젝트\"}]}"
-  /search/providers:
-    get:
-      tags:
-      - providers
-      summary: Search Providers
-      description: Search Providers
-      operationId: SearchProviders
-      parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      - name: query
-        in: query
-        description: Search Query
-        required: false
-        schema:
-          type: string
-      - name: types
-        in: query
-        description: Provider Types List
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetProvidersResponse"
-              examples:
-                SearchProviders:
-                  value: "{\"providers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"type\":\"COMPANY\",\"id\":\"provider-id\",\"name\"\
-                    :\"Provider Name\",\"isVerified\":true,\"isMaintainer\":true}}]}}"
-  /search/reflections:
-    get:
-      tags:
-      - reflection
-      summary: Search Reflections
-      description: Search Reflections by query string
-      operationId: SearchReflections
-      parameters:
-      - name: query
-        in: query
-        description: Search query (1-100 characters)
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SearchReflectionsResponse"
-              examples:
-                SearchReflections:
-                  value: "{\"reflections\":[{\"id\":1,\"content\":\"Reflection Content\"\
-                    }]}"
+                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
+                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
+                    ,\"name\":\"React 프로젝트\"}]}"
   /search/tags:
     get:
       tags:
@@ -1307,13 +1054,65 @@ paths:
                   value: "{\"tags\":[{\"name\":\"java\",\"description\":\"자바 관련 태그\
                     \",\"postCount\":10},{\"name\":\"spring\",\"description\":\"스프\
                     링 프레임워크 관련 태그\",\"postCount\":5}]}"
-  /users/{userId}/reflections:
+  /search/projects/my:
     get:
       tags:
-      - reflection
-      summary: Get Reflections
-      description: Get Reflections
-      operationId: GetUserReflections
+      - project
+      summary: Search My Projects
+      description: 내 프로젝트를 검색어로 검색합니다.
+      operationId: SearchMyProjects
+      parameters:
+      - name: query
+        in: query
+        description: 프로젝트 검색어
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchProjectsResponse"
+              examples:
+                SearchMyProjects:
+                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
+                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
+                    ,\"name\":\"React 프로젝트\"}]}"
+  /users/{handle}/projects:
+    get:
+      tags:
+      - project
+      summary: Get Projects By User
+      description: 유저 핸들로 해당 유저의 프로젝트 목록을 조회합니다.
+      operationId: GetProjectsByUser
+      parameters:
+      - name: handle
+        in: path
+        description: 유저 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectsResponse"
+              examples:
+                GetProjectsByUser:
+                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
+                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
+                    ,\"name\":\"React 프로젝트\"}]}"
+  /users/{userId}/posts:
+    get:
+      tags:
+      - post
+      summary: Get Posts
+      description: Get Posts
+      operationId: GetUserPosts
       parameters:
       - name: userId
         in: path
@@ -1353,377 +1152,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetReflectionsResponse"
+                $ref: "#/components/schemas/GetPostsResponse"
               examples:
-                GetUserReflections:
-                  value: "{\"reflections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
-                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
-                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
-                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"name\":\"User\"\
-                    },\"content\":\"Reflection Content\",\"createdAt\":\"1970-01-01T00:00:00\"\
-                    }}]}}"
+                GetUserPosts:
+                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
+                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
+                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
+                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
+                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
+                    id\":1,\"name\":\"Project\"},\"content\":\"Post Content\",\"createdAt\"\
+                    :\"1970-01-01T00:00:00\"}}]}}"
 components:
   schemas:
-    UploadMediaResponse:
-      title: UploadMediaResponse
-      required:
-      - expiresAt
-      - mediaId
-      - uploadUrl
-      type: object
-      properties:
-        uploadUrl:
-          type: string
-          description: Pre-signed Upload URL
-        mediaId:
-          type: number
-          description: Media ID
-        expiresAt:
-          type: string
-          description: Expiration Time
-    CreateContestOccurrenceRequest:
-      title: CreateContestOccurrenceRequest
-      required:
-      - title
-      type: object
-      properties:
-        description:
-          type: string
-          description: Contest Occurrence Description
-          nullable: true
-        title:
-          type: string
-          description: Contest Occurrence Title
-    GetJobApplicationsResponse:
-      title: GetJobApplicationsResponse
-      type: object
-      properties:
-        applications:
-          required:
-          - content
-          - pageInfo
-          type: object
-          properties:
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - page
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                page:
-                  type: number
-                  description: Page Number
-              description: Page Info
-            content:
-              type: array
-              description: Content
-              items:
-                required:
-                - id
-                type: object
-                properties:
-                  company:
-                    required:
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Company Name
-                      id:
-                        type: number
-                        description: Company ID
-                  id:
-                    type: number
-                    description: Application ID
-    CreateJobPostingResponse:
-      title: CreateJobPostingResponse
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: string
-          description: Job Posting ID
-    GetProvidersResponse:
-      title: GetProvidersResponse
-      type: object
-      properties:
-        providers:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - id
-                    - isMaintainer
-                    - isVerified
-                    - name
-                    - type
-                    type: object
-                    properties:
-                      isMaintainer:
-                        type: boolean
-                        description: Maintainer Status
-                      isVerified:
-                        type: boolean
-                        description: Verification Status
-                      name:
-                        type: string
-                        description: Provider Name
-                      id:
-                        type: string
-                        description: Provider ID
-                      type:
-                        type: string
-                        description: Provider Type
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
-    LoginRequest:
-      title: LoginRequest
-      required:
-      - email
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: Password
-        email:
-          type: string
-          description: Email
-    GetBookmarkedReflectionsResponse:
-      title: GetBookmarkedReflectionsResponse
-      type: object
-      properties:
-        posts:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - bookmarked
-                    - bookmarkedAt
-                    - commentCount
-                    - content
-                    - createdAt
-                    - id
-                    - likeCount
-                    - slug
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Created At
-                      author:
-                        required:
-                        - handle
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          handle:
-                            type: string
-                            description: Author Handle
-                          id:
-                            type: number
-                            description: Author ID
-                          profileImageUrl:
-                            type: string
-                            description: Author Profile Image URL
-                            nullable: true
-                      bookmarked:
-                        type: boolean
-                        description: Whether the current user bookmarked this reflection
-                      likeCount:
-                        type: number
-                        description: Like Count
-                      id:
-                        type: number
-                        description: Reflection ID
-                      bookmarkedAt:
-                        type: string
-                        description: Bookmarked At
-                      content:
-                        type: string
-                        description: Content
-                      slug:
-                        type: string
-                        description: Reflection Slug
-                      commentCount:
-                        type: number
-                        description: Comment Count
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
-    GetReflectionsResponse:
-      title: GetReflectionsResponse
-      type: object
-      properties:
-        reflections:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - content
-                    - createdAt
-                    - id
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Creation Timestamp
-                      author:
-                        required:
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          id:
-                            type: number
-                            description: Author User ID
-                      id:
-                        type: number
-                        description: Reflection ID
-                      content:
-                        type: string
-                        description: Reflection Content
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
-    SearchProjectsResponse:
-      title: SearchProjectsResponse
+    GetProjectsResponse:
+      title: GetProjectsResponse
       required:
       - projects
       type: object
@@ -1733,6 +1175,7 @@ components:
           description: 프로젝트 목록
           items:
             required:
+            - handle
             - id
             - name
             type: object
@@ -1740,258 +1183,12 @@ components:
               name:
                 type: string
                 description: 프로젝트 이름
+              handle:
+                type: string
+                description: 프로젝트 핸들
               id:
                 type: number
                 description: 프로젝트 ID
-    UploadJobApplicationFileRequest:
-      title: UploadJobApplicationFileRequest
-      required:
-      - fileId
-      type: object
-      properties:
-        fileId:
-          type: number
-          description: File ID
-    CreateJobApplicationResponse:
-      title: CreateJobApplicationResponse
-      required:
-      - applicationId
-      type: object
-      properties:
-        applicationId:
-          type: number
-          description: Job Application ID
-    CreateProjectResponse:
-      title: CreateProjectResponse
-      required:
-      - projectId
-      type: object
-      properties:
-        projectId:
-          type: number
-          description: 생성된 프로젝트 ID
-    CreateJobApplicationRequest:
-      title: CreateJobApplicationRequest
-      required:
-      - companyId
-      - jobPostingId
-      type: object
-      properties:
-        companyId:
-          type: string
-          description: Company ID
-        jobPostingId:
-          type: string
-          description: Job Posting ID
-    GetContestOccurrencesResponse:
-      title: GetContestOccurrencesResponse
-      type: object
-      properties:
-        occurrences:
-          required:
-          - content
-          - pageInfo
-          type: object
-          properties:
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - page
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                page:
-                  type: number
-                  description: Page Number
-              description: Page Info
-            content:
-              type: array
-              description: Content
-              items:
-                required:
-                - id
-                - title
-                type: object
-                properties:
-                  contest:
-                    required:
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Contest Name
-                      id:
-                        type: number
-                        description: Contest ID
-                  description:
-                    type: string
-                    description: Occurrence Description
-                    nullable: true
-                  id:
-                    type: number
-                    description: Contest Occurrence ID
-                  title:
-                    type: string
-                    description: Occurrence Title
-    UpdateUserPreferencesRequest:
-      title: UpdateUserPreferencesRequest
-      type: object
-      properties:
-        theme:
-          type: string
-          description: User theme preference
-          nullable: true
-    GetFeedResponse:
-      title: GetFeedResponse
-      type: object
-      properties:
-        items:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - bookmarked
-                    - commentCount
-                    - content
-                    - createdAt
-                    - id
-                    - likeCount
-                    - slug
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Created At
-                      author:
-                        required:
-                        - handle
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          handle:
-                            type: string
-                            description: Author Handle
-                          id:
-                            type: number
-                            description: Author ID
-                          profileImageUrl:
-                            type: string
-                            description: Author Profile Image URL
-                            nullable: true
-                      bookmarked:
-                        type: boolean
-                        description: Whether the current user bookmarked this feed
-                          item
-                      likeCount:
-                        type: number
-                        description: Like Count
-                      id:
-                        type: number
-                        description: Feed Item ID
-                      content:
-                        type: string
-                        description: Content
-                      slug:
-                        type: string
-                        description: Reflection Slug
-                      commentCount:
-                        type: number
-                        description: Comment Count
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
-    UploadMediaRequest:
-      title: UploadMediaRequest
-      required:
-      - fileName
-      - fileSize
-      - mediaType
-      type: object
-      properties:
-        fileName:
-          type: string
-          description: File Name
-        fileSize:
-          type: number
-          description: File Size
-        mediaType:
-          type: string
-          description: Media Type
-    SearchReflectionsResponse:
-      title: SearchReflectionsResponse
-      required:
-      - reflections
-      type: object
-      properties:
-        reflections:
-          type: array
-          description: Reflection List
-          items:
-            required:
-            - content
-            - id
-            type: object
-            properties:
-              id:
-                type: number
-                description: Reflection ID
-              content:
-                type: string
-                description: Reflection Content
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -2001,7 +1198,7 @@ components:
           description: Profession
           nullable: true
         profileImageId:
-          type: number
+          type: string
           description: Profile Image ID
           nullable: true
         name:
@@ -2048,48 +1245,289 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
-    SearchResponse:
-      title: SearchResponse
+    UploadMediaResponse:
+      title: UploadMediaResponse
       required:
-      - count
+      - expiresAt
+      - mediaId
+      - uploadUrl
       type: object
       properties:
-        count:
+        uploadUrl:
+          type: string
+          description: Pre-signed Upload URL
+        mediaId:
+          type: string
+          description: Media ID
+        expiresAt:
+          type: string
+          description: Expiration Time
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
+    UpdatePostRequest:
+      title: UpdatePostRequest
+      required:
+      - content
+      type: object
+      properties:
+        projectId:
+          type: number
+          description: Project ID
+          nullable: true
+        content:
+          type: string
+          description: Content
+    GetProjectHandleAvailabilityResponse:
+      title: GetProjectHandleAvailabilityResponse
+      required:
+      - available
+      type: object
+      properties:
+        available:
+          type: boolean
+          description: 핸들 사용 가능 여부
+    CreateProjectRequest:
+      title: CreateProjectRequest
+      required:
+      - handle
+      - isPublic
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 프로젝트 이름
+        isPublic:
+          type: boolean
+          description: 공개 여부
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+        handle:
+          type: string
+          description: 프로젝트 핸들
+    GetProjectResponse:
+      title: GetProjectResponse
+      required:
+      - handle
+      - hasMoreTeammates
+      - isPublic
+      - name
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
+              profileImageUrl:
+                type: string
+                description: 팀원 프로필 이미지 URL
+                nullable: true
+        website:
+          type: string
+          description: 프로젝트 웹사이트
+          nullable: true
+        role:
+          type: string
+          description: 현재 사용자 역할
+          nullable: true
+          enum:
+          - ADMIN
+          - MEMBER
+        recentActivities:
+          type: array
+          description: 최근 활동 목록
+          items:
+            required:
+            - id
+            - text
+            - timestamp
+            type: object
+            properties:
+              text:
+                type: string
+                description: 활동 내용
+              id:
+                type: string
+                description: 활동 ID
+              timestamp:
+                type: string
+                description: 활동 시각
+        name:
+          type: string
+          description: 프로젝트 이름
+        isPublic:
+          type: boolean
+          description: 공개 여부
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+        handle:
+          type: string
+          description: 프로젝트 핸들
+        hasMoreTeammates:
+          type: boolean
+          description: 추가 팀원 존재 여부
+    UpdateUserPreferencesRequest:
+      title: UpdateUserPreferencesRequest
+      type: object
+      properties:
+        theme:
+          type: string
+          description: User theme preference
+          nullable: true
+    UpdateProjectRequest:
+      title: UpdateProjectRequest
+      type: object
+      properties:
+        website:
+          type: string
+          description: 프로젝트 웹사이트 URL
+          nullable: true
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+    CreatePostResponse:
+      title: CreatePostResponse
+      required:
+      - slug
+      type: object
+      properties:
+        slug:
+          type: string
+          description: Post Slug
+    UploadMediaRequest:
+      title: UploadMediaRequest
+      required:
+      - fileName
+      - fileSize
+      - mediaType
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: File Name
+        fileSize:
+          type: number
+          description: File Size
+        mediaType:
+          type: string
+          description: Media Type
+    GetBookmarkedPostsResponse:
+      title: GetBookmarkedPostsResponse
+      type: object
+      properties:
+        posts:
           required:
-          - companyCount
-          - contestCount
-          - projectCount
-          - schoolCount
-          - userCount
-          type: object
-          properties:
-            projectCount:
-              type: number
-              description: Project Count
-            companyCount:
-              type: number
-              description: Company Count
-            userCount:
-              type: number
-              description: User Count
-            contestCount:
-              type: number
-              description: Contest Count
-            schoolCount:
-              type: number
-              description: School Count
-          description: Search Result Counts
-        results:
-          required:
-          - content
+          - nodes
           - pageInfo
           type: object
           properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - author
+                    - bookmarked
+                    - bookmarkedAt
+                    - commentCount
+                    - content
+                    - createdAt
+                    - id
+                    - likeCount
+                    - slug
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Created At
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                          id:
+                            type: number
+                            description: Author ID
+                          profileImageUrl:
+                            type: string
+                            description: Author Profile Image URL
+                            nullable: true
+                        description: Author Information
+                      bookmarked:
+                        type: boolean
+                        description: Whether the current user bookmarked this post
+                      likeCount:
+                        type: number
+                        description: Like Count
+                      id:
+                        type: number
+                        description: Post ID
+                      bookmarkedAt:
+                        type: string
+                        description: Bookmarked At
+                      content:
+                        type: string
+                        description: Content
+                      slug:
+                        type: string
+                        description: Post Slug
+                      commentCount:
+                        type: number
+                        description: Comment Count
+                    description: Node Content
             pageInfo:
               required:
               - hasNextPage
               - hasPreviousPage
-              - page
               - size
               type: object
               properties:
@@ -2102,25 +1540,205 @@ components:
                 hasPreviousPage:
                   type: boolean
                   description: Has Previous Page
-                page:
-                  type: number
-                  description: Page Number
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
               description: Page Info
-            content:
+    GetProjectTeammatesResponse:
+      title: GetProjectTeammatesResponse
+      required:
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+                enum:
+                - ADMIN
+                - MEMBER
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
+              profileImageUrl:
+                type: string
+                description: 팀원 프로필 이미지 URL
+                nullable: true
+    GetFeedResponse:
+      title: GetFeedResponse
+      type: object
+      properties:
+        items:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
               type: array
-              description: Content
+              description: Nodes
               items:
                 required:
-                - id
-                - name
+                - content
+                - cursor
                 type: object
                 properties:
-                  name:
+                  cursor:
                     type: string
-                    description: Result Name
-                  id:
-                    type: number
-                    description: Result ID
+                    description: Node Cursor
+                  content:
+                    required:
+                    - author
+                    - bookmarked
+                    - commentCount
+                    - content
+                    - createdAt
+                    - id
+                    - likeCount
+                    - slug
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Created At
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                          id:
+                            type: number
+                            description: Author ID
+                          profileImageUrl:
+                            type: string
+                            description: Author Profile Image URL
+                            nullable: true
+                        description: Author Information
+                      bookmarked:
+                        type: boolean
+                        description: Whether the current user bookmarked this feed
+                          item
+                      likeCount:
+                        type: number
+                        description: Like Count
+                      id:
+                        type: number
+                        description: Feed Item ID
+                      content:
+                        type: string
+                        description: Content
+                      slug:
+                        type: string
+                        description: Post Slug
+                      commentCount:
+                        type: number
+                        description: Comment Count
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
+    CreatePostRequest:
+      title: CreatePostRequest
+      required:
+      - content
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Post Type
+          enum:
+          - SHORT
+          - LONG
+          - QUESTION
+        title:
+          type: string
+          description: Title
+          nullable: true
+        projectId:
+          type: number
+          description: 프로젝트 ID
+          nullable: true
+        content:
+          required:
+          - json
+          - text
+          type: object
+          properties:
+            json:
+              type: string
+              description: JSON Content
+            mediaIds:
+              type: array
+              description: 사용된 미디어 ID 목록
+              nullable: true
+              items:
+                oneOf:
+                - type: object
+                - type: boolean
+                - type: string
+                - type: number
+            text:
+              type: string
+              description: Text Content
+          description: Content
+        tags:
+          type: array
+          description: 태그 목록
+          nullable: true
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
     UpdateCommentRequest:
       title: UpdateCommentRequest
       required:
@@ -2130,80 +1748,11 @@ components:
         content:
           type: string
           description: Comment content
-    CreateReflectionResponse:
-      title: CreateReflectionResponse
-      required:
-      - slug
+    GetPostReportsResponse:
+      title: GetPostReportsResponse
       type: object
       properties:
-        slug:
-          type: string
-          description: Reflection Slug
-    GetJobPostingResponse:
-      title: GetJobPostingResponse
-      required:
-      - company
-      - createdAt
-      - id
-      - jobDescription
-      - jobTitle
-      - location
-      - updatedAt
-      type: object
-      properties:
-        createdAt:
-          type: string
-          description: Creation Timestamp
-        jobTitle:
-          type: string
-          description: Job Title
-        location:
-          type: string
-          description: Location
-        jobDescription:
-          type: string
-          description: Job Description
-        company:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Company Name
-            id:
-              type: string
-              description: Company ID
-          description: Company
-        id:
-          type: string
-          description: Job Posting ID
-        updatedAt:
-          type: string
-          description: Update Timestamp
-    GetJobApplicationFilesResponse:
-      title: GetJobApplicationFilesResponse
-      required:
-      - files
-      type: object
-      properties:
-        files:
-          type: array
-          description: List of job application files
-          items:
-            required:
-            - url
-            type: object
-            properties:
-              url:
-                type: string
-                description: File URL
-    GetJobPostingsResponse:
-      title: GetJobPostingsResponse
-      type: object
-      properties:
-        postings:
+        reports:
           required:
           - content
           - pageInfo
@@ -2235,46 +1784,121 @@ components:
               description: Content
               items:
                 required:
-                - company
                 - createdAt
                 - id
-                - jobDescription
-                - jobTitle
-                - location
-                - updatedAt
+                - reason
+                - status
                 type: object
                 properties:
                   createdAt:
                     type: string
-                    description: Creation Timestamp
-                  jobTitle:
+                    description: 신고 생성 시각
+                  reason:
                     type: string
-                    description: Job Title
-                  company:
+                    description: 신고 사유
+                  post:
                     required:
+                    - content
+                    - id
+                    - slug
+                    - visibility
+                    type: object
+                    properties:
+                      visibility:
+                        type: string
+                        description: 포스트 노출 상태
+                      id:
+                        type: number
+                        description: 포스트 ID
+                      title:
+                        type: string
+                        description: 포스트 제목
+                        nullable: true
+                      content:
+                        type: string
+                        description: 포스트 본문
+                      slug:
+                        type: string
+                        description: 포스트 슬러그
+                  reviewedAt:
+                    type: string
+                    description: 검토 시각
+                    nullable: true
+                  description:
+                    type: string
+                    description: 신고 상세 설명
+                    nullable: true
+                  reporter:
+                    required:
+                    - handle
                     - id
                     - name
                     type: object
                     properties:
                       name:
                         type: string
-                        description: Company Name
-                      id:
+                        description: 신고자 이름
+                      handle:
                         type: string
-                        description: Company ID
-                    description: Company
-                  location:
-                    type: string
-                    description: Location
-                  jobDescription:
-                    type: string
-                    description: Job Description
+                        description: 신고자 핸들
+                      id:
+                        type: number
+                        description: 신고자 ID
                   id:
+                    type: number
+                    description: 신고 ID
+                  reviewedBy:
+                    required:
+                    - handle
+                    - id
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 검토자 이름
+                      handle:
+                        type: string
+                        description: 검토자 핸들
+                      id:
+                        type: number
+                        description: 검토자 ID
+                  resolutionNote:
                     type: string
-                    description: Job Posting ID
-                  updatedAt:
+                    description: 관리자 처리 메모
+                    nullable: true
+                  status:
                     type: string
-                    description: Update Timestamp
+                    description: 신고 상태
+    ReviewPostReportRequest:
+      title: ReviewPostReportRequest
+      required:
+      - resolution
+      type: object
+      properties:
+        hiddenReason:
+          type: string
+          description: 포스트 숨김 사유
+          nullable: true
+        resolutionNote:
+          type: string
+          description: 관리자 처리 메모
+          nullable: true
+        resolution:
+          type: string
+          description: 처리 방식
+          enum:
+          - DISMISS
+          - HIDE_POST
+    CreateProjectResponse:
+      title: CreateProjectResponse
+      required:
+      - handle
+      type: object
+      properties:
+        handle:
+          type: string
+          description: 생성된 프로젝트 핸들
     GetCommentsResponse:
       title: GetCommentsResponse
       required:
@@ -2437,6 +2061,15 @@ components:
         email:
           type: string
           description: Email
+    AddTeammateRequest:
+      title: AddTeammateRequest
+      required:
+      - teammateHandle
+      type: object
+      properties:
+        teammateHandle:
+          type: string
+          description: 추가할 팀원의 핸들
     CreateCommentResponse:
       title: CreateCommentResponse
       required:
@@ -2446,131 +2079,260 @@ components:
         id:
           type: number
           description: Created comment ID
-    CreateReflectionRequest:
-      title: CreateReflectionRequest
+    GetPostResponse:
+      title: GetPostResponse
       required:
+      - author
+      - bookmarked
+      - commentCount
       - content
-      type: object
-      properties:
-        title:
-          type: string
-          description: Title
-          nullable: true
-        projectId:
-          type: number
-          description: 프로젝트 ID
-          nullable: true
-        content:
-          required:
-          - json
-          - text
-          type: object
-          properties:
-            json:
-              type: string
-              description: JSON Content
-            text:
-              type: string
-              description: Text Content
-          description: Content
-        tags:
-          type: array
-          description: 태그 목록
-          nullable: true
-          items:
-            oneOf:
-            - type: object
-            - type: boolean
-            - type: string
-            - type: number
-    CreateJobPostingRequest:
-      title: CreateJobPostingRequest
-      required:
-      - jobDescription
-      - jobTitle
-      type: object
-      properties:
-        jobTitle:
-          type: string
-          description: Job Title
-        location:
-          type: string
-          description: Location
-          nullable: true
-        jobDescription:
-          type: string
-          description: Job Description
-    UpdateReflectionRequest:
-      title: UpdateReflectionRequest
-      required:
-      - content
-      type: object
-      properties:
-        projectId:
-          type: number
-          description: Project ID
-          nullable: true
-        content:
-          type: string
-          description: Content
-    CreateProjectRequest:
-      title: CreateProjectRequest
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-          description: 프로젝트 이름
-    GetJobApplicationResponse:
-      title: GetJobApplicationResponse
-      required:
-      - company
+      - createdAt
       - id
-      - jobDescription
-      - status
+      - likeCount
+      - slug
+      - type
       type: object
       properties:
-        notes:
+        createdAt:
           type: string
-          description: Additional Notes
-          nullable: true
-        jobDescription:
+          description: Creation Timestamp
+        bookmarked:
+          type: boolean
+          description: Whether the current user bookmarked this post
+        author:
           required:
-          - description
-          - location
-          - title
-          type: object
-          properties:
-            description:
-              type: string
-              description: Job Description
-            location:
-              type: string
-              description: Job Location
-            title:
-              type: string
-              description: Job Title
-          description: Job Description Information
-        company:
-          required:
-          - id
+          - handle
           - name
           type: object
           properties:
             name:
               type: string
-              description: Company Name
+              description: Author Name
+            handle:
+              type: string
+              description: Author Handle
+          description: Author Information
+        project:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Project Name
+              nullable: true
             id:
               type: number
-              description: Company ID
-          description: Company Information
+              description: Project ID
+              nullable: true
+          description: Project Information
+        likeCount:
+          type: number
+          description: Number of Likes
         id:
           type: number
-          description: Application ID
-        status:
+          description: Post ID
+        type:
           type: string
-          description: Application Status
+          description: Post Type
+          enum:
+          - SHORT
+          - LONG
+          - QUESTION
+        content:
+          required:
+          - json
+          - media
+          type: object
+          properties:
+            json:
+              type: string
+              description: Post Content JSON
+            media:
+              type: array
+              description: Media attached to the post
+              items:
+                required:
+                - id
+                - url
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: Media ID
+                  url:
+                    type: string
+                    description: Media URL
+          description: Post Content
+        slug:
+          type: string
+          description: Post Slug
+        commentCount:
+          type: number
+          description: Number of Comments
+    GetPostActivitiesResponse:
+      title: GetPostActivitiesResponse
+      required:
+      - activities
+      type: object
+      properties:
+        activities:
+          type: array
+          description: List of Activities
+          items:
+            required:
+            - count
+            - date
+            type: object
+            properties:
+              date:
+                type: string
+                description: Activity Date
+              count:
+                type: number
+                description: Number of Posts
+    ReportPostRequest:
+      title: ReportPostRequest
+      required:
+      - reason
+      type: object
+      properties:
+        reason:
+          type: string
+          description: 신고 사유
+          enum:
+          - SPAM
+          - HARASSMENT
+          - HATE
+          - SEXUAL
+          - VIOLENCE
+          - MISINFORMATION
+          - OTHER
+        description:
+          type: string
+          description: 신고 상세 설명
+          nullable: true
+    SearchPostsResponse:
+      title: SearchPostsResponse
+      required:
+      - posts
+      type: object
+      properties:
+        posts:
+          type: array
+          description: Post List
+          items:
+            required:
+            - content
+            - id
+            type: object
+            properties:
+              id:
+                type: number
+                description: Post ID
+              content:
+                type: string
+                description: Post Content
+    GetPostsResponse:
+      title: GetPostsResponse
+      type: object
+      properties:
+        posts:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - author
+                    - content
+                    - createdAt
+                    - id
+                    - slug
+                    - type
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Creation Timestamp
+                      author:
+                        required:
+                        - handle
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                        description: Author Information
+                      project:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Project Name
+                            nullable: true
+                          id:
+                            type: number
+                            description: Project ID
+                            nullable: true
+                        description: Project Information
+                      id:
+                        type: number
+                        description: Post ID
+                      type:
+                        type: string
+                        description: Post Type
+                        enum:
+                        - SHORT
+                        - LONG
+                        - QUESTION
+                      content:
+                        type: string
+                        description: Post Content
+                      slug:
+                        type: string
+                        description: Post Slug
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     SearchTagsResponse:
       title: SearchTagsResponse
       required:
@@ -2596,6 +2358,31 @@ components:
               description:
                 type: string
                 description: 태그 설명
+    SearchProjectsResponse:
+      title: SearchProjectsResponse
+      required:
+      - projects
+      type: object
+      properties:
+        projects:
+          type: array
+          description: 프로젝트 목록
+          items:
+            required:
+            - handle
+            - id
+            - name
+            type: object
+            properties:
+              name:
+                type: string
+                description: 프로젝트 이름
+              handle:
+                type: string
+                description: 프로젝트 핸들
+              id:
+                type: number
+                description: 프로젝트 ID
     CreateCommentRequest:
       title: CreateCommentRequest
       required:
@@ -2609,96 +2396,3 @@ components:
           type: number
           description: Parent comment ID
           nullable: true
-    GetReflectionResponse:
-      title: GetReflectionResponse
-      required:
-      - author
-      - bookmarked
-      - commentCount
-      - content
-      - id
-      - likeCount
-      - slug
-      type: object
-      properties:
-        bookmarked:
-          type: boolean
-          description: Whether the current user bookmarked this reflection
-        author:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Author Name
-            id:
-              type: number
-              description: Author User ID
-          description: Author Information
-        likeCount:
-          type: number
-          description: Number of Likes
-        id:
-          type: number
-          description: Reflection ID
-        content:
-          type: string
-          description: Reflection Content
-        slug:
-          type: string
-          description: Reflection Slug
-        commentCount:
-          type: number
-          description: Number of Comments
-    GetReflectionActivitiesResponse:
-      title: GetReflectionActivitiesResponse
-      required:
-      - activities
-      type: object
-      properties:
-        activities:
-          type: array
-          description: List of Activities
-          items:
-            required:
-            - count
-            - date
-            type: object
-            properties:
-              date:
-                type: string
-                description: Activity Date
-              count:
-                type: number
-                description: Number of Reflections
-    GetContestOccurrenceResponse:
-      title: GetContestOccurrenceResponse
-      required:
-      - id
-      - title
-      type: object
-      properties:
-        contest:
-          required:
-          - id
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Contest Name
-            id:
-              type: number
-              description: Contest ID
-        description:
-          type: string
-          description: Occurrence Description
-          nullable: true
-        id:
-          type: number
-          description: Contest Occurrence ID
-        title:
-          type: string
-          description: Occurrence Title

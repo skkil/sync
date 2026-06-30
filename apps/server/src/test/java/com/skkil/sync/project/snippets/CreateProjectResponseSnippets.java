@@ -10,11 +10,11 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 public class CreateProjectResponseSnippets {
 
   public static CreateProjectResponse getCreateProjectResponse() {
-    return new CreateProjectResponse(1L);
+    return new CreateProjectResponse("my-project");
   }
 
   public static ResponseFieldsSnippet getCreateProjectResponseFields() {
     return responseFields(
-        fieldWithPath("projectId").type(JsonFieldType.NUMBER).description("생성된 프로젝트 ID"));
+        fieldWithPath("handle").type(JsonFieldType.STRING).description("생성된 프로젝트 핸들"));
   }
 }

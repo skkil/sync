@@ -8,4 +8,13 @@
 export interface CreateProjectRequest {
   /** 프로젝트 이름 */
   name: string;
+  /** 공개 여부 */
+  isPublic: boolean;
+  /**
+   * 프로젝트 설명
+   * @nullable
+   */
+  description?: string | null;
+  /** 프로젝트 핸들 */
+  handle: string;
 }

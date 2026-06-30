@@ -27,19 +27,19 @@ public class CommentController {
     this.commentService = commentService;
   }
 
-  @GetMapping("/reflections/{slug}/comments")
+  @GetMapping("/posts/{slug}/comments")
   @ResponseStatus(HttpStatus.OK)
-  public GetCommentsResponse getReflectionComments(@PathVariable String slug) {
-    return commentService.getReflectionComments(slug);
+  public GetCommentsResponse getPostComments(@PathVariable String slug) {
+    return commentService.getPostComments(slug);
   }
 
-  @PostMapping("/reflections/{reflectionId}/comments")
+  @PostMapping("/posts/{postId}/comments")
   @ResponseStatus(HttpStatus.CREATED)
   public CreateCommentResponse createComment(
       @AuthenticationPrincipal AuthenticatedUser user,
-      @PathVariable Long reflectionId,
+      @PathVariable Long postId,
       @RequestBody @Validated CreateCommentRequest request) {
-    return commentService.createComment(user.userId(), reflectionId, request);
+    return commentService.createComment(user.userId(), postId, request);
   }
 
   @PatchMapping("/comments/{commentId}")

@@ -6,34 +6,32 @@ import {
   TrashIcon,
 } from '@phosphor-icons/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 import {
-  getGetReflectionCommentsQueryOptions,
+  getGetPostCommentsQueryOptions,
   useCreateComment,
   useDeleteComment,
-  useGetReflectionComments,
+  useGetPostComments,
   useUpdateComment,
 } from '@/api/__generated__/comment/comment';
 import type { GetCommentsResponseCommentsItem } from '@/api/__generated__/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { RelativeTime } from '@/components/ui/relative-time';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useSession } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 
 interface CommentsSectionProps {
-  reflectionId: string;
+  postId: string;
 }
 
-export default function CommentsSection({
-  reflectionId,
-}: CommentsSectionProps) {
+export default function CommentsSection({ postId }: CommentsSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isPending } = useGetReflectionComments(reflectionId, {
+  const { data, isPending } = useGetPostComments(postId, {
     query: {
       enabled: isOpen,
     },
@@ -56,7 +54,7 @@ export default function CommentsSection({
 
       {isOpen && (
         <div className="mt-3 space-y-4">
-          <CommentForm reflectionId={reflectionId} />
+          <CommentForm postId={postId} />
 
           {isPending ? (
             <div className="flex justify-center py-4">
@@ -68,7 +66,7 @@ export default function CommentsSection({
                 <CommentThread
                   key={comment.id}
                   comment={comment}
-                  reflectionId={reflectionId}
+                  postId={postId}
                 />
               ))}
             </div>
@@ -81,14 +79,14 @@ export default function CommentsSection({
 
 function CommentThread({
   comment,
-  reflectionId,
+  postId,
 }: {
   comment: GetCommentsResponseCommentsItem;
-  reflectionId: string;
+  postId: string;
 }) {
   return (
     <div className="space-y-3">
-      <CommentRow comment={comment} reflectionId={reflectionId} />
+      <CommentRow comment={comment} postId={postId} />
 
       {comment.replies.length > 0 && (
         <div className="ml-10 space-y-3 border-l pl-3">
@@ -96,7 +94,7 @@ function CommentThread({
             <CommentRow
               key={(reply as GetCommentsResponseCommentsItem).id}
               comment={reply as GetCommentsResponseCommentsItem}
-              reflectionId={reflectionId}
+              postId={postId}
               parentId={comment.id}
               isReply
             />
@@ -109,12 +107,12 @@ function CommentThread({
 
 function CommentRow({
   comment,
-  reflectionId,
+  postId,
   parentId,
   isReply = false,
 }: {
   comment: GetCommentsResponseCommentsItem;
-  reflectionId: string;
+  postId: string;
   parentId?: number;
   isReply?: boolean;
 }) {
@@ -139,9 +137,7 @@ function CommentRow({
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">{authorLabel}</p>
               <p className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(comment.createdAt), {
-                  addSuffix: true,
-                })}
+                <RelativeTime date={comment.createdAt} />
               </p>
             </div>
 
@@ -163,7 +159,7 @@ function CommentRow({
           {isEditing ? (
             <EditCommentForm
               commentId={comment.id}
-              reflectionId={reflectionId}
+              postId={postId}
               initialContent={comment.content ?? ''}
               onDone={() => setIsEditing(false)}
             />
@@ -188,7 +184,7 @@ function CommentRow({
             {isReplying && (
               <div className="mt-2">
                 <CommentForm
-                  reflectionId={reflectionId}
+                  postId={postId}
                   parentId={parentId ?? comment.id}
                   onSuccess={() => setIsReplying(false)}
                 />
@@ -202,11 +198,11 @@ function CommentRow({
 }
 
 function CommentForm({
-  reflectionId,
+  postId,
   parentId,
   onSuccess,
 }: {
-  reflectionId: string;
+  postId: string;
   parentId?: number;
   onSuccess?: () => void;
 }) {
@@ -218,9 +214,7 @@ function CommentForm({
     mutation: {
       onSuccess: () => {
         setContent('');
-        queryClient.invalidateQueries(
-          getGetReflectionCommentsQueryOptions(reflectionId),
-        );
+        queryClient.invalidateQueries(getGetPostCommentsQueryOptions(postId));
         onSuccess?.();
       },
       onError: () => toast.error('댓글을 저장하지 못했습니다.'),
@@ -238,7 +232,7 @@ function CommentForm({
     }
 
     mutate({
-      reflectionId,
+      postId,
       data: {
         parentId,
         content: trimmed,
@@ -270,12 +264,12 @@ function CommentForm({
 
 function EditCommentForm({
   commentId,
-  reflectionId,
+  postId,
   initialContent,
   onDone,
 }: {
   commentId: number;
-  reflectionId: string;
+  postId: string;
   initialContent: string;
   onDone: () => void;
 }) {
@@ -284,9 +278,7 @@ function EditCommentForm({
   const { mutate, isPending } = useUpdateComment({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries(
-          getGetReflectionCommentsQueryOptions(reflectionId),
-        );
+        queryClient.invalidateQueries(getGetPostCommentsQueryOptions(postId));
         onDone();
       },
       onError: () => toast.error('댓글을 수정하지 못했습니다.'),

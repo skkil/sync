@@ -59,28 +59,28 @@ class CommentControllerTests {
   @MockitoBean private CommentService commentService;
 
   @Test
-  @DisplayName("[getReflectionComments] API 문서화 테스트")
-  void getReflectionComments() throws Exception {
-    String slug = "test-reflection";
+  @DisplayName("[getPostComments] API 문서화 테스트")
+  void getPostComments() throws Exception {
+    String slug = "test-post";
     GetCommentsResponse response = GetCommentsResponseSnippets.getGetCommentsResponse();
 
-    when(commentService.getReflectionComments(slug)).thenReturn(response);
+    when(commentService.getPostComments(slug)).thenReturn(response);
 
     mockMvc
-        .perform(get("/reflections/{slug}/comments", slug))
+        .perform(get("/posts/{slug}/comments", slug))
         .andExpect(status().isOk())
         .andDo(
             document(
-                "GetReflectionComments",
+                "GetPostComments",
                 ResourceSnippetParameters.builder()
                     .tag("comment")
-                    .summary("Get Reflection Comments")
-                    .description("Get Reflection Comments")
+                    .summary("Get Post Comments")
+                    .description("Get Post Comments")
                     .responseSchema(schema(GetCommentsResponse.class.getSimpleName())),
                 null,
                 null,
                 Function.identity(),
-                pathParameters(parameterWithName("slug").description("Reflection Slug")),
+                pathParameters(parameterWithName("slug").description("Post Slug")),
                 GetCommentsResponseSnippets.getCommentsResponseFields()));
   }
 
@@ -88,17 +88,17 @@ class CommentControllerTests {
   @DisplayName("[createComment] API 문서화 테스트")
   @WithAuthenticatedUser
   void createComment() throws Exception {
-    Long reflectionId = 1L;
+    Long postId = 1L;
     AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
     CreateCommentRequest request = CreateCommentRequestSnippets.getCreateCommentRequest();
     CreateCommentResponse response = CreateCommentResponseSnippets.getCreateCommentResponse();
 
-    when(commentService.createComment(eq(user.userId()), eq(reflectionId), eq(request)))
+    when(commentService.createComment(eq(user.userId()), eq(postId), eq(request)))
         .thenReturn(response);
 
     mockMvc
         .perform(
-            post("/reflections/{reflectionId}/comments", reflectionId)
+            post("/posts/{postId}/comments", postId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
@@ -114,7 +114,7 @@ class CommentControllerTests {
                 preprocessRequest(modifyHeaders().set("Content-Type", "application/json")),
                 null,
                 Function.identity(),
-                pathParameters(parameterWithName("reflectionId").description("Reflection ID")),
+                pathParameters(parameterWithName("postId").description("Post ID")),
                 CreateCommentRequestSnippets.getCreateCommentRequestFields(),
                 CreateCommentResponseSnippets.getCreateCommentResponseFields()));
   }

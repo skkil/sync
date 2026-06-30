@@ -1,0 +1,124 @@
+package com.skkil.sync.post.repository;
+
+import static com.skkil.sync.jooq.tables.PostBookmarks.POST_BOOKMARKS;
+import static com.skkil.sync.jooq.tables.Posts.POSTS;
+import static com.skkil.sync.jooq.tables.Projects.PROJECTS;
+import static com.skkil.sync.jooq.tables.Users.USERS;
+
+import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
+import com.skkil.sync.post.dto.data.PostDto;
+import com.skkil.sync.post.model.PostVisibility;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.SelectFieldOrAsterisk;
+import org.jooq.impl.DSL;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class PostQueryRepository {
+
+  private final DSLContext dsl;
+
+  public PostQueryRepository(DSLContext dsl) {
+    this.dsl = dsl;
+  }
+
+  public Optional<PostDto> getPostBySlug(Long requesterId, String slug) {
+    return dsl.select(post(requesterId))
+        .from(POSTS)
+        .join(USERS)
+        .on(POSTS.AUTHOR_ID.eq(USERS.ID))
+        .leftJoin(PROJECTS)
+        .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
+        .where(POSTS.SLUG.eq(slug).and(visibleCondition()))
+        .fetchOptional()
+        .map(record -> record.into(PostDto.class));
+  }
+
+  public CursorPaginationDataFetcher<PostDto> getPosts() {
+    return (condition, orderFields, size) ->
+        dsl.select(post(null))
+            .from(POSTS)
+            .join(USERS)
+            .on(POSTS.AUTHOR_ID.eq(USERS.ID))
+            .leftJoin(PROJECTS)
+            .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
+            .where(condition.and(visibleCondition()))
+            .orderBy(orderFields)
+            .limit(size)
+            .fetchInto(PostDto.class);
+  }
+
+  public CursorPaginationDataFetcher<PostDto> getPostsByUser(Long userId) {
+    return (condition, orderFields, size) -> {
+      CursorPaginationDataFetcher<PostDto> base = getPosts();
+      return base.fetch(condition.and(POSTS.AUTHOR_ID.eq(userId)), orderFields, size);
+    };
+  }
+
+  public CursorPaginationDataFetcher<PostDto> getPostsByProject(String handle) {
+    return (condition, orderFields, size) -> {
+      CursorPaginationDataFetcher<PostDto> base = getPosts();
+      return base.fetch(condition.and(PROJECTS.HANDLE.eq(handle)), orderFields, size);
+    };
+  }
+
+  public List<PostDto> getPostsByIds(List<Long> ids) {
+    if (ids.isEmpty()) {
+      return List.of();
+    }
+
+    Map<Long, PostDto> byId =
+        dsl
+            .select(post(null))
+            .from(POSTS)
+            .join(USERS)
+            .on(POSTS.AUTHOR_ID.eq(USERS.ID))
+            .leftJoin(PROJECTS)
+            .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
+            .where(POSTS.ID.in(ids).and(visibleCondition()))
+            .fetchInto(PostDto.class)
+            .stream()
+            .collect(Collectors.toMap(PostDto::id, Function.identity()));
+
+    return ids.stream().map(byId::get).filter(dto -> dto != null).toList();
+  }
+
+  private List<SelectFieldOrAsterisk> post(Long requesterId) {
+    Field<Boolean> bookmarked =
+        requesterId == null
+            ? DSL.value(false)
+            : DSL.field(
+                DSL.exists(
+                    DSL.selectOne()
+                        .from(POST_BOOKMARKS)
+                        .where(POST_BOOKMARKS.POST_ID.eq(POSTS.ID))
+                        .and(POST_BOOKMARKS.USER_ID.eq(requesterId))));
+
+    return List.of(
+        POSTS.ID.as("id"),
+        POSTS.POST_TYPE.as("type"),
+        POSTS.SLUG.as("slug"),
+        POSTS.AUTHOR_ID.as("authorId"),
+        USERS.FULL_NAME.as("authorName"),
+        USERS.HANDLE.as("authorHandle"),
+        PROJECTS.ID.as("projectId"),
+        PROJECTS.NAME.as("projectName"),
+        POSTS.CONTENT.as("content"),
+        POSTS.CREATED_AT.as("createdAt"),
+        POSTS.UPDATED_AT.as("updatedAt"),
+        POSTS.LIKE_COUNT.as("likeCount"),
+        DSL.value(0L).as("commentCount"),
+        bookmarked.as("bookmarked"));
+  }
+
+  private Condition visibleCondition() {
+    return POSTS.VISIBILITY.eq(PostVisibility.VISIBLE.name());
+  }
+}

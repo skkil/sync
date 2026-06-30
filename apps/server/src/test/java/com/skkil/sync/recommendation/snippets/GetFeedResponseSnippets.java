@@ -40,14 +40,15 @@ public class GetFeedResponseSnippets {
         fields.andWithPrefix(
             "items.nodes[].content",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Feed Item ID"),
-            fieldWithPath(".slug").type(JsonFieldType.STRING).description("Reflection Slug"),
+            fieldWithPath(".slug").type(JsonFieldType.STRING).description("Post Slug"),
             fieldWithPath(".content").type(JsonFieldType.STRING).description("Content"),
             fieldWithPath(".likeCount").type(JsonFieldType.NUMBER).description("Like Count"),
             fieldWithPath(".commentCount").type(JsonFieldType.NUMBER).description("Comment Count"),
             fieldWithPath(".bookmarked")
                 .type(JsonFieldType.BOOLEAN)
                 .description("Whether the current user bookmarked this feed item"),
-            fieldWithPath(".createdAt").type(JsonFieldType.STRING).description("Created At"));
+            fieldWithPath(".createdAt").type(JsonFieldType.STRING).description("Created At"),
+            fieldWithPath(".author").type(JsonFieldType.OBJECT).description("Author Information"));
 
     fields =
         fields.andWithPrefix(

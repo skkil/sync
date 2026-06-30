@@ -49,7 +49,7 @@ public class MediaService {
     URL url = s3Template.createSignedPutURL(bucket, key, Duration.ofMinutes(10));
 
     return UploadMediaResponse.builder()
-        .mediaId(media.getId())
+        .mediaId(String.valueOf(media.getId()))
         .uploadUrl(url.toExternalForm())
         .expiresAt(LocalDateTime.now(ZoneId.systemDefault()).plusMinutes(10))
         .build();

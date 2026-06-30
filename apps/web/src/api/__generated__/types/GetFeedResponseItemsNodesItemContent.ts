@@ -12,7 +12,8 @@ import type { GetFeedResponseItemsNodesItemContentAuthor } from './GetFeedRespon
 export type GetFeedResponseItemsNodesItemContent = {
   /** Created At */
   createdAt: string;
-  author?: GetFeedResponseItemsNodesItemContentAuthor;
+  /** Author Information */
+  author: GetFeedResponseItemsNodesItemContentAuthor;
   /** Whether the current user bookmarked this feed item */
   bookmarked: boolean;
   /** Like Count */
@@ -21,7 +22,7 @@ export type GetFeedResponseItemsNodesItemContent = {
   id: number;
   /** Content */
   content: string;
-  /** Reflection Slug */
+  /** Post Slug */
   slug: string;
   /** Comment Count */
   commentCount: number;

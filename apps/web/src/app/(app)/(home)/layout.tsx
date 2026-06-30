@@ -1,10 +1,9 @@
-import { BaseLayout } from '@/components/layout/app';
-import LeftSidebar from '@/components/layout/sidebar/LeftSidebar';
+import { TripleColumnLayout } from '@/components/layout/columns';
 
-interface AppLayoutProps {
+interface HomeLayoutProps {
   children: React.ReactNode;
 }
 
-export default function AppLayout({ children }: AppLayoutProps) {
-  return <BaseLayout left={<LeftSidebar />}>{children}</BaseLayout>;
+export default function AppLayout({ children }: HomeLayoutProps) {
+  return <TripleColumnLayout left={null} right={null} main={children} />;
 }

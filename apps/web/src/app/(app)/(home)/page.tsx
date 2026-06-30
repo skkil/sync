@@ -1,9 +1,9 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import MiniPostEditor from '@/components/feature/post/editor/MiniPostEditor';
 import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
 
-import MiniPostEditor from './_components/MiniPostEditor';
 import Posts from './_components/Posts';
 
 export default async function Home() {
