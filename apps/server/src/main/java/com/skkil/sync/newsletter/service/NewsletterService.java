@@ -40,7 +40,7 @@ public class NewsletterService {
   @Transactional(readOnly = true)
   public int sendNewsletterToVerifiedUsers() {
     int sentCount = 0;
-PageRequest pageRequest = PageRequest.of(0, RECIPIENT_PAGE_SIZE, org.springframework.data.domain.Sort.by("id"));
+    PageRequest pageRequest = PageRequest.of(0, RECIPIENT_PAGE_SIZE);
     Page<User> recipients;
 
     do {
