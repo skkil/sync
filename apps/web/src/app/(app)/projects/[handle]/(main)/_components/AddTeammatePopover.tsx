@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserPlusIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
@@ -30,10 +30,12 @@ type AddTeammateFormValues = z.infer<typeof AddTeammateFormSchema>;
 
 interface AddTeammatePopoverProps {
   projectHandle: string;
+  trigger?: React.ReactNode;
 }
 
 export default function AddTeammatePopover({
   projectHandle,
+  trigger,
 }: AddTeammatePopoverProps) {
   const t = useTranslations('pages.projects.project.overview.add-teammate');
   const [open, setOpen] = useState(false);
@@ -69,9 +71,11 @@ export default function AddTeammatePopover({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t('trigger')}>
-          <UserPlusIcon className="h-4 w-4" />
-        </Button>
+        {trigger ?? (
+          <Button variant="ghost" size="icon" aria-label={t('trigger')}>
+            <UserPlusIcon className="h-4 w-4" />
+          </Button>
+        )}
       </PopoverTrigger>
 
       <PopoverContent align="start">

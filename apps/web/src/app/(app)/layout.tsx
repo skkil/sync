@@ -1,4 +1,8 @@
 import TopNavigationBar from '@/components/layout/nav/top/TopNavigationBar';
+import AppSidebar from '@/components/layout/sidebar/AppSidebar';
+import ProjectContextSync from '@/components/layout/sidebar/ProjectContextSync';
+import SidebarOverlay from '@/components/layout/sidebar/SidebarOverlay';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -6,11 +10,16 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <TopNavigationBar />
-      <div className="grow w-full max-w-7xl px-7 pt-7 mx-auto">
-        <div className="h-full w-full">{children}</div>
-      </div>
-    </div>
+    <SidebarProvider>
+      <ProjectContextSync />
+      <AppSidebar />
+      <SidebarOverlay />
+      <SidebarInset>
+        <TopNavigationBar />
+        <div className="grow w-full max-w-7xl px-7 pt-7 mx-auto">
+          {children}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
