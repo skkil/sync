@@ -5,7 +5,10 @@ import { useParams, usePathname } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 
-const TABS = [{ label: 'Teammates', href: 'teammates' }];
+const TABS = [
+  { label: '워크스페이스', href: '' },
+  { label: '팀원', href: 'teammates' },
+];
 
 export default function SettingsSidebar() {
   const { handle } = useParams<{ handle: string }>();
@@ -14,7 +17,9 @@ export default function SettingsSidebar() {
   return (
     <nav className="flex flex-col gap-1">
       {TABS.map((tab) => {
-        const href = `/projects/${handle}/settings/${tab.href}`;
+        const href = tab.href
+          ? `/projects/${handle}/settings/${tab.href}`
+          : `/projects/${handle}/settings`;
         const isActive = pathname === href;
 
         return (
