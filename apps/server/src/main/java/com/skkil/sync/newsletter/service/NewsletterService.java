@@ -40,7 +40,7 @@ public class NewsletterService {
   @Transactional(readOnly = true)
   public int sendNewsletterToVerifiedUsers() {
     int sentCount = 0;
-PageRequest pageRequest = PageRequest.of(0, RECIPIENT_PAGE_SIZE, org.springframework.data.domain.Sort.by("id"));
+    PageRequest pageRequest = PageRequest.of(0, RECIPIENT_PAGE_SIZE, org.springframework.data.domain.Sort.by("id"));
     Page<User> recipients;
 
     do {
@@ -60,8 +60,7 @@ PageRequest pageRequest = PageRequest.of(0, RECIPIENT_PAGE_SIZE, org.springframe
   }
 
   private boolean sendNewsletter(User recipient) {
-    List<NewsletterPost> posts =
-        newsletterPostProvider.getPosts(recipient.getId(), NEWSLETTER_POST_LIMIT);
+    List<NewsletterPost> posts = newsletterPostProvider.getPosts(recipient.getId(), NEWSLETTER_POST_LIMIT);
     if (posts.isEmpty()) {
       log.debug("뉴스레터에 포함할 포스트가 없어 사용자 {} 발송을 건너뜁니다.", recipient.getId());
       return false;
@@ -71,12 +70,11 @@ PageRequest pageRequest = PageRequest.of(0, RECIPIENT_PAGE_SIZE, org.springframe
     context.setVariable("recipientName", recipient.getFullName());
     context.setVariable("posts", posts);
 
-    EmailMessage email =
-        EmailMessage.builder()
-            .to(recipient.getEmail())
-            .subject("sync 뉴스레터")
-            .text(templateEngine.process("email/newsletter", context))
-            .build();
+    EmailMessage email = EmailMessage.builder()
+        .to(recipient.getEmail())
+        .subject("sync 뉴스레터")
+        .text(templateEngine.process("email/newsletter", context))
+        .build();
 
     emailService.sendMessage(email);
     return true;
