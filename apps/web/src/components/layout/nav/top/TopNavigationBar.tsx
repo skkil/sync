@@ -1,130 +1,57 @@
 'use client';
 
-import {
-  BookmarkSimpleIcon,
-  ChatCircleDotsIcon,
-  ProjectorScreenChartIcon,
-} from '@phosphor-icons/react';
-import { useTranslations } from 'next-intl';
+import { PencilSimpleIcon } from '@phosphor-icons/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/ui/logo';
-import { useSession } from '@/lib/auth/client';
-import { cn } from '@/lib/utils';
 
-import MobileNavigationMenu from './_components/MobileNavigationMenu';
+import NotificationsButton from './_components/NotificationsButton';
+import ProjectSwitcher from './_components/ProjectSwitcher';
 import SearchBar from './_components/SearchBar';
 import UserAvatar from './_components/UserAvatar';
 
 export default function TopNavigationBar() {
-  const path = usePathname();
-  const { data: session } = useSession();
-
   return (
-    <>
-      <div className="hidden lg:block">
-        <TopNavigationBarDesktop
-          path={path}
-          isAuthenticated={!!session && !!session.user}
-        />
-      </div>
-
-      <div className="block lg:hidden">
-        <TopNavigationBarMobile />
-      </div>
-    </>
+    <nav className="w-full flex items-center justify-between gap-3 bg-background px-4 md:px-8 py-3 border-b">
+      <LeftSection />
+      <RightSection />
+    </nav>
   );
 }
 
-function TopNavigationBarDesktop({
-  path,
-  isAuthenticated,
-}: {
-  path: string;
-  isAuthenticated: boolean;
-}) {
-  const t = useTranslations('components.navigation');
-
-  const tabs = [
-    {
-      id: 'bookmarks',
-      href: '/bookmarks',
-      icon: <BookmarkSimpleIcon />,
-      highlight: () => {
-        return path.startsWith('/bookmarks');
-      },
-      authenticated: true,
-    },
-    {
-      id: 'projects',
-      href: '/projects',
-      icon: <ProjectorScreenChartIcon />,
-      highlight: () => {
-        return path.startsWith('/projects');
-      },
-    },
-    {
-      id: 'messages',
-      href: '/messages',
-      icon: <ChatCircleDotsIcon />,
-      highlight: () => {
-        return path.startsWith('/messages');
-      },
-      authenticated: true,
-    },
-  ];
-
+function LeftSection() {
   return (
-    <nav className="w-full flex items-center justify-between gap-2 bg-background p-3 px-4 md:px-8 border-b mb-4">
-      <Link href="/">
+    <div className="flex items-center gap-2 min-w-0">
+      <Link href="/" className="shrink-0">
         <Logo />
       </Link>
 
-      <div className="flex items-center justify-end grow gap-4">
-        <SearchBar />
+      <ProjectSwitcher />
 
-        {tabs.map((tab) => {
-          if (tab.authenticated && !isAuthenticated) {
-            return null;
-          }
-
-          return (
-            <Link
-              key={tab.id}
-              href={tab.href}
-              className={cn(
-                'flex flex-col items-center justify-center',
-                tab.highlight() ? '' : 'text-foreground/80',
-              )}
-            >
-              <Button variant="ghost" size="icon">
-                {tab.icon}
-              </Button>
-
-              <span className="text-xs">{t(`menu.${tab.id}`)}</span>
-            </Link>
-          );
-        })}
-
-        <UserAvatar />
+      <div className="hidden md:block">
+        <SearchBar variant="desktop" />
       </div>
-    </nav>
+    </div>
   );
 }
 
-function TopNavigationBarMobile() {
+function RightSection() {
   return (
-    <nav className="h-16 w-full flex items-center justify-between px-8">
-      <div className="flex items-center mr-4">
-        <Logo />
+    <div className="flex items-center gap-1">
+      <div className="md:hidden">
+        <SearchBar variant="mobile" />
       </div>
 
-      <div className="grow flex items-center gap-2">
-        <SearchBar />
-        <MobileNavigationMenu />
-      </div>
-    </nav>
+      <Button asChild variant="ghost" size="icon" aria-label="새 포스트 작성">
+        <Link href="/posts/new">
+          <PencilSimpleIcon size={20} />
+        </Link>
+      </Button>
+
+      <NotificationsButton />
+
+      <UserAvatar />
+    </div>
   );
 }

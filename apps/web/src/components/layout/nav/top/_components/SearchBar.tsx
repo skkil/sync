@@ -3,7 +3,7 @@
 import { MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,7 +12,11 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 
-export default function SearchBar() {
+interface SearchBarProps {
+  variant: 'desktop' | 'mobile';
+}
+
+export default function SearchBar({ variant }: SearchBarProps) {
   const t = useTranslations('components.navigation');
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -20,41 +24,44 @@ export default function SearchBar() {
   const [query, setQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleExpand = () => {
-    setIsExpanded(true);
-    setTimeout(() => {
+  useEffect(() => {
+    if (isExpanded) {
       inputRef.current?.focus();
-    }, 100);
-  };
-
-  const handleCollapse = () => {
-    setIsExpanded(false);
-    setQuery('');
-  };
+    }
+  }, [isExpanded]);
 
   const handleSearch = () => {
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query)}`);
-      setQuery('');
+    if (!query.trim()) return;
+    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    setQuery('');
+    setIsExpanded(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch();
+    } else if (e.key === 'Escape') {
       setIsExpanded(false);
+      setQuery('');
     }
   };
 
-  return (
-    <>
-      <div className="lg:hidden flex-1 flex items-center justify-end">
+  if (variant === 'mobile') {
+    return (
+      <div className="flex items-center">
         {!isExpanded ? (
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleExpand}
-            aria-label="Search"
+            onClick={() => setIsExpanded(true)}
+            aria-label="검색"
           >
             <MagnifyingGlassIcon size={20} />
           </Button>
         ) : (
-          <div className="flex items-center gap-1 flex-1">
-            <InputGroup className="flex-1">
+          <div className="flex items-center gap-1">
+            <InputGroup>
               <InputGroupAddon>
                 <MagnifyingGlassIcon />
               </InputGroupAddon>
@@ -63,49 +70,39 @@ export default function SearchBar() {
                 placeholder={t('search.placeholder')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleSearch();
-                  } else if (e.key === 'Escape') {
-                    handleCollapse();
-                  }
-                }}
+                onKeyDown={handleKeyDown}
+                className="w-40"
               />
             </InputGroup>
             <Button
               variant="ghost"
               size="icon"
-              onClick={handleCollapse}
-              aria-label="Close search"
+              onClick={() => {
+                setIsExpanded(false);
+                setQuery('');
+              }}
+              aria-label="검색 닫기"
             >
               <XIcon size={20} />
             </Button>
           </div>
         )}
       </div>
+    );
+  }
 
-      <div className="hidden lg:block">
-        <InputGroup>
-          <InputGroupAddon>
-            <MagnifyingGlassIcon />
-          </InputGroupAddon>
-
-          <InputGroupInput
-            placeholder={t('search.placeholder')}
-            className="w-64"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                setQuery('');
-                router.push(`/search?q=${encodeURIComponent(query)}`);
-              }
-            }}
-          />
-        </InputGroup>
-      </div>
-    </>
+  return (
+    <InputGroup>
+      <InputGroupAddon>
+        <MagnifyingGlassIcon />
+      </InputGroupAddon>
+      <InputGroupInput
+        placeholder={t('search.placeholder')}
+        className="w-56"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+    </InputGroup>
   );
 }

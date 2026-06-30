@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { PostType } from '@/features/post/constants/post-type';
+import { useCurrentProject } from '@/hooks/use-current-project';
 
 import { EditorBubbleMenu } from './components/EditorBubbleMenu';
 import { EditorTemplates } from './components/EditorTemplates';
@@ -39,6 +40,8 @@ interface PostEditorProps {
 export default function PostEditor({ type, onSubmit }: PostEditorProps) {
   const t = useTranslations('components.editor');
   const locale = useLocale();
+
+  const { currentProject } = useCurrentProject();
 
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState<string[]>([]);
@@ -109,6 +112,7 @@ export default function PostEditor({ type, onSubmit }: PostEditorProps) {
           onChange={(id) => {
             setProjectId(id);
           }}
+          initialProject={currentProject}
         />
         <TagInput tags={tags} onChange={setTags} />
         <div className="flex justify-end">

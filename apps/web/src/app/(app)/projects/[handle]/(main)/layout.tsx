@@ -2,6 +2,7 @@ import { TripleColumnLayout } from '@/components/layout/columns';
 import { Separator } from '@/components/ui/separator';
 
 import LeftSidebar from './_components/LeftSidebar';
+import ProjectContext from './_components/ProjectContext';
 import ProjectHeader from './_components/ProjectHeader';
 import RightSidebar from './_components/RightSidebar';
 
@@ -20,6 +21,7 @@ export default async function ProjectLayout({
 
   return (
     <div>
+      <ProjectContext handle={handle} />
       <ProjectHeader handle={handle} />
 
       <Separator className="my-5" />

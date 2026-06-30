@@ -2,7 +2,7 @@
 
 import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
-import { type KeyboardEvent, useRef, useState } from 'react';
+import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { useSearchMyProjects } from '@/api/__generated__/project/project';
 import { cn } from '@/lib/utils';
@@ -12,9 +12,14 @@ const DEBOUNCE_MS = 300;
 interface ProjectInputProps {
   projectId: number | null;
   onChange: (projectId: number | null) => void;
+  initialProject?: { handle: string; name: string } | null;
 }
 
-export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
+export function ProjectInput({
+  projectId,
+  onChange,
+  initialProject,
+}: ProjectInputProps) {
   const t = useTranslations('components.editor.projects');
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -22,6 +27,23 @@ export function ProjectInput({ projectId, onChange }: ProjectInputProps) {
   const [selectedProjectName, setSelectedProjectName] = useState<string | null>(
     null,
   );
+
+  const { data: initialData } = useSearchMyProjects(
+    { query: initialProject?.handle ?? '' },
+    { query: { enabled: !!initialProject && projectId === null } },
+  );
+
+  useEffect(() => {
+    if (projectId !== null || !initialProject) return;
+    const match = initialData?.data.projects.find(
+      (p) => p.handle === initialProject.handle,
+    );
+    if (match) {
+      setSelectedProjectName(match.name);
+      onChange(match.id);
+    }
+  }, [initialData, initialProject, onChange, projectId]);
+
   const debouncedInput = useDebounce(input, DEBOUNCE_MS);
 
   const [focused, setFocused] = useState(false);

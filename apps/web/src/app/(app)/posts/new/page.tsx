@@ -19,7 +19,7 @@ function getInitialPostType(value: string | null): PostType {
 export default function CreatePostPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
 
   const { mutate: createPost } = useCreatePost({
     mutation: {
@@ -29,12 +29,14 @@ export default function CreatePostPage() {
     },
   });
 
-  if (isAuthenticated(session) && !isOnboarded(session)) {
-    redirect('/onboarding');
-  }
+  if (!isPending) {
+    if (isAuthenticated(session) && !isOnboarded(session)) {
+      redirect('/onboarding');
+    }
 
-  if (!isAuthenticated(session)) {
-    redirect('/auth/login');
+    if (!isAuthenticated(session)) {
+      redirect('/auth/login');
+    }
   }
 
   return (
