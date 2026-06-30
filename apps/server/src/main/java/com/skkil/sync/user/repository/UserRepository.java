@@ -21,9 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("SELECT u FROM User u LEFT JOIN FETCH u.oAuth2Accounts WHERE u.email = :email")
   Optional<User> findByEmailWithOAuthAccounts(String email);
 
-  @Query("SELECT u FROM User u WHERE u.isEmailVerified = true AND u.deletedAt IS NULL")
-  Page<User> findVerifiedEmailUsers(Pageable pageable);
-
   @Query(
       """
       SELECT u FROM User u
