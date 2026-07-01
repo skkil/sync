@@ -2,7 +2,6 @@
 
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
 import { createContext, useContext, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
@@ -26,19 +25,10 @@ export default function WebSocketProvider({
   children,
 }: WebSocketProviderProps) {
   const t = useTranslations();
-  const pathname = usePathname();
-  const shouldConnect =
-    pathname !== '/' &&
-    !pathname.startsWith('/auth') &&
-    !pathname.startsWith('/onboarding');
 
   const client = useRef<Client | null>(null);
 
   useEffect(() => {
-    if (!shouldConnect) {
-      return;
-    }
-
     if (!client.current) {
       client.current = getStompClient();
     }
@@ -50,7 +40,7 @@ export default function WebSocketProvider({
         client.current.deactivate();
       }
     };
-  }, [client, shouldConnect]);
+  }, [client]);
 
   return (
     <WebSocketContext.Provider

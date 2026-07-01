@@ -1,9 +1,9 @@
 import { TripleColumnLayout } from '@/components/layout/columns';
 
-interface FeedLayoutProps {
+interface HomeLayoutProps {
   children: React.ReactNode;
 }
 
-export default function FeedLayout({ children }: FeedLayoutProps) {
+export default function AppLayout({ children }: HomeLayoutProps) {
   return <TripleColumnLayout left={null} right={null} main={children} />;
 }

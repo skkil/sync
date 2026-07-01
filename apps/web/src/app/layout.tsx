@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
-import { Geist_Mono, Noto_Sans_KR } from 'next/font/google';
+import { Figtree, Geist, Geist_Mono } from 'next/font/google';
 
 import AppProvider from '@/components/providers/AppProvider';
 import { Toaster } from '@/components/ui/sonner';
 import '@/styles/globals.css';
 
-const notoSansKr = Noto_Sans_KR({
+const figtree = Figtree({ subsets: ['latin'], variable: '--font-sans' });
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
   subsets: ['latin'],
-  variable: '--font-sans',
 });
 
 const geistMono = Geist_Mono({
@@ -26,8 +28,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning className={notoSansKr.variable}>
-      <body className={`${geistMono.variable} font-sans antialiased`}>
+    <html lang="en" suppressHydrationWarning className={figtree.variable}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <AppProvider>{children}</AppProvider>
         <Toaster />
       </body>
