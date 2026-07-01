@@ -42,6 +42,23 @@ export const auth = betterAuth({
                 return null;
               }
 
+              const existingToken = await ctx.getSignedCookie(
+                ctx.context.authCookies.sessionToken.name,
+                ctx.context.secret,
+              );
+
+              if (existingToken) {
+                const existingSession =
+                  await ctx.context.internalAdapter.findSession(existingToken);
+
+                if (
+                  existingSession &&
+                  new Date(existingSession.session.expiresAt) > new Date()
+                ) {
+                  return null;
+                }
+              }
+
               const response = await getAuthenticatedUser()
                 .then((res) => res.data)
                 .catch(() => null);
@@ -75,16 +92,31 @@ export const auth = betterAuth({
                 data: { theme: 'system' },
               }));
 
-              const user = await ctx.context.internalAdapter.createUser({
-                id: userId,
-                name,
-                handle,
-                email,
-                image: profileImageUrl,
-                isOnboarded,
-                role,
-                theme,
-              });
+              const existingUser =
+                await ctx.context.internalAdapter.findUserById(String(userId));
+
+              const user = existingUser
+                ? await ctx.context.internalAdapter.updateUser(
+                    existingUser.id,
+                    {
+                      name,
+                      handle,
+                      image: profileImageUrl,
+                      isOnboarded,
+                      role,
+                      theme,
+                    },
+                  )
+                : await ctx.context.internalAdapter.createUser({
+                    id: userId,
+                    name,
+                    handle,
+                    email,
+                    image: profileImageUrl,
+                    isOnboarded,
+                    role,
+                    theme,
+                  });
 
               const session = await ctx.context.internalAdapter.createSession(
                 userId,
@@ -115,7 +147,9 @@ export const auth = betterAuth({
 
 type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
 
-export function isAuthenticated(session: Session) {
+export function isAuthenticated(
+  session: Session,
+): session is NonNullable<Session> {
   return session !== null && session.user !== null;
 }
 
