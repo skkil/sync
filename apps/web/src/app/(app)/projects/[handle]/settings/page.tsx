@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 import { useGetProjectByHandle } from '@/api/__generated__/project/project';
 import { GetProjectResponseRole } from '@/api/__generated__/types';
@@ -11,7 +11,6 @@ import { Separator } from '@/components/ui/separator';
 
 export default function WorkspaceSettingsPage() {
   const { handle } = useParams<{ handle: string }>();
-  const router = useRouter();
   const { data, isPending } = useGetProjectByHandle(handle);
 
   const project = data?.data;

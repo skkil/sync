@@ -32,7 +32,7 @@ export default function TopNavigationBar({
 function LeftSection({ showSidebarTrigger }: { showSidebarTrigger: boolean }) {
   return (
     <div className="flex items-center gap-2 min-w-0">
-      {showSidebarTrigger && <SidebarTrigger />}
+      {showSidebarTrigger && <SidebarTrigger className="md:hidden" />}
       <Link href="/">
         <Logo />
       </Link>

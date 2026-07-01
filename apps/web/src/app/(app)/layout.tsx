@@ -1,7 +1,6 @@
 import TopNavigationBar from '@/components/layout/navbar/TopNavigationBar';
 import AppSidebar from '@/components/layout/sidebar/AppSidebar';
 import ProjectContextSync from '@/components/layout/sidebar/ProjectContextSync';
-import SidebarOverlay from '@/components/layout/sidebar/SidebarOverlay';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 interface AppLayoutProps {
@@ -10,16 +9,17 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="h-svh flex-col">
       <ProjectContextSync />
-      <AppSidebar />
-      <SidebarOverlay />
-      <SidebarInset>
-        <TopNavigationBar />
-        <div className="grow w-full max-w-7xl px-7 pt-7 mx-auto">
-          {children}
-        </div>
-      </SidebarInset>
+      <TopNavigationBar />
+      <div className="relative flex min-h-0 flex-1 w-full">
+        <AppSidebar />
+        <SidebarInset className="overflow-y-auto">
+          <div className="grow w-full max-w-7xl px-7 pt-7 mx-auto">
+            {children}
+          </div>
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }
