@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { RelativeTime } from '@/components/ui/relative-time';
 import { PostType } from '@/features/post/constants/post-type';
+import ROUTES from '@/util/routes';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
 import { deserialize } from '../editor/utils/serializer';
@@ -57,7 +58,11 @@ export default function PostPreview({
   });
 
   const handleClickCard = () => {
-    redirect(`/posts/${slug}`);
+    if (project) {
+      redirect(ROUTES.PROJECT_POST(project.handle, slug));
+    } else {
+      redirect(ROUTES.POST(slug));
+    }
   };
 
   return (

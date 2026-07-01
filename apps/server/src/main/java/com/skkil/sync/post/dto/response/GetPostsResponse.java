@@ -23,5 +23,5 @@ public record GetPostsResponse(CursorPaginationResponse<Post> posts) {
 
   public static record Author(String name, String handle) {}
 
-  public static record Project(Long id, String name) {}
+  public static record Project(String handle, String name) {}
 }

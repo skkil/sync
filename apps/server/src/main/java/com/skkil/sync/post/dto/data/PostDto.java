@@ -11,7 +11,7 @@ public record PostDto(
     Long authorId,
     String authorName,
     String authorHandle,
-    @Nullable Long projectId,
+    @Nullable String projectHandle,
     @Nullable String projectName,
     String content,
     LocalDateTime createdAt,

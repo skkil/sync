@@ -25,7 +25,7 @@ public record GetPostResponse(
   public static record Author(String name, String handle) {}
 
   @Builder
-  public static record Project(Long id, String name) {}
+  public static record Project(String handle, String name) {}
 
   @Builder
   public static record Content(String json, List<Media> media) {}

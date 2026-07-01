@@ -108,7 +108,7 @@ public class PostQueryRepository {
         POSTS.AUTHOR_ID.as("authorId"),
         USERS.FULL_NAME.as("authorName"),
         USERS.HANDLE.as("authorHandle"),
-        PROJECTS.ID.as("projectId"),
+        PROJECTS.HANDLE.as("projectHandle"),
         PROJECTS.NAME.as("projectName"),
         POSTS.CONTENT.as("content"),
         POSTS.CREATED_AT.as("createdAt"),
