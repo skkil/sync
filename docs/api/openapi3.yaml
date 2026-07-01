@@ -176,8 +176,8 @@ paths:
                     :\"user_handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
                     https://example.com/profile.jpg\"},\"content\":\"This is a bookmarked\
                     \ post content\",\"likeCount\":10,\"commentCount\":5,\"bookmarked\"\
-                    :true,\"createdAt\":\"2026-05-04T12:00:00\",\"bookmarkedAt\":\"\
-                    2026-05-05T12:00:00\"}}]}}"
+                    :true,\"createdAt\":\"2026-05-04T12:00:00Z\",\"bookmarkedAt\"\
+                    :\"2026-05-05T12:00:00Z\"}}]}}"
   /comments/{commentId}:
     delete:
       tags:
@@ -291,7 +291,7 @@ paths:
                             "likeCount" : 10,
                             "commentCount" : 5,
                             "bookmarked" : true,
-                            "createdAt" : "2026-05-04T12:00:00"
+                            "createdAt" : "2026-05-04T12:00:00Z"
                           }
                         } ]
                       }
@@ -376,7 +376,7 @@ paths:
                     :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
                     :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
                     handle\":\"project-handle\",\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00Z\"}}]}}"
     post:
       tags:
       - post
@@ -476,7 +476,7 @@ paths:
                     :{\"handle\":\"project-handle\",\"name\":\"Project Name\"},\"\
                     content\":{\"json\":\"Post Content\",\"media\":[{\"id\":1,\"url\"\
                     :\"https://example.com/media.png\"}]},\"likeCount\":1,\"commentCount\"\
-                    :1,\"bookmarked\":true,\"createdAt\":\"1970-01-01T00:00:00\"}"
+                    :1,\"bookmarked\":true,\"createdAt\":\"1970-01-01T00:00:00Z\"}"
   /posts/{postId}/bookmarks:
     post:
       tags:
@@ -930,7 +930,7 @@ paths:
                     :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
                     :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
                     handle\":\"project-handle\",\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00Z\"}}]}}"
   /projects/{handle}/teammates:
     get:
       tags:
@@ -1165,7 +1165,7 @@ paths:
                     :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"author\"\
                     :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
                     handle\":\"project-handle\",\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00\"}}]}}"
+                    :\"Post Content\",\"createdAt\":\"1970-01-01T00:00:00Z\"}}]}}"
 components:
   schemas:
     GetProjectsResponse:
@@ -1434,6 +1434,66 @@ components:
         mediaType:
           type: string
           description: Media Type
+    CreatePostRequest:
+      title: CreatePostRequest
+      required:
+      - content
+      - type
+      type: object
+      properties:
+        project:
+          required:
+          - handle
+          type: object
+          properties:
+            handle:
+              type: string
+              description: 프로젝트 핸들
+          description: 프로젝트
+        type:
+          type: string
+          description: Post Type
+          enum:
+          - SHORT
+          - LONG
+          - QUESTION
+        title:
+          type: string
+          description: Title
+          nullable: true
+        content:
+          required:
+          - json
+          - text
+          type: object
+          properties:
+            json:
+              type: string
+              description: JSON Content
+            mediaIds:
+              type: array
+              description: 사용된 미디어 ID 목록
+              nullable: true
+              items:
+                oneOf:
+                - type: object
+                - type: boolean
+                - type: string
+                - type: number
+            text:
+              type: string
+              description: Text Content
+          description: Content
+        tags:
+          type: array
+          description: 태그 목록
+          nullable: true
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
     GetBookmarkedPostsResponse:
       title: GetBookmarkedPostsResponse
       type: object
@@ -1540,66 +1600,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    CreatePostRequest:
-      title: CreatePostRequest
-      required:
-      - content
-      - type
-      type: object
-      properties:
-        project:
-          required:
-          - handle
-          type: object
-          properties:
-            handle:
-              type: string
-              description: 프로젝트 핸들
-          description: 프로젝트
-        type:
-          type: string
-          description: Post Type
-          enum:
-          - SHORT
-          - LONG
-          - QUESTION
-        title:
-          type: string
-          description: Title
-          nullable: true
-        content:
-          required:
-          - json
-          - text
-          type: object
-          properties:
-            json:
-              type: string
-              description: JSON Content
-            mediaIds:
-              type: array
-              description: 사용된 미디어 ID 목록
-              nullable: true
-              items:
-                oneOf:
-                - type: object
-                - type: boolean
-                - type: string
-                - type: number
-            text:
-              type: string
-              description: Text Content
-          description: Content
-        tags:
-          type: array
-          description: 태그 목록
-          nullable: true
-          items:
-            oneOf:
-            - type: object
-            - type: boolean
-            - type: string
-            - type: number
     GetProjectTeammatesResponse:
       title: GetProjectTeammatesResponse
       required:

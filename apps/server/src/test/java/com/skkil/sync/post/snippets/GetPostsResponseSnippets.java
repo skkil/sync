@@ -27,7 +27,7 @@ public class GetPostsResponseSnippets {
             author,
             project,
             "Post Content",
-            DateTimeTestUtils.defaultTestLocalDateTime());
+            DateTimeTestUtils.defaultTestOffsetDateTime());
 
     return new GetPostsResponse(CursorPaginationResponseSnippets.of(List.of(post)));
   }

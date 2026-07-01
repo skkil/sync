@@ -36,7 +36,7 @@ public class GetPostResponseSnippets {
         .likeCount(1L)
         .commentCount(1L)
         .bookmarked(true)
-        .createdAt(DateTimeTestUtils.defaultTestLocalDateTime())
+        .createdAt(DateTimeTestUtils.defaultTestOffsetDateTime())
         .build();
   }
 

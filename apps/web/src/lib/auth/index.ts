@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
 import { nextCookies } from 'better-auth/next-js';
+import { HTTPError } from 'ky';
 
 import { getUserPreferences } from '@/api/__generated__/preferences/preferences';
 import { getAuthenticatedUser } from '@/api/__generated__/profile/profile';
@@ -59,19 +60,26 @@ export const auth = betterAuth({
                 }
               }
 
-              const response = await getAuthenticatedUser()
-                .then((res) => res.data)
-                .catch(() => null);
-
-              if (response === null) {
-                await ctx.setSignedCookie(
-                  ctx.context.authCookies.sessionToken.name,
-                  '',
-                  ctx.context.secret,
-                  {
-                    maxAge: -1,
-                  },
-                );
+              let response;
+              try {
+                response = (await getAuthenticatedUser()).data;
+              } catch (error) {
+                // 백엔드가 명시적으로 401을 반환했을 때만 실제 미인증으로 간주하고
+                // 세션 쿠키를 무효화한다. 네트워크 오류, 타임아웃, 5xx 등 일시적인
+                // 장애까지 로그아웃으로 취급하면 정상 세션도 강제로 끊기게 된다.
+                if (
+                  error instanceof HTTPError &&
+                  error.response.status === 401
+                ) {
+                  await ctx.setSignedCookie(
+                    ctx.context.authCookies.sessionToken.name,
+                    '',
+                    ctx.context.secret,
+                    {
+                      maxAge: -1,
+                    },
+                  );
+                }
 
                 return null;
               }

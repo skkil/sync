@@ -1,6 +1,6 @@
 package com.skkil.sync.recommendation.dto.data;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record FeedDto(
     Long id,
@@ -15,5 +15,5 @@ public record FeedDto(
     Long likeCount,
     Long commentCount,
     Boolean bookmarked,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt) {}
+    OffsetDateTime createdAt,
+    OffsetDateTime updatedAt) {}

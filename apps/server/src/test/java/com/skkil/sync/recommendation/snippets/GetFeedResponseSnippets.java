@@ -8,7 +8,8 @@ import com.skkil.sync.common.util.pagination.snippets.CursorPaginationResponseSn
 import com.skkil.sync.recommendation.dto.response.GetFeedResponse;
 import com.skkil.sync.recommendation.dto.response.GetFeedResponse.Author;
 import com.skkil.sync.recommendation.dto.response.GetFeedResponse.FeedItem;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
@@ -28,7 +29,7 @@ public class GetFeedResponseSnippets {
             10L,
             5L,
             true,
-            LocalDateTime.of(2026, 5, 4, 12, 0, 0));
+            OffsetDateTime.of(2026, 5, 4, 12, 0, 0, 0, ZoneOffset.UTC));
 
     return new GetFeedResponse(CursorPaginationResponseSnippets.of(List.of(feedItem)));
   }

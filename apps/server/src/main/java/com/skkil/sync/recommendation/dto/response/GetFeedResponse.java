@@ -1,7 +1,7 @@
 package com.skkil.sync.recommendation.dto.response;
 
 import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.Builder;
 
 public record GetFeedResponse(CursorPaginationResponse<FeedItem> items) {
@@ -16,7 +16,7 @@ public record GetFeedResponse(CursorPaginationResponse<FeedItem> items) {
       Long likeCount,
       Long commentCount,
       boolean bookmarked,
-      LocalDateTime createdAt) {}
+      OffsetDateTime createdAt) {}
 
   @Builder
   public static record Author(Long id, String handle, String name, String profileImageUrl) {}
