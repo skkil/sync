@@ -29,9 +29,9 @@ export function NotFound({
         </EmptyHeader>
         <EmptyContent>
           <p className="text-muted-foreground">{description}</p>
-          <Link href={backHref}>
-            <Button variant="outline">{backLabel}</Button>
-          </Link>
+          <Button asChild variant="outline">
+            <Link href={backHref}>{backLabel}</Link>
+          </Button>
         </EmptyContent>
       </Empty>
     </div>
