@@ -31,9 +31,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="container max-w-3xl py-8 space-y-6">
-        <ProjectPosts handle={handle} />
-      </div>
+      <ProjectPosts handle={handle} />
     </HydrationBoundary>
   );
 }

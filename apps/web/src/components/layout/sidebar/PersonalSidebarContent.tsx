@@ -18,14 +18,25 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
+import { isAuthenticated } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
 
 import SidebarCloseButton from './SidebarCloseButton';
 
 const global = [
-  { label: 'Home', href: '/', icon: HouseIcon },
-  { label: 'Explore', href: '/explore', icon: CompassIcon },
-  { label: 'New Post', href: '/posts/new', icon: NotePencilIcon },
+  { label: 'Home', href: '/', icon: HouseIcon, authenticated: false },
+  {
+    label: 'Explore',
+    href: '/explore',
+    icon: CompassIcon,
+    authenticated: false,
+  },
+  {
+    label: 'New Post',
+    href: '/posts/new',
+    icon: NotePencilIcon,
+    authenticated: true,
+  },
 ];
 
 const footer = [
@@ -66,49 +77,59 @@ export default function PersonalSidebarContent() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {global.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <Link href={item.href}>
-                        <Icon />
-                        {item.label}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {global
+                .filter((item) =>
+                  item.authenticated ? isAuthenticated(session) : true,
+                )
+                .map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <Link href={item.href}>
+                          <Icon />
+                          {item.label}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarSeparator />
-
-        <SidebarGroup>
-          <SidebarGroupLabel asChild>
-            <Link href="/projects" className="hover:text-sidebar-foreground">
-              Workspaces
-            </Link>
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {projects.map((project) => {
-                const isActive = pathname === `/projects/${project.handle}`;
-                return (
-                  <SidebarMenuItem key={project.id}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <Link href={`/projects/${project.handle}`}>
-                        {project.name}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {isAuthenticated(session) && (
+          <>
+            <SidebarSeparator />
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <Link
+                  href="/projects"
+                  className="hover:text-sidebar-foreground"
+                >
+                  Workspaces
+                </Link>
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {projects.map((project) => {
+                    const isActive = pathname === `/projects/${project.handle}`;
+                    return (
+                      <SidebarMenuItem key={project.id}>
+                        <SidebarMenuButton asChild isActive={isActive}>
+                          <Link href={`/projects/${project.handle}`}>
+                            {project.name}
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
       </SidebarContent>
 
       <SidebarFooter>

@@ -35,12 +35,6 @@ function LeftSection({ showSidebarTrigger }: { showSidebarTrigger: boolean }) {
       <Link href="/">
         <Logo />
       </Link>
-      <div className="hidden md:block">
-        <SearchBar variant="desktop" />
-      </div>
-      <div className="md:hidden">
-        <SearchBar variant="mobile" />
-      </div>
     </div>
   );
 }
@@ -56,6 +50,15 @@ function RightSection() {
 
   return (
     <div className="flex items-center gap-1">
+      <>
+        <div className="hidden md:block">
+          <SearchBar variant="desktop" />
+        </div>
+        <div className="md:hidden">
+          <SearchBar variant="mobile" />
+        </div>
+      </>
+
       {isAuthenticated(session) && <NotificationsButton />}
 
       {isAuthenticated(session) ? (
