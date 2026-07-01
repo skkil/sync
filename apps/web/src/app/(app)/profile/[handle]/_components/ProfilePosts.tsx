@@ -6,10 +6,10 @@ import { useEffect } from 'react';
 
 import { useGetUserPostsInfinite } from '@/api/__generated__/post/post';
 import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
+import { PostType } from '@/components/feature/post/types/post';
 import PostPreview from '@/components/feature/post/viewer/PostPreview';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
-import { PostType } from '@/features/post/constants/post-type';
 
 const POSTS_PAGE_SIZE = '10';
 

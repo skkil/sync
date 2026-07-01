@@ -5,7 +5,6 @@ import com.skkil.sync.comment.dto.request.UpdateCommentRequest;
 import com.skkil.sync.comment.dto.response.CreateCommentResponse;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
 import com.skkil.sync.comment.exception.CommentNotFoundException;
-import com.skkil.sync.comment.exception.InvalidCommentException;
 import com.skkil.sync.comment.mapper.CommentMapper;
 import com.skkil.sync.comment.model.Comment;
 import com.skkil.sync.comment.repository.CommentRepository;
@@ -14,8 +13,7 @@ import com.skkil.sync.post.model.Post;
 import com.skkil.sync.post.service.PostDomainService;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,59 +48,21 @@ public class CommentService {
 
     List<Comment> comments = commentRepository.findByPost(post);
 
-    List<Comment> roots = new ArrayList<>();
-    Map<Long, List<Comment>> replies = new HashMap<>();
-    Map<Long, String> profileImageUrls = new HashMap<>();
+    Map<Long, URL> profileImageUrls =
+        mediaDomainService.generatePublicGetUrls(
+            comments, comment -> comment.getAuthor().getProfileImage());
 
-    for (Comment comment : comments) {
-      if (comment.isReply()) {
-        replies.computeIfAbsent(comment.getParent().getId(), k -> new ArrayList<>()).add(comment);
-      } else {
-        roots.add(comment);
-      }
-
-      Long authorId = comment.getAuthor().getId();
-      if (!profileImageUrls.containsKey(authorId)) {
-        String profileImageUrl =
-            mediaDomainService
-                .generatePublicGetUrl(comment.getAuthor().getProfileImage())
-                .toExternalForm();
-        profileImageUrls.put(authorId, profileImageUrl);
-      }
-    }
-
-    return commentMapper.toGetCommentsResponse(post, roots, replies, profileImageUrls);
+    return commentMapper.toGetCommentsResponse(post, comments, profileImageUrls);
   }
 
   @Transactional
   public CreateCommentResponse createComment(
-      Long authorId, Long postId, CreateCommentRequest request) {
+      Long authorId, String slug, CreateCommentRequest request) {
     User author = userDomainService.getUserReference(authorId);
-    Post post = postDomainService.getPost(postId);
-
-    Comment parent = null;
-    if (request.parentId() != null) {
-      parent =
-          commentRepository
-              .findById(request.parentId())
-              .orElseThrow(() -> new CommentNotFoundException(request.parentId()));
-
-      if (parent.isReply()) {
-        throw new InvalidCommentException("Replies cannot have replies.");
-      }
-
-      if (!postId.equals(parent.getPost().getId())) {
-        throw new InvalidCommentException("Reply target must match parent comment target.");
-      }
-    }
+    Post post = postDomainService.getPostBySlug(slug);
 
     Comment comment =
-        Comment.builder()
-            .author(author)
-            .post(post)
-            .parent(parent)
-            .content(request.content())
-            .build();
+        Comment.builder().author(author).post(post).content(request.content()).build();
 
     comment = commentRepository.save(comment);
     return new CreateCommentResponse(comment.getId());

@@ -7,6 +7,7 @@ export enum ErrorCode {
   MEDIA_UPLOAD_FAILED = 'MEDIA_UPLOAD_FAILED',
   MESSAGE_TO_SELF = 'MESSAGE_TO_SELF',
   PROJECT_NOT_FOUND = 'PROJECT_NOT_FOUND',
+  POST_NOT_FOUND = 'POST_NOT_FOUND',
 }
 
 export default class SyncError extends Error {

@@ -229,106 +229,6 @@ export const useUpdateComment = <
   return useMutation(getUpdateCommentMutationOptions(options), queryClient);
 };
 /**
- * Create Comment
- * @summary Create Comment
- */
-export type createCommentResponse201 = {
-  data: CreateCommentResponse;
-  status: 201;
-};
-
-export type createCommentResponseSuccess = createCommentResponse201 & {
-  headers: Headers;
-};
-export type createCommentResponse = createCommentResponseSuccess;
-
-export const getCreateCommentUrl = (postId: string) => {
-  return `/posts/${postId}/comments`;
-};
-
-export const createComment = async (
-  postId: string,
-  createCommentRequest: CreateCommentRequest,
-  options?: RequestInit,
-): Promise<createCommentResponse> => {
-  return api<createCommentResponse>(getCreateCommentUrl(postId), {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createCommentRequest),
-  });
-};
-
-export const getCreateCommentMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createComment>>,
-    TError,
-    { postId: string; data: CreateCommentRequest },
-    TContext
-  >;
-  request?: SecondParameter<typeof api>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createComment>>,
-  TError,
-  { postId: string; data: CreateCommentRequest },
-  TContext
-> => {
-  const mutationKey = ['createComment'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createComment>>,
-    { postId: string; data: CreateCommentRequest }
-  > = (props) => {
-    const { postId, data } = props ?? {};
-
-    return createComment(postId, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type CreateCommentMutationResult = NonNullable<
-  Awaited<ReturnType<typeof createComment>>
->;
-export type CreateCommentMutationBody = CreateCommentRequest;
-export type CreateCommentMutationError = ErrorType<unknown>;
-
-/**
- * @summary Create Comment
- */
-export const useCreateComment = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createComment>>,
-      TError,
-      { postId: string; data: CreateCommentRequest },
-      TContext
-    >;
-    request?: SecondParameter<typeof api>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof createComment>>,
-  TError,
-  { postId: string; data: CreateCommentRequest },
-  TContext
-> => {
-  return useMutation(getCreateCommentMutationOptions(options), queryClient);
-};
-/**
  * Get Post Comments
  * @summary Get Post Comments
  */
@@ -506,3 +406,104 @@ export function useGetPostComments<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Create Comment
+ * @summary Create Comment
+ */
+export type createCommentResponse201 = {
+  data: CreateCommentResponse;
+  status: 201;
+};
+
+export type createCommentResponseSuccess = createCommentResponse201 & {
+  headers: Headers;
+};
+export type createCommentResponse = createCommentResponseSuccess;
+
+export const getCreateCommentUrl = (slug: string) => {
+  return `/posts/${slug}/comments`;
+};
+
+export const createComment = async (
+  slug: string,
+  createCommentRequest: CreateCommentRequest,
+  options?: RequestInit,
+): Promise<createCommentResponse> => {
+  return api<createCommentResponse>(getCreateCommentUrl(slug), {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createCommentRequest),
+  });
+};
+
+export const getCreateCommentMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createComment>>,
+    TError,
+    { slug: string; data: CreateCommentRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createComment>>,
+  TError,
+  { slug: string; data: CreateCommentRequest },
+  TContext
+> => {
+  const mutationKey = ['createComment'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createComment>>,
+    { slug: string; data: CreateCommentRequest }
+  > = (props) => {
+    const { slug, data } = props ?? {};
+
+    return createComment(slug, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createComment>>
+>;
+export type CreateCommentMutationBody = CreateCommentRequest;
+export type CreateCommentMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create Comment
+ */
+export const useCreateComment = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createComment>>,
+      TError,
+      { slug: string; data: CreateCommentRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createComment>>,
+  TError,
+  { slug: string; data: CreateCommentRequest },
+  TContext
+> => {
+  return useMutation(getCreateCommentMutationOptions(options), queryClient);
+};

@@ -111,9 +111,9 @@ export default function PostEditor({
     });
   };
 
-  const showTitle = type !== PostType.Short;
+  const showTitle = type !== PostType.SHORT;
   const titlePlaceholder =
-    type === PostType.Question
+    type === PostType.QUESTION
       ? t('placeholders.title-question')
       : t('placeholders.title-long');
 
@@ -153,7 +153,7 @@ export default function PostEditor({
         <ScrollArea className="flex-1 min-h-0 max-h-screen">
           <EditorContent editor={editor} />
           {editor && <EditorBubbleMenu editor={editor} />}
-          {isEditorEmpty && type === PostType.Long && (
+          {isEditorEmpty && type === PostType.LONG && (
             <EditorTemplates
               locale={locale}
               onSelect={(template) => {

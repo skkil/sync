@@ -10,15 +10,11 @@ import org.springframework.restdocs.payload.RequestFieldsSnippet;
 public class CreateCommentRequestSnippets {
 
   public static CreateCommentRequest getCreateCommentRequest() {
-    return new CreateCommentRequest(1L, "Comment content");
+    return new CreateCommentRequest("Comment content");
   }
 
   public static RequestFieldsSnippet getCreateCommentRequestFields() {
     return requestFields(
-        fieldWithPath("parentId")
-            .type(JsonFieldType.NUMBER)
-            .description("Parent comment ID")
-            .optional(),
         fieldWithPath("content").type(JsonFieldType.STRING).description("Comment content"));
   }
 }

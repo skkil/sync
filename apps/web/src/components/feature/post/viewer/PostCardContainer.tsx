@@ -3,7 +3,8 @@
 import { useGetPostBySlug } from '@/api/__generated__/post/post';
 import PostCard from '@/components/feature/post/viewer/PostCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PostType } from '@/features/post/constants/post-type';
+
+import { PostType } from '../types/post';
 
 interface PostCardContainerProps {
   slug: string;

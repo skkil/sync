@@ -33,13 +33,13 @@ public class CommentController {
     return commentService.getPostComments(slug);
   }
 
-  @PostMapping("/posts/{postId}/comments")
+  @PostMapping("/posts/{slug}/comments")
   @ResponseStatus(HttpStatus.CREATED)
   public CreateCommentResponse createComment(
       @AuthenticationPrincipal AuthenticatedUser user,
-      @PathVariable Long postId,
+      @PathVariable String slug,
       @RequestBody @Validated CreateCommentRequest request) {
-    return commentService.createComment(user.userId(), postId, request);
+    return commentService.createComment(user.userId(), slug, request);
   }
 
   @PatchMapping("/comments/{commentId}")

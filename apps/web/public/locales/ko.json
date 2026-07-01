@@ -36,6 +36,21 @@
           "success": "신고가 접수되었습니다.",
           "error": "신고 접수에 실패했습니다."
         }
+      },
+      "comments": {
+        "title": "댓글",
+        "empty": "아직 댓글이 없습니다.",
+        "deleted": "삭제된 댓글입니다.",
+        "composer": {
+          "placeholder": "댓글을 입력하세요",
+          "submit": "댓글 작성"
+        },
+        "author-badge": "작성자"
+      },
+      "not-found": {
+        "title": "포스트를 찾을 수 없습니다",
+        "description": "요청하신 포스트가 존재하지 않거나 삭제되었습니다.",
+        "back": "홈으로 돌아가기"
       }
     },
     "projects": {

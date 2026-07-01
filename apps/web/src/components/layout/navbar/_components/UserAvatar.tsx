@@ -8,6 +8,7 @@ import {
 } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { useLogout } from '@/api/__generated__/auth/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -39,7 +40,15 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
 
   const t = useTranslations('components.navigation');
 
-  if (isPending) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // `useSession` can resolve synchronously from a client-only cache, which
+  // would make the very first client render diverge from the SSR output.
+  // Rendering the pending state until mounted keeps hydration in sync.
+  if (!mounted || isPending) {
     return (
       <Avatar className="flex items-center justify-center">
         <Spinner />

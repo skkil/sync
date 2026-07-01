@@ -161,14 +161,10 @@ CREATE TABLE comments (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     author_id BIGINT NOT NULL,
     post_id BIGINT NOT NULL,
-    parent_id BIGINT,
     content TEXT NOT NULL,
     deleted_at TIMESTAMPTZ,
     FOREIGN KEY(author_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY(post_id) REFERENCES posts(id),
-    FOREIGN KEY(parent_id) REFERENCES comments(id) ON DELETE
-    SET
-        NULL
+    FOREIGN KEY(post_id) REFERENCES posts(id)
 );
 
 CREATE TABLE user_follow_relationships (

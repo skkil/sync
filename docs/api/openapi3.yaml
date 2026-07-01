@@ -510,38 +510,6 @@ paths:
       responses:
         "204":
           description: "204"
-  /posts/{postId}/comments:
-    post:
-      tags:
-      - comment
-      summary: Create Comment
-      description: Create Comment
-      operationId: CreateComment
-      parameters:
-      - name: postId
-        in: path
-        description: Post ID
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateCommentRequest"
-            examples:
-              CreateComment:
-                value: "{\"parentId\":1,\"content\":\"Comment content\"}"
-      responses:
-        "201":
-          description: "201"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateCommentResponse"
-              examples:
-                CreateComment:
-                  value: "{\"id\":1}"
   /posts/{postId}/likes:
     put:
       tags:
@@ -627,12 +595,38 @@ paths:
                     :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
                     http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
                     :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
-                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\",\"replies\":[{\"id\":2,\"\
-                    author\":{\"id\":1,\"handle\":\"user-handle\",\"name\":\"User\
-                    \ Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
-                    ,\"isPostAuthor\":false},\"content\":\"Reply content\",\"isDeleted\"\
-                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
-                    2026-01-01T00:00:00Z\",\"replies\":[]}]}]}"
+                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\"}]}"
+    post:
+      tags:
+      - comment
+      summary: Create Comment
+      description: Create Comment
+      operationId: CreateComment
+      parameters:
+      - name: slug
+        in: path
+        description: Post Slug
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+            examples:
+              CreateComment:
+                value: "{\"content\":\"Comment content\"}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCommentResponse"
+              examples:
+                CreateComment:
+                  value: "{\"id\":1}"
   /preferences/me:
     get:
       tags:
@@ -1309,6 +1303,63 @@ components:
         handle:
           type: string
           description: 프로젝트 핸들
+    GetCommentsResponse:
+      title: GetCommentsResponse
+      required:
+      - comments
+      type: object
+      properties:
+        comments:
+          type: array
+          description: Comments
+          items:
+            required:
+            - createdAt
+            - id
+            - isDeleted
+            - updatedAt
+            type: object
+            properties:
+              createdAt:
+                type: string
+                description: Creation timestamp
+              isDeleted:
+                type: boolean
+                description: Is deleted
+              author:
+                required:
+                - handle
+                - id
+                - isPostAuthor
+                - name
+                type: object
+                properties:
+                  isPostAuthor:
+                    type: boolean
+                    description: Whether the author is the post author
+                  name:
+                    type: string
+                    description: Author name
+                  handle:
+                    type: string
+                    description: Author handle
+                  id:
+                    type: number
+                    description: Author user ID
+                  profileImageUrl:
+                    type: string
+                    description: Author profile image URL
+                    nullable: true
+              id:
+                type: number
+                description: Comment ID
+              content:
+                type: string
+                description: Comment content
+                nullable: true
+              updatedAt:
+                type: string
+                description: Update timestamp
     GetProjectResponse:
       title: GetProjectResponse
       required:
@@ -1895,73 +1946,6 @@ components:
         handle:
           type: string
           description: 생성된 프로젝트 핸들
-    GetCommentsResponse:
-      title: GetCommentsResponse
-      required:
-      - comments
-      type: object
-      properties:
-        comments:
-          type: array
-          description: Comments
-          items:
-            required:
-            - createdAt
-            - id
-            - isDeleted
-            - replies
-            - updatedAt
-            type: object
-            properties:
-              createdAt:
-                type: string
-                description: Creation timestamp
-              replies:
-                type: array
-                description: Replies
-                items:
-                  oneOf:
-                  - type: object
-                  - type: boolean
-                  - type: string
-                  - type: number
-              isDeleted:
-                type: boolean
-                description: Is deleted
-              author:
-                required:
-                - handle
-                - id
-                - isPostAuthor
-                - name
-                type: object
-                properties:
-                  isPostAuthor:
-                    type: boolean
-                    description: Whether the author is the post author
-                  name:
-                    type: string
-                    description: Author name
-                  handle:
-                    type: string
-                    description: Author handle
-                  id:
-                    type: number
-                    description: Author user ID
-                  profileImageUrl:
-                    type: string
-                    description: Author profile image URL
-                    nullable: true
-              id:
-                type: number
-                description: Comment ID
-              content:
-                type: string
-                description: Comment content
-                nullable: true
-              updatedAt:
-                type: string
-                description: Update timestamp
     GetUserPreferencesResponse:
       title: GetUserPreferencesResponse
       required:
@@ -2173,15 +2157,15 @@ components:
         email:
           type: string
           description: Email
-    AddTeammateRequest:
-      title: AddTeammateRequest
+    CreateCommentRequest:
+      title: CreateCommentRequest
       required:
-      - teammateHandle
+      - content
       type: object
       properties:
-        teammateHandle:
+        content:
           type: string
-          description: 추가할 팀원의 핸들
+          description: Comment content
     CreateCommentResponse:
       title: CreateCommentResponse
       required:
@@ -2191,6 +2175,15 @@ components:
         id:
           type: number
           description: Created comment ID
+    AddTeammateRequest:
+      title: AddTeammateRequest
+      required:
+      - teammateHandle
+      type: object
+      properties:
+        teammateHandle:
+          type: string
+          description: 추가할 팀원의 핸들
     GetPostActivitiesResponse:
       title: GetPostActivitiesResponse
       required:
@@ -2403,16 +2396,3 @@ components:
               id:
                 type: number
                 description: 프로젝트 ID
-    CreateCommentRequest:
-      title: CreateCommentRequest
-      required:
-      - content
-      type: object
-      properties:
-        content:
-          type: string
-          description: Comment content
-        parentId:
-          type: number
-          description: Parent comment ID
-          nullable: true

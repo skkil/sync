@@ -8,9 +8,4 @@
 export interface CreateCommentRequest {
   /** Comment content */
   content: string;
-  /**
-   * Parent comment ID
-   * @nullable
-   */
-  parentId?: number | null;
 }
