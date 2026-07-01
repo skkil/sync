@@ -6,11 +6,6 @@
  */
 
 export interface UpdatePostRequest {
-  /**
-   * Project ID
-   * @nullable
-   */
-  projectId?: number | null;
   /** Content */
   content: string;
 }

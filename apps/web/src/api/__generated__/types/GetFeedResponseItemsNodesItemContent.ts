@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetFeedResponseItemsNodesItemContentAuthor } from './GetFeedResponseItemsNodesItemContentAuthor';
+import type { GetFeedResponseItemsNodesItemContentProject } from './GetFeedResponseItemsNodesItemContentProject';
 
 /**
  * Node Content
@@ -16,6 +17,8 @@ export type GetFeedResponseItemsNodesItemContent = {
   author: GetFeedResponseItemsNodesItemContentAuthor;
   /** Whether the current user bookmarked this feed item */
   bookmarked: boolean;
+  /** Project Information */
+  project?: GetFeedResponseItemsNodesItemContentProject;
   /** Like Count */
   likeCount: number;
   /** Feed Item ID */

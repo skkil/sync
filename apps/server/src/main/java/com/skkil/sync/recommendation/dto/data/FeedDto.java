@@ -10,6 +10,8 @@ public record FeedDto(
     String authorName,
     Long authorProfileImageId,
     String content,
+    String projectHandle,
+    String projectName,
     Long likeCount,
     Long commentCount,
     Boolean bookmarked,

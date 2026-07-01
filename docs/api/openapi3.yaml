@@ -284,6 +284,10 @@ paths:
                               "profileImageUrl" : "https://example.com/profile.jpg"
                             },
                             "content" : "This is a feed item content",
+                            "project" : {
+                              "handle" : "project_handle",
+                              "name" : "name"
+                            },
                             "likeCount" : 10,
                             "commentCount" : 5,
                             "bookmarked" : true,
@@ -389,7 +393,7 @@ paths:
                 value: "{\"title\":\"title\",\"type\":\"SHORT\",\"content\":{\"text\"\
                   :\"This is a post content.\",\"json\":\"{\\\"text\\\": \\\"This\
                   \ is a post content.\\\"}\",\"mediaIds\":[1,2]},\"tags\":[\"java\"\
-                  ,\"spring\"],\"projectId\":1}"
+                  ,\"spring\"],\"project\":{\"handle\":\"project-handle\"}}"
       responses:
         "201":
           description: "201"
@@ -440,7 +444,7 @@ paths:
               $ref: "#/components/schemas/UpdatePostRequest"
             examples:
               UpdatePost:
-                value: "{\"projectId\":1,\"content\":\"This is a post content.\"}"
+                value: "{\"content\":\"This is a post content.\"}"
       responses:
         "204":
           description: "204"
@@ -1275,19 +1279,6 @@ components:
         email:
           type: string
           description: Email
-    UpdatePostRequest:
-      title: UpdatePostRequest
-      required:
-      - content
-      type: object
-      properties:
-        projectId:
-          type: number
-          description: Project ID
-          nullable: true
-        content:
-          type: string
-          description: Content
     GetProjectHandleAvailabilityResponse:
       title: GetProjectHandleAvailabilityResponse
       required:
@@ -1549,141 +1540,6 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    GetProjectTeammatesResponse:
-      title: GetProjectTeammatesResponse
-      required:
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - handle
-            - name
-            - role
-            type: object
-            properties:
-              role:
-                type: string
-                description: 팀원 역할
-                enum:
-                - ADMIN
-                - MEMBER
-              name:
-                type: string
-                description: 팀원 이름
-              handle:
-                type: string
-                description: 팀원 핸들
-              profileImageUrl:
-                type: string
-                description: 팀원 프로필 이미지 URL
-                nullable: true
-    GetFeedResponse:
-      title: GetFeedResponse
-      type: object
-      properties:
-        items:
-          required:
-          - nodes
-          - pageInfo
-          type: object
-          properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - author
-                    - bookmarked
-                    - commentCount
-                    - content
-                    - createdAt
-                    - id
-                    - likeCount
-                    - slug
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Created At
-                      author:
-                        required:
-                        - handle
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          handle:
-                            type: string
-                            description: Author Handle
-                          id:
-                            type: number
-                            description: Author ID
-                          profileImageUrl:
-                            type: string
-                            description: Author Profile Image URL
-                            nullable: true
-                        description: Author Information
-                      bookmarked:
-                        type: boolean
-                        description: Whether the current user bookmarked this feed
-                          item
-                      likeCount:
-                        type: number
-                        description: Like Count
-                      id:
-                        type: number
-                        description: Feed Item ID
-                      content:
-                        type: string
-                        description: Content
-                      slug:
-                        type: string
-                        description: Post Slug
-                      commentCount:
-                        type: number
-                        description: Comment Count
-                    description: Node Content
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
-                  type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
-                  type: string
-                  description: Start Cursor
-                  nullable: true
-              description: Page Info
     CreatePostRequest:
       title: CreatePostRequest
       required:
@@ -1691,6 +1547,15 @@ components:
       - type
       type: object
       properties:
+        project:
+          required:
+          - handle
+          type: object
+          properties:
+            handle:
+              type: string
+              description: 프로젝트 핸들
+          description: 프로젝트
         type:
           type: string
           description: Post Type
@@ -1701,10 +1566,6 @@ components:
         title:
           type: string
           description: Title
-          nullable: true
-        projectId:
-          type: number
-          description: 프로젝트 ID
           nullable: true
         content:
           required:
@@ -1739,6 +1600,38 @@ components:
             - type: boolean
             - type: string
             - type: number
+    GetProjectTeammatesResponse:
+      title: GetProjectTeammatesResponse
+      required:
+      - teammates
+      type: object
+      properties:
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - handle
+            - name
+            - role
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+                enum:
+                - ADMIN
+                - MEMBER
+              name:
+                type: string
+                description: 팀원 이름
+              handle:
+                type: string
+                description: 팀원 핸들
+              profileImageUrl:
+                type: string
+                description: 팀원 프로필 이미지 URL
+                nullable: true
     UpdateCommentRequest:
       title: UpdateCommentRequest
       required:
@@ -2078,6 +1971,122 @@ components:
         theme:
           type: string
           description: User theme preference
+    GetFeedResponse:
+      title: GetFeedResponse
+      type: object
+      properties:
+        items:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - author
+                    - bookmarked
+                    - commentCount
+                    - content
+                    - createdAt
+                    - id
+                    - likeCount
+                    - slug
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Created At
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Author Name
+                          handle:
+                            type: string
+                            description: Author Handle
+                          id:
+                            type: number
+                            description: Author ID
+                          profileImageUrl:
+                            type: string
+                            description: Author Profile Image URL
+                            nullable: true
+                        description: Author Information
+                      bookmarked:
+                        type: boolean
+                        description: Whether the current user bookmarked this feed
+                          item
+                      project:
+                        required:
+                        - handle
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Project Name
+                          handle:
+                            type: string
+                            description: Project Handle
+                        description: Project Information
+                      likeCount:
+                        type: number
+                        description: Like Count
+                      id:
+                        type: number
+                        description: Feed Item ID
+                      content:
+                        type: string
+                        description: Content
+                      slug:
+                        type: string
+                        description: Post Slug
+                      commentCount:
+                        type: number
+                        description: Comment Count
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     GetProfileResponse:
       title: GetProfileResponse
       required:
@@ -2335,6 +2344,15 @@ components:
               content:
                 type: string
                 description: Post Content
+    UpdatePostRequest:
+      title: UpdatePostRequest
+      required:
+      - content
+      type: object
+      properties:
+        content:
+          type: string
+          description: Content
     SearchTagsResponse:
       title: SearchTagsResponse
       required:

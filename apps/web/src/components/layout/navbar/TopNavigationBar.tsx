@@ -1,6 +1,5 @@
 'use client';
 
-import { PencilSimpleIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
@@ -49,18 +48,14 @@ function LeftSection({ showSidebarTrigger }: { showSidebarTrigger: boolean }) {
 function RightSection() {
   const t = useTranslations('components.navigation');
 
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
+
+  if (isPending) {
+    return <div className="flex items-center gap-1" />;
+  }
 
   return (
     <div className="flex items-center gap-1">
-      {isAuthenticated(session) && (
-        <Button asChild variant="ghost" size="icon" aria-label="새 포스트 작성">
-          <Link href="/posts/new">
-            <PencilSimpleIcon size={20} />
-          </Link>
-        </Button>
-      )}
-
       {isAuthenticated(session) && <NotificationsButton />}
 
       {isAuthenticated(session) ? (

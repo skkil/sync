@@ -4,6 +4,7 @@ import {
   ArrowLeftIcon,
   FolderSimpleIcon,
   GearIcon,
+  PencilIcon,
   RssIcon,
   UsersIcon,
 } from '@phosphor-icons/react';
@@ -22,7 +23,6 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { useCurrentProject } from '@/hooks/use-current-project';
 import ROUTES from '@/util/routes';
 
 import SidebarCloseButton from './SidebarCloseButton';
@@ -35,10 +35,9 @@ export default function ProjectSidebarContent({
   handle,
 }: ProjectSidebarContentProps) {
   const pathname = usePathname();
-  const { currentProject } = useCurrentProject();
   const { data } = useGetProjectByHandle(handle);
 
-  const projectName = data?.data.name ?? currentProject?.name ?? handle;
+  const projectName = data?.data.name ?? handle;
 
   const workspaceNavItems = [
     { label: 'Feed', href: `/projects/${handle}`, icon: RssIcon },
@@ -64,6 +63,18 @@ export default function ProjectSidebarContent({
           </div>
           <span className="truncate font-medium">{projectName}</span>
         </div>
+
+        <SidebarMenu>
+          <SidebarMenuButton
+            asChild
+            isActive={pathname === ROUTES.NEW_PROJECT_POST(handle)}
+          >
+            <Link href={ROUTES.NEW_PROJECT_POST(handle)}>
+              <PencilIcon />
+              Write a new post
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>

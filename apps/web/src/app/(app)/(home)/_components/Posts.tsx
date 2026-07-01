@@ -68,6 +68,7 @@ export default function Posts() {
             commentCount={post.content.commentCount}
             bookmarked={post.content.bookmarked}
             createdAt={post.content.createdAt}
+            project={post.content.project?.handle}
           />
         ))}
       </div>

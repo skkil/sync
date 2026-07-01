@@ -1,9 +1,9 @@
 'use client';
 
-import { CompassIcon, HouseIcon } from '@phosphor-icons/react';
+import { CompassIcon, HouseIcon, NotePencilIcon } from '@phosphor-icons/react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { useSearchMyProjects } from '@/api/__generated__/project/project';
 import {
@@ -18,7 +18,6 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { useCurrentProject } from '@/hooks/use-current-project';
 import { useSession } from '@/lib/auth/client';
 
 import SidebarCloseButton from './SidebarCloseButton';
@@ -26,6 +25,7 @@ import SidebarCloseButton from './SidebarCloseButton';
 const global = [
   { label: 'Home', href: '/', icon: HouseIcon },
   { label: 'Explore', href: '/explore', icon: CompassIcon },
+  { label: 'New Post', href: '/posts/new', icon: NotePencilIcon },
 ];
 
 const footer = [
@@ -36,17 +36,25 @@ const footer = [
 
 export default function PersonalSidebarContent() {
   const pathname = usePathname();
-  const router = useRouter();
   const [query] = useState('');
 
+  // `useSession` can resolve synchronously from its client-side cache before
+  // hydration, while SSR always renders a logged-out state. Gating on
+  // `mounted` keeps the first client render identical to the server-rendered
+  // HTML so the project list doesn't shift Radix's useId-based ids and cause
+  // a hydration mismatch.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { data: session } = useSession();
-  const { currentProject, setCurrentProject } = useCurrentProject();
   const { data } = useSearchMyProjects(
     { query },
-    { query: { enabled: !!session } },
+    { query: { enabled: mounted && !!session } },
   );
 
-  const projects = data?.data.projects ?? [];
+  const projects = mounted ? (data?.data.projects ?? []) : [];
 
   return (
     <>
@@ -87,20 +95,13 @@ export default function PersonalSidebarContent() {
           <SidebarGroupContent>
             <SidebarMenu>
               {projects.map((project) => {
-                const isActive = currentProject?.handle === project.handle;
+                const isActive = pathname === `/projects/${project.handle}`;
                 return (
                   <SidebarMenuItem key={project.id}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      onClick={() => {
-                        setCurrentProject({
-                          handle: project.handle,
-                          name: project.name,
-                        });
-                        router.push(`/projects/${project.handle}`);
-                      }}
-                    >
-                      {project.name}
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <Link href={`/projects/${project.handle}`}>
+                        {project.name}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );

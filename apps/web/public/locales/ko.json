@@ -984,6 +984,7 @@
         "content-question": "질문에 대한 자세한 내용을 입력하세요"
       },
       "submit": "게시하기",
+      "posting-to": "{project}에 게시",
       "messages": {
         "create-success": "게시글이 작성되었습니다.",
         "create-error": "게시글 작성에 실패했습니다."

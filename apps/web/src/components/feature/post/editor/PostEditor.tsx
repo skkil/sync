@@ -6,16 +6,15 @@ import StarterKit from '@tiptap/starter-kit';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PostType } from '@/features/post/constants/post-type';
-import { useCurrentProject } from '@/hooks/use-current-project';
 
 import { EditorBubbleMenu } from './components/EditorBubbleMenu';
 import { EditorTemplates } from './components/EditorTemplates';
-import { ProjectInput } from './components/ProjectInput';
 import { TagInput } from './components/TagInput';
 import { CommandsExtension } from './extensions/commands';
 import { ImageNode } from './extensions/nodes/image';
@@ -23,11 +22,15 @@ import { serialize } from './utils/serializer';
 
 interface PostEditorProps {
   type: PostType;
+  project?: {
+    handle: string;
+    name: string;
+  };
   onSubmit: (data: {
     title: string;
     type: PostType;
     tags: string[];
-    projectId: number | null;
+    project?: { handle: string };
     content: {
       json: string;
       text: string;
@@ -49,18 +52,16 @@ function getContentPlaceholder(
 
 export default function PostEditor({
   type: initialType,
+  project,
   onSubmit,
 }: PostEditorProps) {
   const t = useTranslations('components.editor');
   const tType = useTranslations('components.post.type');
   const locale = useLocale();
 
-  const { currentProject } = useCurrentProject();
-
   const [type, setType] = useState<PostType>(initialType);
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const [projectId, setProjectId] = useState<number | null>(null);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
 
   const editor = useEditor({
@@ -105,7 +106,7 @@ export default function PostEditor({
       title,
       type,
       tags,
-      projectId,
+      project: project ? { handle: project.handle } : undefined,
       content: serialize(editor),
     });
   };
@@ -119,6 +120,12 @@ export default function PostEditor({
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto py-12 flex flex-col gap-4">
+        {project && (
+          <Badge variant="secondary" className="w-fit">
+            {t('posting-to', { project: project.name })}
+          </Badge>
+        )}
+
         <Tabs
           value={type}
           onValueChange={(value) => {
@@ -161,13 +168,6 @@ export default function PostEditor({
       <Separator />
 
       <div className="px-6 py-3 flex flex-col gap-3 shrink-0">
-        <ProjectInput
-          projectId={projectId}
-          onChange={(id) => {
-            setProjectId(id);
-          }}
-          initialProject={currentProject}
-        />
         <TagInput tags={tags} onChange={setTags} />
         <div className="flex justify-end">
           <Button onClick={handleSubmit}>{t('submit')}</Button>

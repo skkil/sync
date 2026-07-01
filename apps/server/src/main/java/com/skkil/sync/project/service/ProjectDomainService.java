@@ -16,7 +16,7 @@ public class ProjectDomainService {
   }
 
   @Transactional
-  public Project getProject(Long projectId) {
-    return projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException());
+  public Project getProjectByHandle(String handle) {
+    return projectRepository.findByHandle(handle).orElseThrow(() -> new ProjectNotFoundException());
   }
 }

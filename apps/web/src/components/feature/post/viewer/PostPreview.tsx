@@ -5,6 +5,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { redirect } from 'next/navigation';
 
+import { useGetProjectByHandle } from '@/api/__generated__/project/project';
 import type { GetPostResponse } from '@/api/__generated__/types';
 import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +31,7 @@ interface PostPreviewProps {
   slug: string;
   type?: PostType;
   author: GetPostResponse['author'];
-  project?: GetPostResponse['project'];
+  project?: string;
   content: GetPostResponse['content'];
   likeCount: number;
   commentCount: number;
@@ -57,9 +58,15 @@ export default function PostPreview({
     immediatelyRender: false,
   });
 
+  const { data: projectData } = useGetProjectByHandle(project ?? '', {
+    query: {
+      enabled: !!project,
+    },
+  });
+
   const handleClickCard = () => {
-    if (project) {
-      redirect(ROUTES.PROJECT_POST(project.handle, slug));
+    if (projectData?.data) {
+      redirect(ROUTES.PROJECT_POST(projectData.data.handle, slug));
     } else {
       redirect(ROUTES.POST(slug));
     }
@@ -100,9 +107,15 @@ function PostPreviewHeader({
 }: {
   type?: PostType;
   author: GetPostResponse['author'];
-  project?: GetPostResponse['project'];
+  project?: string;
   createdAt: string;
 }) {
+  const { data: projectData } = useGetProjectByHandle(project ?? '', {
+    query: {
+      enabled: !!project,
+    },
+  });
+
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-2">
@@ -121,7 +134,9 @@ function PostPreviewHeader({
 
         {type && <PostTypeBadge type={type} />}
 
-        {project?.name && <Badge variant="secondary">{project.name}</Badge>}
+        {projectData?.data && (
+          <Badge variant="secondary">{projectData.data.name}</Badge>
+        )}
       </div>
 
       <DropdownMenu>

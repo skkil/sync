@@ -1,25 +1,13 @@
-import { createJSONStorage, persist } from 'zustand/middleware';
 import { createStore } from 'zustand/vanilla';
 
 import { ModalSlice, createModalSlice } from './slices/modal';
-import { ProjectSlice, createProjectSlice } from './slices/project';
 
-export type AppStore = ModalSlice & ProjectSlice;
+export type AppStore = ModalSlice;
 
 export const createAppStore = () => {
-  return createStore<AppStore>()(
-    persist(
-      (...a) => ({
-        ...createModalSlice(...a),
-        ...createProjectSlice(...a),
-      }),
-      {
-        name: 'app-store',
-        storage: createJSONStorage(() => sessionStorage),
-        partialize: (state) => ({ currentProject: state.currentProject }),
-      },
-    ),
-  );
+  return createStore<AppStore>()((...a) => ({
+    ...createModalSlice(...a),
+  }));
 };
 
 export type AppStoreType = ReturnType<typeof createAppStore>;

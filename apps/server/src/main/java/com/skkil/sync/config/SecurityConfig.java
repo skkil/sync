@@ -60,7 +60,8 @@ public class SecurityConfig {
                         "/users/**",
                         "/team-building/**",
                         "/projects/**",
-                        "/contests/**")
+                        "/contests/**",
+                        "/feed/**")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/providers/**", "/projects/**")
                     .authenticated()

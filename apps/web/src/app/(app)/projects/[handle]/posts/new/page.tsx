@@ -1,8 +1,14 @@
 'use client';
 
-import { redirect, useRouter, useSearchParams } from 'next/navigation';
+import {
+  redirect,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 
 import { useCreatePost } from '@/api/__generated__/post/post';
+import { useGetProjectByHandle } from '@/api/__generated__/project/project';
 import PostEditor from '@/components/feature/post/editor/PostEditor';
 import { PostType } from '@/features/post/constants/post-type';
 import { isAuthenticated, isOnboarded } from '@/lib/auth';
@@ -16,15 +22,17 @@ function getInitialPostType(value: string | null): PostType {
   return PostType.Long;
 }
 
-export default function CreatePostPage() {
+export default function CreateProjectPostPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { handle } = useParams<{ handle: string }>();
   const { data: session, isPending } = useSession();
+  const { data: projectData } = useGetProjectByHandle(handle);
 
   const { mutate: createPost } = useCreatePost({
     mutation: {
       onSuccess: ({ data }) => {
-        router.push(`/posts/${data.slug}`);
+        router.push(`/projects/${handle}/posts/${data.slug}`);
       },
     },
   });
@@ -43,12 +51,16 @@ export default function CreatePostPage() {
     <div className="h-full">
       <PostEditor
         type={getInitialPostType(searchParams.get('type'))}
-        onSubmit={({ title, type, tags, content }) => {
+        project={
+          projectData ? { handle, name: projectData.data.name } : undefined
+        }
+        onSubmit={({ title, type, tags, project, content }) => {
           createPost({
             data: {
               type,
               title,
               tags,
+              project,
               content: {
                 json: content.json,
                 text: content.text,

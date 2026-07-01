@@ -12,6 +12,7 @@ public record GetFeedResponse(CursorPaginationResponse<FeedItem> items) {
       String slug,
       Author author,
       String content,
+      Project project,
       Long likeCount,
       Long commentCount,
       boolean bookmarked,
@@ -19,4 +20,6 @@ public record GetFeedResponse(CursorPaginationResponse<FeedItem> items) {
 
   @Builder
   public static record Author(Long id, String handle, String name, String profileImageUrl) {}
+
+  public static record Project(String handle, String name) {}
 }
