@@ -100,7 +100,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
                 slug={post.content.slug}
                 type={post.content.type as PostType}
                 author={post.content.author}
-                project={post.content.project}
+                project={post.content.project?.handle}
                 content={{ json: post.content.content, media: [] }}
                 likeCount={0}
                 commentCount={0}
