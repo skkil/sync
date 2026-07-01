@@ -1,7 +1,7 @@
 'use client';
 
 import { DotsThreeIcon, SirenIcon } from '@phosphor-icons/react';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -25,6 +25,7 @@ import { PostType } from '../types/post';
 import { PostCardActions } from './components/PostCardActions';
 import { PostTypeBadge } from './components/PostTypeBadge';
 import { ReportPostDialog } from './components/ReportPostDialog';
+import { PostBody } from './variants/PostBody';
 
 interface PostCardProps {
   id: number;
@@ -71,7 +72,8 @@ export default function PostCard({
       <CardContent
         className={type === PostType.SHORT ? 'space-y-3' : 'space-y-4'}
       >
-        <EditorContent
+        <PostBody
+          type={type}
           editor={editor}
           className={type === PostType.LONG ? 'line-clamp-4' : undefined}
         />
