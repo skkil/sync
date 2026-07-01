@@ -4,16 +4,16 @@ import { redirect, useRouter, useSearchParams } from 'next/navigation';
 
 import { useCreatePost } from '@/api/__generated__/post/post';
 import PostEditor from '@/components/feature/post/editor/PostEditor';
-import { PostType } from '@/features/post/constants/post-type';
+import { PostType } from '@/components/feature/post/types/post';
 import { isAuthenticated, isOnboarded } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
 
 function getInitialPostType(value: string | null): PostType {
-  if (value === PostType.Short || value === PostType.Question) {
+  if (value === PostType.SHORT || value === PostType.QUESTION) {
     return value;
   }
 
-  return PostType.Long;
+  return PostType.LONG;
 }
 
 export default function CreatePostPage() {

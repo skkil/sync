@@ -18,10 +18,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { RelativeTime } from '@/components/ui/relative-time';
-import { PostType } from '@/features/post/constants/post-type';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
 import { deserialize } from '../editor/utils/serializer';
+import { PostType } from '../types/post';
 import { PostCardActions } from './components/PostCardActions';
 import { PostTypeBadge } from './components/PostTypeBadge';
 import { ReportPostDialog } from './components/ReportPostDialog';
@@ -69,11 +69,11 @@ export default function PostCard({
       </CardHeader>
 
       <CardContent
-        className={type === PostType.Short ? 'space-y-3' : 'space-y-4'}
+        className={type === PostType.SHORT ? 'space-y-3' : 'space-y-4'}
       >
         <EditorContent
           editor={editor}
-          className={type === PostType.Long ? 'line-clamp-4' : undefined}
+          className={type === PostType.LONG ? 'line-clamp-4' : undefined}
         />
         <PostCardActions
           postId={id}
