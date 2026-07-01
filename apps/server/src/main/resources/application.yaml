@@ -30,6 +30,7 @@ spring:
   jackson:
     mapper:
       accept-case-insensitive-enums: true
+    time-zone: UTC
 
   security:
     oauth2:

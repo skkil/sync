@@ -5,6 +5,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { redirect } from 'next/navigation';
 
+import { useGetProjectByHandle } from '@/api/__generated__/project/project';
 import type { GetPostResponse } from '@/api/__generated__/types';
 import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { RelativeTime } from '@/components/ui/relative-time';
 import { PostType } from '@/features/post/constants/post-type';
+import ROUTES from '@/util/routes';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
 import { deserialize } from '../editor/utils/serializer';
@@ -29,7 +31,7 @@ interface PostPreviewProps {
   slug: string;
   type?: PostType;
   author: GetPostResponse['author'];
-  project?: GetPostResponse['project'];
+  project?: string;
   content: GetPostResponse['content'];
   likeCount: number;
   commentCount: number;
@@ -56,8 +58,18 @@ export default function PostPreview({
     immediatelyRender: false,
   });
 
+  const { data: projectData } = useGetProjectByHandle(project ?? '', {
+    query: {
+      enabled: !!project,
+    },
+  });
+
   const handleClickCard = () => {
-    redirect(`/posts/${slug}`);
+    if (projectData?.data) {
+      redirect(ROUTES.PROJECT_POST(projectData.data.handle, slug));
+    } else {
+      redirect(ROUTES.POST(slug));
+    }
   };
 
   return (
@@ -95,9 +107,15 @@ function PostPreviewHeader({
 }: {
   type?: PostType;
   author: GetPostResponse['author'];
-  project?: GetPostResponse['project'];
+  project?: string;
   createdAt: string;
 }) {
+  const { data: projectData } = useGetProjectByHandle(project ?? '', {
+    query: {
+      enabled: !!project,
+    },
+  });
+
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-2">
@@ -116,7 +134,9 @@ function PostPreviewHeader({
 
         {type && <PostTypeBadge type={type} />}
 
-        {project?.name && <Badge variant="secondary">{project.name}</Badge>}
+        {projectData?.data && (
+          <Badge variant="secondary">{projectData.data.name}</Badge>
+        )}
       </div>
 
       <DropdownMenu>

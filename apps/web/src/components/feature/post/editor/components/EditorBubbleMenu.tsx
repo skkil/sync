@@ -65,12 +65,17 @@ export function EditorBubbleMenu({ editor }: EditorBubbleMenuProps) {
     <BubbleMenu
       editor={editor}
       className="flex items-center gap-0.5 rounded-lg border bg-popover p-1 shadow-lg"
-      shouldShow={({ editor, view }) => {
+      shouldShow={({ editor, view, state }) => {
         if (!view.hasFocus()) {
           return false;
         }
 
         if (editor.isActive(NodeType.Image)) {
+          return false;
+        }
+
+        const { empty } = state.selection;
+        if (empty) {
           return false;
         }
 

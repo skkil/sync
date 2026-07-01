@@ -13,6 +13,21 @@ interface ErrorResponse {
   code: ErrorCode;
 }
 
+async function invalidateClientSessionIfAuthenticated() {
+  const sessionRes = await fetch('/api/auth/get-session', {
+    credentials: 'include',
+  });
+
+  const session = sessionRes.ok ? await sessionRes.json() : null;
+  if (session) {
+    await fetch('/api/auth/sign-out', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    window.location.href = '/auth/login';
+  }
+}
+
 export const server = ky.extend({
   prefixUrl: env.NEXT_PUBLIC_BACKEND_URL,
   credentials: 'include',
@@ -44,7 +59,15 @@ export const server = ky.extend({
       async (error) => {
         const { response } = error;
 
-        if (response.status === 401 || response.status === 403) {
+        if (response.status === 401) {
+          if (!isServer()) {
+            await invalidateClientSessionIfAuthenticated();
+          }
+
+          return error;
+        }
+
+        if (response.status === 403) {
           return error;
         }
 

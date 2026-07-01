@@ -36,11 +36,11 @@ public interface PostMapper {
   }
 
   default GetPostResponse.Project toGetPostProject(PostDto postDto) {
-    if (postDto.projectId() == null) {
+    if (postDto.projectHandle() == null) {
       return null;
     }
 
-    return new GetPostResponse.Project(postDto.projectId(), postDto.projectName());
+    return new GetPostResponse.Project(postDto.projectHandle(), postDto.projectName());
   }
 
   default GetPostsResponse.Author toPostAuthor(PostDto postDto) {
@@ -48,10 +48,10 @@ public interface PostMapper {
   }
 
   default GetPostsResponse.Project toPostProject(PostDto postDto) {
-    if (postDto.projectId() == null) {
+    if (postDto.projectHandle() == null) {
       return null;
     }
 
-    return new GetPostsResponse.Project(postDto.projectId(), postDto.projectName());
+    return new GetPostsResponse.Project(postDto.projectHandle(), postDto.projectName());
   }
 }

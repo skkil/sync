@@ -26,6 +26,10 @@ public interface FeedMapper {
         .slug(feedDto.slug())
         .author(author)
         .content(feedDto.content())
+        .project(
+            feedDto.projectHandle() == null
+                ? null
+                : new GetFeedResponse.Project(feedDto.projectHandle(), feedDto.projectName()))
         .likeCount(feedDto.likeCount())
         .commentCount(feedDto.commentCount())
         .bookmarked(Boolean.TRUE.equals(feedDto.bookmarked()))

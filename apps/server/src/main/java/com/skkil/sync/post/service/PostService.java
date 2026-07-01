@@ -83,8 +83,8 @@ public class PostService {
             .title(request.title())
             .content(request.content().json());
 
-    if (request.projectId() != null) {
-      Project project = projectDomainService.getProject(request.projectId());
+    if (request.project() != null) {
+      Project project = projectDomainService.getProjectByHandle(request.project().handle());
       postBuilder.project(project);
     }
 
@@ -112,13 +112,6 @@ public class PostService {
         postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 
     post.updateContent(request.content());
-
-    if (request.projectId() == null) {
-      post.unlinkProject();
-    } else {
-      Project project = projectDomainService.getProject(request.projectId());
-      post.linkProject(project);
-    }
   }
 
   @Transactional

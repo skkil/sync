@@ -6,7 +6,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import com.epages.restdocs.apispec.FieldDescriptors;
 import com.skkil.sync.bookmark.dto.response.GetBookmarkedPostsResponse;
 import com.skkil.sync.common.util.pagination.snippets.CursorPaginationResponseSnippets;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
@@ -27,8 +28,8 @@ public class GetBookmarkedPostsResponseSnippets {
             10L,
             5L,
             true,
-            LocalDateTime.of(2026, 5, 4, 12, 0, 0),
-            LocalDateTime.of(2026, 5, 5, 12, 0, 0));
+            OffsetDateTime.of(2026, 5, 4, 12, 0, 0, 0, ZoneOffset.UTC),
+            OffsetDateTime.of(2026, 5, 5, 12, 0, 0, 0, ZoneOffset.UTC));
 
     return new GetBookmarkedPostsResponse(CursorPaginationResponseSnippets.of(List.of(post)));
   }

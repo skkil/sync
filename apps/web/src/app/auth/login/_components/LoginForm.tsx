@@ -59,8 +59,8 @@ export default function LoginForm() {
         },
       },
       {
-        onSuccess: () => {
-          refetchSession();
+        onSuccess: async () => {
+          await refetchSession();
           router.push('/');
         },
         onError: () => {

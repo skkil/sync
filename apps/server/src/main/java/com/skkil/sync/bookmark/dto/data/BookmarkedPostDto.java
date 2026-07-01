@@ -1,12 +1,12 @@
 package com.skkil.sync.bookmark.dto.data;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record BookmarkedPostDto(
     Long id,
     String slug,
     Long bookmarkId,
-    LocalDateTime bookmarkedAt,
+    OffsetDateTime bookmarkedAt,
     Long authorId,
     String authorHandle,
     String authorName,
@@ -15,5 +15,5 @@ public record BookmarkedPostDto(
     Long likeCount,
     Long commentCount,
     Boolean bookmarked,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt) {}
+    OffsetDateTime createdAt,
+    OffsetDateTime updatedAt) {}

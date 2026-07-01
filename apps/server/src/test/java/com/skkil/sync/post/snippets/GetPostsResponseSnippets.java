@@ -17,7 +17,7 @@ public class GetPostsResponseSnippets {
 
   public static GetPostsResponse getGetPostsResponse() {
     GetPostsResponse.Author author = new GetPostsResponse.Author("User", "user-handle");
-    GetPostsResponse.Project project = new GetPostsResponse.Project(1L, "Project");
+    GetPostsResponse.Project project = new GetPostsResponse.Project("project-handle", "Project");
 
     GetPostsResponse.Post post =
         new GetPostsResponse.Post(
@@ -27,7 +27,7 @@ public class GetPostsResponseSnippets {
             author,
             project,
             "Post Content",
-            DateTimeTestUtils.defaultTestLocalDateTime());
+            DateTimeTestUtils.defaultTestOffsetDateTime());
 
     return new GetPostsResponse(CursorPaginationResponseSnippets.of(List.of(post)));
   }
@@ -64,11 +64,8 @@ public class GetPostsResponseSnippets {
     fields =
         fields.andWithPrefix(
             "posts.nodes[].content.project",
-            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Project ID").optional(),
-            fieldWithPath(".name")
-                .type(JsonFieldType.STRING)
-                .description("Project Name")
-                .optional());
+            fieldWithPath(".handle").type(JsonFieldType.STRING).description("Project Handle"),
+            fieldWithPath(".name").type(JsonFieldType.STRING).description("Project Name"));
 
     return responseFields(fields.getFieldDescriptors());
   }

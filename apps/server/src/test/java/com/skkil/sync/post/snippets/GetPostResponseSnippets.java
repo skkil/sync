@@ -18,7 +18,7 @@ public class GetPostResponseSnippets {
         GetPostResponse.Author.builder().name("Author Name").handle("author-handle").build();
 
     GetPostResponse.Project project =
-        GetPostResponse.Project.builder().id(1L).name("Project Name").build();
+        GetPostResponse.Project.builder().handle("project-handle").name("Project Name").build();
 
     GetPostResponse.Media media =
         GetPostResponse.Media.builder().id(1L).url("https://example.com/media.png").build();
@@ -36,7 +36,7 @@ public class GetPostResponseSnippets {
         .likeCount(1L)
         .commentCount(1L)
         .bookmarked(true)
-        .createdAt(DateTimeTestUtils.defaultTestLocalDateTime())
+        .createdAt(DateTimeTestUtils.defaultTestOffsetDateTime())
         .build();
   }
 
@@ -55,11 +55,8 @@ public class GetPostResponseSnippets {
             .type(JsonFieldType.OBJECT)
             .description("Project Information")
             .optional(),
-        fieldWithPath("project.id").type(JsonFieldType.NUMBER).description("Project ID").optional(),
-        fieldWithPath("project.name")
-            .type(JsonFieldType.STRING)
-            .description("Project Name")
-            .optional(),
+        fieldWithPath("project.handle").type(JsonFieldType.STRING).description("Project Handle"),
+        fieldWithPath("project.name").type(JsonFieldType.STRING).description("Project Name"),
         fieldWithPath("content").type(JsonFieldType.OBJECT).description("Post Content"),
         fieldWithPath("content.json").type(JsonFieldType.STRING).description("Post Content JSON"),
         fieldWithPath("content.media")

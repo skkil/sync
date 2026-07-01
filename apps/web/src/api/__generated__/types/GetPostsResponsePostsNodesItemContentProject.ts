@@ -9,14 +9,8 @@
  * Project Information
  */
 export type GetPostsResponsePostsNodesItemContentProject = {
-  /**
-   * Project Name
-   * @nullable
-   */
-  name?: string | null;
-  /**
-   * Project ID
-   * @nullable
-   */
-  id?: number | null;
+  /** Project Name */
+  name: string;
+  /** Project Handle */
+  handle: string;
 };

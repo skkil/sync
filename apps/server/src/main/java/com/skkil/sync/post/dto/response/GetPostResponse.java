@@ -2,7 +2,7 @@ package com.skkil.sync.post.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.skkil.sync.post.model.PostType;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.Builder;
 import org.jspecify.annotations.Nullable;
@@ -19,13 +19,13 @@ public record GetPostResponse(
     Long likeCount,
     Long commentCount,
     boolean bookmarked,
-    LocalDateTime createdAt) {
+    OffsetDateTime createdAt) {
 
   @Builder
   public static record Author(String name, String handle) {}
 
   @Builder
-  public static record Project(Long id, String name) {}
+  public static record Project(String handle, String name) {}
 
   @Builder
   public static record Content(String json, List<Media> media) {}

@@ -100,14 +100,6 @@ public class Post extends BaseEntity {
     this.tags.removeIf(postTag -> postTag.getTag().getName().equals(tag.getName()));
   }
 
-  public void linkProject(Project project) {
-    this.project = project;
-  }
-
-  public void unlinkProject() {
-    this.project = null;
-  }
-
   public boolean isVisible() {
     return visibility == PostVisibility.VISIBLE;
   }
