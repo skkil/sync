@@ -14,4 +14,5 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
   },
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

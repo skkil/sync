@@ -5,10 +5,11 @@
   "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "concurrently \"orval --config orval.config.ts --watch\" \"next dev\"",
-    "build": "rm -rf ./src/api/__generated__ && orval --config orval.config.ts && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
+    "orval": "rm -rf ./src/api/__generated__ && orval --config orval.config.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

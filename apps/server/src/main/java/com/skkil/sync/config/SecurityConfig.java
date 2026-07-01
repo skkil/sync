@@ -3,6 +3,7 @@ package com.skkil.sync.config;
 import com.skkil.sync.common.security.GlobalPermissionEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,15 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
+
+  @Bean
+  @Order(Ordered.HIGHEST_PRECEDENCE)
+  SecurityFilterChain actuatorSecurityFilterChain(HttpSecurity http) throws Exception {
+    return http.securityMatcher("/actuator/**")
+        .authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
+        .csrf(csrf -> csrf.disable())
+        .build();
+  }
 
   @Bean
   @Order(2)

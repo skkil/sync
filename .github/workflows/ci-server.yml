@@ -19,7 +19,7 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "25"
-      - run: ./scripts/ci/server.sh
+      - run: ./scripts/ci/build-server.sh
       - name: Check for formatting issues
         run: |
           if [[ -n $(git status --porcelain) ]]; then

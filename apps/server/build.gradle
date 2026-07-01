@@ -224,6 +224,8 @@ tasks.named('asciidoctor') {
 
 spotless {
 	java {
+		targetExclude("**/build/generated/**")
+
 		importOrder()
 		removeUnusedImports()
 		forbidWildcardImports()

@@ -74,13 +74,16 @@ spring:
         config.enabled: true
 
 app:
-  cors.allowed-origins: http://localhost:3000
+  cors.allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000}
   oauth2:
-    frontend-redirect-uri: http://localhost:3000
+    frontend-redirect-uri: ${APP_OAUTH2_FRONTEND_REDIRECT_URI:http://localhost:3000}
   slack:
     webhook-url: ${SLACK_WEBHOOK_URL:}
 
 management:
+  server:
+    port: 8081
+
   observations:
     annotations:
       enabled: true
@@ -98,6 +101,12 @@ management:
     metrics:
       export:
         enabled: ${ENABLE_TELEMETRY:false}
+
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
 
   endpoints:
     web:

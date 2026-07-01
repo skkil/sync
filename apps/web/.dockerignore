@@ -1,0 +1,7 @@
+.next/
+node_modules/
+.git/
+.gitignore
+.env.local
+*.md
+.storybook/
