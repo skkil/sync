@@ -10,10 +10,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
 
-import {
-  useCreateProject,
-  useGetProjectHandleAvailability,
-} from '@/api/__generated__/project/project';
+import { useGetProjectHandleAvailability } from '@/api/__generated__/project/project';
+import { useCreateProject } from '@/components/feature/project/hooks/useCreateProject';
 import { Button } from '@/components/ui/button';
 import {
   Card,
