@@ -1,7 +1,7 @@
 'use client';
 
 import { DotsThreeIcon } from '@phosphor-icons/react';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { redirect } from 'next/navigation';
 
@@ -18,13 +18,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { RelativeTime } from '@/components/ui/relative-time';
-import { PostType } from '@/features/post/constants/post-type';
 import ROUTES from '@/util/routes';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
 import { deserialize } from '../editor/utils/serializer';
+import { PostType } from '../types/post';
 import { PostCardActions } from './components/PostCardActions';
 import { PostTypeBadge } from './components/PostTypeBadge';
+import { PostBody } from './variants/PostBody';
 
 interface PostPreviewProps {
   id: number;
@@ -84,9 +85,10 @@ export default function PostPreview({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <EditorContent
+        <PostBody
+          type={type}
           editor={editor}
-          className={type === PostType.Long ? 'line-clamp-6' : undefined}
+          className={type === PostType.LONG ? 'line-clamp-6' : undefined}
         />
         <PostCardActions
           postId={id}

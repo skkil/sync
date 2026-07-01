@@ -11,8 +11,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PostType } from '@/features/post/constants/post-type';
 
+import { PostType } from '../types/post';
 import { EditorBubbleMenu } from './components/EditorBubbleMenu';
 import { EditorTemplates } from './components/EditorTemplates';
 import { TagInput } from './components/TagInput';
@@ -45,8 +45,8 @@ function getContentPlaceholder(
   t: ReturnType<typeof useTranslations<'components.editor'>>,
   type: PostType,
 ): string {
-  if (type === PostType.Short) return t('placeholders.content-short');
-  if (type === PostType.Question) return t('placeholders.content-question');
+  if (type === PostType.SHORT) return t('placeholders.content-short');
+  if (type === PostType.QUESTION) return t('placeholders.content-question');
   return t('placeholders.content-long');
 }
 
@@ -111,9 +111,9 @@ export default function PostEditor({
     });
   };
 
-  const showTitle = type !== PostType.Short;
+  const showTitle = type !== PostType.SHORT;
   const titlePlaceholder =
-    type === PostType.Question
+    type === PostType.QUESTION
       ? t('placeholders.title-question')
       : t('placeholders.title-long');
 
@@ -153,7 +153,7 @@ export default function PostEditor({
         <ScrollArea className="flex-1 min-h-0 max-h-screen">
           <EditorContent editor={editor} />
           {editor && <EditorBubbleMenu editor={editor} />}
-          {isEditorEmpty && type === PostType.Long && (
+          {isEditorEmpty && type === PostType.LONG && (
             <EditorTemplates
               locale={locale}
               onSelect={(template) => {

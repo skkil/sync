@@ -13,8 +13,7 @@ public record GetCommentsResponse(List<Comment> comments) {
       String content,
       boolean isDeleted,
       Instant createdAt,
-      Instant updatedAt,
-      List<Comment> replies) {}
+      Instant updatedAt) {}
 
   @Builder
   public record Author(

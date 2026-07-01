@@ -18,7 +18,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'sync',
+  title: {
+    default: 'sync',
+    template: '%s | sync',
+  },
   description: '',
 };
 

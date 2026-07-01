@@ -6,11 +6,11 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 import { useGetPostsByProjectInfinite } from '@/api/__generated__/post/post';
+import { PostType } from '@/components/feature/post/types/post';
 import PostPreview from '@/components/feature/post/viewer/PostPreview';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
-import { PostType } from '@/features/post/constants/post-type';
 import ROUTES from '@/util/routes';
 
 import AddTeammatePopover from './AddTeammatePopover';

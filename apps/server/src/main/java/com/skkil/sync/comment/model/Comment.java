@@ -26,10 +26,6 @@ public class Comment extends BaseEntity {
   @JoinColumn(name = "post_id", nullable = false)
   private Post post;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "parent_id")
-  private Comment parent;
-
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
@@ -39,19 +35,14 @@ public class Comment extends BaseEntity {
   protected Comment() {}
 
   @Builder
-  public Comment(User author, Post post, Comment parent, String content) {
+  public Comment(User author, Post post, String content) {
     this.author = author;
     this.post = post;
-    this.parent = parent;
     this.content = content;
   }
 
   public boolean isDeleted() {
     return deletedAt != null;
-  }
-
-  public boolean isReply() {
-    return parent != null;
   }
 
   public void updateContent(String content) {

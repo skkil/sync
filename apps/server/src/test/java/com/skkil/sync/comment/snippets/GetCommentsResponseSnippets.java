@@ -2,7 +2,6 @@ package com.skkil.sync.comment.snippets;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 
 import com.epages.restdocs.apispec.FieldDescriptors;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
@@ -23,15 +22,6 @@ public class GetCommentsResponseSnippets {
             .isPostAuthor(false)
             .build();
 
-    GetCommentsResponse.Comment reply =
-        new GetCommentsResponse.Comment(
-            2L,
-            author,
-            "Reply content",
-            false,
-            Instant.parse("2026-01-01T00:00:00Z"),
-            Instant.parse("2026-01-01T00:00:00Z"),
-            List.of());
     GetCommentsResponse.Comment comment =
         new GetCommentsResponse.Comment(
             1L,
@@ -39,8 +29,7 @@ public class GetCommentsResponseSnippets {
             "Comment content",
             false,
             Instant.parse("2026-01-01T00:00:00Z"),
-            Instant.parse("2026-01-01T00:00:00Z"),
-            List.of(reply));
+            Instant.parse("2026-01-01T00:00:00Z"));
 
     return new GetCommentsResponse(List.of(comment));
   }
@@ -62,10 +51,7 @@ public class GetCommentsResponseSnippets {
             fieldWithPath(".createdAt")
                 .type(JsonFieldType.STRING)
                 .description("Creation timestamp"),
-            fieldWithPath(".updatedAt").type(JsonFieldType.STRING).description("Update timestamp"),
-            // TODO: Spring REST Docs does not support recursive field descriptors, need to
-            // implement custom handling for replies
-            subsectionWithPath(".replies").type(JsonFieldType.ARRAY).description("Replies"));
+            fieldWithPath(".updatedAt").type(JsonFieldType.STRING).description("Update timestamp"));
 
     fields =
         fields.andWithPrefix(

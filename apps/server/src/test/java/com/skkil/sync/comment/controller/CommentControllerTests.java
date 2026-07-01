@@ -88,17 +88,17 @@ class CommentControllerTests {
   @DisplayName("[createComment] API 문서화 테스트")
   @WithAuthenticatedUser
   void createComment() throws Exception {
-    Long postId = 1L;
+    String slug = "test-post";
     AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
     CreateCommentRequest request = CreateCommentRequestSnippets.getCreateCommentRequest();
     CreateCommentResponse response = CreateCommentResponseSnippets.getCreateCommentResponse();
 
-    when(commentService.createComment(eq(user.userId()), eq(postId), eq(request)))
+    when(commentService.createComment(eq(user.userId()), eq(slug), eq(request)))
         .thenReturn(response);
 
     mockMvc
         .perform(
-            post("/posts/{postId}/comments", postId)
+            post("/posts/{slug}/comments", slug)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
@@ -114,7 +114,7 @@ class CommentControllerTests {
                 preprocessRequest(modifyHeaders().set("Content-Type", "application/json")),
                 null,
                 Function.identity(),
-                pathParameters(parameterWithName("postId").description("Post ID")),
+                pathParameters(parameterWithName("slug").description("Post Slug")),
                 CreateCommentRequestSnippets.getCreateCommentRequestFields(),
                 CreateCommentResponseSnippets.getCreateCommentResponseFields()));
   }

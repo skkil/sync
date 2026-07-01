@@ -5,13 +5,10 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { GetCommentsResponseCommentsItemAuthor } from './GetCommentsResponseCommentsItemAuthor';
-import type { GetCommentsResponseCommentsItemRepliesItem } from './GetCommentsResponseCommentsItemRepliesItem';
 
 export type GetCommentsResponseCommentsItem = {
   /** Creation timestamp */
   createdAt: string;
-  /** Replies */
-  replies: GetCommentsResponseCommentsItemRepliesItem[];
   /** Is deleted */
   isDeleted: boolean;
   author?: GetCommentsResponseCommentsItemAuthor;

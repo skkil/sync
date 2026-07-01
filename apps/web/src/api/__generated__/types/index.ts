@@ -27,7 +27,6 @@ export * from './GetBookmarkedPostsResponsePostsPageInfo';
 export * from './GetCommentsResponse';
 export * from './GetCommentsResponseCommentsItem';
 export * from './GetCommentsResponseCommentsItemAuthor';
-export * from './GetCommentsResponseCommentsItemRepliesItem';
 export * from './GetFeedResponse';
 export * from './GetFeedResponseItems';
 export * from './GetFeedResponseItemsNodesItem';
