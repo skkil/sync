@@ -1,4 +1,4 @@
-import TopNavigationBar from '@/components/layout/nav/top/TopNavigationBar';
+import TopNavigationBar from '@/components/layout/navbar/TopNavigationBar';
 import AppSidebar from '@/components/layout/sidebar/AppSidebar';
 import ProjectContextSync from '@/components/layout/sidebar/ProjectContextSync';
 import SidebarOverlay from '@/components/layout/sidebar/SidebarOverlay';

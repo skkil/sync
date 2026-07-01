@@ -7,7 +7,6 @@ import {
   UserIcon,
 } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { useLogout } from '@/api/__generated__/auth/auth';
@@ -23,6 +22,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { ModalType } from '@/constants/modal';
 import { useModal } from '@/hooks/store';
+import { isAuthenticated } from '@/lib/auth';
 import { signOut, useSession } from '@/lib/auth/client';
 
 interface UserAvatarProps {
@@ -47,12 +47,8 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
     );
   }
 
-  if (!session || !session.user) {
-    return (
-      <Link href="/auth/login">
-        <Button variant="ghost">{t('login')}</Button>
-      </Link>
-    );
+  if (!isAuthenticated(session)) {
+    return null;
   }
 
   const menu = [
