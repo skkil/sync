@@ -43,7 +43,8 @@
         "deleted": "삭제된 댓글입니다.",
         "composer": {
           "placeholder": "댓글을 입력하세요",
-          "submit": "댓글 작성"
+          "submit": "댓글 작성",
+          "login": "로그인하고 댓글 작성하기"
         },
         "author-badge": "작성자"
       },
@@ -959,6 +960,20 @@
     }
   },
   "modals": {
+    "auth-required": {
+      "title": "로그인이 필요합니다",
+      "descriptions": {
+        "like": "좋아요를 남기고 관심 있는 글을 표현하려면 로그인하세요.",
+        "bookmark": "나중에 다시 볼 글을 저장하려면 로그인하세요.",
+        "comment": "댓글을 작성하고 대화에 참여하려면 로그인하세요.",
+        "follow": "관심 있는 사람이나 프로젝트를 팔로우하려면 로그인하세요.",
+        "write": "새 글을 작성하고 지식을 공유하려면 로그인하세요."
+      },
+      "oauth-divider": "또는",
+      "actions": {
+        "keep-reading": "계속 읽기"
+      }
+    },
     "settings": {
       "title": "설정",
       "categories": {

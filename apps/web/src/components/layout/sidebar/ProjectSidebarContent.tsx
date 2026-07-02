@@ -22,6 +22,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import ROUTES from '@/util/routes';
 
 import SidebarCloseButton from './SidebarCloseButton';
@@ -34,6 +35,7 @@ export default function ProjectSidebarContent({
   handle,
 }: ProjectSidebarContentProps) {
   const pathname = usePathname();
+  const { requireAuth } = useRequireAuth();
   const { data } = useGetProjectByHandle(handle);
 
   const projectName = data?.data.name ?? handle;
@@ -68,7 +70,19 @@ export default function ProjectSidebarContent({
             asChild
             isActive={pathname === ROUTES.NEW_PROJECT_POST(handle)}
           >
-            <Link href={ROUTES.NEW_PROJECT_POST(handle)}>
+            <Link
+              href={ROUTES.NEW_PROJECT_POST(handle)}
+              onClick={(event) => {
+                if (
+                  !requireAuth({
+                    intent: 'write',
+                    redirectTo: ROUTES.NEW_PROJECT_POST(handle),
+                  })
+                ) {
+                  event.preventDefault();
+                }
+              }}
+            >
               <PencilIcon />
               Write a new post
             </Link>

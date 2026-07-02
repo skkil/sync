@@ -6,10 +6,9 @@ import { ComponentType } from 'react';
 import { ModalType } from '@/constants/modal';
 import { useModal } from '@/hooks/store';
 
-const modals: {
-  [K in ModalType]: ComponentType<{}>;
-} = {
+const modals: Record<ModalType, ComponentType> = {
   [ModalType.SETTINGS]: dynamic(() => import('../modals/settings')),
+  [ModalType.AUTH_REQUIRED]: dynamic(() => import('../modals/auth-required')),
 };
 
 export default function ModalProvider() {

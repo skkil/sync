@@ -6,15 +6,14 @@ import { useGetProjectByHandle } from '@/api/__generated__/project/project';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { isAuthenticated } from '@/lib/auth';
-import { useSession } from '@/lib/auth/client';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 
 interface ProjectHeaderProps {
   handle: string;
 }
 
 export default function ProjectHeader({ handle }: ProjectHeaderProps) {
-  const { data: session } = useSession();
+  const { requireAuth } = useRequireAuth();
   const { data, isPending } = useGetProjectByHandle(handle);
 
   if (isPending) {
@@ -44,7 +43,15 @@ export default function ProjectHeader({ handle }: ProjectHeaderProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        {isAuthenticated(session) && <Button>Follow</Button>}
+        {!project.role && (
+          <Button
+            onClick={() => {
+              requireAuth({ intent: 'follow' });
+            }}
+          >
+            Follow
+          </Button>
+        )}
         {project.role && (
           <Button asChild>
             <Link href={`/projects/${project.handle}/settings`}>Settings</Link>

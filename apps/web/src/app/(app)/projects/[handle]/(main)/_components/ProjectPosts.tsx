@@ -11,6 +11,7 @@ import PostPreview from '@/components/feature/post/viewer/PostPreview';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import ROUTES from '@/util/routes';
 
 import AddTeammatePopover from './AddTeammatePopover';
@@ -127,6 +128,8 @@ function ProjectPostsSkeleton() {
 }
 
 function ProjectPostsEmpty({ handle }: ProjectPostsProps) {
+  const { requireAuth } = useRequireAuth();
+
   return (
     <div className="flex flex-col items-center gap-6 text-center w-full">
       <div className="space-y-2">
@@ -145,7 +148,21 @@ function ProjectPostsEmpty({ handle }: ProjectPostsProps) {
           }
         />
         <Button asChild size="sm">
-          <Link href={ROUTES.NEW_PROJECT_POST(handle)}>첫 게시물 작성하기</Link>
+          <Link
+            href={ROUTES.NEW_PROJECT_POST(handle)}
+            onClick={(event) => {
+              if (
+                !requireAuth({
+                  intent: 'write',
+                  redirectTo: ROUTES.NEW_PROJECT_POST(handle),
+                })
+              ) {
+                event.preventDefault();
+              }
+            }}
+          >
+            첫 게시물 작성하기
+          </Link>
         </Button>
       </div>
     </div>

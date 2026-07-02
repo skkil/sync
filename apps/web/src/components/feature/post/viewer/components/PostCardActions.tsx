@@ -13,6 +13,7 @@ import {
 } from '@/api/__generated__/bookmark/bookmark';
 import { useLikePost, useUnlikePost } from '@/api/__generated__/post/post';
 import { Button } from '@/components/ui/button';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { cn } from '@/lib/utils';
 
 function useLikeToggle(postId: number, initialLikeCount: number) {
@@ -64,6 +65,7 @@ export function PostCardActions({
   commentCount,
   bookmarked: initialBookmarked,
 }: PostCardActionsProps) {
+  const { requireAuth } = useRequireAuth();
   const {
     liked,
     likeCount,
@@ -75,9 +77,22 @@ export function PostCardActions({
   );
 
   return (
-    <div className="flex items-center justify-between">
+    <div
+      className="flex items-center justify-between"
+      onClick={(event) => event.stopPropagation()}
+    >
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="sm" onClick={toggleLike}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            if (!requireAuth({ intent: 'like' })) {
+              return;
+            }
+
+            toggleLike();
+          }}
+        >
           <HeartIcon
             className={cn(liked && 'fill-destructive text-destructive')}
             weight={liked ? 'fill' : 'regular'}
@@ -85,13 +100,29 @@ export function PostCardActions({
           {likeCount}
         </Button>
 
-        <Button variant="ghost" size="sm">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            requireAuth({ intent: 'comment' });
+          }}
+        >
           <ChatCircleIcon />
           {commentCount}
         </Button>
       </div>
 
-      <Button variant="ghost" size="icon-sm" onClick={toggleBookmark}>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        onClick={() => {
+          if (!requireAuth({ intent: 'bookmark' })) {
+            return;
+          }
+
+          toggleBookmark();
+        }}
+      >
         <BookmarkSimpleIcon
           className={cn(bookmarked && 'fill-primary text-primary')}
           weight={bookmarked ? 'fill' : 'regular'}

@@ -9,6 +9,7 @@ export function useModal() {
     useShallow((state) => ({
       isOpen: state.isOpen,
       type: state.type,
+      payload: state.payload,
       openModal: state.openModal,
       closeModal: state.closeModal,
     })),

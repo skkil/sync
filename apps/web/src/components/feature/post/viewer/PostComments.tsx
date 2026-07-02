@@ -18,6 +18,7 @@ import { RelativeTime } from '@/components/ui/relative-time';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useSession } from '@/lib/auth/client';
 
 interface PostCommentsProps {
@@ -70,6 +71,7 @@ function PostCommentItem({
 export default function PostComments({ slug }: PostCommentsProps) {
   const t = useTranslations('pages.posts.comments');
   const { data: session } = useSession();
+  const { requireAuth } = useRequireAuth();
 
   const { data, isPending } = useGetPostComments(slug);
   const [draft, setDraft] = useState('');
@@ -93,6 +95,10 @@ export default function PostComments({ slug }: PostCommentsProps) {
   }, [data]);
 
   function handleSubmit() {
+    if (!requireAuth({ intent: 'comment' })) {
+      return;
+    }
+
     const content = draft.trim();
     if (!content) {
       return;
@@ -141,6 +147,24 @@ export default function PostComments({ slug }: PostCommentsProps) {
                 </Button>
               </div>
             </div>
+          </div>
+
+          <Separator />
+        </>
+      )}
+
+      {!session?.user && (
+        <>
+          <div className="px-5 py-4">
+            <Button
+              variant="outline"
+              className="w-full justify-center"
+              onClick={() => {
+                requireAuth({ intent: 'comment' });
+              }}
+            >
+              {t('composer.login')}
+            </Button>
           </div>
 
           <Separator />

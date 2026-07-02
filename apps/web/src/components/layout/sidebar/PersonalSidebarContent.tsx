@@ -25,6 +25,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { isAuthenticated } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
 import ROUTES from '@/util/routes';
@@ -62,6 +63,7 @@ const footer = [
 export default function PersonalSidebarContent() {
   const pathname = usePathname();
   const [query] = useState('');
+  const { requireAuth } = useRequireAuth();
 
   // `useSession` can resolve synchronously from its client-side cache before
   // hydration, while SSR always renders a logged-out state. Gating on
@@ -91,24 +93,33 @@ export default function PersonalSidebarContent() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {global
-                .filter((item) =>
-                  item.authenticated ? isAuthenticated(session) : true,
-                )
-                .map((item) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href;
-                  return (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={isActive}>
-                        <Link href={item.href}>
-                          <Icon />
-                          {item.label}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
+              {global.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <Link
+                        href={item.href}
+                        onClick={(event) => {
+                          if (
+                            item.authenticated &&
+                            !requireAuth({
+                              intent: 'write',
+                              redirectTo: item.href,
+                            })
+                          ) {
+                            event.preventDefault();
+                          }
+                        }}
+                      >
+                        <Icon />
+                        {item.label}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

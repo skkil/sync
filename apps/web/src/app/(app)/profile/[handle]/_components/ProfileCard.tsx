@@ -48,6 +48,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { useFollowUserMutation } from '@/features/user/api/follow-user';
 import { useUnfollowUserMutation } from '@/features/user/api/unfollow-user';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useSession } from '@/lib/auth/client';
 import SyncError, { ErrorCode } from '@/lib/error';
 
@@ -605,6 +606,7 @@ function FollowButton({ handle }: FollowButtonProps) {
   const t = useTranslations('pages.profile.header');
 
   const { data: session } = useSession();
+  const { requireAuth } = useRequireAuth();
   const { data: profile, isPending } = useGetProfileByHandle(handle);
 
   const { mutate: followUser } = useFollowUserMutation();
@@ -614,15 +616,21 @@ function FollowButton({ handle }: FollowButtonProps) {
     return null;
   }
 
-  if (session?.user.id === profile.data.userId) {
+  if (String(session?.user.id) === String(profile.data.userId)) {
     return null;
   }
+
+  const targetUserId = String(profile.data.userId);
 
   if (profile.data.isFollowing) {
     return (
       <Button
         onClick={() => {
-          unfollowUser(handle);
+          if (!requireAuth({ intent: 'follow' })) {
+            return;
+          }
+
+          unfollowUser(targetUserId);
         }}
       >
         {t('unfollow')}
@@ -632,7 +640,11 @@ function FollowButton({ handle }: FollowButtonProps) {
     return (
       <Button
         onClick={() => {
-          followUser(handle);
+          if (!requireAuth({ intent: 'follow' })) {
+            return;
+          }
+
+          followUser(targetUserId);
         }}
       >
         {t('follow')}
