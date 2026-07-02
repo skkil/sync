@@ -1,12 +1,18 @@
-'use client';
+import { getTranslations } from 'next-intl/server';
 
-import { CompassIcon } from '@phosphor-icons/react';
+import PublicPostFeed from '@/components/feature/post/viewer/PublicPostFeed';
 
-export default function ExplorePage() {
+export default async function ExplorePage() {
+  const t = await getTranslations('pages.explore');
+
   return (
-    <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 px-4 py-24 text-center">
-      <CompassIcon className="text-muted-foreground size-10" />
-      <p className="text-muted-foreground text-sm">Nothing to explore yet.</p>
+    <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-semibold">{t('title')}</h1>
+        <p className="text-muted-foreground text-sm">{t('description')}</p>
+      </div>
+
+      <PublicPostFeed emptyMessage={t('empty')} />
     </div>
   );
 }

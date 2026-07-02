@@ -44,6 +44,15 @@ export default async function About() {
           <p className="text-muted-foreground max-w-lg mx-auto mb-8">
             {t('hero.description')}
           </p>
+
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button asChild>
+              <Link href={ROUTES.EXPLORE()}>{t('hero.actions.explore')}</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href={ROUTES.REGISTER()}>{t('hero.actions.register')}</Link>
+            </Button>
+          </div>
         </section>
       </main>
 

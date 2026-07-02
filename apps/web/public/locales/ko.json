@@ -9,6 +9,11 @@
         }
       }
     },
+    "explore": {
+      "title": "공개 글 탐색",
+      "description": "sync에 공개된 최신 글을 읽어보세요.",
+      "empty": "아직 공개된 글이 없습니다."
+    },
     "posts": {
       "report": {
         "trigger": "신고",
@@ -532,6 +537,7 @@
         "title": "배움을 기록하고, 함께 성장하세요",
         "description": "sync는 기술팀을 위한 지식 플랫폼입니다. TIL과 블로그, 질문을 기록하고 프로젝트를 통해 동료들과 함께 성장하세요.",
         "actions": {
+          "explore": "공개 글 둘러보기",
           "register": "무료로 시작하기",
           "login": "로그인"
         }
