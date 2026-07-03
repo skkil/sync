@@ -56,8 +56,14 @@ export default function AuthRequiredModal() {
 
         <LoginForm
           onSuccess={() => {
-            router.refresh();
             closeModal();
+
+            if (authPayload.redirectTo) {
+              router.push(authPayload.redirectTo);
+              return;
+            }
+
+            router.refresh();
           }}
           redirectTo={authPayload.redirectTo}
         />

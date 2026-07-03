@@ -77,15 +77,14 @@ export function PostCardActions({
   );
 
   return (
-    <div
-      className="flex items-center justify-between"
-      onClick={(event) => event.stopPropagation()}
-    >
+    <div className="flex items-center justify-between">
       <div className="flex items-center gap-1">
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => {
+          onClick={(event) => {
+            event.stopPropagation();
+
             if (!requireAuth({ intent: 'like' })) {
               return;
             }
@@ -103,8 +102,10 @@ export function PostCardActions({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => {
-            requireAuth({ intent: 'comment' });
+          onClick={(event) => {
+            if (!requireAuth({ intent: 'comment' })) {
+              event.stopPropagation();
+            }
           }}
         >
           <ChatCircleIcon />
@@ -115,7 +116,9 @@ export function PostCardActions({
       <Button
         variant="ghost"
         size="icon-sm"
-        onClick={() => {
+        onClick={(event) => {
+          event.stopPropagation();
+
           if (!requireAuth({ intent: 'bookmark' })) {
             return;
           }
