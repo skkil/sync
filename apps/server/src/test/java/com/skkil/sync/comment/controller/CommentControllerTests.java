@@ -30,6 +30,8 @@ import com.skkil.sync.comment.snippets.UpdateCommentRequestSnippets;
 import com.skkil.sync.common.config.TestSecurityConfig;
 import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.common.security.WithAuthenticatedUserSecurityContextFactory;
+import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
+import com.skkil.sync.common.util.pagination.snippets.CursorPaginationRequestSnippets;
 import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,12 +64,16 @@ class CommentControllerTests {
   @DisplayName("[getPostComments] API 문서화 테스트")
   void getPostComments() throws Exception {
     String slug = "test-post";
+    CursorPaginationRequest pagination =
+        CursorPaginationRequestSnippets.getCursorPaginationRequest();
     GetCommentsResponse response = GetCommentsResponseSnippets.getGetCommentsResponse();
 
-    when(commentService.getPostComments(slug)).thenReturn(response);
+    when(commentService.getPostComments(eq(slug), eq(pagination))).thenReturn(response);
 
     mockMvc
-        .perform(get("/posts/{slug}/comments", slug))
+        .perform(
+            get("/posts/{slug}/comments", slug)
+                .params(CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
         .andExpect(status().isOk())
         .andDo(
             document(
@@ -81,6 +87,7 @@ class CommentControllerTests {
                 null,
                 Function.identity(),
                 pathParameters(parameterWithName("slug").description("Post Slug")),
+                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
                 GetCommentsResponseSnippets.getCommentsResponseFields()));
   }
 

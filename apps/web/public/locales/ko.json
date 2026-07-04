@@ -46,6 +46,8 @@
         "title": "댓글",
         "empty": "아직 댓글이 없습니다.",
         "deleted": "삭제된 댓글입니다.",
+        "load-more": "댓글 더 보기",
+        "loading-more": "댓글을 불러오는 중",
         "composer": {
           "placeholder": "댓글을 입력하세요",
           "submit": "댓글 작성",

@@ -4,14 +4,17 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetCommentsResponseCommentsItemAuthor } from './GetCommentsResponseCommentsItemAuthor';
+import type { GetCommentsResponseCommentsNodesItemContentAuthor } from './GetCommentsResponseCommentsNodesItemContentAuthor';
 
-export type GetCommentsResponseCommentsItem = {
+/**
+ * Node Content
+ */
+export type GetCommentsResponseCommentsNodesItemContent = {
   /** Creation timestamp */
   createdAt: string;
   /** Is deleted */
   isDeleted: boolean;
-  author?: GetCommentsResponseCommentsItemAuthor;
+  author?: GetCommentsResponseCommentsNodesItemContentAuthor;
   /** Comment ID */
   id: number;
   /**

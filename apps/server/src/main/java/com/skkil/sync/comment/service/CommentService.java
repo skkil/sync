@@ -1,5 +1,6 @@
 package com.skkil.sync.comment.service;
 
+import com.skkil.sync.comment.dto.data.CommentDto;
 import com.skkil.sync.comment.dto.request.CreateCommentRequest;
 import com.skkil.sync.comment.dto.request.UpdateCommentRequest;
 import com.skkil.sync.comment.dto.response.CreateCommentResponse;
@@ -7,15 +8,20 @@ import com.skkil.sync.comment.dto.response.GetCommentsResponse;
 import com.skkil.sync.comment.exception.CommentNotFoundException;
 import com.skkil.sync.comment.mapper.CommentMapper;
 import com.skkil.sync.comment.model.Comment;
+import com.skkil.sync.comment.repository.CommentQueryRepository;
 import com.skkil.sync.comment.repository.CommentRepository;
+import com.skkil.sync.comment.repository.pagination.CommentCursorPaginationProvider;
+import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
+import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
+import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.media.service.domain.MediaDomainService;
 import com.skkil.sync.post.model.Post;
 import com.skkil.sync.post.service.PostDomainService;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,35 +30,52 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
 
   private final CommentRepository commentRepository;
+  private final CommentQueryRepository commentQueryRepository;
   private final PostDomainService postDomainService;
   private final UserDomainService userDomainService;
   private final MediaDomainService mediaDomainService;
+  private final PaginationService paginationService;
+  private final CommentCursorPaginationProvider paginationProvider;
   private final CommentMapper commentMapper;
 
   public CommentService(
       CommentRepository commentRepository,
+      CommentQueryRepository commentQueryRepository,
       PostDomainService postDomainService,
       UserDomainService userDomainService,
       MediaDomainService mediaDomainService,
+      PaginationService paginationService,
+      CommentCursorPaginationProvider paginationProvider,
       CommentMapper commentMapper) {
     this.commentRepository = commentRepository;
+    this.commentQueryRepository = commentQueryRepository;
     this.postDomainService = postDomainService;
     this.userDomainService = userDomainService;
     this.mediaDomainService = mediaDomainService;
+    this.paginationService = paginationService;
+    this.paginationProvider = paginationProvider;
     this.commentMapper = commentMapper;
   }
 
   @Transactional(readOnly = true)
-  public GetCommentsResponse getPostComments(String slug) {
+  public GetCommentsResponse getPostComments(String slug, CursorPaginationRequest pagination) {
     Post post = postDomainService.getPublicPublishedPostBySlug(slug);
 
-    List<Comment> comments = commentRepository.findByPost(post);
+    CursorPaginationResponse<CommentDto> comments =
+        paginationService.paginate(
+            commentQueryRepository.getCommentsByPost(post.getId()), paginationProvider, pagination);
 
     Map<Long, URL> profileImageUrls =
         mediaDomainService.generatePublicGetUrls(
-            comments, comment -> comment.getAuthor().getProfileImage());
+            comments.nodes().stream()
+                .map(CursorPaginationResponse.Node::content)
+                .map(CommentDto::authorProfileImageId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList());
 
-    return commentMapper.toGetCommentsResponse(post, comments, profileImageUrls);
+    return commentMapper.toGetCommentsResponse(
+        comments, post.getAuthor().getId(), profileImageUrls);
   }
 
   @Transactional

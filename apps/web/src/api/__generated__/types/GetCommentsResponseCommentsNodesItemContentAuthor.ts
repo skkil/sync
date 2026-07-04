@@ -5,7 +5,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type GetCommentsResponseCommentsItemAuthor = {
+export type GetCommentsResponseCommentsNodesItemContentAuthor = {
   /** Whether the author is the post author */
   isPostAuthor: boolean;
   /** Author name */

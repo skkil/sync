@@ -665,6 +665,32 @@ paths:
         required: true
         schema:
           type: string
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
       responses:
         "200":
           description: "200"
@@ -674,11 +700,14 @@ paths:
                 $ref: "#/components/schemas/GetCommentsResponse"
               examples:
                 GetPostComments:
-                  value: "{\"comments\":[{\"id\":1,\"author\":{\"id\":1,\"handle\"\
-                    :\"user-handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
-                    http://example.com/profile.jpg\",\"isPostAuthor\":false},\"content\"\
-                    :\"Comment content\",\"isDeleted\":false,\"createdAt\":\"2026-01-01T00:00:00Z\"\
-                    ,\"updatedAt\":\"2026-01-01T00:00:00Z\"}]}"
+                  value: "{\"comments\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"id\":1,\"author\":{\"id\":1,\"handle\":\"user-handle\"\
+                    ,\"name\":\"User Name\",\"profileImageUrl\":\"http://example.com/profile.jpg\"\
+                    ,\"isPostAuthor\":false},\"content\":\"Comment content\",\"isDeleted\"\
+                    :false,\"createdAt\":\"2026-01-01T00:00:00Z\",\"updatedAt\":\"\
+                    2026-01-01T00:00:00Z\"}}]}}"
     post:
       tags:
       - comment
@@ -1728,63 +1757,6 @@ components:
               expiresAt:
                 type: string
                 description: 초대 만료 시각
-    GetCommentsResponse:
-      title: GetCommentsResponse
-      required:
-      - comments
-      type: object
-      properties:
-        comments:
-          type: array
-          description: Comments
-          items:
-            required:
-            - createdAt
-            - id
-            - isDeleted
-            - updatedAt
-            type: object
-            properties:
-              createdAt:
-                type: string
-                description: Creation timestamp
-              isDeleted:
-                type: boolean
-                description: Is deleted
-              author:
-                required:
-                - handle
-                - id
-                - isPostAuthor
-                - name
-                type: object
-                properties:
-                  isPostAuthor:
-                    type: boolean
-                    description: Whether the author is the post author
-                  name:
-                    type: string
-                    description: Author name
-                  handle:
-                    type: string
-                    description: Author handle
-                  id:
-                    type: number
-                    description: Author user ID
-                  profileImageUrl:
-                    type: string
-                    description: Author profile image URL
-                    nullable: true
-              id:
-                type: number
-                description: Comment ID
-              content:
-                type: string
-                description: Comment content
-                nullable: true
-              updatedAt:
-                type: string
-                description: Update timestamp
     GetProjectResponse:
       title: GetProjectResponse
       required:
@@ -2762,6 +2734,105 @@ components:
               id:
                 type: number
                 description: 프로젝트 ID
+    GetCommentsResponse:
+      title: GetCommentsResponse
+      required:
+      - comments
+      type: object
+      properties:
+        comments:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - createdAt
+                    - id
+                    - isDeleted
+                    - updatedAt
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                        description: Creation timestamp
+                      isDeleted:
+                        type: boolean
+                        description: Is deleted
+                      author:
+                        required:
+                        - handle
+                        - id
+                        - isPostAuthor
+                        - name
+                        type: object
+                        properties:
+                          isPostAuthor:
+                            type: boolean
+                            description: Whether the author is the post author
+                          name:
+                            type: string
+                            description: Author name
+                          handle:
+                            type: string
+                            description: Author handle
+                          id:
+                            type: number
+                            description: Author user ID
+                          profileImageUrl:
+                            type: string
+                            description: Author profile image URL
+                            nullable: true
+                      id:
+                        type: number
+                        description: Comment ID
+                      content:
+                        type: string
+                        description: Comment content
+                        nullable: true
+                      updatedAt:
+                        type: string
+                        description: Update timestamp
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
+          description: Comments
     CreateProjectInvitationRequest:
       title: CreateProjectInvitationRequest
       required:

@@ -79,6 +79,11 @@ export default defineConfig({
               useInfinite: true,
             },
           },
+          GetPostComments: {
+            query: {
+              useInfinite: true,
+            },
+          },
           GetPostsByProject: {
             query: {
               useInfinite: true,

@@ -4,16 +4,20 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
+  DefinedUseInfiniteQueryResult,
   DefinedUseQueryResult,
+  InfiniteData,
   MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -26,6 +30,7 @@ import type {
   CreateCommentRequest,
   CreateCommentResponse,
   GetCommentsResponse,
+  GetPostCommentsParams,
   UpdateCommentRequest,
 } from '../types';
 
@@ -242,29 +247,255 @@ export type getPostCommentsResponseSuccess = getPostCommentsResponse200 & {
 };
 export type getPostCommentsResponse = getPostCommentsResponseSuccess;
 
-export const getGetPostCommentsUrl = (slug: string) => {
-  return `/posts/${slug}/comments`;
+export const getGetPostCommentsUrl = (
+  slug: string,
+  params?: GetPostCommentsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/posts/${slug}/comments?${stringifiedParams}`
+    : `/posts/${slug}/comments`;
 };
 
 export const getPostComments = async (
   slug: string,
+  params?: GetPostCommentsParams,
   options?: RequestInit,
 ): Promise<getPostCommentsResponse> => {
-  return api<getPostCommentsResponse>(getGetPostCommentsUrl(slug), {
+  return api<getPostCommentsResponse>(getGetPostCommentsUrl(slug, params), {
     ...options,
     method: 'GET',
   });
 };
 
-export const getGetPostCommentsQueryKey = (slug: string) => {
-  return [`/posts/${slug}/comments`] as const;
+export const getGetPostCommentsInfiniteQueryKey = (
+  slug: string,
+  params?: GetPostCommentsParams,
+) => {
+  return [
+    'infinite',
+    `/posts/${slug}/comments`,
+    ...(params ? [params] : []),
+  ] as const;
 };
+
+export const getGetPostCommentsQueryKey = (
+  slug: string,
+  params?: GetPostCommentsParams,
+) => {
+  return [`/posts/${slug}/comments`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetPostCommentsInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPostComments>>,
+    GetPostCommentsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  params?: GetPostCommentsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPostComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPostCommentsParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPostCommentsInfiniteQueryKey(slug, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPostComments>>,
+    QueryKey,
+    GetPostCommentsParams['after']
+  > = ({ signal, pageParam }) =>
+    getPostComments(
+      slug,
+      { ...params, after: pageParam || params?.['after'] },
+      { signal, ...requestOptions },
+    );
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getPostComments>>,
+    TError,
+    TData,
+    QueryKey,
+    GetPostCommentsParams['after']
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPostCommentsInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPostComments>>
+>;
+export type GetPostCommentsInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetPostCommentsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPostComments>>,
+    GetPostCommentsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  params: undefined | GetPostCommentsParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPostComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPostCommentsParams['after']
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPostComments>>,
+          TError,
+          Awaited<ReturnType<typeof getPostComments>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPostCommentsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPostComments>>,
+    GetPostCommentsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  params?: GetPostCommentsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPostComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPostCommentsParams['after']
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPostComments>>,
+          TError,
+          Awaited<ReturnType<typeof getPostComments>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPostCommentsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPostComments>>,
+    GetPostCommentsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  params?: GetPostCommentsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPostComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPostCommentsParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Post Comments
+ */
+
+export function useGetPostCommentsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPostComments>>,
+    GetPostCommentsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  slug: string,
+  params?: GetPostCommentsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPostComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPostCommentsParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPostCommentsInfiniteQueryOptions(
+    slug,
+    params,
+    options,
+  );
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 export const getGetPostCommentsQueryOptions = <
   TData = Awaited<ReturnType<typeof getPostComments>>,
   TError = ErrorType<unknown>,
 >(
   slug: string,
+  params?: GetPostCommentsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -278,11 +509,12 @@ export const getGetPostCommentsQueryOptions = <
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetPostCommentsQueryKey(slug);
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPostCommentsQueryKey(slug, params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostComments>>> = ({
     signal,
-  }) => getPostComments(slug, { signal, ...requestOptions });
+  }) => getPostComments(slug, params, { signal, ...requestOptions });
 
   return {
     queryKey,
@@ -306,6 +538,7 @@ export function useGetPostComments<
   TError = ErrorType<unknown>,
 >(
   slug: string,
+  params: undefined | GetPostCommentsParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -333,6 +566,7 @@ export function useGetPostComments<
   TError = ErrorType<unknown>,
 >(
   slug: string,
+  params?: GetPostCommentsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -360,6 +594,7 @@ export function useGetPostComments<
   TError = ErrorType<unknown>,
 >(
   slug: string,
+  params?: GetPostCommentsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -383,6 +618,7 @@ export function useGetPostComments<
   TError = ErrorType<unknown>,
 >(
   slug: string,
+  params?: GetPostCommentsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -397,7 +633,7 @@ export function useGetPostComments<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetPostCommentsQueryOptions(slug, options);
+  const queryOptions = getGetPostCommentsQueryOptions(slug, params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

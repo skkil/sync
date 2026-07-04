@@ -5,7 +5,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 
 import com.epages.restdocs.apispec.FieldDescriptors;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
-import java.time.Instant;
+import com.skkil.sync.common.util.pagination.snippets.CursorPaginationResponseSnippets;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
@@ -28,20 +29,24 @@ public class GetCommentsResponseSnippets {
             author,
             "Comment content",
             false,
-            Instant.parse("2026-01-01T00:00:00Z"),
-            Instant.parse("2026-01-01T00:00:00Z"));
+            OffsetDateTime.parse("2026-01-01T00:00:00Z"),
+            OffsetDateTime.parse("2026-01-01T00:00:00Z"));
 
-    return new GetCommentsResponse(List.of(comment));
+    return new GetCommentsResponse(CursorPaginationResponseSnippets.of(List.of(comment)));
   }
 
   public static ResponseFieldsSnippet getCommentsResponseFields() {
     FieldDescriptors fields =
         new FieldDescriptors()
-            .and(fieldWithPath("comments").type(JsonFieldType.ARRAY).description("Comments"));
+            .and(fieldWithPath("comments").type(JsonFieldType.OBJECT).description("Comments"))
+            .and(
+                CursorPaginationResponseSnippets.getCursorPaginationResponseFields("comments")
+                    .getFieldDescriptors()
+                    .toArray(org.springframework.restdocs.payload.FieldDescriptor[]::new));
 
     fields =
         fields.andWithPrefix(
-            "comments[]",
+            "comments.nodes[].content",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Comment ID"),
             fieldWithPath(".content")
                 .type(JsonFieldType.STRING)
@@ -55,7 +60,7 @@ public class GetCommentsResponseSnippets {
 
     fields =
         fields.andWithPrefix(
-            "comments[].author",
+            "comments.nodes[].content.author",
             fieldWithPath(".id").type(JsonFieldType.NUMBER).description("Author user ID"),
             fieldWithPath(".handle").type(JsonFieldType.STRING).description("Author handle"),
             fieldWithPath(".name").type(JsonFieldType.STRING).description("Author name"),

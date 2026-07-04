@@ -1,10 +1,9 @@
 package com.skkil.sync.comment.mapper;
 
+import com.skkil.sync.comment.dto.data.CommentDto;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
-import com.skkil.sync.comment.model.Comment;
-import com.skkil.sync.post.model.Post;
+import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 import org.mapstruct.Mapper;
 
@@ -12,33 +11,36 @@ import org.mapstruct.Mapper;
 public interface CommentMapper {
 
   default GetCommentsResponse toGetCommentsResponse(
-      Post post, List<Comment> comments, Map<Long, URL> profileImageUrls) {
+      CursorPaginationResponse<CommentDto> comments,
+      Long postAuthorId,
+      Map<Long, URL> profileImageUrls) {
     return new GetCommentsResponse(
-        comments.stream()
-            .map(comment -> toGetCommentsResponseComment(post, comment, profileImageUrls))
-            .toList());
+        comments.map(
+            comment -> toGetCommentsResponseComment(comment, postAuthorId, profileImageUrls)));
   }
 
   default GetCommentsResponse.Comment toGetCommentsResponseComment(
-      Post post, Comment comment, Map<Long, URL> profileImageUrls) {
-    var profileImage = comment.getAuthor().getProfileImage();
-    var url = profileImage != null ? profileImageUrls.get(profileImage.getId()) : null;
+      CommentDto comment, Long postAuthorId, Map<Long, URL> profileImageUrls) {
+    URL profileImageUrl =
+        comment.authorProfileImageId() == null
+            ? null
+            : profileImageUrls.get(comment.authorProfileImageId());
 
     GetCommentsResponse.Author author =
         GetCommentsResponse.Author.builder()
-            .id(comment.getAuthor().getId())
-            .handle(comment.getAuthor().getHandle())
-            .name(comment.getAuthor().getFullName())
-            .profileImageUrl(url != null ? url.toString() : null)
-            .isPostAuthor(comment.getAuthor().equals(post.getAuthor()))
+            .id(comment.authorId())
+            .handle(comment.authorHandle())
+            .name(comment.authorName())
+            .profileImageUrl(profileImageUrl == null ? null : profileImageUrl.toExternalForm())
+            .isPostAuthor(comment.authorId().equals(postAuthorId))
             .build();
 
     return new GetCommentsResponse.Comment(
-        comment.getId(),
+        comment.id(),
         author,
-        comment.getContent(),
-        comment.isDeleted(),
-        comment.getCreatedAt(),
-        comment.getUpdatedAt());
+        comment.content(),
+        Boolean.TRUE.equals(comment.deleted()),
+        comment.createdAt(),
+        comment.updatedAt());
   }
 }

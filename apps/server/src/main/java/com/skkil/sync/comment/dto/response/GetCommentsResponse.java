@@ -1,10 +1,10 @@
 package com.skkil.sync.comment.dto.response;
 
-import java.time.Instant;
-import java.util.List;
+import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
+import java.time.OffsetDateTime;
 import lombok.Builder;
 
-public record GetCommentsResponse(List<Comment> comments) {
+public record GetCommentsResponse(CursorPaginationResponse<Comment> comments) {
 
   @Builder
   public record Comment(
@@ -12,8 +12,8 @@ public record GetCommentsResponse(List<Comment> comments) {
       Author author,
       String content,
       boolean isDeleted,
-      Instant createdAt,
-      Instant updatedAt) {}
+      OffsetDateTime createdAt,
+      OffsetDateTime updatedAt) {}
 
   @Builder
   public record Author(

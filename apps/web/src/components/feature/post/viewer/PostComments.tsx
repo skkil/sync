@@ -5,11 +5,12 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import {
-  getGetPostCommentsQueryKey,
+  getGetPostCommentsInfiniteQueryKey,
+  type getPostCommentsResponse,
   useCreateComment,
-  useGetPostComments,
+  useGetPostCommentsInfinite,
 } from '@/api/__generated__/comment/comment';
-import type { GetCommentsResponseCommentsItem } from '@/api/__generated__/types';
+import type { GetCommentsResponseCommentsNodesItemContent } from '@/api/__generated__/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useSession } from '@/lib/auth/client';
 
+import { COMMENT_PAGE_SIZE } from './constants';
+
 interface PostCommentsProps {
   slug: string;
 }
@@ -28,7 +31,7 @@ interface PostCommentsProps {
 function PostCommentItem({
   comment,
 }: {
-  comment: GetCommentsResponseCommentsItem;
+  comment: GetCommentsResponseCommentsNodesItemContent;
 }) {
   const t = useTranslations('pages.posts.comments');
   const author = comment.author;
@@ -73,24 +76,56 @@ export default function PostComments({ slug }: PostCommentsProps) {
   const { data: session } = useSession();
   const { requireAuth } = useRequireAuth();
 
-  const { data, isPending } = useGetPostComments(slug);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
+    useGetPostCommentsInfinite(
+      slug,
+      { first: COMMENT_PAGE_SIZE },
+      {
+        query: {
+          getNextPageParam: (lastPage) => {
+            const pageInfo = lastPage.data.comments?.pageInfo;
+            return pageInfo?.hasNextPage
+              ? (pageInfo.endCursor ?? undefined)
+              : undefined;
+          },
+        },
+      },
+    );
   const [draft, setDraft] = useState('');
+  const commentsQueryKey = getGetPostCommentsInfiniteQueryKey(slug, {
+    first: COMMENT_PAGE_SIZE,
+  });
 
   const { mutate: createComment, isPending: isSubmitting } = useCreateComment({
     mutation: {
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
         setDraft('');
+        context.client.setQueryData<{
+          pages: getPostCommentsResponse[];
+          pageParams: unknown[];
+        }>(commentsQueryKey, (previous) => {
+          if (!previous) {
+            return previous;
+          }
+
+          return {
+            pages: previous.pages.slice(0, 1),
+            pageParams: previous.pageParams.slice(0, 1),
+          };
+        });
+
         await context.client.invalidateQueries({
-          queryKey: getGetPostCommentsQueryKey(slug),
+          queryKey: commentsQueryKey,
         });
       },
     },
   });
 
   const comments = useMemo(() => {
-    return [...(data?.data.comments ?? [])].sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    return (
+      data?.pages.flatMap(
+        (page) => page.data.comments?.nodes.map((node) => node.content) ?? [],
+      ) ?? []
     );
   }, [data]);
 
@@ -108,10 +143,10 @@ export default function PostComments({ slug }: PostCommentsProps) {
   }
 
   return (
-    <Card className="gap-0 p-0">
+    <Card className="gap-0 p-0 lg:max-h-[calc(100vh-7rem)]">
       <div className="flex items-center justify-between px-5 py-4">
         <h2 className="text-sm font-semibold">
-          {t('title')} {data && `· ${comments.length}`}
+          {t('title')} {comments.length > 0 && `· ${comments.length}`}
         </h2>
       </div>
 
@@ -171,7 +206,7 @@ export default function PostComments({ slug }: PostCommentsProps) {
         </>
       )}
 
-      <div className="divide-border/60 divide-y px-5">
+      <div className="divide-border/60 divide-y px-5 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
         {isPending && (
           <div className="space-y-4 py-4">
             <Skeleton className="h-12 w-full" />
@@ -188,6 +223,21 @@ export default function PostComments({ slug }: PostCommentsProps) {
         {comments.map((comment) => (
           <PostCommentItem key={comment.id} comment={comment} />
         ))}
+
+        {hasNextPage && (
+          <div className="py-4">
+            <Button
+              variant="outline"
+              className="w-full justify-center"
+              disabled={isFetchingNextPage}
+              onClick={() => {
+                fetchNextPage();
+              }}
+            >
+              {isFetchingNextPage ? t('loading-more') : t('load-more')}
+            </Button>
+          </div>
+        )}
       </div>
     </Card>
   );
