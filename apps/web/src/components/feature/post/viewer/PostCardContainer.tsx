@@ -22,6 +22,7 @@ export default function PostCardContainer({ slug }: PostCardContainerProps) {
   return (
     <PostCard
       id={post.id}
+      slug={post.slug}
       type={post.type as PostType}
       scope={post.scope as PostScope}
       status={post.status as PostStatus}

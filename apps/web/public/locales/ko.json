@@ -1053,6 +1053,20 @@
       "scope": {
         "PUBLIC": "공개",
         "WORKSPACE": "워크스페이스"
+      },
+      "actions": {
+        "menu": "포스트 메뉴",
+        "copy-link": "링크 복사",
+        "copy-success": "링크를 복사했습니다.",
+        "copy-error": "링크 복사에 실패했습니다.",
+        "report": "신고",
+        "delete": "삭제",
+        "deleting": "삭제 중...",
+        "cancel": "취소",
+        "delete-title": "포스트를 삭제할까요?",
+        "delete-description": "삭제한 포스트는 되돌릴 수 없습니다.",
+        "delete-success": "포스트를 삭제했습니다.",
+        "delete-error": "포스트 삭제에 실패했습니다."
       }
     },
     "navigation": {

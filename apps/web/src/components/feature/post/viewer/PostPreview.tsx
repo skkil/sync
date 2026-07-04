@@ -1,23 +1,15 @@
 'use client';
 
-import { DotsThreeIcon } from '@phosphor-icons/react';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useTranslations } from 'next-intl';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { useGetProjectByHandle } from '@/api/__generated__/project/project';
 import type { GetPostResponse } from '@/api/__generated__/types';
 import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { RelativeTime } from '@/components/ui/relative-time';
 import ROUTES from '@/util/routes';
 
@@ -30,6 +22,7 @@ import {
   isPublicPublishedPost,
 } from '../types/post';
 import { PostCardActions } from './components/PostCardActions';
+import { PostOverflowMenu } from './components/PostOverflowMenu';
 import { PostTypeBadge } from './components/PostTypeBadge';
 import { PostBody } from './variants/PostBody';
 
@@ -64,6 +57,7 @@ export default function PostPreview({
   bookmarked,
   createdAt,
 }: PostPreviewProps) {
+  const router = useRouter();
   const editor = useEditor({
     extensions: [StarterKit, ImageNode],
     content: deserialize(content.json, content.media),
@@ -71,18 +65,13 @@ export default function PostPreview({
     immediatelyRender: false,
   });
 
-  const { data: projectData } = useGetProjectByHandle(project ?? '', {
-    query: {
-      enabled: !!project,
-    },
-  });
   const showActions = isPublicPublishedPost(scope, status);
 
   const handleClickCard = () => {
-    if (projectData?.data) {
-      redirect(ROUTES.PROJECT_POST(projectData.data.handle, slug));
+    if (project) {
+      router.push(ROUTES.PROJECT_POST(project, slug));
     } else {
-      redirect(ROUTES.POST(slug));
+      router.push(ROUTES.POST(slug));
     }
   };
 
@@ -90,6 +79,8 @@ export default function PostPreview({
     <Card onClick={handleClickCard}>
       <CardHeader>
         <PostPreviewHeader
+          postId={id}
+          slug={slug}
           type={type}
           scope={scope}
           status={status}
@@ -124,6 +115,8 @@ export default function PostPreview({
 }
 
 function PostPreviewHeader({
+  postId,
+  slug,
   type,
   scope,
   status,
@@ -131,6 +124,8 @@ function PostPreviewHeader({
   project,
   createdAt,
 }: {
+  postId: number;
+  slug: string;
   type?: PostType;
   scope?: PostScope;
   status?: PostStatus;
@@ -176,19 +171,12 @@ function PostPreviewHeader({
         )}
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon-sm" aria-label="Post options">
-            <DotsThreeIcon weight="bold" />
-          </Button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>Copy link</DropdownMenuItem>
-          <DropdownMenuItem>Report</DropdownMenuItem>
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <PostOverflowMenu
+        postId={postId}
+        slug={slug}
+        authorHandle={author.handle}
+        projectHandle={project}
+      />
     </div>
   );
 }

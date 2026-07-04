@@ -1,23 +1,15 @@
 'use client';
 
-import { DotsThreeIcon, SirenIcon } from '@phosphor-icons/react';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 
 import type { GetPostResponse } from '@/api/__generated__/types';
 import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { RelativeTime } from '@/components/ui/relative-time';
+import ROUTES from '@/util/routes';
 
 import { ImageNode } from '../editor/extensions/nodes/image';
 import { deserialize } from '../editor/utils/serializer';
@@ -28,12 +20,13 @@ import {
   isPublicPublishedPost,
 } from '../types/post';
 import { PostCardActions } from './components/PostCardActions';
+import { PostOverflowMenu } from './components/PostOverflowMenu';
 import { PostTypeBadge } from './components/PostTypeBadge';
-import { ReportPostDialog } from './components/ReportPostDialog';
 import { PostBody } from './variants/PostBody';
 
 interface PostCardProps {
   id: number;
+  slug: string;
   type: PostType;
   scope?: PostScope;
   status?: PostStatus;
@@ -49,6 +42,7 @@ interface PostCardProps {
 
 export default function PostCard({
   id,
+  slug,
   type,
   scope,
   status,
@@ -74,6 +68,7 @@ export default function PostCard({
       <CardHeader>
         <PostCardHeader
           postId={id}
+          slug={slug}
           type={type}
           scope={scope}
           status={status}
@@ -109,6 +104,7 @@ export default function PostCard({
 
 function PostCardHeader({
   postId,
+  slug,
   type,
   scope,
   status,
@@ -117,6 +113,7 @@ function PostCardHeader({
   createdAt,
 }: {
   postId: number;
+  slug: string;
   type: PostType;
   scope?: PostScope;
   status?: PostStatus;
@@ -124,68 +121,43 @@ function PostCardHeader({
   project?: GetPostResponse['project'];
   createdAt: string;
 }) {
-  const t = useTranslations('pages.posts.report');
   const tPost = useTranslations('components.post');
-  const [reportOpen, setReportOpen] = useState(false);
+  const redirectAfterDelete = project?.handle
+    ? ROUTES.PROJECT(project.handle)
+    : ROUTES.HOME();
 
   return (
-    <>
-      <div className="flex items-start justify-between">
-        <div className="flex flex-wrap items-center gap-2">
-          <ProfileHoverCard
-            handle={author.handle}
-            name={author.name}
-            size="sm"
-          />
+    <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-center gap-2">
+        <ProfileHoverCard handle={author.handle} name={author.name} size="sm" />
 
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold">{author.name}</span>
-            <span className="text-muted-foreground text-xs">
-              @{author.handle} · <RelativeTime date={createdAt} />
-            </span>
-          </div>
-
-          <PostTypeBadge type={type} />
-
-          {status === PostStatus.DRAFT && (
-            <Badge variant="outline">{tPost('status.DRAFT')}</Badge>
-          )}
-
-          {scope === PostScope.WORKSPACE && (
-            <Badge variant="outline">{tPost('scope.WORKSPACE')}</Badge>
-          )}
-
-          {project?.name && <Badge variant="secondary">{project.name}</Badge>}
+        <div className="flex flex-col">
+          <span className="text-sm font-semibold">{author.name}</span>
+          <span className="text-muted-foreground text-xs">
+            @{author.handle} · <RelativeTime date={createdAt} />
+          </span>
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-sm" aria-label="Post options">
-              <DotsThreeIcon weight="bold" />
-            </Button>
-          </DropdownMenuTrigger>
+        <PostTypeBadge type={type} />
 
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Copy link</DropdownMenuItem>
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={() => {
-                setReportOpen(true);
-              }}
-            >
-              <SirenIcon />
-              {t('trigger')}
-            </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {status === PostStatus.DRAFT && (
+          <Badge variant="outline">{tPost('status.DRAFT')}</Badge>
+        )}
+
+        {scope === PostScope.WORKSPACE && (
+          <Badge variant="outline">{tPost('scope.WORKSPACE')}</Badge>
+        )}
+
+        {project?.name && <Badge variant="secondary">{project.name}</Badge>}
       </div>
 
-      <ReportPostDialog
+      <PostOverflowMenu
         postId={postId}
-        open={reportOpen}
-        onOpenChange={setReportOpen}
+        slug={slug}
+        authorHandle={author.handle}
+        projectHandle={project?.handle}
+        redirectAfterDelete={redirectAfterDelete}
       />
-    </>
+    </div>
   );
 }
