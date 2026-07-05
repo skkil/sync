@@ -94,6 +94,7 @@ export function PostOverflowMenu({
 
           if (redirectAfterDelete) {
             router.replace(redirectAfterDelete);
+            return;
           }
 
           router.refresh();
@@ -228,11 +229,7 @@ async function invalidatePostQueries(
       predicate: (query) => {
         const path = getQueryPath(query.queryKey);
 
-        return (
-          path === '/feed/recent' ||
-          path === '/search/posts' ||
-          path.includes('/posts')
-        );
+        return isPostListQueryPath(path);
       },
     }),
   ]);
@@ -242,4 +239,16 @@ function getQueryPath(queryKey: readonly unknown[]) {
   const path = queryKey[0] === 'infinite' ? queryKey[1] : queryKey[0];
 
   return typeof path === 'string' ? path : '';
+}
+
+function isPostListQueryPath(path: string) {
+  return (
+    path === '/feed/recent' ||
+    path === '/search/posts' ||
+    path === '/bookmarks/posts' ||
+    path === '/posts' ||
+    /^\/users\/[^/]+\/posts$/.test(path) ||
+    /^\/projects\/[^/]+\/posts$/.test(path) ||
+    /^\/profiles\/[^/]+\/posts\/activities$/.test(path)
+  );
 }
