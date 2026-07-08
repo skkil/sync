@@ -178,4 +178,41 @@ class PostQueryControllerTests {
                     .and(parameterWithName("type").description("게시글 타입").optional()),
                 GetPostsResponseSnippets.getPostsResponseFields()));
   }
+
+  @Test
+  @DisplayName("[getPostsByTag] API 문서화 테스트")
+  void getPostsByTag() throws Exception {
+    String name = "spring";
+    PostType type = PostType.LONG;
+
+    CursorPaginationRequest pagination =
+        CursorPaginationRequestSnippets.getCursorPaginationRequest();
+    GetPostsResponse response = GetPostsResponseSnippets.getGetPostsResponse();
+
+    when(postQueryService.getPostsByTag(any(), eq(name), eq(type), eq(pagination)))
+        .thenReturn(response);
+
+    mockMvc
+        .perform(
+            get("/tags/{name}/posts", name)
+                .queryParam("type", type.name())
+                .queryParams(
+                    CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetPostsByTag",
+                ResourceSnippetParameters.builder()
+                    .tag("post")
+                    .summary("Get Posts By Tag")
+                    .description("태그가 붙은 공개 게시글 목록을 조회합니다.")
+                    .responseSchema(schema(GetPostsResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("name").description("태그 이름")),
+                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters()
+                    .and(parameterWithName("type").description("게시글 타입").optional()),
+                GetPostsResponseSnippets.getPostsResponseFields()));
+  }
 }

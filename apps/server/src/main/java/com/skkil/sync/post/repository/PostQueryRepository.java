@@ -2,8 +2,10 @@ package com.skkil.sync.post.repository;
 
 import static com.skkil.sync.jooq.tables.PostBookmarks.POST_BOOKMARKS;
 import static com.skkil.sync.jooq.tables.PostLikes.POST_LIKES;
+import static com.skkil.sync.jooq.tables.PostTags.POST_TAGS;
 import static com.skkil.sync.jooq.tables.Posts.POSTS;
 import static com.skkil.sync.jooq.tables.Projects.PROJECTS;
+import static com.skkil.sync.jooq.tables.Tags.TAGS;
 import static com.skkil.sync.jooq.tables.Teammates.TEAMMATES;
 import static com.skkil.sync.jooq.tables.Users.USERS;
 
@@ -88,6 +90,29 @@ public class PostQueryRepository {
           .join(PROJECTS)
           .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
           .where(projectCondition)
+          .orderBy(orderFields)
+          .limit(size)
+          .fetchInto(PostDto.class);
+    };
+  }
+
+  public CursorPaginationDataFetcher<PostDto> getPostsByTag(
+      Long requesterId, String tagName, PostType type) {
+    return (condition, orderFields, size) -> {
+      Condition tagCondition = condition.and(TAGS.NAME.eq(tagName)).and(publicPublishedCondition());
+      if (type != null) {
+        tagCondition = tagCondition.and(POSTS.POST_TYPE.eq(type.name()));
+      }
+
+      return dsl.select(post(requesterId))
+          .from(POSTS)
+          .join(POST_TAGS)
+          .on(POST_TAGS.POST_ID.eq(POSTS.ID))
+          .join(TAGS)
+          .on(TAGS.ID.eq(POST_TAGS.TAG_ID))
+          .leftJoin(PROJECTS)
+          .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
+          .where(tagCondition)
           .orderBy(orderFields)
           .limit(size)
           .fetchInto(PostDto.class);

@@ -76,6 +76,7 @@ export * from './GetPostResponseSummaryProject';
 export * from './GetPostResponseSummaryStatus';
 export * from './GetPostResponseSummaryType';
 export * from './GetPostsByProjectParams';
+export * from './GetPostsByTagParams';
 export * from './GetPostsParams';
 export * from './GetPostsResponse';
 export * from './GetPostsResponsePosts';

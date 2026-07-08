@@ -1570,6 +1570,75 @@ paths:
                     \ 프로젝트\",\"description\":\"프로젝트 설명\",\"website\":\"https://example.com\"\
                     ,\"isPublic\":true,\"iconUrl\":\"https://example.com/icon.png\"\
                     }]}"
+  /tags/{name}/posts:
+    get:
+      tags:
+      - post
+      summary: Get Posts By Tag
+      description: 태그가 붙은 공개 게시글 목록을 조회합니다.
+      operationId: GetPostsByTag
+      parameters:
+      - name: name
+        in: path
+        description: 태그 이름
+        required: true
+        schema:
+          type: string
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: 게시글 타입
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPostsResponse"
+              examples:
+                GetPostsByTag:
+                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
+                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
+                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
+                    :{\"summary\":{\"id\":1,\"slug\":\"test-slug\",\"title\":\"Test\
+                    \ Post Title\",\"type\":\"SHORT\",\"status\":\"PUBLISHED\",\"\
+                    author\":{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"project\":{\"handle\":\"\
+                    my-project\",\"name\":\"나의 프로젝트\",\"description\":\"프로젝트 설명\"\
+                    ,\"website\":\"https://example.com\",\"isPublic\":true,\"iconUrl\"\
+                    :\"https://example.com/icon.png\"},\"resolved\":false,\"isAuthor\"\
+                    :false,\"createdAt\":\"1970-01-01T00:00:00Z\",\"likeCount\":1,\"\
+                    liked\":true,\"commentCount\":1,\"bookmarked\":true,\"bookmarkedAt\"\
+                    :\"1970-01-01T00:00:00Z\",\"likedAt\":\"1970-01-01T00:00:00Z\"\
+                    },\"content\":\"Post Content\"}}]}}"
   /users/recommendations:
     get:
       tags:

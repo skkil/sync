@@ -19,6 +19,7 @@ import SearchCategorySidebar, {
 import SearchPostResults from './_components/SearchPostResults';
 import SearchProjectResults from './_components/SearchProjectResults';
 import SearchQueryInput from './_components/SearchQueryInput';
+import SearchTagResults from './_components/SearchTagResults';
 import SearchUserResults from './_components/SearchUserResults';
 
 export default function SearchPage() {
@@ -60,6 +61,7 @@ export default function SearchPage() {
             {category === 'posts' && (
               <SearchPostResults query={query} projectHandle={projectHandle} />
             )}
+            {category === 'tags' && <SearchTagResults query={query} />}
             {category === 'users' && <SearchUserResults query={query} />}
             {category === 'projects' && <SearchProjectResults query={query} />}
           </>

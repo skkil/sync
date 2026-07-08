@@ -3,6 +3,7 @@
 import {
   FileTextIcon,
   FolderSimpleIcon,
+  HashIcon,
   UsersIcon,
 } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
@@ -10,10 +11,11 @@ import { useTranslations } from 'next-intl';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 
-export type SearchCategory = 'posts' | 'users' | 'projects';
+export type SearchCategory = 'posts' | 'tags' | 'users' | 'projects';
 
 const CATEGORIES: { value: SearchCategory; icon: typeof FileTextIcon }[] = [
   { value: 'posts', icon: FileTextIcon },
+  { value: 'tags', icon: HashIcon },
   { value: 'users', icon: UsersIcon },
   { value: 'projects', icon: FolderSimpleIcon },
 ];

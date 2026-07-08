@@ -105,4 +105,22 @@ public class PostQueryService {
 
     return new GetPostsResponse(posts);
   }
+
+  @Transactional(readOnly = true)
+  public GetPostsResponse getPostsByTag(
+      Long requesterId, String tagName, PostType type, CursorPaginationRequest pagination) {
+    var posts =
+        paginationService
+            .paginate(
+                postQueryRepository.getPostsByTag(requesterId, tagName, type),
+                paginationProvider,
+                pagination)
+            .mapWithLookup(
+                PostDto::authorId,
+                userAssembler::toUserSummaries,
+                (post, authors) ->
+                    postAssembler.toPostResponse(post, authors.get(post.authorId()), requesterId));
+
+    return new GetPostsResponse(posts);
+  }
 }

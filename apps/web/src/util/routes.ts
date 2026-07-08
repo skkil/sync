@@ -8,6 +8,7 @@ const ROUTES = {
   REGISTER: () => '/auth/register',
   ONBOARDING: () => '/onboarding',
   POST: (slug: string) => `/posts/${slug}`,
+  TAG: (name: string) => `/tags/${encodeURIComponent(name)}`,
   NEW_POST: () => `/posts/new`,
   PROJECT: (handle: string) => `/projects/${handle}`,
   NEW_PROJECT: () => '/projects/new',

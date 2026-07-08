@@ -471,8 +471,19 @@
       },
       "tabs": {
         "posts": "게시물",
+        "tags": "태그",
         "users": "사용자",
         "projects": "프로젝트"
+      },
+      "tags": {
+        "post-count": "{count}개의 게시물"
+      }
+    },
+    "tags": {
+      "label": "태그",
+      "empty": {
+        "title": "{name} 태그의 공개 게시물이 없습니다.",
+        "description": "다른 태그를 검색해보세요."
       }
     },
     "auth": {
