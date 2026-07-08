@@ -13,7 +13,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       <div className="relative flex min-h-0 flex-1 w-full">
         <AppSidebar />
         <SidebarInset className="overflow-y-auto">
-          <div className="grow w-full max-w-7xl px-7 pt-7 mx-auto">
+          <div className="grow w-full max-w-7xl px-7 py-7 mx-auto">
             {children}
           </div>
         </SidebarInset>

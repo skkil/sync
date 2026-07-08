@@ -4,7 +4,7 @@ import { useGetPostBySlug } from '@/api/__generated__/post/post';
 import PostCard from '@/components/feature/post/viewer/PostCard';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { PostScope, PostStatus, PostType } from '../types/post';
+import { PostStatus, PostType } from '../types/post';
 
 interface PostCardContainerProps {
   slug: string;
@@ -18,22 +18,24 @@ export default function PostCardContainer({ slug }: PostCardContainerProps) {
   }
 
   const post = data.data;
+  const { summary } = post;
 
   return (
     <PostCard
-      id={post.id}
-      slug={post.slug}
-      type={post.type as PostType}
-      scope={post.scope as PostScope}
-      status={post.status as PostStatus}
-      title={post.title}
-      author={post.author}
-      project={post.project}
+      id={summary.id}
+      slug={slug}
+      type={summary.type as PostType}
+      status={summary.status as PostStatus}
+      title={summary.title}
+      author={summary.author}
+      project={summary.project}
       content={post.content}
-      likeCount={post.likeCount}
-      commentCount={post.commentCount}
-      bookmarked={post.bookmarked}
-      createdAt={post.createdAt}
+      liked={summary.liked}
+      likeCount={summary.likeCount}
+      commentCount={summary.commentCount}
+      bookmarked={summary.bookmarked}
+      isAuthor={summary.isAuthor}
+      createdAt={summary.createdAt}
     />
   );
 }

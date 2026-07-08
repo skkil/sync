@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretLeftIcon } from '@phosphor-icons/react';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -29,13 +29,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { isAuthenticated } from '@/lib/auth';
-import { useSession } from '@/lib/auth/client';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
+import ROUTES from '@/util/routes';
 
 export default function CreateProjectPage() {
   const t = useTranslations('pages.projects.new');
   const router = useRouter();
-  const { data: session, isPending: isSessionPending } = useSession();
+  const { isPending: isSessionPending } = useAuthGuard();
 
   const { mutate: createProject, isPending } = useCreateProject();
 
@@ -106,7 +106,7 @@ export default function CreateProjectPage() {
       {
         onSuccess: ({ data: { handle } }) => {
           toast.success(t('form.submit.success'));
-          router.push(`/projects/${handle}`);
+          router.push(ROUTES.PROJECT(handle));
         },
         onError: () => {
           toast.error(t('form.submit.error'));
@@ -117,10 +117,6 @@ export default function CreateProjectPage() {
 
   if (isSessionPending) {
     return null;
-  }
-
-  if (!isAuthenticated(session)) {
-    redirect('/auth/login');
   }
 
   return (

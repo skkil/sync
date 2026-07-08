@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.post.dto.request.ReportPostRequest;
 import com.skkil.sync.post.exception.PostReportAlreadyExistsException;
+import com.skkil.sync.post.mapper.PostReportAssembler;
 import com.skkil.sync.post.model.Post;
 import com.skkil.sync.post.model.PostReport;
 import com.skkil.sync.post.model.PostReportReason;
@@ -14,6 +15,7 @@ import com.skkil.sync.post.model.PostType;
 import com.skkil.sync.post.model.PostVisibility;
 import com.skkil.sync.post.repository.PostReportRepository;
 import com.skkil.sync.post.repository.PostRepository;
+import com.skkil.sync.user.mapper.UserAssembler;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
 import java.util.Optional;
@@ -31,6 +33,8 @@ class PostReportServiceTests {
   @Mock private PostRepository postRepository;
   @Mock private PostReportRepository postReportRepository;
   @Mock private UserDomainService userDomainService;
+  @Mock private UserAssembler userAssembler;
+  @Mock private PostReportAssembler postReportAssembler;
   @Mock private PaginationService paginationService;
 
   private PostReportService postReportService;
@@ -39,7 +43,12 @@ class PostReportServiceTests {
   void setUp() {
     postReportService =
         new PostReportService(
-            postRepository, postReportRepository, userDomainService, paginationService);
+            postRepository,
+            postReportRepository,
+            userDomainService,
+            userAssembler,
+            postReportAssembler,
+            paginationService);
   }
 
   @Test

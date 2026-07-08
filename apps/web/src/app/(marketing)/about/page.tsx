@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
+import { Button, LinkButton } from '@/components/ui/button';
 import { Copyright } from '@/components/ui/copyright';
 import { Logo } from '@/components/ui/logo';
 import ROUTES from '@/util/routes';
@@ -17,12 +17,10 @@ export default async function About() {
         <Logo />
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" asChild>
-            <Link href={ROUTES.LOGIN()}>{t('nav.login')}</Link>
-          </Button>
-          <Button asChild>
-            <Link href={ROUTES.REGISTER()}>{t('nav.register')}</Link>
-          </Button>
+          <LinkButton href={ROUTES.LOGIN()} variant="ghost">
+            {t('nav.login')}
+          </LinkButton>
+          <LinkButton href={ROUTES.REGISTER()}>{t('nav.register')}</LinkButton>
         </div>
       </header>
 

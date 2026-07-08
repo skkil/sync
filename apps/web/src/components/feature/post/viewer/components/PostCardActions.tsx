@@ -16,8 +16,12 @@ import { Button } from '@/components/ui/button';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { cn } from '@/lib/utils';
 
-function useLikeToggle(postId: number, initialLikeCount: number) {
-  const [liked, setLiked] = useState(false);
+function useLikeToggle(
+  postId: number,
+  initialLiked: boolean,
+  initialLikeCount: number,
+) {
+  const [liked, setLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
 
   const { mutate: likePost } = useLikePost();
@@ -54,6 +58,7 @@ function useBookmarkToggle(postId: number, initialBookmarked: boolean) {
 
 interface PostCardActionsProps {
   postId: number;
+  liked: boolean;
   likeCount: number;
   commentCount: number;
   bookmarked: boolean;
@@ -61,6 +66,7 @@ interface PostCardActionsProps {
 
 export function PostCardActions({
   postId,
+  liked: initialLiked,
   likeCount: initialLikeCount,
   commentCount,
   bookmarked: initialBookmarked,
@@ -70,7 +76,7 @@ export function PostCardActions({
     liked,
     likeCount,
     toggle: toggleLike,
-  } = useLikeToggle(postId, initialLikeCount);
+  } = useLikeToggle(postId, initialLiked, initialLikeCount);
   const { bookmarked, toggle: toggleBookmark } = useBookmarkToggle(
     postId,
     initialBookmarked,

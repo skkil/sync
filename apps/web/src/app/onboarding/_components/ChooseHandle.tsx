@@ -1,21 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
-import { forwardRef, useEffect, useImperativeHandle } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import z from 'zod';
 
-import {
-  getGetAuthenticatedUserQueryKey,
-  useUpdateProfile,
-} from '@/api/__generated__/profile/profile';
 import { useGetHandleAvailability } from '@/api/__generated__/user/user';
+import { useUpdateProfile } from '@/components/feature/profile/hooks/useUpdateProfile';
 import { FieldError } from '@/components/ui/field';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
+import { useSession } from '@/lib/auth/client';
 
 import { OnboardingStepContentProps, OnboardingStepContentRef } from '../page';
 
@@ -55,6 +53,16 @@ export const ChooseHandle = forwardRef<
     },
   });
 
+  const { data: session, refetch: refetchSession } = useSession();
+
+  const hasPrefilledHandle = useRef(false);
+  useEffect(() => {
+    if (!hasPrefilledHandle.current && session?.user.handle) {
+      hasPrefilledHandle.current = true;
+      form.reset({ handle: session.user.handle });
+    }
+  }, [session, form]);
+
   const handle = form.watch('handle');
 
   const debouncedHandle = useDebounce(handle, 500);
@@ -75,15 +83,7 @@ export const ChooseHandle = forwardRef<
     },
   );
 
-  const { mutate: updateProfile } = useUpdateProfile({
-    mutation: {
-      onSuccess: (_data, _variables, _onMutateResult, context) => {
-        context.client.invalidateQueries({
-          queryKey: getGetAuthenticatedUserQueryKey(),
-        });
-      },
-    },
-  });
+  const { mutate: updateProfile } = useUpdateProfile();
 
   useEffect(() => {
     if (handleAvailabilityData) {
@@ -124,7 +124,8 @@ export const ChooseHandle = forwardRef<
           },
         },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
+            await refetchSession();
             onSuccess();
           },
         },

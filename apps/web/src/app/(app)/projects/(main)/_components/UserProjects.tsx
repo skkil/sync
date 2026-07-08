@@ -30,9 +30,10 @@ export default function UserProjects() {
     <div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => (
         <ProjectCard
-          key={project.id}
+          key={project.handle}
           name={project.name}
           handle={project.handle}
+          iconUrl={project.iconUrl}
         />
       ))}
       <NewProjectCard />

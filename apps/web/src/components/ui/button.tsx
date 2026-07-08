@@ -1,4 +1,5 @@
 import { type VariantProps, cva } from 'class-variance-authority';
+import Link from 'next/link';
 import { Slot } from 'radix-ui';
 import * as React from 'react';
 
@@ -73,12 +74,37 @@ function Button({
       )}
       {...props}
     >
-      <div className="flex items-center gap-2">
-        {isPending && <Spinner />}
-        {children}
-      </div>
+      {asChild ? (
+        children
+      ) : (
+        <div className="relative flex items-center gap-2">
+          {isPending && <Spinner className="absolute inset-0 m-auto" />}
+          <div
+            className={cn('flex items-center gap-2', isPending && 'invisible')}
+          >
+            {children}
+          </div>
+        </div>
+      )}
     </Comp>
   );
 }
 
-export { Button, buttonVariants };
+function LinkButton({
+  className,
+  variant,
+  size,
+  ...props
+}: React.ComponentProps<typeof Link> & VariantProps<typeof buttonVariants>) {
+  return (
+    <Link
+      data-slot="button"
+      data-variant={variant}
+      data-size={size}
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  );
+}
+
+export { Button, LinkButton, buttonVariants };

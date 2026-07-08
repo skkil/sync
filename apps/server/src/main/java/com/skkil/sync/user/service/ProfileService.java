@@ -6,6 +6,7 @@ import com.skkil.sync.media.service.domain.MediaDomainService;
 import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.exception.UserNotFoundException;
+import com.skkil.sync.user.mapper.ProfileAssembler;
 import com.skkil.sync.user.mapper.ProfileMapper;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.model.UserContacts;
@@ -25,16 +26,19 @@ public class ProfileService {
   private final UserRepository userRepository;
   private final MediaDomainService mediaService;
   private final ProfileMapper profileMapper;
+  private final ProfileAssembler profileAssembler;
 
   public ProfileService(
       UserRelationshipService userRelationshipService,
       UserRepository userRepository,
       MediaDomainService mediaService,
-      ProfileMapper profileMapper) {
+      ProfileMapper profileMapper,
+      ProfileAssembler profileAssembler) {
     this.userRelationshipService = userRelationshipService;
     this.userRepository = userRepository;
     this.mediaService = mediaService;
     this.profileMapper = profileMapper;
+    this.profileAssembler = profileAssembler;
   }
 
   @Transactional(readOnly = true)
@@ -70,20 +74,8 @@ public class ProfileService {
 
     boolean isFollowing = userRelationshipService.isFollowing(requesterId, userId);
 
-    return GetProfileResponse.builder()
-        .userId(user.getId().toString())
-        .handle(user.getHandle())
-        .name(user.getFullName())
-        .email(user.getEmail())
-        .bio(user.getBio())
-        .profession(user.getProfession())
-        .profileImageUrl(profileImageUrl)
-        .isFollowing(isFollowing)
-        .isOnboarded(user.getIsOnboarded())
-        .isAuthenticatedUser(isAuthenticatedUser)
-        .role(user.getRole())
-        .contacts(profileMapper.toGetProfileResponseContacts(user.getContacts()))
-        .build();
+    return profileAssembler.toGetProfileResponse(
+        user, profileImageUrl, isFollowing, isAuthenticatedUser);
   }
 
   @Transactional(readOnly = true)

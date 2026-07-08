@@ -16,9 +16,10 @@ const DEBOUNCE_MS = 300;
 interface TagInputProps {
   tags: string[];
   onChange: (tags: string[]) => void;
+  accentRing?: string;
 }
 
-export function TagInput({ tags, onChange }: TagInputProps) {
+export function TagInput({ tags, onChange, accentRing }: TagInputProps) {
   const t = useTranslations('components.editor.tags');
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -81,7 +82,10 @@ export function TagInput({ tags, onChange }: TagInputProps) {
   return (
     <div className="relative flex flex-col gap-2">
       <div
-        className="flex flex-wrap items-center gap-1.5 rounded-md border border-input bg-transparent px-3 py-2 text-sm cursor-text min-h-9"
+        className={cn(
+          'flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-transparent px-2.5 py-2 text-sm cursor-text min-h-9 transition-shadow focus-within:ring-2',
+          accentRing ?? 'focus-within:ring-primary/30',
+        )}
         onClick={() => inputRef.current?.focus()}
       >
         {tags.map((tag) => (
@@ -92,7 +96,10 @@ export function TagInput({ tags, onChange }: TagInputProps) {
               removeTag(tag);
             }}
           >
-            <Badge className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-lg font-medium">
+            <Badge
+              variant="secondary"
+              className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
+            >
               {tag}
               <XIcon size={10} />
             </Badge>
@@ -116,7 +123,7 @@ export function TagInput({ tags, onChange }: TagInputProps) {
             setTimeout(() => setOpen(false), 150);
           }}
           placeholder={tags.length === 0 ? t('placeholder') : ''}
-          className="flex-1 min-w-24 bg-transparent outline-none placeholder:text-muted-foreground text-lg"
+          className="flex-1 min-w-16 bg-transparent outline-none placeholder:text-muted-foreground text-sm"
         />
       </div>
 

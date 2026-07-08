@@ -11,14 +11,16 @@ import z from 'zod';
 
 import { useUploadMedia } from '@/api/__generated__/media/media';
 import {
-  getGetAuthenticatedUserQueryOptions,
-  getGetProfileByHandleQueryOptions,
   useGetAuthenticatedUser,
   useGetProfileByHandle,
-  useUpdateProfile,
 } from '@/api/__generated__/profile/profile';
 import { uploadFileToS3 } from '@/api/s3';
 import { ContactFields } from '@/components/feature/profile/contacts';
+import { useUpdateProfile } from '@/components/feature/profile/hooks/useUpdateProfile';
+import {
+  useFollowUser,
+  useUnfollowUser,
+} from '@/components/feature/user/hooks/useFollowUser';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,11 +48,10 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
-import { useFollowUserMutation } from '@/features/user/api/follow-user';
-import { useUnfollowUserMutation } from '@/features/user/api/unfollow-user';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useSession } from '@/lib/auth/client';
 import SyncError, { ErrorCode } from '@/lib/error';
+import ROUTES from '@/util/routes';
 
 interface ProfileOverviewProps {
   handle: string;
@@ -108,7 +109,7 @@ export default function ProfileOverview({ handle }: ProfileOverviewProps) {
                   ) : (
                     <>
                       <FollowButton handle={handle} />
-                      <Link href={`/messages?to=${handle}`}>
+                      <Link href={ROUTES.MESSAGES(handle)}>
                         <Button variant="outline">{t('header.message')}</Button>
                       </Link>
                     </>
@@ -252,21 +253,11 @@ function EditProfileDialog() {
 
   const { mutate: updateProfile, isPending: isUpdateProfilePending } =
     useUpdateProfile({
-      mutation: {
-        onSuccess: async (_data, _variables, _onMutateResult, context) => {
-          await refetchSession();
-
-          await context.client.invalidateQueries(
-            getGetAuthenticatedUserQueryOptions(),
-          );
-
-          await context.client.invalidateQueries(
-            getGetProfileByHandleQueryOptions(profile?.data.handle || ''),
-          );
-
-          toast.success(t('messages.success'));
-          closeDialog();
-        },
+      handle: profile?.data.handle || '',
+      onSuccess: async () => {
+        await refetchSession();
+        toast.success(t('messages.success'));
+        closeDialog();
       },
     });
 
@@ -438,24 +429,14 @@ function EditProfileDialog() {
 
 function ProfileImageField() {
   const t = useTranslations('pages.profile.edit.form.image');
+  const tCommon = useTranslations();
 
   const { refetch: refetchSession } = useSession();
   const { data: profile } = useGetAuthenticatedUser();
 
   const { mutate: updateProfile } = useUpdateProfile({
-    mutation: {
-      onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        await refetchSession();
-
-        await context.client.invalidateQueries(
-          getGetAuthenticatedUserQueryOptions(),
-        );
-
-        await context.client.invalidateQueries(
-          getGetProfileByHandleQueryOptions(profile?.data.handle || ''),
-        );
-      },
-    },
+    handle: profile?.data.handle || '',
+    onSuccess: refetchSession,
   });
 
   const { mutateAsync: uploadMedia, isPending: isUploadMediaPending } =
@@ -520,7 +501,12 @@ function ProfileImageField() {
           setSelectedImage(null);
         },
         onError: (error) => {
-          if (error instanceof Error) {
+          if (
+            error instanceof SyncError &&
+            error.code === ErrorCode.NETWORK_ERROR
+          ) {
+            setError(tCommon('errors.connection-failed'));
+          } else if (error instanceof SyncError) {
             setError(error.message);
           } else {
             setError(t('errors.uploadFailed'));
@@ -609,8 +595,8 @@ function FollowButton({ handle }: FollowButtonProps) {
   const { requireAuth } = useRequireAuth();
   const { data: profile, isPending } = useGetProfileByHandle(handle);
 
-  const { mutate: followUser } = useFollowUserMutation();
-  const { mutate: unfollowUser } = useUnfollowUserMutation();
+  const { mutate: followUser } = useFollowUser();
+  const { mutate: unfollowUser } = useUnfollowUser();
 
   if (isPending || !profile) {
     return null;
@@ -620,35 +606,36 @@ function FollowButton({ handle }: FollowButtonProps) {
     return null;
   }
 
-  const targetUserId = String(profile.data.userId);
+  const followeeId = String(profile.data.userId);
 
   if (profile.data.isFollowing) {
     return (
       <Button
+        variant="outline"
         onClick={() => {
           if (!requireAuth({ intent: 'follow' })) {
             return;
           }
 
-          unfollowUser(targetUserId);
+          unfollowUser({ followeeId });
         }}
       >
         {t('unfollow')}
       </Button>
     );
-  } else {
-    return (
-      <Button
-        onClick={() => {
-          if (!requireAuth({ intent: 'follow' })) {
-            return;
-          }
-
-          followUser(targetUserId);
-        }}
-      >
-        {t('follow')}
-      </Button>
-    );
   }
+
+  return (
+    <Button
+      onClick={() => {
+        if (!requireAuth({ intent: 'follow' })) {
+          return;
+        }
+
+        followUser({ followeeId });
+      }}
+    >
+      {t('follow')}
+    </Button>
+  );
 }

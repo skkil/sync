@@ -3,25 +3,16 @@ package com.skkil.sync.post.snippets;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
-import com.skkil.sync.common.util.restdocs.RestDocsUtils;
-import com.skkil.sync.common.util.time.DateTimeTestUtils;
 import com.skkil.sync.post.dto.response.GetPostResponse;
-import com.skkil.sync.post.model.PostScope;
-import com.skkil.sync.post.model.PostStatus;
-import com.skkil.sync.post.model.PostType;
+import java.util.ArrayList;
 import java.util.List;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
 public class GetPostResponseSnippets {
 
   public static GetPostResponse getGetPostResponse() {
-    GetPostResponse.Author author =
-        GetPostResponse.Author.builder().name("Author Name").handle("author-handle").build();
-
-    GetPostResponse.Project project =
-        GetPostResponse.Project.builder().handle("project-handle").name("Project Name").build();
-
     GetPostResponse.Media media =
         GetPostResponse.Media.builder().id(1L).url("https://example.com/media.png").build();
 
@@ -29,64 +20,26 @@ public class GetPostResponseSnippets {
         GetPostResponse.Content.builder().json("Post Content").media(List.of(media)).build();
 
     return GetPostResponse.builder()
-        .id(1L)
-        .type(PostType.SHORT)
-        .scope(PostScope.PUBLIC)
-        .status(PostStatus.PUBLISHED)
-        .slug("test-slug")
-        .title("title")
-        .author(author)
-        .project(project)
+        .summary(PostSummarySnippets.getPostSummary())
         .content(content)
-        .likeCount(1L)
-        .commentCount(1L)
-        .bookmarked(true)
-        .resolved(false)
-        .createdAt(DateTimeTestUtils.defaultTestOffsetDateTime())
         .build();
   }
 
   public static ResponseFieldsSnippet getPostResponseFields() {
-    return responseFields(
-        fieldWithPath("id").type(JsonFieldType.NUMBER).description("Post ID"),
-        fieldWithPath("type")
-            .type(RestDocsUtils.ENUM_TYPE)
-            .description("Post Type")
-            .attributes(RestDocsUtils.getEnumAttributes(PostType.class)),
-        fieldWithPath("scope")
-            .type(RestDocsUtils.ENUM_TYPE)
-            .description("Post Scope")
-            .attributes(RestDocsUtils.getEnumAttributes(PostScope.class)),
-        fieldWithPath("status")
-            .type(RestDocsUtils.ENUM_TYPE)
-            .description("Post Status")
-            .attributes(RestDocsUtils.getEnumAttributes(PostStatus.class)),
-        fieldWithPath("slug").type(JsonFieldType.STRING).description("Post Slug"),
-        fieldWithPath("title").type(JsonFieldType.STRING).description("Post Title").optional(),
-        fieldWithPath("author").type(JsonFieldType.OBJECT).description("Author Information"),
-        fieldWithPath("author.name").type(JsonFieldType.STRING).description("Author Name"),
-        fieldWithPath("author.handle").type(JsonFieldType.STRING).description("Author Handle"),
-        fieldWithPath("project")
-            .type(JsonFieldType.OBJECT)
-            .description("Project Information")
-            .optional(),
-        fieldWithPath("project.handle").type(JsonFieldType.STRING).description("Project Handle"),
-        fieldWithPath("project.name").type(JsonFieldType.STRING).description("Project Name"),
-        fieldWithPath("content").type(JsonFieldType.OBJECT).description("Post Content"),
-        fieldWithPath("content.json").type(JsonFieldType.STRING).description("Post Content JSON"),
+    List<FieldDescriptor> fields = new ArrayList<>();
+    fields.add(fieldWithPath("summary").type(JsonFieldType.OBJECT).description("포스트 정보"));
+    fields.addAll(PostSummarySnippets.getPostSummaryFields("summary."));
+    fields.add(fieldWithPath("content").type(JsonFieldType.OBJECT).description("Post Content"));
+    fields.add(
+        fieldWithPath("content.json").type(JsonFieldType.STRING).description("Post Content JSON"));
+    fields.add(
         fieldWithPath("content.media")
             .type(JsonFieldType.ARRAY)
-            .description("Media attached to the post"),
-        fieldWithPath("content.media[].id").type(JsonFieldType.NUMBER).description("Media ID"),
-        fieldWithPath("content.media[].url").type(JsonFieldType.STRING).description("Media URL"),
-        fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("Number of Likes"),
-        fieldWithPath("commentCount").type(JsonFieldType.NUMBER).description("Number of Comments"),
-        fieldWithPath("bookmarked")
-            .type(JsonFieldType.BOOLEAN)
-            .description("Whether the current user bookmarked this post"),
-        fieldWithPath("resolved")
-            .type(JsonFieldType.BOOLEAN)
-            .description("Whether the question post has been resolved"),
-        fieldWithPath("createdAt").type(JsonFieldType.STRING).description("Creation Timestamp"));
+            .description("Media attached to the post"));
+    fields.add(
+        fieldWithPath("content.media[].id").type(JsonFieldType.NUMBER).description("Media ID"));
+    fields.add(
+        fieldWithPath("content.media[].url").type(JsonFieldType.STRING).description("Media URL"));
+    return responseFields(fields.toArray(FieldDescriptor[]::new));
   }
 }

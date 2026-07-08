@@ -9,8 +9,10 @@ import com.skkil.sync.post.dto.response.GetPostReportsResponse;
 import com.skkil.sync.post.model.PostReportReason;
 import com.skkil.sync.post.model.PostReportStatus;
 import com.skkil.sync.post.model.PostVisibility;
+import com.skkil.sync.user.snippets.UserSummarySnippets;
 import java.time.Instant;
 import java.util.List;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
@@ -20,20 +22,16 @@ public class GetPostReportsResponseSnippets {
     GetPostReportsResponse.Post post =
         new GetPostReportsResponse.Post(
             1L, "reported-post", "신고된 포스트", "{\"text\":\"신고된 포스트 내용\"}", PostVisibility.HIDDEN);
-    GetPostReportsResponse.Reporter reporter =
-        new GetPostReportsResponse.Reporter(2L, "reporter", "신고자");
-    GetPostReportsResponse.Reviewer reviewer =
-        new GetPostReportsResponse.Reviewer(3L, "admin", "관리자");
     GetPostReportsResponse.Report report =
         new GetPostReportsResponse.Report(
             1L,
             post,
-            reporter,
+            UserSummarySnippets.getUserSummary(),
             PostReportReason.SPAM,
             "광고성 게시글입니다.",
             PostReportStatus.RESOLVED,
             Instant.EPOCH,
-            reviewer,
+            UserSummarySnippets.getUserSummary(),
             Instant.EPOCH,
             "스팸으로 판단했습니다.");
 
@@ -59,6 +57,11 @@ public class GetPostReportsResponseSnippets {
             fieldWithPath(".resolutionNote")
                 .type(JsonFieldType.STRING)
                 .description("관리자 처리 메모")
+                .optional(),
+            fieldWithPath(".reporter").type(JsonFieldType.OBJECT).description("신고자 정보"),
+            fieldWithPath(".reviewedBy")
+                .type(JsonFieldType.OBJECT)
+                .description("검토자 정보")
                 .optional());
 
     fields =
@@ -73,16 +76,12 @@ public class GetPostReportsResponseSnippets {
     fields =
         fields.andWithPrefix(
             "reports.content[].reporter",
-            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("신고자 ID"),
-            fieldWithPath(".handle").type(JsonFieldType.STRING).description("신고자 핸들"),
-            fieldWithPath(".name").type(JsonFieldType.STRING).description("신고자 이름"));
+            UserSummarySnippets.getUserSummaryFields(".").toArray(FieldDescriptor[]::new));
 
     fields =
         fields.andWithPrefix(
             "reports.content[].reviewedBy",
-            fieldWithPath(".id").type(JsonFieldType.NUMBER).description("검토자 ID"),
-            fieldWithPath(".handle").type(JsonFieldType.STRING).description("검토자 핸들"),
-            fieldWithPath(".name").type(JsonFieldType.STRING).description("검토자 이름"));
+            UserSummarySnippets.getUserSummaryFields(".").toArray(FieldDescriptor[]::new));
 
     return responseFields(fields.getFieldDescriptors());
   }

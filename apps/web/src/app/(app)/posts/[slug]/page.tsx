@@ -28,10 +28,10 @@ export default async function Post({ params }: PostProps) {
       getGetPostBySlugQueryOptions(slug),
     );
 
-    commentsEnabled = post.scope === 'PUBLIC' && post.status === 'PUBLISHED';
+    commentsEnabled = post.summary.status === 'PUBLISHED';
 
-    if (post.project) {
-      redirect(ROUTES.PROJECT_POST(post.project.handle, post.slug));
+    if (post.summary.project?.handle) {
+      redirect(ROUTES.PROJECT_POST(post.summary.project.handle, slug));
     }
   } catch (error) {
     if (error instanceof SyncError) {

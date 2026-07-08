@@ -3,6 +3,7 @@ package com.skkil.sync.post.service;
 import com.skkil.sync.post.constants.PostConstants;
 import com.skkil.sync.post.dto.response.SearchTagsResponse;
 import com.skkil.sync.post.exception.PostTagLimitExceededException;
+import com.skkil.sync.post.mapper.TagMapper;
 import com.skkil.sync.post.model.Post;
 import com.skkil.sync.post.model.PostTag;
 import com.skkil.sync.post.model.Tag;
@@ -15,23 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class TagService {
 
   private final TagRepository tagRepository;
+  private final TagMapper tagMapper;
 
-  public TagService(TagRepository tagRepository) {
+  public TagService(TagRepository tagRepository, TagMapper tagMapper) {
     this.tagRepository = tagRepository;
+    this.tagMapper = tagMapper;
   }
 
   @Transactional(readOnly = true)
   public SearchTagsResponse searchTags(String query) {
-    var tags =
-        tagRepository.searchTags(query).stream()
-            .map(
-                tag ->
-                    SearchTagsResponse.Tag.builder()
-                        .name(tag.getName())
-                        .description(tag.getDescription())
-                        .postCount(tag.getPostCount())
-                        .build())
-            .toList();
+    var tags = tagRepository.searchTags(query).stream().map(tagMapper::toTag).toList();
 
     return new SearchTagsResponse(tags);
   }

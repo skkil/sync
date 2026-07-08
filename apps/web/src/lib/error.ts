@@ -8,6 +8,7 @@ export enum ErrorCode {
   MESSAGE_TO_SELF = 'MESSAGE_TO_SELF',
   PROJECT_NOT_FOUND = 'PROJECT_NOT_FOUND',
   POST_NOT_FOUND = 'POST_NOT_FOUND',
+  NETWORK_ERROR = 'NETWORK_ERROR',
 }
 
 export default class SyncError extends Error {

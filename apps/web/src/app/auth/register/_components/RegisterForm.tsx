@@ -2,14 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { useRegister } from '@/api/__generated__/auth/auth';
-import { Button } from '@/components/ui/button';
+import { Button, LinkButton } from '@/components/ui/button';
 import {
   Field,
   FieldError,
@@ -18,6 +17,7 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import SyncError, { ErrorCode } from '@/lib/error';
+import ROUTES from '@/util/routes';
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -81,7 +81,7 @@ export default function RegisterForm() {
       },
       {
         onSuccess: () => {
-          router.push('/auth/login');
+          router.replace(ROUTES.LOGIN());
         },
         onError: (error) => {
           if (error instanceof SyncError) {
@@ -183,9 +183,9 @@ export default function RegisterForm() {
               {t('submit.label')}
             </Button>
 
-            <Button className="w-full" variant="link">
-              <Link href="/auth/login">{t('links.login.label')}</Link>
-            </Button>
+            <LinkButton className="w-full" variant="link" href={ROUTES.LOGIN()}>
+              {t('links.login.label')}
+            </LinkButton>
           </div>
         </FieldGroup>
       </form>

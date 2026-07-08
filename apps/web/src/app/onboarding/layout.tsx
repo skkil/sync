@@ -1,9 +1,9 @@
 import { getTranslations } from 'next-intl/server';
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { TwoColumnFullPageLayout } from '@/components/layout/TwoColumnLayout';
-import { auth, isAuthenticated, isOnboarded } from '@/lib/auth';
+import { isOnboarded } from '@/lib/auth';
+import { requireSession } from '@/lib/auth/guards';
 import ROUTES from '@/util/routes';
 
 interface OnboardingLayoutProps {
@@ -13,13 +13,7 @@ interface OnboardingLayoutProps {
 export default async function OnboardingLayout({
   children,
 }: OnboardingLayoutProps) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!isAuthenticated(session)) {
-    redirect(ROUTES.ABOUT());
-  }
+  const session = await requireSession();
 
   if (isOnboarded(session)) {
     redirect(ROUTES.HOME());

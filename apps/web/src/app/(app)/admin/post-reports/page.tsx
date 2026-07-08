@@ -49,6 +49,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
+import ROUTES from '@/util/routes';
 
 const PAGE_SIZE = '20';
 const REPORT_STATUSES = ['PENDING', 'RESOLVED', 'DISMISSED'] as const;
@@ -185,7 +186,7 @@ export default function AdminPostReportsPage() {
                     <div className="space-y-2">
                       {report.post && (
                         <Link
-                          href={`/posts/${report.post.slug}`}
+                          href={ROUTES.POST(report.post.slug)}
                           className="font-medium hover:underline"
                         >
                           {report.post.title || report.post.slug}

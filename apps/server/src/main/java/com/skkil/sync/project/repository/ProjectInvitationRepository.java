@@ -12,7 +12,7 @@ public interface ProjectInvitationRepository extends JpaRepository<ProjectInvita
   @EntityGraph(attributePaths = {"project", "inviter", "invitee"})
   Optional<ProjectInvitation> findByToken(String token);
 
-  @EntityGraph(attributePaths = {"invitee"})
+  @EntityGraph(attributePaths = {"invitee", "inviter"})
   List<ProjectInvitation> findByProjectIdAndStatus(Long projectId, InvitationStatus status);
 
   @EntityGraph(attributePaths = {"project", "inviter"})

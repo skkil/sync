@@ -4,13 +4,9 @@ import { PaperPlaneRightIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
-import {
-  getGetPostCommentsInfiniteQueryKey,
-  type getPostCommentsResponse,
-  useCreateComment,
-  useGetPostCommentsInfinite,
-} from '@/api/__generated__/comment/comment';
+import { useGetPostCommentsInfinite } from '@/api/__generated__/comment/comment';
 import type { GetCommentsResponseCommentsNodesItemContent } from '@/api/__generated__/types';
+import { useCreateComment } from '@/components/feature/post/hooks/useCreateComment';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -92,34 +88,8 @@ export default function PostComments({ slug }: PostCommentsProps) {
       },
     );
   const [draft, setDraft] = useState('');
-  const commentsQueryKey = getGetPostCommentsInfiniteQueryKey(slug, {
-    first: COMMENT_PAGE_SIZE,
-  });
 
-  const { mutate: createComment, isPending: isSubmitting } = useCreateComment({
-    mutation: {
-      onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        setDraft('');
-        context.client.setQueryData<{
-          pages: getPostCommentsResponse[];
-          pageParams: unknown[];
-        }>(commentsQueryKey, (previous) => {
-          if (!previous) {
-            return previous;
-          }
-
-          return {
-            pages: previous.pages.slice(0, 1),
-            pageParams: previous.pageParams.slice(0, 1),
-          };
-        });
-
-        await context.client.invalidateQueries({
-          queryKey: commentsQueryKey,
-        });
-      },
-    },
-  });
+  const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
 
   const comments = useMemo(() => {
     return (
@@ -139,7 +109,10 @@ export default function PostComments({ slug }: PostCommentsProps) {
       return;
     }
 
-    createComment({ slug, data: { content } });
+    createComment(
+      { slug, data: { content } },
+      { onSuccess: () => setDraft('') },
+    );
   }
 
   return (

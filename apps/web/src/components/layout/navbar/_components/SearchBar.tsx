@@ -2,7 +2,7 @@
 
 import { MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
+import ROUTES from '@/util/routes';
 
 interface SearchBarProps {
   variant: 'desktop' | 'mobile';
@@ -19,10 +20,17 @@ interface SearchBarProps {
 export default function SearchBar({ variant }: SearchBarProps) {
   const t = useTranslations('components.navigation');
   const router = useRouter();
+  const pathname = usePathname();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [query, setQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const projectHandleMatch = pathname.match(/^\/projects\/([^/]+)/)?.[1];
+  const projectHandle =
+    projectHandleMatch && projectHandleMatch !== 'new'
+      ? projectHandleMatch
+      : undefined;
 
   useEffect(() => {
     if (isExpanded) {
@@ -32,7 +40,7 @@ export default function SearchBar({ variant }: SearchBarProps) {
 
   const handleSearch = () => {
     if (!query.trim()) return;
-    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    router.push(ROUTES.SEARCH(query.trim(), projectHandle));
     setQuery('');
     setIsExpanded(false);
   };
@@ -67,7 +75,11 @@ export default function SearchBar({ variant }: SearchBarProps) {
               </InputGroupAddon>
               <InputGroupInput
                 ref={inputRef}
-                placeholder={t('search.placeholder')}
+                placeholder={t(
+                  projectHandle
+                    ? 'search.placeholder-scoped'
+                    : 'search.placeholder',
+                )}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}

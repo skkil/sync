@@ -2,7 +2,6 @@
 
 import {
   ArrowLeftIcon,
-  FolderSimpleIcon,
   GearIcon,
   PencilIcon,
   RssIcon,
@@ -11,6 +10,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { useGetProjectByHandle } from '@/api/__generated__/project/project';
+import { ProjectAvatar } from '@/components/feature/project/avatar';
 import {
   SidebarContent,
   SidebarGroup,
@@ -35,37 +35,46 @@ export default function ProjectSidebarContent({
   handle,
 }: ProjectSidebarContentProps) {
   const pathname = usePathname();
-  const { requireAuth } = useRequireAuth();
+  const { requireAuth, isAuthenticated } = useRequireAuth();
   const { data } = useGetProjectByHandle(handle);
 
-  const projectName = data?.data.name ?? handle;
+  const projectName = data?.data.summary.name ?? handle;
+  const projectIconUrl = data?.data.summary.iconUrl;
 
   const workspaceNavItems = [
-    { label: 'Feed', href: `/projects/${handle}`, icon: RssIcon },
+    { label: 'Feed', href: ROUTES.PROJECT_POSTS(handle), icon: RssIcon },
   ];
 
   return (
     <>
       <SidebarHeader className="flex flex-col gap-3 p-4">
         <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-1 text-xs text-sidebar-foreground/60 hover:text-sidebar-foreground"
-          >
-            <ArrowLeftIcon size={12} />
-            Home
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              href={ROUTES.HOME()}
+              className="flex items-center gap-1 text-xs text-sidebar-foreground/60 hover:text-sidebar-foreground"
+            >
+              <ArrowLeftIcon size={12} />
+              Home
+            </Link>
+          ) : (
+            <div />
+          )}
           <SidebarCloseButton />
         </div>
 
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg">
-            <FolderSimpleIcon className="size-4" />
-          </div>
-          <span className="truncate font-medium">{projectName}</span>
-        </div>
-
         <SidebarMenu>
+          <SidebarMenuButton
+            asChild
+            size="lg"
+            isActive={pathname === ROUTES.PROJECT(handle)}
+          >
+            <Link href={ROUTES.PROJECT(handle)}>
+              <ProjectAvatar name={projectName} iconUrl={projectIconUrl} />
+              <span className="truncate font-medium">{projectName}</span>
+            </Link>
+          </SidebarMenuButton>
+
           <SidebarMenuButton
             asChild
             isActive={pathname === ROUTES.NEW_PROJECT_POST(handle)}
@@ -113,27 +122,31 @@ export default function ProjectSidebarContent({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarSeparator />
+        {isAuthenticated && (
+          <>
+            <SidebarSeparator />
 
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname.startsWith(
-                    ROUTES.PROJECT_SETTINGS(handle),
-                  )}
-                >
-                  <Link href={ROUTES.PROJECT_SETTINGS(handle)}>
-                    <GearIcon />
-                    Settings
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname.startsWith(
+                        ROUTES.PROJECT_SETTINGS(handle),
+                      )}
+                    >
+                      <Link href={ROUTES.PROJECT_SETTINGS(handle)}>
+                        <GearIcon />
+                        Settings
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
       </SidebarContent>
     </>
   );

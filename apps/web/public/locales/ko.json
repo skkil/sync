@@ -42,6 +42,29 @@
           "error": "신고 접수에 실패했습니다."
         }
       },
+      "delete": {
+        "trigger": "삭제",
+        "title": "이 포스트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+        "actions": {
+          "cancel": "취소",
+          "confirm": "삭제"
+        },
+        "messages": {
+          "success": "포스트가 삭제되었습니다.",
+          "error": "포스트 삭제에 실패했습니다."
+        }
+      },
+      "copy-link": {
+        "trigger": "링크 복사",
+        "messages": {
+          "success": "링크가 복사되었습니다.",
+          "error": "링크 복사에 실패했습니다."
+        }
+      },
+      "render-error": {
+        "title": "포스트를 표시할 수 없습니다",
+        "description": "이 포스트의 내용을 불러오는 중 문제가 발생했습니다."
+      },
       "comments": {
         "title": "댓글",
         "empty": "아직 댓글이 없습니다.",
@@ -441,16 +464,14 @@
       }
     },
     "search": {
+      "empty-query": "검색어를 입력해 주세요.",
       "results": {
         "title": "{query}에 대한 검색 결과",
         "no-results": "{query}에 대한 검색 결과가 없습니다."
       },
-      "filters": {
-        "title": "필터",
-        "people": "사람",
-        "schools": "학교",
-        "companies": "회사",
-        "contests": "대회",
+      "tabs": {
+        "posts": "게시물",
+        "users": "사용자",
         "projects": "프로젝트"
       }
     },
@@ -532,7 +553,8 @@
     "about": {
       "nav": {
         "login": "로그인",
-        "register": "가입하기"
+        "register": "가입하기",
+        "app": "앱으로 이동"
       },
       "hero": {
         "badge": "sync 소개",
@@ -605,6 +627,13 @@
             }
           }
         },
+        "follow": {
+          "title": "관심사가 비슷한 사람들",
+          "description": "회원님과 잘 맞을 만한 사람들이에요. 지금 팔로우하고 피드를 채워보세요.",
+          "follow": "팔로우",
+          "following": "팔로잉",
+          "empty": "아직 추천할 사용자가 없어요. 나중에 다시 확인해보세요."
+        },
         "finished": {
           "title": "이제 sync를 사용할 준비가 끝났습니다!",
           "description": "프로필을 탐색하고 네트워크를 확장하세요."
@@ -614,6 +643,9 @@
         "previous": "뒤로",
         "next": "다음",
         "finish": "완료"
+      },
+      "errors": {
+        "finish": "온보딩을 완료하지 못했습니다. 다시 시도해주세요."
       }
     },
     "profile": {
@@ -693,19 +725,15 @@
         "posts": "블로그",
         "questions": {
           "label": "질문",
-          "empty": "아직 작성한 질문이 없습니다."
-        },
-        "feed": {
-          "label": "피드",
-          "empty": "아직 작성한 피드가 없습니다."
+          "empty": "아직 작성한 질문이 없습니다.",
+          "error": "질문을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도하세요.",
+          "end": "질문이 더 이상 없습니다."
         },
         "likes": {
           "label": "좋아요",
-          "empty": "좋아요를 누른 게시물이 없습니다."
-        },
-        "media": {
-          "label": "미디어",
-          "empty": "업로드한 미디어가 없습니다."
+          "empty": "좋아요를 누른 게시물이 없습니다.",
+          "error": "좋아요한 게시물을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도하세요.",
+          "end": "좋아요한 게시물이 더 이상 없습니다."
         }
       },
       "edit": {
@@ -964,7 +992,11 @@
       }
     },
     "not-found": {
-      "title": "페이지를 찾을 수 없습니다"
+      "eyebrow": "sync status",
+      "title": "요청하신 주소를 찾을 수 없습니다.",
+      "description": "삭제되었거나 잘못 입력된 링크일 수 있어요.",
+      "back": "홈으로 돌아가기",
+      "explore": "탐색하기"
     }
   },
   "modals": {
@@ -1050,10 +1082,6 @@
         "DRAFT": "임시저장",
         "PUBLISHED": "게시됨"
       },
-      "scope": {
-        "PUBLIC": "공개",
-        "WORKSPACE": "워크스페이스"
-      },
       "actions": {
         "menu": "포스트 메뉴",
         "copy-link": "링크 복사",
@@ -1071,7 +1099,8 @@
     },
     "navigation": {
       "search": {
-        "placeholder": "검색..."
+        "placeholder": "검색...",
+        "placeholder-scoped": "이 프로젝트에서 검색..."
       },
       "menu": {
         "bookmarks": "북마크",
@@ -1083,7 +1112,10 @@
         "profile": "내 프로필",
         "settings": "설정",
         "admin": "관리자 페이지",
-        "sign-out": "로그아웃"
+        "sign-out": "로그아웃",
+        "errors": {
+          "sign-out": "로그아웃에 실패했습니다. 다시 시도해주세요."
+        }
       }
     },
     "footer": {
@@ -1144,7 +1176,18 @@
       },
       "messages": {
         "create-success": "게시글이 작성되었습니다.",
-        "create-error": "게시글 작성에 실패했습니다."
+        "create-error": "게시글 작성에 실패했습니다.",
+        "empty-content": "내용을 입력해주세요."
+      },
+      "sidebar": {
+        "type": "종류",
+        "project": "프로젝트",
+        "tags": "태그"
+      },
+      "type-descriptions": {
+        "SHORT": "오늘 배운 것을 짧게 기록해요",
+        "LONG": "생각을 정리해 글로 남겨요",
+        "QUESTION": "막힌 부분을 물어봐요"
       },
       "toolbar": {
         "bold": {

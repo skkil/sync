@@ -6,8 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import com.skkil.sync.auth.AuthenticatedUser;
+import com.skkil.sync.user.dto.response.GetProfileResponse;
 import com.skkil.sync.user.exception.UserNotFoundException;
-import com.skkil.sync.user.mapper.ProfileMapper;
+import com.skkil.sync.user.mapper.ProfileAssembler;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import java.util.Optional;
@@ -23,7 +24,7 @@ class ProfileServiceTests {
 
   @Mock private UserRepository userRepository;
   @Mock private UserRelationshipService userRelationshipService;
-  @Mock private ProfileMapper profileMapper;
+  @Mock private ProfileAssembler profileAssembler;
 
   @InjectMocks private ProfileService profileService;
 
@@ -55,8 +56,9 @@ class ProfileServiceTests {
 
     assertThat(user.isEnabled()).isFalse();
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-    when(profileMapper.toGetProfileResponseContacts(null)).thenReturn(null);
     when(userRelationshipService.isFollowing(requesterId, userId)).thenReturn(false);
+    when(profileAssembler.toGetProfileResponse(user, null, false, true))
+        .thenReturn(GetProfileResponse.builder().build());
 
     assertThatCode(() -> profileService.getProfileById(requester, userId))
         .doesNotThrowAnyException();

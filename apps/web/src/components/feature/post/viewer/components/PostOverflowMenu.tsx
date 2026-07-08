@@ -6,16 +6,12 @@ import {
   SirenIcon,
   TrashIcon,
 } from '@phosphor-icons/react';
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import {
-  getGetPostBySlugQueryKey,
-  useDeletePost,
-} from '@/api/__generated__/post/post';
+import { useDeletePost } from '@/components/feature/post/hooks/useDeletePost';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +29,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useSession } from '@/lib/auth/client';
 import ROUTES from '@/util/routes';
 
 import { ReportPostDialog } from './ReportPostDialog';
@@ -41,8 +36,9 @@ import { ReportPostDialog } from './ReportPostDialog';
 interface PostOverflowMenuProps {
   postId: number;
   slug: string;
-  authorHandle: string;
-  projectHandle?: string;
+  postPath?: string;
+  isAuthor: boolean;
+  projectHandle?: string | null;
   showReport?: boolean;
   redirectAfterDelete?: string;
   onDeleted?: () => void;
@@ -51,7 +47,8 @@ interface PostOverflowMenuProps {
 export function PostOverflowMenu({
   postId,
   slug,
-  authorHandle,
+  postPath,
+  isAuthor,
   projectHandle,
   showReport = true,
   redirectAfterDelete,
@@ -59,19 +56,18 @@ export function PostOverflowMenu({
 }: PostOverflowMenuProps) {
   const t = useTranslations('components.post.actions');
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { data: session } = useSession();
   const { mutate: deletePost, isPending: isDeleting } = useDeletePost();
   const [reportOpen, setReportOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const isAuthor = session?.user.handle === authorHandle;
-  const postPath = projectHandle
-    ? ROUTES.PROJECT_POST(projectHandle, slug)
-    : ROUTES.POST(slug);
+  const resolvedPostPath =
+    postPath ??
+    (projectHandle
+      ? ROUTES.PROJECT_POST(projectHandle, slug)
+      : ROUTES.POST(slug));
 
   const copyPostLink = async () => {
-    const url = new URL(postPath, window.location.origin).toString();
+    const url = new URL(resolvedPostPath, window.location.origin).toString();
 
     try {
       await writeToClipboard(url);
@@ -85,12 +81,10 @@ export function PostOverflowMenu({
     deletePost(
       { postId: String(postId) },
       {
-        onSuccess: async () => {
+        onSuccess: () => {
           toast.success(t('delete-success'));
           setDeleteOpen(false);
           onDeleted?.();
-
-          await invalidatePostQueries(queryClient, slug);
 
           if (redirectAfterDelete) {
             router.replace(redirectAfterDelete);
@@ -215,40 +209,4 @@ async function writeToClipboard(text: string) {
   } finally {
     document.body.removeChild(textarea);
   }
-}
-
-async function invalidatePostQueries(
-  queryClient: ReturnType<typeof useQueryClient>,
-  slug: string,
-) {
-  await Promise.all([
-    queryClient.invalidateQueries({
-      queryKey: getGetPostBySlugQueryKey(slug),
-    }),
-    queryClient.invalidateQueries({
-      predicate: (query) => {
-        const path = getQueryPath(query.queryKey);
-
-        return isPostListQueryPath(path);
-      },
-    }),
-  ]);
-}
-
-function getQueryPath(queryKey: readonly unknown[]) {
-  const path = queryKey[0] === 'infinite' ? queryKey[1] : queryKey[0];
-
-  return typeof path === 'string' ? path : '';
-}
-
-function isPostListQueryPath(path: string) {
-  return (
-    path === '/feed/recent' ||
-    path === '/search/posts' ||
-    path === '/bookmarks/posts' ||
-    path === '/posts' ||
-    /^\/users\/[^/]+\/posts$/.test(path) ||
-    /^\/projects\/[^/]+\/posts$/.test(path) ||
-    /^\/profiles\/[^/]+\/posts\/activities$/.test(path)
-  );
 }

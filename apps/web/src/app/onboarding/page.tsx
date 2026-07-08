@@ -3,15 +3,15 @@
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { forwardRef, useCallback, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
-import {
-  getGetAuthenticatedUserQueryKey,
-  useUpdateProfile,
-} from '@/api/__generated__/profile/profile';
+import { useUpdateProfile } from '@/components/feature/profile/hooks/useUpdateProfile';
 import { Button } from '@/components/ui/button';
 import { useSession } from '@/lib/auth/client';
+import ROUTES from '@/util/routes';
 
 import { ChooseHandle } from './_components/ChooseHandle';
+import { RecommendedFollows } from './_components/RecommendedFollows';
 
 export interface OnboardingStepContentRef {
   submit: (onSuccess: () => void) => void;
@@ -36,6 +36,10 @@ const steps: {
     content: ChooseHandle,
   },
   {
+    id: 'follow',
+    content: RecommendedFollows,
+  },
+  {
     id: 'finished',
     content: null,
   },
@@ -55,18 +59,10 @@ export default function Onboarding() {
     isValid: true,
   });
 
-  const { mutate: updateProfile } = useUpdateProfile({
-    mutation: {
-      onSuccess: async (_data, _variables, _onMutateResult, context) =>
-        await refetchSession()
-          .then(() => {
-            context.client.invalidateQueries({
-              queryKey: getGetAuthenticatedUserQueryKey(),
-            });
-          })
-          .then(() => {
-            router.push('/');
-          }),
+  const { mutate: updateProfile, isPending: isFinishing } = useUpdateProfile({
+    onSuccess: async () => {
+      await refetchSession();
+      router.replace(ROUTES.HOME());
     },
   });
 
@@ -111,11 +107,18 @@ export default function Onboarding() {
   };
 
   const finishedButtonClickHandler = () => {
-    updateProfile({
-      data: {
-        isOnboarded: true,
+    updateProfile(
+      {
+        data: {
+          isOnboarded: true,
+        },
       },
-    });
+      {
+        onError: () => {
+          toast.error(t('errors.finish'));
+        },
+      },
+    );
   };
 
   const step = steps[stepIndex];
@@ -155,7 +158,10 @@ export default function Onboarding() {
           )}
 
           {stepIndex === steps.length - 1 ? (
-            <Button onClick={finishedButtonClickHandler}>
+            <Button
+              isPending={isFinishing}
+              onClick={finishedButtonClickHandler}
+            >
               {t('actions.finish')}
             </Button>
           ) : (

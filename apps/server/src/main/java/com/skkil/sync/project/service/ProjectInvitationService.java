@@ -7,7 +7,7 @@ import com.skkil.sync.project.exception.ProjectInvitationAlreadyExistsException;
 import com.skkil.sync.project.exception.ProjectInvitationExpiredException;
 import com.skkil.sync.project.exception.ProjectInvitationNotFoundException;
 import com.skkil.sync.project.exception.ProjectNotFoundException;
-import com.skkil.sync.project.mapper.ProjectInvitationMapper;
+import com.skkil.sync.project.mapper.ProjectAssembler;
 import com.skkil.sync.project.model.InvitationStatus;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.model.ProjectInvitation;
@@ -32,19 +32,19 @@ public class ProjectInvitationService {
 
   private final UserDomainService userDomainService;
 
-  private final ProjectInvitationMapper projectInvitationMapper;
+  private final ProjectAssembler projectAssembler;
 
   public ProjectInvitationService(
       ProjectRepository projectRepository,
       TeammateRepository teammateRepository,
       ProjectInvitationRepository projectInvitationRepository,
       UserDomainService userDomainService,
-      ProjectInvitationMapper projectInvitationMapper) {
+      ProjectAssembler projectAssembler) {
     this.projectRepository = projectRepository;
     this.teammateRepository = teammateRepository;
     this.projectInvitationRepository = projectInvitationRepository;
     this.userDomainService = userDomainService;
-    this.projectInvitationMapper = projectInvitationMapper;
+    this.projectAssembler = projectAssembler;
   }
 
   @Transactional
@@ -80,13 +80,10 @@ public class ProjectInvitationService {
         projectRepository.findByHandle(projectHandle).orElseThrow(ProjectNotFoundException::new);
 
     var invitations =
-        projectInvitationRepository
-            .findByProjectIdAndStatus(project.getId(), InvitationStatus.PENDING)
-            .stream()
-            .map(projectInvitationMapper::toGetProjectInvitationsResponseInvitation)
-            .toList();
+        projectInvitationRepository.findByProjectIdAndStatus(
+            project.getId(), InvitationStatus.PENDING);
 
-    return new GetProjectInvitationsResponse(invitations);
+    return projectAssembler.toGetProjectInvitationsResponse(invitations);
   }
 
   @Transactional
@@ -111,10 +108,9 @@ public class ProjectInvitationService {
             .findByInviteeIdAndStatus(userId, InvitationStatus.PENDING)
             .stream()
             .filter(i -> !i.isExpired())
-            .map(projectInvitationMapper::toGetMyProjectInvitationsResponseInvitation)
             .toList();
 
-    return new GetMyProjectInvitationsResponse(invitations);
+    return projectAssembler.toGetMyProjectInvitationsResponse(invitations);
   }
 
   @Transactional

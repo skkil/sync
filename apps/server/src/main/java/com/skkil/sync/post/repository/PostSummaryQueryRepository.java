@@ -1,6 +1,5 @@
 package com.skkil.sync.post.repository;
 
-import static com.skkil.sync.jooq.tables.PostSummaries.POST_SUMMARIES;
 import static com.skkil.sync.jooq.tables.Posts.POSTS;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
@@ -25,11 +24,9 @@ public class PostSummaryQueryRepository {
                 POSTS.ID.as("postId"),
                 POSTS.SLUG.as("slug"),
                 POSTS.TITLE.as("title"),
-                DSL.coalesce(POST_SUMMARIES.SUMMARY, POSTS.CONTENT).as("displayText"),
+                DSL.coalesce(POSTS.SUMMARY, POSTS.CONTENT).as("displayText"),
                 POSTS.CREATED_AT.as("createdAt"))
             .from(POSTS)
-            .leftJoin(POST_SUMMARIES)
-            .on(POSTS.ID.eq(POST_SUMMARIES.ID))
             .where(
                 condition
                     .and(POSTS.AUTHOR_ID.eq(authorId))

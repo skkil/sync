@@ -15,18 +15,15 @@ public class Slugify {
       return "";
     }
 
-    String slug = WHITESPACE.matcher(input).replaceAll("-").trim();
+    String slug = input.toLowerCase(Locale.ENGLISH);
+
+    slug = WHITESPACE.matcher(slug).replaceAll("-").trim();
 
     slug = Normalizer.normalize(slug, Normalizer.Form.NFD);
 
     slug = NON_ALPHANUMERIC.matcher(slug).replaceAll("");
 
-    slug =
-        MULTIPLE_HYPHENS
-            .matcher(slug)
-            .replaceAll("-")
-            .toLowerCase(Locale.ENGLISH)
-            .replaceAll("^-|-$", "");
+    slug = MULTIPLE_HYPHENS.matcher(slug).replaceAll("-").replaceAll("^-|-$", "");
 
     if (slug.isEmpty()) {
       return String.valueOf(System.currentTimeMillis());

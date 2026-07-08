@@ -3,8 +3,11 @@ package com.skkil.sync.post.mapper;
 import com.skkil.sync.media.dto.MediaDto;
 import com.skkil.sync.post.dto.data.PostDto;
 import com.skkil.sync.post.dto.response.GetPostResponse;
-import com.skkil.sync.post.dto.response.GetPostsResponse;
+import com.skkil.sync.post.dto.summary.PostSummary;
+import com.skkil.sync.project.dto.summary.ProjectSummary;
+import com.skkil.sync.user.dto.summary.UserSummary;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -12,12 +15,8 @@ import org.mapstruct.Mappings;
 @Mapper(componentModel = "spring")
 public interface PostMapper {
 
-  @Mappings({
-    @Mapping(target = "author", expression = "java(toGetPostAuthor(post))"),
-    @Mapping(target = "project", expression = "java(toGetPostProject(post))"),
-    @Mapping(target = "content", expression = "java(toContent(post, media))")
-  })
-  GetPostResponse toGetPostResponse(PostDto post, List<MediaDto> media);
+  PostSummary toPostSummary(
+      PostDto post, UserSummary author, @Nullable ProjectSummary project, boolean isAuthor);
 
   @Mappings({
     @Mapping(target = "json", source = "post.content"),
@@ -25,33 +24,11 @@ public interface PostMapper {
   })
   GetPostResponse.Content toContent(PostDto post, List<MediaDto> media);
 
-  @Mappings({
-    @Mapping(target = "author", expression = "java(toPostAuthor(postDto))"),
-    @Mapping(target = "project", expression = "java(toPostProject(postDto))")
-  })
-  GetPostsResponse.Post toPostResponse(PostDto postDto);
-
-  default GetPostResponse.Author toGetPostAuthor(PostDto postDto) {
-    return new GetPostResponse.Author(postDto.authorName(), postDto.authorHandle());
-  }
-
-  default GetPostResponse.Project toGetPostProject(PostDto postDto) {
-    if (postDto.projectHandle() == null) {
-      return null;
-    }
-
-    return new GetPostResponse.Project(postDto.projectHandle(), postDto.projectName());
-  }
-
-  default GetPostsResponse.Author toPostAuthor(PostDto postDto) {
-    return new GetPostsResponse.Author(postDto.authorName(), postDto.authorHandle());
-  }
-
-  default GetPostsResponse.Project toPostProject(PostDto postDto) {
-    if (postDto.projectHandle() == null) {
-      return null;
-    }
-
-    return new GetPostsResponse.Project(postDto.projectHandle(), postDto.projectName());
-  }
+  @Mapping(target = "handle", source = "projectHandle")
+  @Mapping(target = "name", source = "projectName")
+  @Mapping(target = "description", source = "projectDescription")
+  @Mapping(target = "website", source = "projectWebsite")
+  @Mapping(target = "isPublic", source = "projectIsPublic")
+  @Mapping(target = "iconUrl", ignore = true)
+  ProjectSummary toProjectSummary(PostDto post);
 }

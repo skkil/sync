@@ -28,5 +28,5 @@ public interface UserFollowRelationshipRepository
             DELETE FROM UserFollowRelationship r
             WHERE r.follower.id = :followerId AND r.followee.id = :followeeId
             """)
-  public void deleteByFollowerAndFollowee(Long followerId, Long followeeId);
+  public int deleteByFollowerAndFollowee(Long followerId, Long followeeId);
 }

@@ -4,8 +4,6 @@ import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.docume
 import static com.epages.restdocs.apispec.Schema.schema;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyHeaders;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -76,10 +74,7 @@ class MediaControllerTests {
                     .description("Upload Media")
                     .requestSchema(schema(UploadMediaRequest.class.getSimpleName()))
                     .responseSchema(schema(UploadMediaResponse.class.getSimpleName())),
-                // TODO: Temporary fix for Orval's issue where it doesn't recognize the content type
-                // if it contains a charset=UTF-8.
-                // See https://github.com/orval-labs/orval/issues/3040
-                preprocessRequest(modifyHeaders().set("Content-Type", "application/json")),
+                null,
                 preprocessResponse(prettyPrint()),
                 Function.identity(),
                 UploadMediaRequestSnippets.getUploadMediaRequestFields(),

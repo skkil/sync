@@ -4,9 +4,23 @@ import com.skkil.sync.project.model.Project;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
+
+  @Modifying
+  @Query(
+      value = "UPDATE projects SET follower_count = follower_count + 1 WHERE id = :projectId",
+      nativeQuery = true)
+  void incrementFollowerCount(Long projectId);
+
+  @Modifying
+  @Query(
+      value =
+          "UPDATE projects SET follower_count = GREATEST(follower_count - 1, 0) WHERE id = :projectId",
+      nativeQuery = true)
+  void decrementFollowerCount(Long projectId);
 
   @Query(
       """

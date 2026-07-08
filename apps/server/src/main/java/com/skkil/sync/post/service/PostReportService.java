@@ -10,6 +10,7 @@ import com.skkil.sync.post.exception.PostNotFoundException;
 import com.skkil.sync.post.exception.PostReportAlreadyExistsException;
 import com.skkil.sync.post.exception.PostReportAlreadyReviewedException;
 import com.skkil.sync.post.exception.PostReportNotFoundException;
+import com.skkil.sync.post.mapper.PostReportAssembler;
 import com.skkil.sync.post.model.Post;
 import com.skkil.sync.post.model.PostReport;
 import com.skkil.sync.post.model.PostReportResolution;
@@ -17,8 +18,13 @@ import com.skkil.sync.post.model.PostReportStatus;
 import com.skkil.sync.post.model.PostVisibility;
 import com.skkil.sync.post.repository.PostReportRepository;
 import com.skkil.sync.post.repository.PostRepository;
+import com.skkil.sync.user.dto.summary.UserSummary;
+import com.skkil.sync.user.mapper.UserAssembler;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,16 +35,22 @@ public class PostReportService {
   private final PostRepository postRepository;
   private final PostReportRepository postReportRepository;
   private final UserDomainService userDomainService;
+  private final UserAssembler userAssembler;
+  private final PostReportAssembler postReportAssembler;
   private final PaginationService paginationService;
 
   public PostReportService(
       PostRepository postRepository,
       PostReportRepository postReportRepository,
       UserDomainService userDomainService,
+      UserAssembler userAssembler,
+      PostReportAssembler postReportAssembler,
       PaginationService paginationService) {
     this.postRepository = postRepository;
     this.postReportRepository = postReportRepository;
     this.userDomainService = userDomainService;
+    this.userAssembler = userAssembler;
+    this.postReportAssembler = postReportAssembler;
     this.paginationService = paginationService;
   }
 
@@ -65,16 +77,27 @@ public class PostReportService {
   @Transactional(readOnly = true)
   public GetPostReportsResponse getReports(
       PostReportStatus status, OffsetPaginationRequest pagination) {
+    OffsetPaginationResponse<PostReport> page =
+        paginationService.paginate(
+            pageable ->
+                status == null
+                    ? postReportRepository.findAllByOrderByCreatedAtDescIdDesc(pageable)
+                    : postReportRepository.findByStatusOrderByCreatedAtDescIdDesc(status, pageable),
+            pagination);
+
+    var userIds =
+        page.content().stream()
+            .flatMap(
+                report ->
+                    Stream.of(
+                        report.getReporter().getId(),
+                        report.getReviewedBy() == null ? null : report.getReviewedBy().getId()))
+            .filter(Objects::nonNull)
+            .toList();
+    Map<Long, UserSummary> userSummaries = userAssembler.toUserSummaries(userIds);
+
     OffsetPaginationResponse<GetPostReportsResponse.Report> reports =
-        paginationService
-            .paginate(
-                pageable ->
-                    status == null
-                        ? postReportRepository.findAllByOrderByCreatedAtDescIdDesc(pageable)
-                        : postReportRepository.findByStatusOrderByCreatedAtDescIdDesc(
-                            status, pageable),
-                pagination)
-            .map(this::toResponse);
+        page.map(report -> postReportAssembler.toReport(report, userSummaries));
 
     return new GetPostReportsResponse(reports);
   }
@@ -111,28 +134,5 @@ public class PostReportService {
     }
 
     return request.resolutionNote();
-  }
-
-  private GetPostReportsResponse.Report toResponse(PostReport report) {
-    Post post = report.getPost();
-    User reporter = report.getReporter();
-    User reviewer = report.getReviewedBy();
-
-    return new GetPostReportsResponse.Report(
-        report.getId(),
-        new GetPostReportsResponse.Post(
-            post.getId(), post.getSlug(), post.getTitle(), post.getContent(), post.getVisibility()),
-        new GetPostReportsResponse.Reporter(
-            reporter.getId(), reporter.getHandle(), reporter.getFullName()),
-        report.getReason(),
-        report.getDescription(),
-        report.getStatus(),
-        report.getCreatedAt(),
-        reviewer == null
-            ? null
-            : new GetPostReportsResponse.Reviewer(
-                reviewer.getId(), reviewer.getHandle(), reviewer.getFullName()),
-        report.getReviewedAt(),
-        report.getResolutionNote());
   }
 }

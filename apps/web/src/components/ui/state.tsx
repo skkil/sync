@@ -1,6 +1,4 @@
-import Link from 'next/link';
-
-import { Button } from '@/components/ui/button';
+import { LinkButton } from '@/components/ui/button';
 import {
   Empty,
   EmptyContent,
@@ -29,9 +27,9 @@ export function NotFound({
         </EmptyHeader>
         <EmptyContent>
           <p className="text-muted-foreground">{description}</p>
-          <Button asChild variant="outline">
-            <Link href={backHref}>{backLabel}</Link>
-          </Button>
+          <LinkButton href={backHref} variant="outline">
+            {backLabel}
+          </LinkButton>
         </EmptyContent>
       </Empty>
     </div>

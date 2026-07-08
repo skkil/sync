@@ -25,7 +25,7 @@ export type ImageNodeAttributes = {
   mediaId: string | null;
 };
 
-export const ImageNode = Node.create<ImageNodeAttributes>({
+const imageNodeSchema = {
   name: NodeType.Image,
   group: 'block',
   content: '',
@@ -51,17 +51,32 @@ export const ImageNode = Node.create<ImageNodeAttributes>({
     return [
       {
         tag: 'img[src]',
-        getAttrs: (element) => ({
+        getAttrs: (element: Element) => ({
           status: element.getAttribute('src') ? 'uploaded' : 'none',
         }),
       },
     ];
   },
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({
+    HTMLAttributes,
+  }: {
+    HTMLAttributes: Record<string, unknown>;
+  }): [string, Record<string, unknown>] {
     return ['img', mergeAttributes(HTMLAttributes)];
   },
+};
+
+export const ImageNode = Node.create<ImageNodeAttributes>({
+  ...imageNodeSchema,
   addNodeView() {
     return ReactNodeViewRenderer(ImageNodeComponent);
+  },
+});
+
+export const ReadOnlyImageNode = Node.create<ImageNodeAttributes>({
+  ...imageNodeSchema,
+  addNodeView() {
+    return ReactNodeViewRenderer(ReadOnlyImageNodeComponent);
   },
 });
 
@@ -201,6 +216,28 @@ function ImageNodeComponent({
             )}
           </div>
         )}
+      </div>
+    </NodeViewWrapper>
+  );
+}
+
+function ReadOnlyImageNodeComponent({ node }: NodeViewProps) {
+  const { src } = node.attrs as ImageNodeAttributes;
+
+  return (
+    <NodeViewWrapper>
+      <div className="w-full overflow-hidden rounded-lg">
+        <div className="relative aspect-video w-full">
+          {src && (
+            <Image
+              src={src}
+              alt="Uploaded image"
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          )}
+        </div>
       </div>
     </NodeViewWrapper>
   );

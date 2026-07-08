@@ -5,6 +5,7 @@ import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest
 import com.skkil.sync.provider.constant.ProviderType;
 import com.skkil.sync.provider.dto.response.GetProvidersResponse;
 import com.skkil.sync.provider.service.ProviderQueryService;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Validated
 public class ProviderQueryController {
 
   private final ProviderQueryService providerQueryService;
@@ -26,12 +28,11 @@ public class ProviderQueryController {
   @GetMapping("/search/providers")
   @ResponseStatus(HttpStatus.OK)
   public GetProvidersResponse searchProviders(
-      @AuthenticationPrincipal AuthenticatedUser user,
+      @AuthenticationPrincipal @NotNull AuthenticatedUser user,
       @RequestParam(required = false) String query,
       @RequestParam(required = false) List<ProviderType> types,
       @Validated CursorPaginationRequest pagination) {
-    Long requesterId = user != null ? user.userId() : null;
-    return providerQueryService.searchProviders(requesterId, query, types, pagination);
+    return providerQueryService.searchProviders(user.userId(), query, types, pagination);
   }
 
   @GetMapping("/providers/my")

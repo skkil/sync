@@ -1,6 +1,7 @@
 package com.skkil.sync.post.service;
 
 import com.skkil.sync.post.dto.response.GetPostActivitiesResponse;
+import com.skkil.sync.post.mapper.PostActivityMapper;
 import com.skkil.sync.post.repository.PostActivityRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
@@ -13,11 +14,15 @@ public class PostActivityService {
 
   private final PostActivityRepository postActivityRepository;
   private final UserDomainService userDomainService;
+  private final PostActivityMapper postActivityMapper;
 
   public PostActivityService(
-      PostActivityRepository postActivityRepository, UserDomainService userDomainService) {
+      PostActivityRepository postActivityRepository,
+      UserDomainService userDomainService,
+      PostActivityMapper postActivityMapper) {
     this.postActivityRepository = postActivityRepository;
     this.userDomainService = userDomainService;
+    this.postActivityMapper = postActivityMapper;
   }
 
   @Transactional(readOnly = true)
@@ -29,12 +34,7 @@ public class PostActivityService {
             .findAllByUserAndBetweenYears(
                 user, LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31))
             .stream()
-            .map(
-                activity ->
-                    GetPostActivitiesResponse.Activity.builder()
-                        .date(activity.getDate())
-                        .count(activity.getCount())
-                        .build())
+            .map(postActivityMapper::toActivity)
             .toList();
 
     return new GetPostActivitiesResponse(activities);

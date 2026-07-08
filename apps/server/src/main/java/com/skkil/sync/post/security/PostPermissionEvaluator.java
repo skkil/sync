@@ -5,7 +5,6 @@ import com.skkil.sync.common.security.CustomPermissionEvaluator;
 import com.skkil.sync.common.security.PermissionOperation;
 import com.skkil.sync.common.security.enums.PermissionEvaluatorType;
 import com.skkil.sync.post.model.Post;
-import com.skkil.sync.post.model.PostScope;
 import com.skkil.sync.post.repository.PostRepository;
 import com.skkil.sync.project.repository.TeammateRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +67,6 @@ public class PostPermissionEvaluator implements CustomPermissionEvaluator<Long> 
     }
 
     return post.isPublished()
-        && post.getScope() == PostScope.WORKSPACE
         && post.getProject() != null
         && teammateRepository
             .findByProjectIdAndUserId(post.getProject().getId(), user.userId())

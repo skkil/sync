@@ -17,7 +17,7 @@ export async function generateMetadata({
   try {
     const { data: project } = await getProjectByHandle(handle);
 
-    return { title: project.name };
+    return { title: project.summary.name };
   } catch {
     return {};
   }

@@ -1,10 +1,6 @@
 package com.skkil.sync.user.dto.response;
 
+import com.skkil.sync.user.dto.summary.UserSummary;
 import java.util.List;
-import lombok.Builder;
 
-public record SearchUsersResponse(List<User> users) {
-
-  @Builder
-  public record User(String handle, String name, String profileImageUrl) {}
-}
+public record SearchUsersResponse(List<UserSummary> users) {}

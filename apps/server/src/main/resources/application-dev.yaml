@@ -1,3 +1,7 @@
+app:
+  seed:
+    enabled: true
+
 spring:
   cloud:
     aws:

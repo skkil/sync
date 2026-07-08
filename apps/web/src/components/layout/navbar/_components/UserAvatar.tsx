@@ -9,6 +9,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { useLogout } from '@/api/__generated__/auth/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,6 +26,7 @@ import { ModalType } from '@/constants/modal';
 import { useModal } from '@/hooks/store';
 import { isAuthenticated } from '@/lib/auth';
 import { signOut, useSession } from '@/lib/auth/client';
+import ROUTES from '@/util/routes';
 
 interface UserAvatarProps {
   align?: 'start' | 'end';
@@ -66,7 +68,7 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
       isAdmin: false,
       label: t('user.profile'),
       onClick: () => {
-        router.push(`/@${session.user.handle}`);
+        router.push(ROUTES.PROFILE(session.user.handle));
       },
     },
     {
@@ -82,7 +84,7 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
       isAdmin: true,
       label: t('user.admin'),
       onClick: () => {
-        router.push('/admin');
+        router.push(ROUTES.ADMIN());
       },
     },
     {
@@ -92,10 +94,13 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
       onClick: async () => {
         try {
           await logout();
-        } finally {
-          await signOut();
-          router.push('/');
+        } catch {
+          toast.error(t('user.errors.sign-out'));
+          return;
         }
+
+        await signOut();
+        router.replace(ROUTES.HOME());
       },
     },
   ];

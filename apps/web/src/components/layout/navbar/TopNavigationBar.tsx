@@ -8,6 +8,7 @@ import { Logo } from '@/components/ui/logo';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { isAuthenticated } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
+import ROUTES from '@/util/routes';
 
 import NotificationsButton from './_components/NotificationsButton';
 import SearchBar from './_components/SearchBar';
@@ -32,7 +33,7 @@ function LeftSection({ showSidebarTrigger }: { showSidebarTrigger: boolean }) {
   return (
     <div className="flex items-center gap-2 min-w-0">
       {showSidebarTrigger && <SidebarTrigger className="md:hidden" />}
-      <Link href="/">
+      <Link href={ROUTES.HOME()}>
         <Logo />
       </Link>
     </div>
@@ -64,7 +65,7 @@ function RightSection() {
       {isAuthenticated(session) ? (
         <UserAvatar />
       ) : (
-        <Link href="/auth/login">
+        <Link href={ROUTES.LOGIN()}>
           <Button variant="ghost">{t('login')}</Button>
         </Link>
       )}

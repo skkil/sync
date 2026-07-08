@@ -71,6 +71,12 @@ public class User extends BaseEntity {
   @Column(name = "is_email_verified", nullable = false)
   private Boolean isEmailVerified = false;
 
+  @Column(name = "follower_count", nullable = false)
+  private Long followerCount = 0L;
+
+  @Column(name = "following_count", nullable = false)
+  private Long followingCount = 0L;
+
   @Column(name = "deleted_at", nullable = true)
   private Instant deletedAt;
 

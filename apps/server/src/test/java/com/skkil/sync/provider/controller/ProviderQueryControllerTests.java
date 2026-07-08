@@ -128,4 +128,15 @@ class ProviderQueryControllerTests {
                     CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
         .andExpect(status().isUnauthorized());
   }
+
+  @Test
+  @DisplayName("[searchProviders] 로그인하지 않은 사용자는 접근할 수 없다")
+  void searchProviders_unauthenticatedUser_shouldReturnUnauthorized() throws Exception {
+    mockMvc
+        .perform(
+            get("/search/providers")
+                .queryParams(
+                    CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
+        .andExpect(status().isUnauthorized());
+  }
 }

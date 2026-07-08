@@ -2,9 +2,12 @@ package com.skkil.sync.project.model;
 
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.common.util.text.Slugify;
+import com.skkil.sync.media.model.Media;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
@@ -29,11 +32,18 @@ public class Project extends BaseEntity {
   @Column(name = "website_url")
   private String website;
 
+  @ManyToOne
+  @JoinColumn(name = "icon_media_id")
+  private Media icon;
+
   @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = true)
   private List<Teammate> teammates = new ArrayList<>();
 
   @Column(name = "is_public", nullable = false)
   private boolean isPublic = true;
+
+  @Column(name = "follower_count", nullable = false)
+  private long followerCount = 0;
 
   protected Project() {}
 
@@ -65,5 +75,21 @@ public class Project extends BaseEntity {
 
   public void updateHandle(String handle) {
     this.handle = handle.trim();
+  }
+
+  public void removeIcon() {
+    if (this.icon != null) {
+      this.icon.markAsDeleted();
+      this.icon = null;
+    }
+  }
+
+  public void setIcon(Media icon) {
+    if (this.icon != null) {
+      this.icon.markAsDeleted();
+    }
+
+    this.icon = icon;
+    icon.markAsUploaded();
   }
 }

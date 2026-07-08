@@ -46,12 +46,13 @@ paths:
                     :true,\"hasPreviousPage\":true},\"content\":[{\"id\":1,\"post\"\
                     :{\"id\":1,\"slug\":\"reported-post\",\"title\":\"신고된 포스트\",\"\
                     content\":\"{\\\"text\\\":\\\"신고된 포스트 내용\\\"}\",\"visibility\"\
-                    :\"HIDDEN\"},\"reporter\":{\"id\":2,\"handle\":\"reporter\",\"\
-                    name\":\"신고자\"},\"reason\":\"SPAM\",\"description\":\"광고성 게시글입\
-                    니다.\",\"status\":\"RESOLVED\",\"createdAt\":\"1970-01-01T00:00:00Z\"\
-                    ,\"reviewedBy\":{\"id\":3,\"handle\":\"admin\",\"name\":\"관리자\"\
-                    },\"reviewedAt\":\"1970-01-01T00:00:00Z\",\"resolutionNote\":\"\
-                    스팸으로 판단했습니다.\"}]}}"
+                    :\"HIDDEN\"},\"reporter\":{\"handle\":\"john-doe\",\"name\":\"\
+                    John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },\"reason\":\"SPAM\",\"description\":\"광고성 게시글입니다.\",\"status\"\
+                    :\"RESOLVED\",\"createdAt\":\"1970-01-01T00:00:00Z\",\"reviewedBy\"\
+                    :{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"reviewedAt\":\"1970-01-01T00:00:00Z\"\
+                    ,\"resolutionNote\":\"스팸으로 판단했습니다.\"}]}}"
   /admin/post-reports/{reportId}:
     patch:
       tags:
@@ -160,24 +161,35 @@ paths:
         required: false
         schema:
           type: string
+      - name: projectHandle
+        in: query
+        description: 프로젝트로 검색 범위 제한 (선택)
+        required: false
+        schema:
+          type: string
       responses:
         "200":
           description: "200"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetBookmarkedPostsResponse"
+                $ref: "#/components/schemas/GetPostsResponse"
               examples:
                 GetBookmarkedPosts:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"slug\":\"test-slug\",\"author\":{\"id\":1,\"handle\"\
-                    :\"user_handle\",\"name\":\"User Name\",\"profileImageUrl\":\"\
-                    https://example.com/profile.jpg\"},\"content\":\"This is a bookmarked\
-                    \ post content\",\"likeCount\":10,\"commentCount\":5,\"bookmarked\"\
-                    :true,\"createdAt\":\"2026-05-04T12:00:00Z\",\"bookmarkedAt\"\
-                    :\"2026-05-05T12:00:00Z\"}}]}}"
+                    :{\"summary\":{\"id\":1,\"slug\":\"test-slug\",\"title\":\"Test\
+                    \ Post Title\",\"type\":\"SHORT\",\"status\":\"PUBLISHED\",\"\
+                    author\":{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"project\":{\"handle\":\"\
+                    my-project\",\"name\":\"나의 프로젝트\",\"description\":\"프로젝트 설명\"\
+                    ,\"website\":\"https://example.com\",\"isPublic\":true,\"iconUrl\"\
+                    :\"https://example.com/icon.png\"},\"resolved\":false,\"isAuthor\"\
+                    :false,\"createdAt\":\"1970-01-01T00:00:00Z\",\"likeCount\":1,\"\
+                    liked\":true,\"commentCount\":1,\"bookmarked\":true,\"bookmarkedAt\"\
+                    :\"1970-01-01T00:00:00Z\",\"likedAt\":\"1970-01-01T00:00:00Z\"\
+                    },\"content\":\"This is a bookmarked post content\"}}]}}"
   /comments/{commentId}:
     delete:
       tags:
@@ -219,83 +231,6 @@ paths:
       responses:
         "204":
           description: "204"
-  /feed/recent:
-    get:
-      tags:
-      - feed
-      summary: Get Recent Feed
-      description: Get Recent Feed
-      operationId: GetRecentFeed
-      parameters:
-      - name: first
-        in: query
-        description: Number of items to return from the beginning of the list
-        required: false
-        schema:
-          type: string
-      - name: after
-        in: query
-        description: "Cursor for pagination, indicating the position after which to\
-          \ return items"
-        required: false
-        schema:
-          type: string
-      - name: last
-        in: query
-        description: Number of items to return from the end of the list
-        required: false
-        schema:
-          type: string
-      - name: before
-        in: query
-        description: "Cursor for pagination, indicating the position before which\
-          \ to return items"
-        required: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetFeedResponse"
-              examples:
-                GetRecentFeed:
-                  value: |-
-                    {
-                      "items" : {
-                        "pageInfo" : {
-                          "size" : 1,
-                          "hasNextPage" : false,
-                          "hasPreviousPage" : false,
-                          "startCursor" : "start-cursor",
-                          "endCursor" : "end-cursor"
-                        },
-                        "nodes" : [ {
-                          "cursor" : "cursor",
-                          "content" : {
-                            "id" : 1,
-                            "slug" : "test-slug",
-                            "author" : {
-                              "id" : 1,
-                              "handle" : "user_handle",
-                              "name" : "User Name",
-                              "profileImageUrl" : "https://example.com/profile.jpg"
-                            },
-                            "content" : "This is a feed item content",
-                            "project" : {
-                              "handle" : "project_handle",
-                              "name" : "name"
-                            },
-                            "likeCount" : 10,
-                            "commentCount" : 5,
-                            "bookmarked" : true,
-                            "createdAt" : "2026-05-04T12:00:00Z"
-                          }
-                        } ]
-                      }
-                    }
   /handles/availability:
     get:
       tags:
@@ -336,10 +271,14 @@ paths:
                 $ref: "#/components/schemas/GetMyProjectInvitationsResponse"
               examples:
                 GetMyProjectInvitations:
-                  value: "{\"invitations\":[{\"id\":1,\"token\":\"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\
-                    ,\"projectHandle\":\"my-project\",\"projectName\":\"My Project\"\
-                    ,\"inviterHandle\":\"jane-doe\",\"inviterName\":\"Jane Doe\",\"\
-                    role\":\"MEMBER\",\"expiresAt\":\"2026-07-09T00:00:00Z\"}]}"
+                  value: "{\"invitations\":[{\"invitation\":{\"id\":1,\"inviter\"\
+                    :{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"role\":\"MEMBER\",\"expiresAt\"\
+                    :\"2026-07-09T00:00:00Z\"},\"token\":\"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\
+                    ,\"project\":{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"\
+                    description\":\"프로젝트 설명\",\"website\":\"https://example.com\"\
+                    ,\"isPublic\":true,\"iconUrl\":\"https://example.com/icon.png\"\
+                    }}]}"
   /invitations/{token}/accept:
     post:
       tags:
@@ -383,7 +322,7 @@ paths:
       operationId: UploadMedia
       requestBody:
         content:
-          application/json:
+          application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/UploadMediaRequest"
             examples:
@@ -451,12 +390,17 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"scope\"\
-                    :\"PUBLIC\",\"status\":\"PUBLISHED\",\"title\":\"title\",\"author\"\
-                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
-                    handle\":\"project-handle\",\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"resolved\":false,\"createdAt\":\"1970-01-01T00:00:00Z\"\
-                    }}]}}"
+                    :{\"summary\":{\"id\":1,\"slug\":\"test-slug\",\"title\":\"Test\
+                    \ Post Title\",\"type\":\"SHORT\",\"status\":\"PUBLISHED\",\"\
+                    author\":{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"project\":{\"handle\":\"\
+                    my-project\",\"name\":\"나의 프로젝트\",\"description\":\"프로젝트 설명\"\
+                    ,\"website\":\"https://example.com\",\"isPublic\":true,\"iconUrl\"\
+                    :\"https://example.com/icon.png\"},\"resolved\":false,\"isAuthor\"\
+                    :false,\"createdAt\":\"1970-01-01T00:00:00Z\",\"likeCount\":1,\"\
+                    liked\":true,\"commentCount\":1,\"bookmarked\":true,\"bookmarkedAt\"\
+                    :\"1970-01-01T00:00:00Z\",\"likedAt\":\"1970-01-01T00:00:00Z\"\
+                    },\"content\":\"Post Content\"}}]}}"
     post:
       tags:
       - post
@@ -470,11 +414,11 @@ paths:
               $ref: "#/components/schemas/CreatePostRequest"
             examples:
               CreatePost:
-                value: "{\"title\":\"title\",\"type\":\"SHORT\",\"scope\":\"WORKSPACE\"\
-                  ,\"status\":\"PUBLISHED\",\"content\":{\"text\":\"This is a post\
-                  \ content.\",\"json\":\"{\\\"text\\\": \\\"This is a post content.\\\
-                  \"}\",\"mediaIds\":[1,2]},\"tags\":[\"java\",\"spring\"],\"project\"\
-                  :{\"handle\":\"project-handle\"}}"
+                value: "{\"title\":\"title\",\"type\":\"SHORT\",\"status\":\"PUBLISHED\"\
+                  ,\"content\":{\"text\":\"This is a post content.\",\"json\":\"{\\\
+                  \"text\\\": \\\"This is a post content.\\\"}\",\"mediaIds\":[1,2]},\"\
+                  tags\":[\"java\",\"spring\"],\"project\":{\"handle\":\"project-handle\"\
+                  }}"
       responses:
         "201":
           description: "201"
@@ -487,6 +431,159 @@ paths:
                   value: |-
                     {
                       "slug" : "slug"
+                    }
+  /posts/likes:
+    get:
+      tags:
+      - post
+      summary: Get Liked Posts
+      description: Get Liked Posts
+      operationId: GetLikedPosts
+      parameters:
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      - name: projectHandle
+        in: query
+        description: 프로젝트로 검색 범위 제한 (선택)
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPostsResponse"
+              examples:
+                GetLikedPosts:
+                  value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
+                    hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
+                    :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
+                    :{\"summary\":{\"id\":1,\"slug\":\"test-slug\",\"title\":\"Test\
+                    \ Post Title\",\"type\":\"SHORT\",\"status\":\"PUBLISHED\",\"\
+                    author\":{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"project\":{\"handle\":\"\
+                    my-project\",\"name\":\"나의 프로젝트\",\"description\":\"프로젝트 설명\"\
+                    ,\"website\":\"https://example.com\",\"isPublic\":true,\"iconUrl\"\
+                    :\"https://example.com/icon.png\"},\"resolved\":false,\"isAuthor\"\
+                    :false,\"createdAt\":\"1970-01-01T00:00:00Z\",\"likeCount\":1,\"\
+                    liked\":true,\"commentCount\":1,\"bookmarked\":true,\"bookmarkedAt\"\
+                    :\"1970-01-01T00:00:00Z\",\"likedAt\":\"1970-01-01T00:00:00Z\"\
+                    },\"content\":\"This is a bookmarked post content\"}}]}}"
+  /posts/recommendations:
+    get:
+      tags:
+      - post
+      summary: Get Post Recommendations
+      description: 추천 게시글 목록을 조회합니다.
+      operationId: GetPostRecommendations
+      parameters:
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPostRecommendationsResponse"
+              examples:
+                GetPostRecommendations:
+                  value: |-
+                    {
+                      "posts" : {
+                        "pageInfo" : {
+                          "size" : 1,
+                          "hasNextPage" : false,
+                          "hasPreviousPage" : false,
+                          "startCursor" : "start-cursor",
+                          "endCursor" : "end-cursor"
+                        },
+                        "nodes" : [ {
+                          "cursor" : "cursor",
+                          "content" : {
+                            "summary" : {
+                              "id" : 1,
+                              "slug" : "test-slug",
+                              "title" : "Test Post Title",
+                              "type" : "SHORT",
+                              "status" : "PUBLISHED",
+                              "author" : {
+                                "handle" : "john-doe",
+                                "name" : "John Doe",
+                                "profileImageUrl" : "https://example.com/john.png"
+                              },
+                              "project" : {
+                                "handle" : "my-project",
+                                "name" : "나의 프로젝트",
+                                "description" : "프로젝트 설명",
+                                "website" : "https://example.com",
+                                "isPublic" : true,
+                                "iconUrl" : "https://example.com/icon.png"
+                              },
+                              "resolved" : false,
+                              "isAuthor" : false,
+                              "createdAt" : "1970-01-01T00:00:00Z",
+                              "likeCount" : 1,
+                              "liked" : true,
+                              "commentCount" : 1,
+                              "bookmarked" : true,
+                              "bookmarkedAt" : "1970-01-01T00:00:00Z",
+                              "likedAt" : "1970-01-01T00:00:00Z"
+                            },
+                            "content" : "Post Content"
+                          }
+                        } ]
+                      }
                     }
   /posts/{postId}:
     delete:
@@ -552,14 +649,19 @@ paths:
                 $ref: "#/components/schemas/GetPostResponse"
               examples:
                 GetPostBySlug:
-                  value: "{\"id\":1,\"type\":\"SHORT\",\"scope\":\"PUBLIC\",\"status\"\
-                    :\"PUBLISHED\",\"slug\":\"test-slug\",\"title\":\"title\",\"author\"\
-                    :{\"name\":\"Author Name\",\"handle\":\"author-handle\"},\"project\"\
-                    :{\"handle\":\"project-handle\",\"name\":\"Project Name\"},\"\
-                    content\":{\"json\":\"Post Content\",\"media\":[{\"id\":1,\"url\"\
-                    :\"https://example.com/media.png\"}]},\"likeCount\":1,\"commentCount\"\
-                    :1,\"bookmarked\":true,\"resolved\":false,\"createdAt\":\"1970-01-01T00:00:00Z\"\
-                    }"
+                  value: "{\"summary\":{\"id\":1,\"slug\":\"test-slug\",\"title\"\
+                    :\"Test Post Title\",\"type\":\"SHORT\",\"status\":\"PUBLISHED\"\
+                    ,\"author\":{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"\
+                    profileImageUrl\":\"https://example.com/john.png\"},\"project\"\
+                    :{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
+                    :\"프로젝트 설명\",\"website\":\"https://example.com\",\"isPublic\"\
+                    :true,\"iconUrl\":\"https://example.com/icon.png\"},\"resolved\"\
+                    :false,\"isAuthor\":false,\"createdAt\":\"1970-01-01T00:00:00Z\"\
+                    ,\"likeCount\":1,\"liked\":true,\"commentCount\":1,\"bookmarked\"\
+                    :true,\"bookmarkedAt\":\"1970-01-01T00:00:00Z\",\"likedAt\":\"\
+                    1970-01-01T00:00:00Z\"},\"content\":{\"json\":\"Post Content\"\
+                    ,\"media\":[{\"id\":1,\"url\":\"https://example.com/media.png\"\
+                    }]}}"
   /posts/{postId}/bookmarks:
     post:
       tags:
@@ -792,8 +894,9 @@ paths:
                   value: "{\"userId\":\"1\",\"handle\":\"username\",\"name\":\"name\"\
                     ,\"email\":\"email@example.com\",\"bio\":\"bio\",\"profession\"\
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
-                    ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
-                    :false,\"role\":\"USER\",\"contacts\":null}"
+                    ,\"isFollowing\":true,\"followerCount\":3,\"followingCount\":5,\"\
+                    isOnboarded\":true,\"isAuthenticatedUser\":false,\"role\":\"USER\"\
+                    ,\"contacts\":null}"
     patch:
       tags:
       - profile
@@ -802,7 +905,7 @@ paths:
       operationId: UpdateProfile
       requestBody:
         content:
-          application/json:
+          application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/UpdateProfileRequest"
             examples:
@@ -842,8 +945,9 @@ paths:
                   value: "{\"userId\":\"1\",\"handle\":\"username\",\"name\":\"name\"\
                     ,\"email\":\"email@example.com\",\"bio\":\"bio\",\"profession\"\
                     :\"profession\",\"profileImageUrl\":\"https://example.com/profile-image.png\"\
-                    ,\"isFollowing\":true,\"isOnboarded\":true,\"isAuthenticatedUser\"\
-                    :false,\"role\":\"USER\",\"contacts\":null}"
+                    ,\"isFollowing\":true,\"followerCount\":3,\"followingCount\":5,\"\
+                    isOnboarded\":true,\"isAuthenticatedUser\":false,\"role\":\"USER\"\
+                    ,\"contacts\":null}"
   /profiles/{handle}/posts/activities:
     get:
       tags:
@@ -884,7 +988,7 @@ paths:
       operationId: CreateProject
       requestBody:
         content:
-          application/json:
+          application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/CreateProjectRequest"
             examples:
@@ -924,14 +1028,16 @@ paths:
                 $ref: "#/components/schemas/GetProjectResponse"
               examples:
                 GetProjectByHandle:
-                  value: "{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
-                    :\"프로젝트 설명\",\"website\":\"https://example.com\",\"isPublic\"\
-                    :false,\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
-                    ,\"role\":\"ADMIN\",\"profileImageUrl\":\"https://example.com/john.png\"\
-                    },{\"handle\":\"jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"\
-                    ,\"profileImageUrl\":\"https://example.com/jane.png\"}],\"hasMoreTeammates\"\
-                    :false,\"role\":\"ADMIN\",\"recentActivities\":[{\"id\":\"1\"\
-                    ,\"timestamp\":\"2024-01-01T00:00:00Z\",\"text\":\"활동 내용\"}]}"
+                  value: "{\"summary\":{\"handle\":\"my-project\",\"name\":\"나의 프로\
+                    젝트\",\"description\":\"프로젝트 설명\",\"website\":\"https://example.com\"\
+                    ,\"isPublic\":true,\"iconUrl\":\"https://example.com/icon.png\"\
+                    },\"teammates\":[{\"user\":{\"handle\":\"john-doe\",\"name\":\"\
+                    John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },\"role\":\"ADMIN\"},{\"user\":{\"handle\":\"john-doe\",\"name\"\
+                    :\"John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },\"role\":\"MEMBER\"}],\"hasMoreTeammates\":false,\"role\":\"\
+                    ADMIN\",\"recentActivities\":[{\"id\":\"1\",\"timestamp\":\"2024-01-01T00:00:00Z\"\
+                    ,\"text\":\"활동 내용\"}]}"
     patch:
       tags:
       - project
@@ -947,13 +1053,13 @@ paths:
           type: string
       requestBody:
         content:
-          application/json:
+          application/json;charset=UTF-8:
             schema:
               $ref: "#/components/schemas/UpdateProjectRequest"
             examples:
               UpdateProject:
                 value: "{\"description\":\"프로젝트 설명입니다.\",\"website\":\"https://example.com\"\
-                  }"
+                  ,\"iconMediaId\":null,\"removeIcon\":null}"
       responses:
         "204":
           description: "204"
@@ -981,6 +1087,77 @@ paths:
               examples:
                 GetProjectHandleAvailability:
                   value: "{\"available\":true}"
+  /projects/{handle}/follow:
+    post:
+      tags:
+      - project
+      summary: Follow Project
+      description: 프로젝트를 팔로우합니다.
+      operationId: FollowProject
+      parameters:
+      - name: handle
+        in: path
+        description: 팔로우할 프로젝트 Handle
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+  /projects/{handle}/followers:
+    get:
+      tags:
+      - project
+      summary: Get Project Followers
+      description: 프로젝트를 팔로우하는 사용자 목록을 조회합니다.
+      operationId: GetProjectFollowers
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 Handle
+        required: true
+        schema:
+          type: string
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectFollowersResponse"
+              examples:
+                GetProjectFollowers:
+                  value: "{\"followers\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"user\":{\"handle\":\"john-doe\",\"name\":\"John\
+                    \ Doe\",\"profileImageUrl\":\"https://example.com/john.png\"}}}]}}"
   /projects/{handle}/invitations:
     get:
       tags:
@@ -1004,9 +1181,12 @@ paths:
                 $ref: "#/components/schemas/GetProjectInvitationsResponse"
               examples:
                 GetProjectInvitations:
-                  value: "{\"invitations\":[{\"id\":1,\"inviteeHandle\":\"john-doe\"\
-                    ,\"inviteeName\":\"John Doe\",\"role\":\"MEMBER\",\"expiresAt\"\
-                    :\"2026-07-09T00:00:00Z\"}]}"
+                  value: "{\"invitations\":[{\"invitation\":{\"id\":1,\"inviter\"\
+                    :{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"role\":\"MEMBER\",\"expiresAt\"\
+                    :\"2026-07-09T00:00:00Z\"},\"invitee\":{\"handle\":\"john-doe\"\
+                    ,\"name\":\"John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    }}]}"
     post:
       tags:
       - project
@@ -1089,12 +1269,17 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"scope\"\
-                    :\"PUBLIC\",\"status\":\"PUBLISHED\",\"title\":\"title\",\"author\"\
-                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
-                    handle\":\"project-handle\",\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"resolved\":false,\"createdAt\":\"1970-01-01T00:00:00Z\"\
-                    }}]}}"
+                    :{\"summary\":{\"id\":1,\"slug\":\"test-slug\",\"title\":\"Test\
+                    \ Post Title\",\"type\":\"SHORT\",\"status\":\"PUBLISHED\",\"\
+                    author\":{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"project\":{\"handle\":\"\
+                    my-project\",\"name\":\"나의 프로젝트\",\"description\":\"프로젝트 설명\"\
+                    ,\"website\":\"https://example.com\",\"isPublic\":true,\"iconUrl\"\
+                    :\"https://example.com/icon.png\"},\"resolved\":false,\"isAuthor\"\
+                    :false,\"createdAt\":\"1970-01-01T00:00:00Z\",\"likeCount\":1,\"\
+                    liked\":true,\"commentCount\":1,\"bookmarked\":true,\"bookmarkedAt\"\
+                    :\"1970-01-01T00:00:00Z\",\"likedAt\":\"1970-01-01T00:00:00Z\"\
+                    },\"content\":\"Post Content\"}}]}}"
   /projects/{handle}/teammates:
     get:
       tags:
@@ -1118,10 +1303,11 @@ paths:
                 $ref: "#/components/schemas/GetProjectTeammatesResponse"
               examples:
                 GetProjectTeammates:
-                  value: "{\"teammates\":[{\"handle\":\"john\",\"name\":\"John Doe\"\
-                    ,\"role\":\"ADMIN\",\"profileImageUrl\":\"https://example.com/john.png\"\
-                    },{\"handle\":\"jane\",\"name\":\"Jane Doe\",\"role\":\"MEMBER\"\
-                    ,\"profileImageUrl\":\"https://example.com/jane.png\"}]}"
+                  value: "{\"teammates\":[{\"user\":{\"handle\":\"john-doe\",\"name\"\
+                    :\"John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },\"role\":\"ADMIN\"},{\"user\":{\"handle\":\"john-doe\",\"name\"\
+                    :\"John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    },\"role\":\"MEMBER\"}]}"
     post:
       tags:
       - project
@@ -1146,6 +1332,23 @@ paths:
       responses:
         "201":
           description: "201"
+  /projects/{handle}/unfollow:
+    delete:
+      tags:
+      - project
+      summary: Unfollow Project
+      description: 프로젝트 팔로우를 취소합니다.
+      operationId: UnfollowProject
+      parameters:
+      - name: handle
+        in: path
+        description: 언팔로우할 프로젝트 Handle
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
   /projects/{handle}/invitations/{invitationId}:
     delete:
       tags:
@@ -1169,6 +1372,59 @@ paths:
       responses:
         "204":
           description: "204"
+  /projects/{handle}/teammates/{teammateHandle}:
+    delete:
+      tags:
+      - project
+      summary: Remove Teammate
+      description: 프로젝트에서 팀원을 제거합니다.
+      operationId: RemoveTeammate
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      - name: teammateHandle
+        in: path
+        description: 제거할 팀원의 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+    patch:
+      tags:
+      - project
+      summary: Update Teammate
+      description: 프로젝트 팀원의 역할을 수정합니다.
+      operationId: UpdateTeammate
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      - name: teammateHandle
+        in: path
+        description: 수정할 팀원의 핸들
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTeammateRequest"
+            examples:
+              UpdateTeammate:
+                value: "{\"role\":\"ADMIN\"}"
+      responses:
+        "204":
+          description: "204"
   /search/posts:
     get:
       tags:
@@ -1183,6 +1439,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: projectHandle
+        in: query
+        description: 프로젝트로 검색 범위 제한 (선택)
+        required: false
+        schema:
+          type: string
       responses:
         "200":
           description: "200"
@@ -1192,7 +1454,17 @@ paths:
                 $ref: "#/components/schemas/SearchPostsResponse"
               examples:
                 SearchPosts:
-                  value: "{\"posts\":[{\"id\":1,\"content\":\"Post Content\"}]}"
+                  value: "{\"posts\":[{\"summary\":{\"id\":1,\"slug\":\"test-slug\"\
+                    ,\"title\":\"Test Post Title\",\"type\":\"SHORT\",\"status\":\"\
+                    PUBLISHED\",\"author\":{\"handle\":\"john-doe\",\"name\":\"John\
+                    \ Doe\",\"profileImageUrl\":\"https://example.com/john.png\"},\"\
+                    project\":{\"handle\":\"my-project\",\"name\":\"나의 프로젝트\",\"description\"\
+                    :\"프로젝트 설명\",\"website\":\"https://example.com\",\"isPublic\"\
+                    :true,\"iconUrl\":\"https://example.com/icon.png\"},\"resolved\"\
+                    :false,\"isAuthor\":false,\"createdAt\":\"1970-01-01T00:00:00Z\"\
+                    ,\"likeCount\":1,\"liked\":true,\"commentCount\":1,\"bookmarked\"\
+                    :true,\"bookmarkedAt\":\"1970-01-01T00:00:00Z\",\"likedAt\":\"\
+                    1970-01-01T00:00:00Z\"},\"content\":\"Post Content\"}]}"
   /search/projects:
     get:
       tags:
@@ -1213,12 +1485,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SearchProjectsResponse"
+                $ref: "#/components/schemas/GetProjectsResponse"
               examples:
                 SearchProjects:
-                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
-                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
-                    ,\"name\":\"React 프로젝트\"}]}"
+                  value: "{\"projects\":[{\"handle\":\"my-project\",\"name\":\"나의\
+                    \ 프로젝트\",\"description\":\"프로젝트 설명\",\"website\":\"https://example.com\"\
+                    ,\"isPublic\":true,\"iconUrl\":\"https://example.com/icon.png\"\
+                    }]}"
   /search/tags:
     get:
       tags:
@@ -1268,8 +1541,8 @@ paths:
                 $ref: "#/components/schemas/SearchUsersResponse"
               examples:
                 SearchUsers:
-                  value: "{\"users\":[{\"handle\":\"skkil\",\"name\":\"스킬\",\"profileImageUrl\"\
-                    :\"https://example.com/profile.png\"}]}"
+                  value: "{\"users\":[{\"handle\":\"john-doe\",\"name\":\"John Doe\"\
+                    ,\"profileImageUrl\":\"https://example.com/john.png\"}]}"
   /search/projects/my:
     get:
       tags:
@@ -1290,12 +1563,93 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SearchProjectsResponse"
+                $ref: "#/components/schemas/GetProjectsResponse"
               examples:
                 SearchMyProjects:
-                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
-                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
-                    ,\"name\":\"React 프로젝트\"}]}"
+                  value: "{\"projects\":[{\"handle\":\"my-project\",\"name\":\"나의\
+                    \ 프로젝트\",\"description\":\"프로젝트 설명\",\"website\":\"https://example.com\"\
+                    ,\"isPublic\":true,\"iconUrl\":\"https://example.com/icon.png\"\
+                    }]}"
+  /users/recommendations:
+    get:
+      tags:
+      - user
+      summary: Get Recommendations
+      description: 팔로우할 만한 사용자 목록을 추천합니다.
+      operationId: GetRecommendations
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserRecommendationsResponse"
+              examples:
+                GetRecommendations:
+                  value: "{\"users\":[{\"userId\":\"1\",\"summary\":{\"handle\":\"\
+                    john-doe\",\"name\":\"John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    }}]}"
+  /users/follow/{followeeId}:
+    post:
+      tags:
+      - user
+      summary: Follow User
+      description: 사용자를 팔로우합니다.
+      operationId: FollowUser
+      parameters:
+      - name: followeeId
+        in: path
+        description: 팔로우할 사용자 ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+  /users/unfollow/{followeeId}:
+    delete:
+      tags:
+      - user
+      summary: Unfollow User
+      description: 사용자 팔로우를 취소합니다.
+      operationId: UnfollowUser
+      parameters:
+      - name: followeeId
+        in: path
+        description: 언팔로우할 사용자 ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /users/{handle}/followed-projects:
+    get:
+      tags:
+      - project
+      summary: Get Followed Projects
+      description: 유저가 팔로우하는 프로젝트 목록을 조회합니다.
+      operationId: GetFollowedProjects
+      parameters:
+      - name: handle
+        in: path
+        description: 유저 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProjectsResponse"
+              examples:
+                GetFollowedProjects:
+                  value: "{\"projects\":[{\"handle\":\"my-project\",\"name\":\"나의\
+                    \ 프로젝트\",\"description\":\"프로젝트 설명\",\"website\":\"https://example.com\"\
+                    ,\"isPublic\":true,\"iconUrl\":\"https://example.com/icon.png\"\
+                    }]}"
   /users/{handle}/projects:
     get:
       tags:
@@ -1319,9 +1673,120 @@ paths:
                 $ref: "#/components/schemas/GetProjectsResponse"
               examples:
                 GetProjectsByUser:
-                  value: "{\"projects\":[{\"id\":1,\"handle\":\"spring-boot-project\"\
-                    ,\"name\":\"Spring Boot 프로젝트\"},{\"id\":2,\"handle\":\"react-project\"\
-                    ,\"name\":\"React 프로젝트\"}]}"
+                  value: "{\"projects\":[{\"handle\":\"my-project\",\"name\":\"나의\
+                    \ 프로젝트\",\"description\":\"프로젝트 설명\",\"website\":\"https://example.com\"\
+                    ,\"isPublic\":true,\"iconUrl\":\"https://example.com/icon.png\"\
+                    }]}"
+  /users/{userId}/followers:
+    get:
+      tags:
+      - user
+      summary: Get Followers
+      description: 사용자를 팔로우하는 사용자 목록을 조회합니다.
+      operationId: GetFollowers
+      parameters:
+      - name: userId
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetConnectionsResponse"
+              examples:
+                GetFollowers:
+                  value: "{\"connections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"userId\":\"1\",\"summary\":{\"handle\":\"john-doe\"\
+                    ,\"name\":\"John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    }}}]}}"
+  /users/{userId}/following:
+    get:
+      tags:
+      - user
+      summary: Get Following
+      description: 사용자가 팔로우하는 사용자 목록을 조회합니다.
+      operationId: GetFollowing
+      parameters:
+      - name: userId
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      - name: first
+        in: query
+        description: Number of items to return from the beginning of the list
+        required: false
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: "Cursor for pagination, indicating the position after which to\
+          \ return items"
+        required: false
+        schema:
+          type: string
+      - name: last
+        in: query
+        description: Number of items to return from the end of the list
+        required: false
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: "Cursor for pagination, indicating the position before which\
+          \ to return items"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetConnectionsResponse"
+              examples:
+                GetFollowing:
+                  value: "{\"connections\":{\"pageInfo\":{\"size\":1,\"hasNextPage\"\
+                    :false,\"hasPreviousPage\":false,\"startCursor\":\"start-cursor\"\
+                    ,\"endCursor\":\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\"\
+                    ,\"content\":{\"userId\":\"1\",\"summary\":{\"handle\":\"john-doe\"\
+                    ,\"name\":\"John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
+                    }}}]}}"
   /users/{userId}/posts:
     get:
       tags:
@@ -1362,6 +1827,12 @@ paths:
         required: false
         schema:
           type: string
+      - name: type
+        in: query
+        description: 게시글 타입
+        required: false
+        schema:
+          type: string
       responses:
         "200":
           description: "200"
@@ -1374,87 +1845,54 @@ paths:
                   value: "{\"posts\":{\"pageInfo\":{\"size\":1,\"hasNextPage\":false,\"\
                     hasPreviousPage\":false,\"startCursor\":\"start-cursor\",\"endCursor\"\
                     :\"end-cursor\"},\"nodes\":[{\"cursor\":\"cursor\",\"content\"\
-                    :{\"id\":1,\"slug\":\"test-slug\",\"type\":\"SHORT\",\"scope\"\
-                    :\"PUBLIC\",\"status\":\"PUBLISHED\",\"title\":\"title\",\"author\"\
-                    :{\"name\":\"User\",\"handle\":\"user-handle\"},\"project\":{\"\
-                    handle\":\"project-handle\",\"name\":\"Project\"},\"content\"\
-                    :\"Post Content\",\"resolved\":false,\"createdAt\":\"1970-01-01T00:00:00Z\"\
-                    }}]}}"
+                    :{\"summary\":{\"id\":1,\"slug\":\"test-slug\",\"title\":\"Test\
+                    \ Post Title\",\"type\":\"SHORT\",\"status\":\"PUBLISHED\",\"\
+                    author\":{\"handle\":\"john-doe\",\"name\":\"John Doe\",\"profileImageUrl\"\
+                    :\"https://example.com/john.png\"},\"project\":{\"handle\":\"\
+                    my-project\",\"name\":\"나의 프로젝트\",\"description\":\"프로젝트 설명\"\
+                    ,\"website\":\"https://example.com\",\"isPublic\":true,\"iconUrl\"\
+                    :\"https://example.com/icon.png\"},\"resolved\":false,\"isAuthor\"\
+                    :false,\"createdAt\":\"1970-01-01T00:00:00Z\",\"likeCount\":1,\"\
+                    liked\":true,\"commentCount\":1,\"bookmarked\":true,\"bookmarkedAt\"\
+                    :\"1970-01-01T00:00:00Z\",\"likedAt\":\"1970-01-01T00:00:00Z\"\
+                    },\"content\":\"Post Content\"}}]}}"
 components:
   schemas:
-    GetProjectsResponse:
-      title: GetProjectsResponse
+    GetUserRecommendationsResponse:
+      title: GetUserRecommendationsResponse
       required:
-      - projects
+      - users
       type: object
       properties:
-        projects:
+        users:
           type: array
-          description: 프로젝트 목록
+          description: 추천 사용자 목록
           items:
             required:
-            - handle
-            - id
-            - name
+            - summary
+            - userId
             type: object
             properties:
-              name:
+              summary:
+                required:
+                - handle
+                - name
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 유저 이름
+                  handle:
+                    type: string
+                    description: 유저 핸들
+                  profileImageUrl:
+                    type: string
+                    description: 유저 프로필 이미지 URL
+                    nullable: true
+                description: 사용자 요약 정보
+              userId:
                 type: string
-                description: 프로젝트 이름
-              handle:
-                type: string
-                description: 프로젝트 핸들
-              id:
-                type: number
-                description: 프로젝트 ID
-    GetMyProjectInvitationsResponse:
-      title: GetMyProjectInvitationsResponse
-      required:
-      - invitations
-      type: object
-      properties:
-        invitations:
-          type: array
-          description: 초대 목록
-          items:
-            required:
-            - expiresAt
-            - id
-            - inviterHandle
-            - inviterName
-            - projectHandle
-            - projectName
-            - role
-            - token
-            type: object
-            properties:
-              inviterHandle:
-                type: string
-                description: 초대한 유저의 핸들
-              role:
-                type: string
-                description: 초대받는 역할
-                enum:
-                - ADMIN
-                - MEMBER
-              id:
-                type: number
-                description: 초대 ID
-              projectName:
-                type: string
-                description: 프로젝트 이름
-              expiresAt:
-                type: string
-                description: 초대 만료 시각
-              inviterName:
-                type: string
-                description: 초대한 유저의 이름
-              projectHandle:
-                type: string
-                description: 프로젝트 핸들
-              token:
-                type: string
-                description: 초대 토큰
+                description: 사용자 ID
     UpdateProfileRequest:
       title: UpdateProfileRequest
       type: object
@@ -1511,31 +1949,6 @@ components:
           type: boolean
           description: Is Onboarded
           nullable: true
-    SearchUsersResponse:
-      title: SearchUsersResponse
-      required:
-      - users
-      type: object
-      properties:
-        users:
-          type: array
-          description: 사용자 목록
-          items:
-            required:
-            - handle
-            - name
-            - profileImageUrl
-            type: object
-            properties:
-              name:
-                type: string
-                description: 사용자 이름
-              handle:
-                type: string
-                description: 사용자 핸들
-              profileImageUrl:
-                type: string
-                description: 프로필 이미지 URL
     UploadMediaResponse:
       title: UploadMediaResponse
       required:
@@ -1566,6 +1979,209 @@ components:
         email:
           type: string
           description: Email
+    SearchPostsResponse:
+      title: SearchPostsResponse
+      required:
+      - posts
+      type: object
+      properties:
+        posts:
+          type: array
+          description: Post List
+          items:
+            required:
+            - content
+            - summary
+            type: object
+            properties:
+              summary:
+                required:
+                - author
+                - bookmarked
+                - commentCount
+                - createdAt
+                - id
+                - isAuthor
+                - likeCount
+                - liked
+                - resolved
+                - slug
+                - status
+                - type
+                type: object
+                properties:
+                  likedAt:
+                    type: string
+                    description: Liked At
+                    nullable: true
+                  bookmarked:
+                    type: boolean
+                    description: Whether the current user bookmarked this post
+                  author:
+                    required:
+                    - handle
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 유저 이름
+                      handle:
+                        type: string
+                        description: 유저 핸들
+                      profileImageUrl:
+                        type: string
+                        description: 유저 프로필 이미지 URL
+                        nullable: true
+                    description: 작성자 정보
+                  project:
+                    type: object
+                    properties:
+                      website:
+                        type: string
+                        description: 프로젝트 웹사이트
+                        nullable: true
+                      name:
+                        type: string
+                        description: 프로젝트 이름
+                        nullable: true
+                      isPublic:
+                        type: boolean
+                        description: 공개 여부
+                        nullable: true
+                      description:
+                        type: string
+                        description: 프로젝트 설명
+                        nullable: true
+                      handle:
+                        type: string
+                        description: 프로젝트 핸들
+                        nullable: true
+                      iconUrl:
+                        type: string
+                        description: 프로젝트 아이콘 URL
+                        nullable: true
+                    description: 소속 프로젝트 정보
+                  likeCount:
+                    type: number
+                    description: Number of Likes
+                  type:
+                    type: string
+                    description: Post Type
+                    enum:
+                    - SHORT
+                    - LONG
+                    - QUESTION
+                  title:
+                    type: string
+                    description: Post Title
+                    nullable: true
+                  liked:
+                    type: boolean
+                    description: Whether the current user liked this post
+                  commentCount:
+                    type: number
+                    description: Number of Comments
+                  isAuthor:
+                    type: boolean
+                    description: Whether the requesting user is the author of this
+                      post
+                  createdAt:
+                    type: string
+                    description: Creation Timestamp
+                  id:
+                    type: number
+                    description: Post ID
+                  bookmarkedAt:
+                    type: string
+                    description: Bookmarked At
+                    nullable: true
+                  slug:
+                    type: string
+                    description: Post Slug
+                  resolved:
+                    type: boolean
+                    description: Whether the question post has been resolved
+                  status:
+                    type: string
+                    description: Post Status
+                    enum:
+                    - DRAFT
+                    - PUBLISHED
+                description: Post Summary
+              content:
+                type: string
+                description: Post Content
+    GetProjectInvitationsResponse:
+      title: GetProjectInvitationsResponse
+      required:
+      - invitations
+      type: object
+      properties:
+        invitations:
+          type: array
+          description: 초대 목록
+          items:
+            required:
+            - invitation
+            - invitee
+            type: object
+            properties:
+              invitation:
+                required:
+                - expiresAt
+                - id
+                - inviter
+                - role
+                type: object
+                properties:
+                  role:
+                    type: string
+                    description: 초대받은 유저의 역할
+                    enum:
+                    - ADMIN
+                    - MEMBER
+                  inviter:
+                    required:
+                    - handle
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 유저 이름
+                      handle:
+                        type: string
+                        description: 유저 핸들
+                      profileImageUrl:
+                        type: string
+                        description: 유저 프로필 이미지 URL
+                        nullable: true
+                    description: 초대한 유저 정보
+                  id:
+                    type: number
+                    description: 초대 ID
+                  expiresAt:
+                    type: string
+                    description: 초대 만료 시각
+                description: 초대 정보
+              invitee:
+                required:
+                - handle
+                - name
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 유저 이름
+                  handle:
+                    type: string
+                    description: 유저 핸들
+                  profileImageUrl:
+                    type: string
+                    description: 유저 프로필 이미지 URL
+                    nullable: true
+                description: 초대받은 유저 정보
     GetPostsResponse:
       title: GetPostsResponse
       type: object
@@ -1590,81 +2206,129 @@ components:
                     description: Node Cursor
                   content:
                     required:
-                    - author
                     - content
-                    - createdAt
-                    - id
-                    - resolved
-                    - scope
-                    - slug
-                    - status
-                    - type
+                    - summary
                     type: object
                     properties:
-                      createdAt:
-                        type: string
-                        description: Creation Timestamp
-                      author:
+                      summary:
                         required:
-                        - handle
-                        - name
+                        - author
+                        - bookmarked
+                        - commentCount
+                        - createdAt
+                        - id
+                        - isAuthor
+                        - likeCount
+                        - liked
+                        - resolved
+                        - slug
+                        - status
+                        - type
                         type: object
                         properties:
-                          name:
+                          likedAt:
                             type: string
-                            description: Author Name
-                          handle:
+                            description: Liked At
+                            nullable: true
+                          bookmarked:
+                            type: boolean
+                            description: Whether the current user bookmarked this
+                              post
+                          author:
+                            required:
+                            - handle
+                            - name
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: 유저 이름
+                              handle:
+                                type: string
+                                description: 유저 핸들
+                              profileImageUrl:
+                                type: string
+                                description: 유저 프로필 이미지 URL
+                                nullable: true
+                            description: 작성자 정보
+                          project:
+                            type: object
+                            properties:
+                              website:
+                                type: string
+                                description: 프로젝트 웹사이트
+                                nullable: true
+                              name:
+                                type: string
+                                description: 프로젝트 이름
+                                nullable: true
+                              isPublic:
+                                type: boolean
+                                description: 공개 여부
+                                nullable: true
+                              description:
+                                type: string
+                                description: 프로젝트 설명
+                                nullable: true
+                              handle:
+                                type: string
+                                description: 프로젝트 핸들
+                                nullable: true
+                              iconUrl:
+                                type: string
+                                description: 프로젝트 아이콘 URL
+                                nullable: true
+                            description: 소속 프로젝트 정보
+                          likeCount:
+                            type: number
+                            description: Number of Likes
+                          type:
                             type: string
-                            description: Author Handle
-                        description: Author Information
-                      scope:
-                        type: string
-                        description: Post Scope
-                        enum:
-                        - PUBLIC
-                        - WORKSPACE
-                      project:
-                        required:
-                        - handle
-                        - name
-                        type: object
-                        properties:
-                          name:
+                            description: Post Type
+                            enum:
+                            - SHORT
+                            - LONG
+                            - QUESTION
+                          title:
                             type: string
-                            description: Project Name
-                          handle:
+                            description: Post Title
+                            nullable: true
+                          liked:
+                            type: boolean
+                            description: Whether the current user liked this post
+                          commentCount:
+                            type: number
+                            description: Number of Comments
+                          isAuthor:
+                            type: boolean
+                            description: Whether the requesting user is the author
+                              of this post
+                          createdAt:
                             type: string
-                            description: Project Handle
-                        description: Project Information
-                      id:
-                        type: number
-                        description: Post ID
-                      title:
-                        type: string
-                        description: Post Title
-                        nullable: true
-                      type:
-                        type: string
-                        description: Post Type
-                        enum:
-                        - SHORT
-                        - LONG
-                        - QUESTION
+                            description: Creation Timestamp
+                          id:
+                            type: number
+                            description: Post ID
+                          bookmarkedAt:
+                            type: string
+                            description: Bookmarked At
+                            nullable: true
+                          slug:
+                            type: string
+                            description: Post Slug
+                          resolved:
+                            type: boolean
+                            description: Whether the question post has been resolved
+                          status:
+                            type: string
+                            description: Post Status
+                            enum:
+                            - DRAFT
+                            - PUBLISHED
+                        description: Post Summary
                       content:
                         type: string
                         description: Post Content
-                      slug:
-                        type: string
-                        description: Post Slug
-                      resolved:
-                        type: boolean
-                        description: Whether the question post has been resolved
-                      status:
-                        type: string
-                        description: Post Status
-                        enum:
-                        - DRAFT
-                        - PUBLISHED
                     description: Node Content
             pageInfo:
               required:
@@ -1721,121 +2385,31 @@ components:
         available:
           type: boolean
           description: 핸들 사용 가능 여부
-    GetProjectInvitationsResponse:
-      title: GetProjectInvitationsResponse
+    SearchUsersResponse:
+      title: SearchUsersResponse
       required:
-      - invitations
+      - users
       type: object
       properties:
-        invitations:
+        users:
           type: array
-          description: 초대 목록
-          items:
-            required:
-            - expiresAt
-            - id
-            - inviteeHandle
-            - inviteeName
-            - role
-            type: object
-            properties:
-              role:
-                type: string
-                description: 초대받은 유저의 역할
-                enum:
-                - ADMIN
-                - MEMBER
-              inviteeName:
-                type: string
-                description: 초대받은 유저의 이름
-              inviteeHandle:
-                type: string
-                description: 초대받은 유저의 핸들
-              id:
-                type: number
-                description: 초대 ID
-              expiresAt:
-                type: string
-                description: 초대 만료 시각
-    GetProjectResponse:
-      title: GetProjectResponse
-      required:
-      - handle
-      - hasMoreTeammates
-      - isPublic
-      - name
-      - teammates
-      type: object
-      properties:
-        teammates:
-          type: array
-          description: 팀원 목록
+          description: 사용자 목록
           items:
             required:
             - handle
             - name
-            - role
             type: object
             properties:
-              role:
-                type: string
-                description: 팀원 역할
               name:
                 type: string
-                description: 팀원 이름
+                description: 유저 이름
               handle:
                 type: string
-                description: 팀원 핸들
+                description: 유저 핸들
               profileImageUrl:
                 type: string
-                description: 팀원 프로필 이미지 URL
+                description: 유저 프로필 이미지 URL
                 nullable: true
-        website:
-          type: string
-          description: 프로젝트 웹사이트
-          nullable: true
-        role:
-          type: string
-          description: 현재 사용자 역할
-          nullable: true
-          enum:
-          - ADMIN
-          - MEMBER
-        recentActivities:
-          type: array
-          description: 최근 활동 목록
-          items:
-            required:
-            - id
-            - text
-            - timestamp
-            type: object
-            properties:
-              text:
-                type: string
-                description: 활동 내용
-              id:
-                type: string
-                description: 활동 ID
-              timestamp:
-                type: string
-                description: 활동 시각
-        name:
-          type: string
-          description: 프로젝트 이름
-        isPublic:
-          type: boolean
-          description: 공개 여부
-        description:
-          type: string
-          description: 프로젝트 설명
-          nullable: true
-        handle:
-          type: string
-          description: 프로젝트 핸들
-        hasMoreTeammates:
-          type: boolean
-          description: 추가 팀원 존재 여부
     UpdateUserPreferencesRequest:
       title: UpdateUserPreferencesRequest
       type: object
@@ -1844,18 +2418,131 @@ components:
           type: string
           description: User theme preference
           nullable: true
-    UpdateProjectRequest:
-      title: UpdateProjectRequest
+    GetPostReportsResponse:
+      title: GetPostReportsResponse
       type: object
       properties:
-        website:
-          type: string
-          description: 프로젝트 웹사이트 URL
-          nullable: true
-        description:
-          type: string
-          description: 프로젝트 설명
-          nullable: true
+        reports:
+          required:
+          - content
+          - pageInfo
+          type: object
+          properties:
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - page
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                page:
+                  type: number
+                  description: Page Number
+              description: Page Info
+            content:
+              type: array
+              description: Content
+              items:
+                required:
+                - createdAt
+                - id
+                - reason
+                - reporter
+                - status
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                    description: 신고 생성 시각
+                  reason:
+                    type: string
+                    description: 신고 사유
+                  post:
+                    required:
+                    - content
+                    - id
+                    - slug
+                    - visibility
+                    type: object
+                    properties:
+                      visibility:
+                        type: string
+                        description: 포스트 노출 상태
+                      id:
+                        type: number
+                        description: 포스트 ID
+                      title:
+                        type: string
+                        description: 포스트 제목
+                        nullable: true
+                      content:
+                        type: string
+                        description: 포스트 본문
+                      slug:
+                        type: string
+                        description: 포스트 슬러그
+                  reviewedAt:
+                    type: string
+                    description: 검토 시각
+                    nullable: true
+                  description:
+                    type: string
+                    description: 신고 상세 설명
+                    nullable: true
+                  reporter:
+                    required:
+                    - handle
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 유저 이름
+                      handle:
+                        type: string
+                        description: 유저 핸들
+                      profileImageUrl:
+                        type: string
+                        description: 유저 프로필 이미지 URL
+                        nullable: true
+                    description: 신고자 정보
+                  id:
+                    type: number
+                    description: 신고 ID
+                  reviewedBy:
+                    required:
+                    - handle
+                    - name
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: 유저 이름
+                      handle:
+                        type: string
+                        description: 유저 핸들
+                      profileImageUrl:
+                        type: string
+                        description: 유저 프로필 이미지 URL
+                        nullable: true
+                    description: 검토자 정보
+                  resolutionNote:
+                    type: string
+                    description: 관리자 처리 메모
+                    nullable: true
+                  status:
+                    type: string
+                    description: 신고 상태
     GetHandleAvailabilityResponse:
       title: GetHandleAvailabilityResponse
       required:
@@ -1891,112 +2578,193 @@ components:
         mediaType:
           type: string
           description: Media Type
-    GetBookmarkedPostsResponse:
-      title: GetBookmarkedPostsResponse
+    GetPostResponse:
+      title: GetPostResponse
+      required:
+      - content
+      - summary
       type: object
       properties:
-        posts:
+        summary:
           required:
-          - nodes
-          - pageInfo
+          - author
+          - bookmarked
+          - commentCount
+          - createdAt
+          - id
+          - isAuthor
+          - likeCount
+          - liked
+          - resolved
+          - slug
+          - status
+          - type
           type: object
           properties:
-            nodes:
-              type: array
-              description: Nodes
-              items:
-                required:
-                - content
-                - cursor
-                type: object
-                properties:
-                  cursor:
-                    type: string
-                    description: Node Cursor
-                  content:
-                    required:
-                    - author
-                    - bookmarked
-                    - bookmarkedAt
-                    - commentCount
-                    - content
-                    - createdAt
-                    - id
-                    - likeCount
-                    - slug
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                        description: Created At
-                      author:
-                        required:
-                        - handle
-                        - id
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Author Name
-                          handle:
-                            type: string
-                            description: Author Handle
-                          id:
-                            type: number
-                            description: Author ID
-                          profileImageUrl:
-                            type: string
-                            description: Author Profile Image URL
-                            nullable: true
-                        description: Author Information
-                      bookmarked:
-                        type: boolean
-                        description: Whether the current user bookmarked this post
-                      likeCount:
-                        type: number
-                        description: Like Count
-                      id:
-                        type: number
-                        description: Post ID
-                      bookmarkedAt:
-                        type: string
-                        description: Bookmarked At
-                      content:
-                        type: string
-                        description: Content
-                      slug:
-                        type: string
-                        description: Post Slug
-                      commentCount:
-                        type: number
-                        description: Comment Count
-                    description: Node Content
-            pageInfo:
+            likedAt:
+              type: string
+              description: Liked At
+              nullable: true
+            bookmarked:
+              type: boolean
+              description: Whether the current user bookmarked this post
+            author:
               required:
-              - hasNextPage
-              - hasPreviousPage
-              - size
+              - handle
+              - name
               type: object
               properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                endCursor:
+                name:
                   type: string
-                  description: End Cursor
-                  nullable: true
-                startCursor:
+                  description: 유저 이름
+                handle:
                   type: string
-                  description: Start Cursor
+                  description: 유저 핸들
+                profileImageUrl:
+                  type: string
+                  description: 유저 프로필 이미지 URL
                   nullable: true
-              description: Page Info
+              description: 작성자 정보
+            project:
+              type: object
+              properties:
+                website:
+                  type: string
+                  description: 프로젝트 웹사이트
+                  nullable: true
+                name:
+                  type: string
+                  description: 프로젝트 이름
+                  nullable: true
+                isPublic:
+                  type: boolean
+                  description: 공개 여부
+                  nullable: true
+                description:
+                  type: string
+                  description: 프로젝트 설명
+                  nullable: true
+                handle:
+                  type: string
+                  description: 프로젝트 핸들
+                  nullable: true
+                iconUrl:
+                  type: string
+                  description: 프로젝트 아이콘 URL
+                  nullable: true
+              description: 소속 프로젝트 정보
+            likeCount:
+              type: number
+              description: Number of Likes
+            type:
+              type: string
+              description: Post Type
+              enum:
+              - SHORT
+              - LONG
+              - QUESTION
+            title:
+              type: string
+              description: Post Title
+              nullable: true
+            liked:
+              type: boolean
+              description: Whether the current user liked this post
+            commentCount:
+              type: number
+              description: Number of Comments
+            isAuthor:
+              type: boolean
+              description: Whether the requesting user is the author of this post
+            createdAt:
+              type: string
+              description: Creation Timestamp
+            id:
+              type: number
+              description: Post ID
+            bookmarkedAt:
+              type: string
+              description: Bookmarked At
+              nullable: true
+            slug:
+              type: string
+              description: Post Slug
+            resolved:
+              type: boolean
+              description: Whether the question post has been resolved
+            status:
+              type: string
+              description: Post Status
+              enum:
+              - DRAFT
+              - PUBLISHED
+          description: 포스트 정보
+        content:
+          required:
+          - json
+          - media
+          type: object
+          properties:
+            json:
+              type: string
+              description: Post Content JSON
+            media:
+              type: array
+              description: Media attached to the post
+              items:
+                required:
+                - id
+                - url
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: Media ID
+                  url:
+                    type: string
+                    description: Media URL
+          description: Post Content
+    UpdateTeammateRequest:
+      title: UpdateTeammateRequest
+      required:
+      - role
+      type: object
+      properties:
+        role:
+          type: string
+          description: 변경할 팀원 역할
+          enum:
+          - ADMIN
+          - MEMBER
+    UpdateCommentRequest:
+      title: UpdateCommentRequest
+      required:
+      - content
+      type: object
+      properties:
+        content:
+          type: string
+          description: Comment content
+    ReviewPostReportRequest:
+      title: ReviewPostReportRequest
+      required:
+      - resolution
+      type: object
+      properties:
+        hiddenReason:
+          type: string
+          description: 포스트 숨김 사유
+          nullable: true
+        resolutionNote:
+          type: string
+          description: 관리자 처리 메모
+          nullable: true
+        resolution:
+          type: string
+          description: 처리 방식
+          enum:
+          - DISMISS
+          - HIDE_POST
     GetProjectTeammatesResponse:
       title: GetProjectTeammatesResponse
       required:
@@ -2008,9 +2776,8 @@ components:
           description: 팀원 목록
           items:
             required:
-            - handle
-            - name
             - role
+            - user
             type: object
             properties:
               role:
@@ -2019,15 +2786,137 @@ components:
                 enum:
                 - ADMIN
                 - MEMBER
+              user:
+                required:
+                - handle
+                - name
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 유저 이름
+                  handle:
+                    type: string
+                    description: 유저 핸들
+                  profileImageUrl:
+                    type: string
+                    description: 유저 프로필 이미지 URL
+                    nullable: true
+                description: 팀원 유저 정보
+    UpdateProjectRequest:
+      title: UpdateProjectRequest
+      type: object
+      properties:
+        website:
+          type: string
+          description: 프로젝트 웹사이트 URL
+          nullable: true
+        removeIcon:
+          type: boolean
+          description: 프로젝트 아이콘 제거 여부
+          nullable: true
+        description:
+          type: string
+          description: 프로젝트 설명
+          nullable: true
+        iconMediaId:
+          type: string
+          description: 프로젝트 아이콘으로 설정할 미디어 ID
+          nullable: true
+    CreateProjectResponse:
+      title: CreateProjectResponse
+      required:
+      - handle
+      type: object
+      properties:
+        handle:
+          type: string
+          description: 생성된 프로젝트 핸들
+    GetUserPreferencesResponse:
+      title: GetUserPreferencesResponse
+      required:
+      - theme
+      type: object
+      properties:
+        theme:
+          type: string
+          description: User theme preference
+    RegisterRequest:
+      title: RegisterRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        email:
+          type: string
+          description: Email
+    AddTeammateRequest:
+      title: AddTeammateRequest
+      required:
+      - teammateHandle
+      type: object
+      properties:
+        teammateHandle:
+          type: string
+          description: 추가할 팀원의 핸들
+    CreateCommentRequest:
+      title: CreateCommentRequest
+      required:
+      - content
+      type: object
+      properties:
+        content:
+          type: string
+          description: Comment content
+    CreateCommentResponse:
+      title: CreateCommentResponse
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: number
+          description: Created comment ID
+    GetProjectsResponse:
+      title: GetProjectsResponse
+      required:
+      - projects
+      type: object
+      properties:
+        projects:
+          type: array
+          description: 프로젝트 목록
+          items:
+            required:
+            - handle
+            - isPublic
+            - name
+            type: object
+            properties:
+              website:
+                type: string
+                description: 프로젝트 웹사이트
+                nullable: true
               name:
                 type: string
-                description: 팀원 이름
+                description: 프로젝트 이름
+              isPublic:
+                type: boolean
+                description: 공개 여부
+              description:
+                type: string
+                description: 프로젝트 설명
+                nullable: true
               handle:
                 type: string
-                description: 팀원 핸들
-              profileImageUrl:
+                description: 프로젝트 핸들
+              iconUrl:
                 type: string
-                description: 팀원 프로필 이미지 URL
+                description: 프로젝트 아이콘 URL
                 nullable: true
     CreatePostRequest:
       title: CreatePostRequest
@@ -2036,13 +2925,6 @@ components:
       - type
       type: object
       properties:
-        scope:
-          type: string
-          description: Post Scope
-          nullable: true
-          enum:
-          - PUBLIC
-          - WORKSPACE
         project:
           type: object
           properties:
@@ -2102,292 +2984,139 @@ components:
           enum:
           - DRAFT
           - PUBLISHED
-    UpdateCommentRequest:
-      title: UpdateCommentRequest
+    GetPostActivitiesResponse:
+      title: GetPostActivitiesResponse
       required:
-      - content
+      - activities
       type: object
       properties:
-        content:
-          type: string
-          description: Comment content
-    GetPostReportsResponse:
-      title: GetPostReportsResponse
+        activities:
+          type: array
+          description: List of Activities
+          items:
+            required:
+            - count
+            - date
+            type: object
+            properties:
+              date:
+                type: string
+                description: Activity Date
+              count:
+                type: number
+                description: Number of Posts
+    GetMyProjectInvitationsResponse:
+      title: GetMyProjectInvitationsResponse
+      required:
+      - invitations
       type: object
       properties:
-        reports:
-          required:
-          - content
-          - pageInfo
-          type: object
-          properties:
-            pageInfo:
-              required:
-              - hasNextPage
-              - hasPreviousPage
-              - page
-              - size
-              type: object
-              properties:
-                size:
-                  type: number
-                  description: Page Size
-                hasNextPage:
-                  type: boolean
-                  description: Has Next Page
-                hasPreviousPage:
-                  type: boolean
-                  description: Has Previous Page
-                page:
-                  type: number
-                  description: Page Number
-              description: Page Info
-            content:
-              type: array
-              description: Content
-              items:
+        invitations:
+          type: array
+          description: 초대 목록
+          items:
+            required:
+            - invitation
+            - project
+            - token
+            type: object
+            properties:
+              invitation:
                 required:
-                - createdAt
+                - expiresAt
                 - id
-                - reason
-                - status
+                - inviter
+                - role
                 type: object
                 properties:
-                  createdAt:
+                  role:
                     type: string
-                    description: 신고 생성 시각
-                  reason:
-                    type: string
-                    description: 신고 사유
-                  post:
+                    description: 초대받은 유저의 역할
+                    enum:
+                    - ADMIN
+                    - MEMBER
+                  inviter:
                     required:
-                    - content
-                    - id
-                    - slug
-                    - visibility
+                    - handle
+                    - name
                     type: object
                     properties:
-                      visibility:
+                      name:
                         type: string
-                        description: 포스트 노출 상태
-                      id:
-                        type: number
-                        description: 포스트 ID
-                      title:
+                        description: 유저 이름
+                      handle:
                         type: string
-                        description: 포스트 제목
+                        description: 유저 핸들
+                      profileImageUrl:
+                        type: string
+                        description: 유저 프로필 이미지 URL
                         nullable: true
-                      content:
-                        type: string
-                        description: 포스트 본문
-                      slug:
-                        type: string
-                        description: 포스트 슬러그
-                  reviewedAt:
+                    description: 초대한 유저 정보
+                  id:
+                    type: number
+                    description: 초대 ID
+                  expiresAt:
                     type: string
-                    description: 검토 시각
+                    description: 초대 만료 시각
+                description: 초대 정보
+              project:
+                required:
+                - handle
+                - isPublic
+                - name
+                type: object
+                properties:
+                  website:
+                    type: string
+                    description: 프로젝트 웹사이트
                     nullable: true
+                  name:
+                    type: string
+                    description: 프로젝트 이름
+                  isPublic:
+                    type: boolean
+                    description: 공개 여부
                   description:
                     type: string
-                    description: 신고 상세 설명
+                    description: 프로젝트 설명
                     nullable: true
-                  reporter:
-                    required:
-                    - handle
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: 신고자 이름
-                      handle:
-                        type: string
-                        description: 신고자 핸들
-                      id:
-                        type: number
-                        description: 신고자 ID
-                  id:
-                    type: number
-                    description: 신고 ID
-                  reviewedBy:
-                    required:
-                    - handle
-                    - id
-                    - name
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: 검토자 이름
-                      handle:
-                        type: string
-                        description: 검토자 핸들
-                      id:
-                        type: number
-                        description: 검토자 ID
-                  resolutionNote:
+                  handle:
                     type: string
-                    description: 관리자 처리 메모
+                    description: 프로젝트 핸들
+                  iconUrl:
+                    type: string
+                    description: 프로젝트 아이콘 URL
                     nullable: true
-                  status:
-                    type: string
-                    description: 신고 상태
-    ReviewPostReportRequest:
-      title: ReviewPostReportRequest
+                description: 프로젝트 정보
+              token:
+                type: string
+                description: 초대 토큰
+    ReportPostRequest:
+      title: ReportPostRequest
       required:
-      - resolution
+      - reason
       type: object
       properties:
-        hiddenReason:
+        reason:
           type: string
-          description: 포스트 숨김 사유
+          description: 신고 사유
+          enum:
+          - SPAM
+          - HARASSMENT
+          - HATE
+          - SEXUAL
+          - VIOLENCE
+          - MISINFORMATION
+          - OTHER
+        description:
+          type: string
+          description: 신고 상세 설명
           nullable: true
-        resolutionNote:
-          type: string
-          description: 관리자 처리 메모
-          nullable: true
-        resolution:
-          type: string
-          description: 처리 방식
-          enum:
-          - DISMISS
-          - HIDE_POST
-    CreateProjectResponse:
-      title: CreateProjectResponse
-      required:
-      - handle
+    GetConnectionsResponse:
+      title: GetConnectionsResponse
       type: object
       properties:
-        handle:
-          type: string
-          description: 생성된 프로젝트 핸들
-    GetPostResponse:
-      title: GetPostResponse
-      required:
-      - author
-      - bookmarked
-      - commentCount
-      - content
-      - createdAt
-      - id
-      - likeCount
-      - resolved
-      - scope
-      - slug
-      - status
-      - type
-      type: object
-      properties:
-        bookmarked:
-          type: boolean
-          description: Whether the current user bookmarked this post
-        author:
-          required:
-          - handle
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Author Name
-            handle:
-              type: string
-              description: Author Handle
-          description: Author Information
-        project:
-          required:
-          - handle
-          - name
-          type: object
-          properties:
-            name:
-              type: string
-              description: Project Name
-            handle:
-              type: string
-              description: Project Handle
-          description: Project Information
-        likeCount:
-          type: number
-          description: Number of Likes
-        title:
-          type: string
-          description: Post Title
-          nullable: true
-        type:
-          type: string
-          description: Post Type
-          enum:
-          - SHORT
-          - LONG
-          - QUESTION
-        content:
-          required:
-          - json
-          - media
-          type: object
-          properties:
-            json:
-              type: string
-              description: Post Content JSON
-            media:
-              type: array
-              description: Media attached to the post
-              items:
-                required:
-                - id
-                - url
-                type: object
-                properties:
-                  id:
-                    type: number
-                    description: Media ID
-                  url:
-                    type: string
-                    description: Media URL
-          description: Post Content
-        commentCount:
-          type: number
-          description: Number of Comments
-        createdAt:
-          type: string
-          description: Creation Timestamp
-        scope:
-          type: string
-          description: Post Scope
-          enum:
-          - PUBLIC
-          - WORKSPACE
-        id:
-          type: number
-          description: Post ID
-        slug:
-          type: string
-          description: Post Slug
-        resolved:
-          type: boolean
-          description: Whether the question post has been resolved
-        status:
-          type: string
-          description: Post Status
-          enum:
-          - DRAFT
-          - PUBLISHED
-    GetUserPreferencesResponse:
-      title: GetUserPreferencesResponse
-      required:
-      - theme
-      type: object
-      properties:
-        theme:
-          type: string
-          description: User theme preference
-    GetFeedResponse:
-      title: GetFeedResponse
-      type: object
-      properties:
-        items:
+        connections:
           required:
           - nodes
           - pageInfo
@@ -2407,72 +3136,30 @@ components:
                     description: Node Cursor
                   content:
                     required:
-                    - author
-                    - bookmarked
-                    - commentCount
-                    - content
-                    - createdAt
-                    - id
-                    - likeCount
-                    - slug
+                    - summary
+                    - userId
                     type: object
                     properties:
-                      createdAt:
-                        type: string
-                        description: Created At
-                      author:
+                      summary:
                         required:
                         - handle
-                        - id
                         - name
                         type: object
                         properties:
                           name:
                             type: string
-                            description: Author Name
+                            description: 유저 이름
                           handle:
                             type: string
-                            description: Author Handle
-                          id:
-                            type: number
-                            description: Author ID
+                            description: 유저 핸들
                           profileImageUrl:
                             type: string
-                            description: Author Profile Image URL
+                            description: 유저 프로필 이미지 URL
                             nullable: true
-                        description: Author Information
-                      bookmarked:
-                        type: boolean
-                        description: Whether the current user bookmarked this feed
-                          item
-                      project:
-                        required:
-                        - handle
-                        - name
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            description: Project Name
-                          handle:
-                            type: string
-                            description: Project Handle
-                        description: Project Information
-                      likeCount:
-                        type: number
-                        description: Like Count
-                      id:
-                        type: number
-                        description: Feed Item ID
-                      content:
+                        description: User Summary
+                      userId:
                         type: string
-                        description: Content
-                      slug:
-                        type: string
-                        description: Post Slug
-                      commentCount:
-                        type: number
-                        description: Comment Count
+                        description: User ID
                     description: Node Content
             pageInfo:
               required:
@@ -2499,182 +3186,76 @@ components:
                   description: Start Cursor
                   nullable: true
               description: Page Info
-    GetProfileResponse:
-      title: GetProfileResponse
-      required:
-      - bio
-      - email
-      - isAuthenticatedUser
-      - isFollowing
-      - isOnboarded
-      - name
-      - profession
-      - profileImageUrl
-      - role
-      - userId
+    GetProjectFollowersResponse:
+      title: GetProjectFollowersResponse
       type: object
       properties:
-        profession:
-          type: string
-          description: Profession
-        isAuthenticatedUser:
-          type: boolean
-          description: Is Authenticated User
-        role:
-          type: string
-          description: Role
-        isFollowing:
-          type: boolean
-          description: Is Following
-        name:
-          type: string
-          description: Full Name
-        bio:
-          type: string
-          description: Bio
-        handle:
-          type: string
-          description: Handle
-          nullable: true
-        profileImageUrl:
-          type: string
-          description: Profile Image URL
-        userId:
-          type: string
-          description: ID
-        contacts:
+        followers:
+          required:
+          - nodes
+          - pageInfo
           type: object
           properties:
-            twitter:
-              type: string
-              description: Twitter Username
-              nullable: true
-            github:
-              type: string
-              description: GitHub Username
-              nullable: true
-            custom:
-              type: string
-              description: Custom Contact
-              nullable: true
-            instagram:
-              type: string
-              description: Instagram Username
-              nullable: true
-            linkedin:
-              type: string
-              description: LinkedIn Username
-              nullable: true
-          description: Contacts
-        email:
-          type: string
-          description: E-mail
-        isOnboarded:
-          type: boolean
-          description: Is Onboarded
-    RegisterRequest:
-      title: RegisterRequest
-      required:
-      - email
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: Password
-        email:
-          type: string
-          description: Email
-    AddTeammateRequest:
-      title: AddTeammateRequest
-      required:
-      - teammateHandle
-      type: object
-      properties:
-        teammateHandle:
-          type: string
-          description: 추가할 팀원의 핸들
-    CreateCommentRequest:
-      title: CreateCommentRequest
-      required:
-      - content
-      type: object
-      properties:
-        content:
-          type: string
-          description: Comment content
-    CreateCommentResponse:
-      title: CreateCommentResponse
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: number
-          description: Created comment ID
-    GetPostActivitiesResponse:
-      title: GetPostActivitiesResponse
-      required:
-      - activities
-      type: object
-      properties:
-        activities:
-          type: array
-          description: List of Activities
-          items:
-            required:
-            - count
-            - date
-            type: object
-            properties:
-              date:
-                type: string
-                description: Activity Date
-              count:
-                type: number
-                description: Number of Posts
-    ReportPostRequest:
-      title: ReportPostRequest
-      required:
-      - reason
-      type: object
-      properties:
-        reason:
-          type: string
-          description: 신고 사유
-          enum:
-          - SPAM
-          - HARASSMENT
-          - HATE
-          - SEXUAL
-          - VIOLENCE
-          - MISINFORMATION
-          - OTHER
-        description:
-          type: string
-          description: 신고 상세 설명
-          nullable: true
-    SearchPostsResponse:
-      title: SearchPostsResponse
-      required:
-      - posts
-      type: object
-      properties:
-        posts:
-          type: array
-          description: Post List
-          items:
-            required:
-            - content
-            - id
-            type: object
-            properties:
-              id:
-                type: number
-                description: Post ID
-              content:
-                type: string
-                description: Post Content
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - user
+                    type: object
+                    properties:
+                      user:
+                        required:
+                        - handle
+                        - name
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: 유저 이름
+                          handle:
+                            type: string
+                            description: 유저 핸들
+                          profileImageUrl:
+                            type: string
+                            description: 유저 프로필 이미지 URL
+                            nullable: true
+                        description: 팔로워 유저 정보
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     SearchTagsResponse:
       title: SearchTagsResponse
       required:
@@ -2709,31 +3290,104 @@ components:
         content:
           type: string
           description: Content
-    SearchProjectsResponse:
-      title: SearchProjectsResponse
+    GetProjectResponse:
+      title: GetProjectResponse
       required:
-      - projects
+      - hasMoreTeammates
+      - summary
+      - teammates
       type: object
       properties:
-        projects:
+        summary:
+          required:
+          - handle
+          - isPublic
+          - name
+          type: object
+          properties:
+            website:
+              type: string
+              description: 프로젝트 웹사이트
+              nullable: true
+            name:
+              type: string
+              description: 프로젝트 이름
+            isPublic:
+              type: boolean
+              description: 공개 여부
+            description:
+              type: string
+              description: 프로젝트 설명
+              nullable: true
+            handle:
+              type: string
+              description: 프로젝트 핸들
+            iconUrl:
+              type: string
+              description: 프로젝트 아이콘 URL
+              nullable: true
+          description: 프로젝트 정보
+        teammates:
           type: array
-          description: 프로젝트 목록
+          description: 팀원 목록
           items:
             required:
-            - handle
-            - id
-            - name
+            - role
+            - user
             type: object
             properties:
-              name:
+              role:
                 type: string
-                description: 프로젝트 이름
-              handle:
+                description: 팀원 역할
+                enum:
+                - ADMIN
+                - MEMBER
+              user:
+                required:
+                - handle
+                - name
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 유저 이름
+                  handle:
+                    type: string
+                    description: 유저 핸들
+                  profileImageUrl:
+                    type: string
+                    description: 유저 프로필 이미지 URL
+                    nullable: true
+                description: 팀원 유저 정보
+        role:
+          type: string
+          description: 현재 사용자 역할
+          nullable: true
+          enum:
+          - ADMIN
+          - MEMBER
+        recentActivities:
+          type: array
+          description: 최근 활동 목록
+          items:
+            required:
+            - id
+            - text
+            - timestamp
+            type: object
+            properties:
+              text:
                 type: string
-                description: 프로젝트 핸들
+                description: 활동 내용
               id:
-                type: number
-                description: 프로젝트 ID
+                type: string
+                description: 활동 ID
+              timestamp:
+                type: string
+                description: 활동 시각
+        hasMoreTeammates:
+          type: boolean
+          description: 추가 팀원 존재 여부
     GetCommentsResponse:
       title: GetCommentsResponse
       required:
@@ -2833,6 +3487,260 @@ components:
                   nullable: true
               description: Page Info
           description: Comments
+    GetProfileResponse:
+      title: GetProfileResponse
+      required:
+      - bio
+      - email
+      - followerCount
+      - followingCount
+      - isAuthenticatedUser
+      - isFollowing
+      - isOnboarded
+      - name
+      - profession
+      - profileImageUrl
+      - role
+      - userId
+      type: object
+      properties:
+        profession:
+          type: string
+          description: Profession
+        role:
+          type: string
+          description: Role
+        isFollowing:
+          type: boolean
+          description: Is Following
+        bio:
+          type: string
+          description: Bio
+        handle:
+          type: string
+          description: Handle
+          nullable: true
+        followingCount:
+          type: number
+          description: Following Count
+        userId:
+          type: string
+          description: ID
+        isAuthenticatedUser:
+          type: boolean
+          description: Is Authenticated User
+        name:
+          type: string
+          description: Full Name
+        followerCount:
+          type: number
+          description: Follower Count
+        profileImageUrl:
+          type: string
+          description: Profile Image URL
+        contacts:
+          type: object
+          properties:
+            twitter:
+              type: string
+              description: Twitter Username
+              nullable: true
+            github:
+              type: string
+              description: GitHub Username
+              nullable: true
+            custom:
+              type: string
+              description: Custom Contact
+              nullable: true
+            instagram:
+              type: string
+              description: Instagram Username
+              nullable: true
+            linkedin:
+              type: string
+              description: LinkedIn Username
+              nullable: true
+          description: Contacts
+        email:
+          type: string
+          description: E-mail
+        isOnboarded:
+          type: boolean
+          description: Is Onboarded
+    GetPostRecommendationsResponse:
+      title: GetPostRecommendationsResponse
+      type: object
+      properties:
+        posts:
+          required:
+          - nodes
+          - pageInfo
+          type: object
+          properties:
+            nodes:
+              type: array
+              description: Nodes
+              items:
+                required:
+                - content
+                - cursor
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                    description: Node Cursor
+                  content:
+                    required:
+                    - content
+                    - summary
+                    type: object
+                    properties:
+                      summary:
+                        required:
+                        - author
+                        - bookmarked
+                        - commentCount
+                        - createdAt
+                        - id
+                        - isAuthor
+                        - likeCount
+                        - liked
+                        - resolved
+                        - slug
+                        - status
+                        - type
+                        type: object
+                        properties:
+                          likedAt:
+                            type: string
+                            description: Liked At
+                            nullable: true
+                          bookmarked:
+                            type: boolean
+                            description: Whether the current user bookmarked this
+                              post
+                          author:
+                            required:
+                            - handle
+                            - name
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: 유저 이름
+                              handle:
+                                type: string
+                                description: 유저 핸들
+                              profileImageUrl:
+                                type: string
+                                description: 유저 프로필 이미지 URL
+                                nullable: true
+                            description: 작성자 정보
+                          project:
+                            type: object
+                            properties:
+                              website:
+                                type: string
+                                description: 프로젝트 웹사이트
+                                nullable: true
+                              name:
+                                type: string
+                                description: 프로젝트 이름
+                                nullable: true
+                              isPublic:
+                                type: boolean
+                                description: 공개 여부
+                                nullable: true
+                              description:
+                                type: string
+                                description: 프로젝트 설명
+                                nullable: true
+                              handle:
+                                type: string
+                                description: 프로젝트 핸들
+                                nullable: true
+                              iconUrl:
+                                type: string
+                                description: 프로젝트 아이콘 URL
+                                nullable: true
+                            description: 소속 프로젝트 정보
+                          likeCount:
+                            type: number
+                            description: Number of Likes
+                          type:
+                            type: string
+                            description: Post Type
+                            enum:
+                            - SHORT
+                            - LONG
+                            - QUESTION
+                          title:
+                            type: string
+                            description: Post Title
+                            nullable: true
+                          liked:
+                            type: boolean
+                            description: Whether the current user liked this post
+                          commentCount:
+                            type: number
+                            description: Number of Comments
+                          isAuthor:
+                            type: boolean
+                            description: Whether the requesting user is the author
+                              of this post
+                          createdAt:
+                            type: string
+                            description: Creation Timestamp
+                          id:
+                            type: number
+                            description: Post ID
+                          bookmarkedAt:
+                            type: string
+                            description: Bookmarked At
+                            nullable: true
+                          slug:
+                            type: string
+                            description: Post Slug
+                          resolved:
+                            type: boolean
+                            description: Whether the question post has been resolved
+                          status:
+                            type: string
+                            description: Post Status
+                            enum:
+                            - DRAFT
+                            - PUBLISHED
+                        description: Post Summary
+                      content:
+                        type: string
+                        description: Post Content
+                    description: Node Content
+            pageInfo:
+              required:
+              - hasNextPage
+              - hasPreviousPage
+              - size
+              type: object
+              properties:
+                size:
+                  type: number
+                  description: Page Size
+                hasNextPage:
+                  type: boolean
+                  description: Has Next Page
+                hasPreviousPage:
+                  type: boolean
+                  description: Has Previous Page
+                endCursor:
+                  type: string
+                  description: End Cursor
+                  nullable: true
+                startCursor:
+                  type: string
+                  description: Start Cursor
+                  nullable: true
+              description: Page Info
     CreateProjectInvitationRequest:
       title: CreateProjectInvitationRequest
       required:

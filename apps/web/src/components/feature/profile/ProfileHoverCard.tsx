@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import ROUTES from '@/util/routes';
 
 interface ProfileHoverCardProps {
   handle: string;
@@ -67,7 +68,7 @@ export function ProfileHoverCard({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <div className="flex flex-col gap-3">
-          <Link href={`/@${handle}`}>
+          <Link href={ROUTES.PROFILE(handle)}>
             <Avatar size="lg">
               <AvatarImage
                 src={

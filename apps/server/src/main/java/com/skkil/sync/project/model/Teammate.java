@@ -64,4 +64,12 @@ public class Teammate extends BaseEntity {
   public void setRole(Role role) {
     this.role = role;
   }
+
+  public boolean isProjectOwner() {
+    return isOwner;
+  }
+
+  public boolean canManageProject() {
+    return isOwner || role == Role.ADMIN;
+  }
 }

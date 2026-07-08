@@ -40,8 +40,13 @@ public class UserService implements UserDetailsService {
   }
 
   @Transactional(readOnly = true)
-  public GetHandleAvailabilityResponse getHandleAvailability(String handle) {
-    boolean available = !userRepository.existsByHandle(handle);
+  public GetHandleAvailabilityResponse getHandleAvailability(Long requestingUserId, String handle) {
+    boolean available =
+        userRepository
+            .findByHandle(handle)
+            .map(user -> user.getId().equals(requestingUserId))
+            .orElse(true);
+
     return new GetHandleAvailabilityResponse(available);
   }
 }

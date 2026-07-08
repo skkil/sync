@@ -1,25 +1,25 @@
-import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 
-import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/project';
+import { getProjectByHandle } from '@/api/__generated__/project/project';
+import { TwoColumnLayout } from '@/components/layout/TwoColumnLayout';
 import SyncError, { ErrorCode } from '@/lib/error';
-import { getQueryClient } from '@/lib/query';
 
-import ProjectPosts from './_components/ProjectPosts';
+import ProjectDashboard from './_components/ProjectDashboard';
+import ProjectInfoSidebar from './_components/ProjectInfoSidebar';
 
-interface ProjectPageProps {
+interface ProjectDashboardPageProps {
   params: Promise<{
     handle: string;
   }>;
 }
 
-export default async function ProjectPage({ params }: ProjectPageProps) {
+export default async function ProjectDashboardPage({
+  params,
+}: ProjectDashboardPageProps) {
   const { handle } = await params;
 
-  const queryClient = getQueryClient();
-
   try {
-    await queryClient.fetchQuery(getGetProjectByHandleQueryOptions(handle));
+    await getProjectByHandle(handle);
   } catch (error) {
     if (error instanceof SyncError) {
       switch (error.code) {
@@ -30,8 +30,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProjectPosts handle={handle} />
-    </HydrationBoundary>
+    <TwoColumnLayout
+      main={<ProjectDashboard />}
+      side={<ProjectInfoSidebar handle={handle} />}
+      reverseSideOnMobile
+    />
   );
 }

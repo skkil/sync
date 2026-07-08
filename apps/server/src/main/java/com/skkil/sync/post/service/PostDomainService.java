@@ -2,7 +2,6 @@ package com.skkil.sync.post.service;
 
 import com.skkil.sync.post.exception.PostNotFoundException;
 import com.skkil.sync.post.model.Post;
-import com.skkil.sync.post.model.PostScope;
 import com.skkil.sync.post.model.PostStatus;
 import com.skkil.sync.post.model.PostVisibility;
 import com.skkil.sync.post.repository.PostRepository;
@@ -31,16 +30,16 @@ public class PostDomainService {
   @Transactional(readOnly = true)
   public Post getPublicPublishedPost(Long postId) {
     return postRepository
-        .findByIdAndVisibilityAndStatusAndScope(
-            postId, PostVisibility.VISIBLE, PostStatus.PUBLISHED, PostScope.PUBLIC)
+        .findByIdAndVisibilityAndStatusAndProjectIsNull(
+            postId, PostVisibility.VISIBLE, PostStatus.PUBLISHED)
         .orElseThrow(() -> new PostNotFoundException(postId));
   }
 
   @Transactional(readOnly = true)
   public Post getPublicPublishedPostBySlug(String slug) {
     return postRepository
-        .findBySlugAndVisibilityAndStatusAndScope(
-            slug, PostVisibility.VISIBLE, PostStatus.PUBLISHED, PostScope.PUBLIC)
+        .findBySlugAndVisibilityAndStatusAndProjectIsNull(
+            slug, PostVisibility.VISIBLE, PostStatus.PUBLISHED)
         .orElseThrow(() -> new PostNotFoundException(slug));
   }
 }

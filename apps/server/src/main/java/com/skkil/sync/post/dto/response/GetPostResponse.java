@@ -1,37 +1,13 @@
 package com.skkil.sync.post.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.skkil.sync.post.model.PostScope;
-import com.skkil.sync.post.model.PostStatus;
-import com.skkil.sync.post.model.PostType;
-import java.time.OffsetDateTime;
+import com.skkil.sync.post.dto.summary.PostSummary;
 import java.util.List;
 import lombok.Builder;
-import org.jspecify.annotations.Nullable;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record GetPostResponse(
-    Long id,
-    PostType type,
-    PostScope scope,
-    PostStatus status,
-    String slug,
-    @Nullable String title,
-    Author author,
-    @Nullable Project project,
-    Content content,
-    Long likeCount,
-    Long commentCount,
-    boolean bookmarked,
-    boolean resolved,
-    OffsetDateTime createdAt) {
-
-  @Builder
-  public static record Author(String name, String handle) {}
-
-  @Builder
-  public static record Project(String handle, String name) {}
+public record GetPostResponse(PostSummary summary, Content content) {
 
   @Builder
   public static record Content(String json, List<Media> media) {}

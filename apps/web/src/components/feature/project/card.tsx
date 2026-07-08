@@ -1,29 +1,34 @@
 import { PlusIcon } from '@phosphor-icons/react';
-import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
+import { LinkButton } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+
+import { ProjectAvatar } from './avatar';
 
 interface ProjectCardProps {
   name: string;
   handle: string;
+  iconUrl?: string | null;
 }
 
-function ProjectCard({ name, handle }: ProjectCardProps) {
+function ProjectCard({ name, handle, iconUrl }: ProjectCardProps) {
   return (
     <Card className="justify-between gap-4 p-5">
-      <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-lg font-semibold text-primary-foreground">
-        {name.charAt(0).toUpperCase()}
-      </div>
+      <ProjectAvatar
+        name={name}
+        iconUrl={iconUrl}
+        size="lg"
+        className="size-10 text-lg"
+      />
 
       <div>
         <p className="font-semibold">{name}</p>
         <p className="text-muted-foreground text-sm">@{handle}</p>
       </div>
 
-      <Button asChild size="sm" className="w-full">
-        <Link href={`/projects/${handle}`}>Open</Link>
-      </Button>
+      <LinkButton href={`/projects/${handle}`} size="sm" className="w-full">
+        Open
+      </LinkButton>
     </Card>
   );
 }
@@ -40,9 +45,9 @@ function NewProjectCard() {
           For a team, company, or open-source project.
         </p>
       </div>
-      <Button asChild size="sm" className="w-full">
-        <Link href="/projects/new">Create</Link>
-      </Button>
+      <LinkButton href="/projects/new" size="sm" className="w-full">
+        Create
+      </LinkButton>
     </Card>
   );
 }

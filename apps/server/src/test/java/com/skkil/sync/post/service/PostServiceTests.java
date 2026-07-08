@@ -7,7 +7,6 @@ import com.skkil.sync.post.dto.request.CreatePostRequest;
 import com.skkil.sync.post.dto.request.UpdatePostRequest;
 import com.skkil.sync.post.exception.InvalidPostPublishRequestException;
 import com.skkil.sync.post.exception.PostNotFoundException;
-import com.skkil.sync.post.model.PostScope;
 import com.skkil.sync.post.model.PostStatus;
 import com.skkil.sync.post.model.PostType;
 import com.skkil.sync.post.repository.PostRepository;
@@ -49,21 +48,6 @@ class PostServiceTests {
   }
 
   @Test
-  @DisplayName("[createPost] 워크스페이스 범위에 프로젝트 핸들이 없으면 InvalidPostPublishRequestException 예외 발생")
-  void createPost_workspaceWithoutProject_throwsException() {
-    CreatePostRequest request =
-        CreatePostRequest.builder()
-            .type(PostType.SHORT)
-            .scope(PostScope.WORKSPACE)
-            .status(PostStatus.DRAFT)
-            .content(new CreatePostRequest.Content("content", "{\"text\":\"content\"}", List.of()))
-            .build();
-
-    assertThatThrownBy(() -> postService.createPost(1L, request))
-        .isInstanceOf(InvalidPostPublishRequestException.class);
-  }
-
-  @Test
   @DisplayName("[updatePost] 존재하지 않는 회고를 수정하려는 경우 PostNotFoundException 예외 발생")
   void updatePost_postNotFound_throwsException() {
     Long postId = 1L;
@@ -91,7 +75,6 @@ class PostServiceTests {
     return CreatePostRequest.builder()
         .title(title)
         .type(type)
-        .scope(PostScope.PUBLIC)
         .status(status)
         .content(new CreatePostRequest.Content("content", "{\"text\":\"content\"}", List.of()))
         .tags(tags)

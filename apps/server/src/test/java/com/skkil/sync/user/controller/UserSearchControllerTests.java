@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.skkil.sync.common.config.TestSecurityConfig;
+import com.skkil.sync.common.security.WithAuthenticatedUser;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.user.dto.response.SearchUsersResponse;
 import com.skkil.sync.user.service.UserSearchService;
@@ -29,7 +30,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserSearchController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = true)
 @AutoConfigureRestDocs
 @ExtendWith(RestDocumentationExtension.class)
 @Import({SecurityConfig.class, TestSecurityConfig.class})
@@ -41,6 +42,7 @@ class UserSearchControllerTests {
 
   @Test
   @DisplayName("[searchUsers] API 문서화 테스트")
+  @WithAuthenticatedUser
   void searchUsers() throws Exception {
     String query = "skkil";
     SearchUsersResponse response = SearchUsersResponseSnippets.getSearchUsersResponse();
@@ -63,5 +65,13 @@ class UserSearchControllerTests {
                 Function.identity(),
                 queryParameters(parameterWithName("query").description("검색어")),
                 SearchUsersResponseSnippets.getSearchUsersResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[searchUsers] 로그인하지 않은 사용자는 접근할 수 없다")
+  void searchUsers_unauthenticatedUser_shouldReturnUnauthorized() throws Exception {
+    mockMvc
+        .perform(get("/search/users").queryParam("query", "skkil"))
+        .andExpect(status().isUnauthorized());
   }
 }

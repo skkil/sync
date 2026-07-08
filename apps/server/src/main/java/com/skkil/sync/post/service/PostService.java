@@ -11,14 +11,10 @@ import com.skkil.sync.post.exception.InvalidPostPublishRequestException;
 import com.skkil.sync.post.exception.PostNotFoundException;
 import com.skkil.sync.post.model.Post;
 import com.skkil.sync.post.model.PostMediaFile;
-import com.skkil.sync.post.model.PostScope;
 import com.skkil.sync.post.model.PostStatus;
-import com.skkil.sync.post.model.PostSummary;
 import com.skkil.sync.post.model.PostType;
-import com.skkil.sync.post.repository.PostLikeRepository;
 import com.skkil.sync.post.repository.PostMediaFileRepository;
 import com.skkil.sync.post.repository.PostRepository;
-import com.skkil.sync.post.repository.PostSummaryRepository;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.service.ProjectDomainService;
 import com.skkil.sync.user.model.User;
@@ -43,8 +39,6 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final PostMediaFileRepository postMediaFileRepository;
-  private final PostSummaryRepository postSummaryRepository;
-  private final PostLikeRepository postLikeRepository;
 
   public PostService(
       UserDomainService userDomainService,
@@ -53,8 +47,6 @@ public class PostService {
       PostContentMediaService contentMediaService,
       PostRepository postRepository,
       PostMediaFileRepository postMediaFileRepository,
-      PostSummaryRepository postSummaryRepository,
-      PostLikeRepository postLikeRepository,
       ApplicationEventPublisher eventPublisher) {
     this.userDomainService = userDomainService;
     this.projectDomainService = projectDomainService;
@@ -62,16 +54,13 @@ public class PostService {
     this.contentMediaService = contentMediaService;
     this.postRepository = postRepository;
     this.postMediaFileRepository = postMediaFileRepository;
-    this.postSummaryRepository = postSummaryRepository;
-    this.postLikeRepository = postLikeRepository;
     this.eventPublisher = eventPublisher;
   }
 
   @Transactional
   public CreatePostResponse createPost(Long authorId, CreatePostRequest request) {
-    PostScope scope = resolveScope(request);
     PostStatus status = resolveStatus(request);
-    validateCreatePostRequest(request, scope, status);
+    validateCreatePostRequest(request, status);
 
     User author = userDomainService.getUserReference(authorId);
 
@@ -85,7 +74,6 @@ public class PostService {
             .slug(slug)
             .author(author)
             .type(request.type())
-            .scope(scope)
             .status(status)
             .title(request.title())
             .content(request.content().json());
@@ -116,28 +104,11 @@ public class PostService {
     return new CreatePostResponse(post.getSlug());
   }
 
-  private static PostScope resolveScope(CreatePostRequest request) {
-    if (request.scope() != null) {
-      return request.scope();
-    }
-
-    return request.project() == null ? PostScope.PUBLIC : PostScope.WORKSPACE;
-  }
-
   private static PostStatus resolveStatus(CreatePostRequest request) {
     return request.status() == null ? PostStatus.PUBLISHED : request.status();
   }
 
-  private static void validateCreatePostRequest(
-      CreatePostRequest request, PostScope scope, PostStatus status) {
-    if (request.project() != null && scope != PostScope.WORKSPACE) {
-      throw new InvalidPostPublishRequestException("Project posts must use WORKSPACE scope.");
-    }
-
-    if (request.project() == null && scope == PostScope.WORKSPACE) {
-      throw new InvalidPostPublishRequestException("Workspace posts require a project handle.");
-    }
-
+  private static void validateCreatePostRequest(CreatePostRequest request, PostStatus status) {
     if (status != PostStatus.PUBLISHED) {
       return;
     }
@@ -187,25 +158,7 @@ public class PostService {
     Post post =
         postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 
-    PostSummary summary =
-        postSummaryRepository
-            .findById(postId)
-            .orElseGet(() -> new PostSummary(post, request.summary()));
-
-    summary.updateSummary(request.summary());
-    postSummaryRepository.save(summary);
-  }
-
-  @Transactional
-  @PreAuthorize("hasPermission(#postId, 'POST', 'READ')")
-  public void likePost(Long userId, Long postId) {
-    postLikeRepository.insertAndIncrementIfAbsent(userId, postId);
-  }
-
-  @Transactional
-  @PreAuthorize("hasPermission(#postId, 'POST', 'READ')")
-  public void unlikePost(Long userId, Long postId) {
-    postLikeRepository.deleteAndDecrementIfPresent(userId, postId);
+    post.updateSummary(request.summary());
   }
 
   @Transactional

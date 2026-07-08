@@ -1,12 +1,12 @@
 'use client';
 
-import { redirect, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useCreatePost } from '@/api/__generated__/post/post';
 import PostEditor from '@/components/feature/post/editor/PostEditor';
-import { PostScope, PostType } from '@/components/feature/post/types/post';
-import { isAuthenticated, isOnboarded } from '@/lib/auth';
-import { useSession } from '@/lib/auth/client';
+import { PostType } from '@/components/feature/post/types/post';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
+import ROUTES from '@/util/routes';
 
 function getInitialPostType(value: string | null): PostType {
   if (value === PostType.SHORT || value === PostType.QUESTION) {
@@ -19,49 +19,35 @@ function getInitialPostType(value: string | null): PostType {
 export default function CreatePostPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: session, isPending } = useSession();
+  useAuthGuard();
 
   const { mutate: createPost, isPending: isCreatingPost } = useCreatePost({
     mutation: {
       onSuccess: ({ data }) => {
-        router.push(`/posts/${data.slug}`);
+        router.push(ROUTES.POST(data.slug));
       },
     },
   });
 
-  if (!isPending) {
-    if (isAuthenticated(session) && !isOnboarded(session)) {
-      redirect('/onboarding');
-    }
-
-    if (!isAuthenticated(session)) {
-      redirect('/auth/login');
-    }
-  }
-
   return (
-    <div className="h-full">
-      <PostEditor
-        type={getInitialPostType(searchParams.get('type'))}
-        scope={PostScope.PUBLIC}
-        isSubmitting={isCreatingPost}
-        onSubmit={({ title, type, scope, status, tags, content }) => {
-          createPost({
-            data: {
-              type,
-              scope,
-              status,
-              title,
-              tags,
-              content: {
-                json: content.json,
-                text: content.text,
-                mediaIds: content.media.map((media) => media.id),
-              },
+    <PostEditor
+      type={getInitialPostType(searchParams.get('type'))}
+      isSubmitting={isCreatingPost}
+      onSubmit={({ title, type, status, tags, content }) => {
+        createPost({
+          data: {
+            type,
+            status,
+            title,
+            tags,
+            content: {
+              json: content.json,
+              text: content.text,
+              mediaIds: content.media.map((media) => media.id),
             },
-          });
-        }}
-      />
-    </div>
+          },
+        });
+      }}
+    />
   );
 }

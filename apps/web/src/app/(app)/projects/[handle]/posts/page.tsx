@@ -1,0 +1,39 @@
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
+
+import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/project';
+import SyncError, { ErrorCode } from '@/lib/error';
+import { getQueryClient } from '@/lib/query';
+
+import ProjectPosts from './_components/ProjectPosts';
+
+interface ProjectPostsPageProps {
+  params: Promise<{
+    handle: string;
+  }>;
+}
+
+export default async function ProjectPostsPage({
+  params,
+}: ProjectPostsPageProps) {
+  const { handle } = await params;
+
+  const queryClient = getQueryClient();
+
+  try {
+    await queryClient.fetchQuery(getGetProjectByHandleQueryOptions(handle));
+  } catch (error) {
+    if (error instanceof SyncError) {
+      switch (error.code) {
+        case ErrorCode.PROJECT_NOT_FOUND:
+          notFound();
+      }
+    }
+  }
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProjectPosts handle={handle} />
+    </HydrationBoundary>
+  );
+}
