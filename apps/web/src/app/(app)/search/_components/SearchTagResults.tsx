@@ -23,7 +23,7 @@ export default function SearchTagResults({ query }: SearchTagResultsProps) {
   const t = useTranslations('pages.search');
   const { data, isPending } = useSearchTags(
     { query },
-    { query: { enabled: !!query } },
+    { query: { enabled: !!query, staleTime: 0 } },
   );
 
   if (isPending) {

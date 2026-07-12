@@ -9,7 +9,9 @@ import com.skkil.sync.post.exception.TagAlreadyExistsException;
 import com.skkil.sync.post.exception.TagNotFoundException;
 import com.skkil.sync.post.mapper.TagMapper;
 import com.skkil.sync.post.model.Post;
+import com.skkil.sync.post.model.PostStatus;
 import com.skkil.sync.post.model.PostTag;
+import com.skkil.sync.post.model.PostVisibility;
 import com.skkil.sync.post.model.Tag;
 import com.skkil.sync.post.repository.TagRepository;
 import com.skkil.sync.project.model.Project;
@@ -41,7 +43,7 @@ public class TagService {
 
     var tags =
         (project == null
-                ? tagRepository.searchTags(query)
+                ? tagRepository.searchTags(query, PostStatus.PUBLISHED, PostVisibility.VISIBLE)
                 : tagRepository.searchTagsByProject(project, query))
             .stream().map(tagMapper::toTag).toList();
 

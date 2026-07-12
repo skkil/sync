@@ -290,6 +290,7 @@ public class PostQueryRepository {
         PROJECTS.DESCRIPTION.as("projectDescription"),
         PROJECTS.WEBSITE_URL.as("projectWebsite"),
         PROJECTS.IS_PUBLIC.as("projectIsPublic"),
+        tagNames(),
         POSTS.CONTENT.as("content"),
         POSTS.CREATED_AT.as("createdAt"),
         POSTS.UPDATED_AT.as("updatedAt"),
@@ -299,6 +300,21 @@ public class PostQueryRepository {
         bookmarked.as("bookmarked"),
         POSTS.RESOLVED.as("resolved"),
         sortKey.as("sortKey"));
+  }
+
+  private Field<List<String>> tagNames() {
+    var responsePostTags = POST_TAGS.as("response_post_tags");
+    var responseTags = TAGS.as("response_tags");
+
+    return DSL.multiset(
+            dsl.select(responseTags.NAME)
+                .from(responsePostTags)
+                .join(responseTags)
+                .on(responseTags.ID.eq(responsePostTags.TAG_ID))
+                .where(responsePostTags.POST_ID.eq(POSTS.ID))
+                .orderBy(responseTags.NAME))
+        .convertFrom(records -> records.map(record -> record.value1()))
+        .as("tags");
   }
 
   private static final class Conditions {

@@ -27,7 +27,6 @@ import { normalizePostContent } from './utils/normalizePostContent';
 import {
   type ReviewStatus,
   getMockReviewStatus,
-  getMockTags,
 } from './utils/placeholderData';
 
 const WORDS_PER_MINUTE = 200;
@@ -94,6 +93,7 @@ function ShortTypePostCard({ summary, editor, postPath }: TypePostCardProps) {
           <h3 className="text-lg font-semibold">{summary.title}</h3>
         )}
         <PostBody editor={editor} />
+        <PreviewTagChips tags={summary.tags} />
         <PostCardActions
           postId={summary.id}
           liked={summary.liked}
@@ -122,6 +122,7 @@ function LongTypePostCard({ summary, editor, postPath }: TypePostCardProps) {
           <h3 className="text-lg font-semibold">{summary.title}</h3>
         )}
         <PostBody editor={editor} className="line-clamp-4" />
+        <PreviewTagChips tags={summary.tags} />
         <PostCardActions
           postId={summary.id}
           liked={summary.liked}
@@ -154,6 +155,7 @@ function QuestionTypePostCard({
           <h3 className="text-lg font-semibold">{summary.title}</h3>
         )}
         <PostBody editor={editor} />
+        <PreviewTagChips tags={summary.tags} />
         <PostCardActions
           postId={summary.id}
           liked={summary.liked}
@@ -195,7 +197,7 @@ function PostPreviewCardBySource({ source }: PostPreviewCardProps) {
     postPath,
     onClick: () => router.push(postPath),
     reviewStatus: getMockReviewStatus(summary.id),
-    tags: getMockTags(summary.id),
+    tags: summary.tags,
   };
 
   switch (summary.type) {
@@ -248,6 +250,7 @@ function ShortTypePostPreviewCard({
   postPath,
   onClick,
   reviewStatus,
+  tags,
 }: TypePostPreviewCardProps) {
   return (
     <Card onClick={onClick}>
@@ -264,6 +267,7 @@ function ShortTypePostPreviewCard({
           <h3 className="text-lg font-semibold">{summary.title}</h3>
         )}
         <PostBody editor={editor} />
+        <PreviewTagChips tags={tags} />
 
         <div className="flex items-center justify-between">
           <ReviewStatusIndicator status={reviewStatus} />

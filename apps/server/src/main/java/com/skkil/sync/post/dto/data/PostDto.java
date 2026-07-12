@@ -3,6 +3,7 @@ package com.skkil.sync.post.dto.data;
 import com.skkil.sync.post.model.PostStatus;
 import com.skkil.sync.post.model.PostType;
 import java.time.OffsetDateTime;
+import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 public record PostDto(
@@ -17,6 +18,7 @@ public record PostDto(
     @Nullable String projectDescription,
     @Nullable String projectWebsite,
     @Nullable Boolean projectIsPublic,
+    List<String> tags,
     String content,
     OffsetDateTime createdAt,
     OffsetDateTime updatedAt,

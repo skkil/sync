@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.snippet.Attributes.Attribute;
 
 public class PostSummarySnippets {
 
@@ -25,6 +26,7 @@ public class PostSummarySnippets {
         .status(PostStatus.PUBLISHED)
         .author(UserSummarySnippets.getUserSummary())
         .project(ProjectSummarySnippets.getProjectSummary())
+        .tags(List.of("java", "spring"))
         .resolved(false)
         .isAuthor(false)
         .createdAt(DateTimeTestUtils.defaultTestOffsetDateTime())
@@ -64,6 +66,11 @@ public class PostSummarySnippets {
     ProjectSummarySnippets.getProjectSummaryFields(prefix + "project.").stream()
         .map(FieldDescriptor::optional)
         .forEach(fields::add);
+    fields.add(
+        fieldWithPath(prefix + "tags")
+            .type(JsonFieldType.ARRAY)
+            .description("게시글 태그 목록")
+            .attributes(new Attribute("itemsType", "string")));
     fields.add(
         fieldWithPath(prefix + "resolved")
             .type(JsonFieldType.BOOLEAN)

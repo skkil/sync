@@ -5,6 +5,7 @@ import com.skkil.sync.post.model.PostType;
 import com.skkil.sync.project.dto.summary.ProjectSummary;
 import com.skkil.sync.user.dto.summary.UserSummary;
 import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.Builder;
 import org.jspecify.annotations.Nullable;
 
@@ -17,6 +18,7 @@ public record PostSummary(
     PostStatus status,
     UserSummary author,
     @Nullable ProjectSummary project,
+    List<String> tags,
     boolean resolved,
     boolean isAuthor,
     OffsetDateTime createdAt,

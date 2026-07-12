@@ -34,6 +34,7 @@ export function TagInput({ tags, onChange, accentRing }: TagInputProps) {
     {
       query: {
         enabled: debouncedInput.trim().length > 0,
+        staleTime: 0,
       },
     },
   );

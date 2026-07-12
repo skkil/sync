@@ -21,6 +21,7 @@ export interface PostSummary {
   title?: string | null;
   author: PostAuthorSummary;
   project?: PostProjectSummary;
+  tags: string[];
   liked: boolean;
   likeCount: number;
   bookmarked: boolean;

@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 import { useSearchPosts } from '@/api/__generated__/post/post';
+import { PreviewTagChips } from '@/components/feature/post/viewer/components/PreviewTagChips';
 import { Badge } from '@/components/ui/badge';
 import {
   Empty,
@@ -83,6 +84,12 @@ export default function SearchPostResults({
             <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
               {post.content}
             </p>
+
+            {post.summary.tags.length > 0 && (
+              <div className="mt-2">
+                <PreviewTagChips tags={post.summary.tags} />
+              </div>
+            )}
           </Link>
         );
       })}

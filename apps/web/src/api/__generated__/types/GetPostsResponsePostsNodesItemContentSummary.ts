@@ -34,6 +34,8 @@ export type GetPostsResponsePostsNodesItemContentSummary = {
   commentCount: number;
   /** Whether the requesting user is the author of this post */
   isAuthor: boolean;
+  /** 게시글 태그 목록 */
+  tags: string[];
   /** Creation Timestamp */
   createdAt: string;
   /** Post ID */
