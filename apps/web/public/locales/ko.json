@@ -7,12 +7,56 @@
           "advanced": "더 자세히 작성하기",
           "label": "게시물 작성"
         }
+      },
+      "discover": {
+        "title": "팔로우할 사람 추천",
+        "explore": "탐색",
+        "follow": "팔로우",
+        "following": "팔로잉"
+      },
+      "feed": {
+        "title": "홈",
+        "description": "팔로우하는 사람, 프로젝트, 태그의 소식입니다.",
+        "tabs": {
+          "all": "전체",
+          "shorts": "TIL",
+          "articles": "블로그",
+          "questions": "질문"
+        }
+      },
+      "recently-viewed": {
+        "title": "최근 본 게시물"
+      },
+      "trending-tags": {
+        "title": "인기 태그",
+        "post-count": "게시물 {count}개"
       }
     },
     "explore": {
-      "title": "공개 글 탐색",
-      "description": "sync에 공개된 최신 글을 읽어보세요.",
-      "empty": "아직 공개된 글이 없습니다."
+      "title": "탐색",
+      "description": "팔로우할 가치가 있는 프로젝트, 사람, 포스트 — 인기가 아닌 신뢰를 기준으로.",
+      "empty": "아직 공개된 글이 없습니다.",
+      "empty-states": {
+        "FOLLOWING": {
+          "title": "팔로우한 사용자의 포스트가 없습니다",
+          "description": "더 많은 사용자를 팔로우하면 여기에 포스트가 모입니다."
+        },
+        "TRENDING": {
+          "title": "인기 포스트가 없습니다",
+          "description": "잠시 후 다시 확인해 주세요."
+        }
+      }
+    },
+    "bookmarks": {
+      "title": "저장한 포스트",
+      "description": "북마크한 포스트를 최근 저장순으로 확인하세요.",
+      "filter": {
+        "all": "전체"
+      },
+      "empty": {
+        "title": "저장한 포스트가 없습니다",
+        "description": "다시 보고 싶은 포스트를 북마크하면 여기에 모입니다."
+      }
     },
     "posts": {
       "report": {
@@ -85,11 +129,26 @@
       }
     },
     "projects": {
-      "my": {
-        "link": "내 프로젝트"
+      "list": {
+        "title": "프로젝트",
+        "description": "내가 속해 있거나, 팔로우 중이거나, 초대받은 스페이스",
+        "invitations": "초대장",
+        "create": "새 프로젝트",
+        "my-projects": "내 프로젝트",
+        "following": {
+          "heading": "팔로우 중",
+          "explore-more": "탐색 페이지에서 더 많은 프로젝트 찾아보기 →",
+          "unfollow": "팔로우 중",
+          "no-new-posts": "새 게시물 없음",
+          "new-posts": "새 게시물 {count}개"
+        },
+        "empty": {
+          "title": "참여 중인 프로젝트가 없습니다",
+          "description": "새 프로젝트를 만들어 팀과 함께 지식을 쌓아보세요.",
+          "create": "새 프로젝트 만들기"
+        }
       },
       "new": {
-        "link": "새 프로젝트 만들기",
         "title": "만들고자 하는 프로젝트에 대해 알려주세요",
         "form": {
           "name": {
@@ -119,7 +178,6 @@
           },
           "errors": {
             "required_name": "이름은 필수 항목입니다.",
-            "required_description": "설명은 필수 항목입니다.",
             "handle_min_length": "핸들은 최소 {length}자 이상이어야 합니다.",
             "handle_max_length": "핸들은 최대 {length}자 이하여야 합니다.",
             "handle_invalid_characters": "핸들에는 영문자, 숫자, 밑줄만 사용할 수 있습니다.",
@@ -134,10 +192,6 @@
           "back": "홈으로 돌아가기"
         },
         "overview": {
-          "handle": "핸들",
-          "teammates": "팀원",
-          "loading": "프로젝트를 불러오는 중...",
-          "owner": "소유자",
           "add-teammate": {
             "trigger": "팀원 추가",
             "title": "팀원 초대",
@@ -153,313 +207,221 @@
         },
         "posts": {
           "label": "게시물",
+          "views": {
+            "feed": "피드",
+            "questions": "질문",
+            "guides": "가이드",
+            "my-posts": "내 게시물",
+            "tag": "#{name}"
+          },
           "list": {
             "empty": "게시물이 없습니다.",
             "end": "게시물이 더 이상 없습니다.",
             "error": "게시물을 불러오는 중 오류가 발생했습니다."
-          }
-        },
-        "about": {
-          "label": "소개"
-        },
-        "team-building": {
-          "label": "팀 빌딩",
-          "list": {
-            "title": "제목",
-            "empty": "팀 빌딩 공고가 없습니다.",
-            "load-more": "더 불러오기",
-            "loading": "팀 빌딩 공고를 불러오는 중..."
-          }
-        },
-        "admin": {
-          "about": {
-            "label": "소개"
           },
-          "team-building": {
-            "label": "팀 빌딩",
-            "form": {
-              "label": "새로운 팀 빌딩 공고 작성하기",
-              "title": "팀 빌딩 공고 작성",
-              "form-description": "팀 빌딩 공고에 대한 정보를 입력하세요",
-              "post-title": {
-                "label": "제목",
-                "placeholder": "팀 빌딩 공고 제목을 입력하세요"
+          "empty-state": {
+            "title": "아직 게시물이 없어요",
+            "description": "팀원을 초대하거나 첫 번째 게시물을 작성해보세요.",
+            "invite": "팀원 초대하기",
+            "write": "첫 게시물 작성하기"
+          }
+        },
+        "my-comments": {
+          "heading": "내가 댓글단 글",
+          "empty": "아직 댓글을 남긴 게시물이 없어요.",
+          "error": "게시물을 불러오지 못했습니다.",
+          "end": "마지막 게시물입니다."
+        },
+        "tags": {
+          "label": "태그",
+          "list": {
+            "empty": "태그가 없습니다.",
+            "error": "태그를 불러오는 중 오류가 발생했습니다."
+          },
+          "post-count": "게시물 {count}개",
+          "no-description": "설명이 없습니다.",
+          "manage-link": "태그 관리",
+          "manage": {
+            "back": "태그로 돌아가기",
+            "create": {
+              "trigger": "새 태그",
+              "title": "새 태그 생성",
+              "name-label": "태그 이름",
+              "name-placeholder": "예: java",
+              "cancel": "취소",
+              "submit": "생성",
+              "messages": {
+                "success": "'{name}' 태그를 생성했습니다.",
+                "error": "태그 생성에 실패했습니다."
+              }
+            },
+            "unverified": {
+              "heading": "인증되지 않은 태그",
+              "description": "검토 후 인증할 태그를 선택하세요.",
+              "empty": "인증되지 않은 태그가 없습니다.",
+              "verify": "인증",
+              "messages": {
+                "success": "'{name}' 태그를 인증했습니다.",
+                "error": "태그 인증에 실패했습니다."
+              }
+            },
+            "verified": {
+              "heading": "인증된 태그",
+              "description": "현재 사용 중인 인증된 태그 목록입니다.",
+              "empty": "인증된 태그가 없습니다.",
+              "badge": "인증됨"
+            },
+            "table": {
+              "columns": {
+                "name": "이름",
+                "description": "설명",
+                "post-count": "게시물 수"
               },
-              "content": {
-                "label": "설명",
-                "placeholder": "팀 빌딩 공고에 대한 자세한 설명을 입력하세요"
-              },
-              "submit": {
-                "label": "공고 작성"
-              },
+              "no-description": "-"
+            }
+          }
+        },
+        "header": {
+          "role": {
+            "admin": "관리자"
+          },
+          "description-empty": "설명이 없습니다.",
+          "meta": "멤버 {count}명 · {year}년 생성",
+          "status": {
+            "member": "참여 중"
+          },
+          "follow": {
+            "follow": "팔로우",
+            "following": "팔로잉"
+          },
+          "actions": {
+            "write": "질문 · 글쓰기"
+          }
+        },
+        "dashboard": {
+          "knowledge-health": {
+            "fresh": "지식이 최신 상태입니다",
+            "fresh-detail": "최근 주기에서 {percent}% 검증됨",
+            "needs-review": "검토 필요",
+            "unanswered": "미답변"
+          },
+          "pinned": {
+            "heading": "고정 · 정본",
+            "badge": "정본",
+            "type-guide": "가이드",
+            "meta": "{author} · {minutes}분"
+          },
+          "recent-activity": {
+            "heading": "최근 활동",
+            "view-all": "피드에서 모두 보기 →",
+            "empty": "최근 활동이 없습니다."
+          }
+        },
+        "sidebar": {
+          "members": {
+            "heading": "멤버",
+            "invite": "멤버 초대하기"
+          },
+          "open-questions": {
+            "heading": "미해결 질문",
+            "empty": "미해결 질문이 없습니다."
+          },
+          "top-tags": {
+            "heading": "인기 태그",
+            "empty": "태그가 없습니다."
+          }
+        },
+        "settings": {
+          "tabs": { "workspace": "워크스페이스", "teammates": "팀원" },
+          "workspace": {
+            "heading": "워크스페이스 설정",
+            "description": "프로젝트의 기본 정보를 관리합니다.",
+            "icon": {
+              "heading": "프로젝트 아이콘",
+              "description": "프로젝트를 대표하는 아이콘 이미지입니다.",
+              "upload": "업로드",
+              "change": "변경",
+              "remove": "제거",
               "errors": {
-                "required-title": "제목은 필수 항목입니다."
+                "size": "파일 크기는 5MB 이하여야 합니다.",
+                "type": "지원하지 않는 파일 형식입니다.",
+                "upload-failed": "업로드에 실패했습니다.",
+                "network": "서버에 연결할 수 없습니다. 나중에 다시 시도하세요."
+              },
+              "messages": { "success": "프로젝트 아이콘이 변경되었습니다." }
+            },
+            "name": {
+              "heading": "프로젝트 이름",
+              "description": "프로젝트의 표시 이름입니다.",
+              "label": "이름",
+              "save": "저장"
+            },
+            "handle": {
+              "heading": "URL 슬러그",
+              "description": "프로젝트 URL에 사용되는 고유 식별자입니다.",
+              "label": "슬러그",
+              "save": "저장"
+            },
+            "danger-zone": {
+              "heading": "위험 구역",
+              "description": "이 작업은 되돌릴 수 없습니다. 신중하게 진행하세요.",
+              "leave": {
+                "title": "워크스페이스 나가기",
+                "description": "이 프로젝트에서 탈퇴합니다.",
+                "action": "나가기"
+              },
+              "delete": {
+                "title": "워크스페이스 삭제",
+                "description": "프로젝트와 모든 데이터를 영구적으로 삭제합니다.",
+                "action": "삭제"
+              }
+            }
+          },
+          "teammates": {
+            "heading": "팀원",
+            "member-count": "프로젝트의 팀원 {count}명",
+            "table": { "columns": { "name": "이름", "role": "역할" } },
+            "role": { "admin": "관리자", "member": "멤버" },
+            "status": { "pending": "초대 대기 중" },
+            "actions": {
+              "edit-role": "역할 수정",
+              "remove": "팀원 삭제",
+              "cancel-invitation": "초대 취소"
+            },
+            "messages": {
+              "unsupported": "아직 지원되지 않는 기능입니다.",
+              "cancel-success": "초대를 취소했습니다.",
+              "cancel-error": "초대 취소에 실패했습니다."
+            },
+            "add-dropdown": {
+              "trigger": "팀원 추가",
+              "search-placeholder": "이름 또는 핸들로 검색",
+              "empty-query": "검색어를 입력하세요.",
+              "searching": "검색하는 중...",
+              "no-results": "사용자를 찾을 수 없습니다.",
+              "messages": {
+                "success": "초대를 보냈습니다.",
+                "error": "초대에 실패했습니다."
               }
             }
           }
         }
-      }
-    },
-    "jobs": {
-      "postings": {
-        "not-found": "채용 공고를 찾을 수 없습니다.",
-        "loading": "채용 공고를 불러오는 중...",
-        "error": "채용 공고를 불러오는 중 오류가 발생했습니다."
       },
-      "bookmark": {
-        "label": "저장한 채용 공고"
-      }
-    },
-    "team-building": {
-      "title": "팀 빌딩 공고",
-      "description": "프로젝트에 함께할 팀원을 모집하세요"
-    },
-    "messages": {
-      "conversations": {
-        "title": "메시지",
-        "search": "대화 검색"
-      },
-      "main": {
-        "input": {
-          "placeholder": "메시지 입력...",
-          "helpers": {
-            "coffee-chat": "커피챗 신청",
-            "invite-to-project": "프로젝트 초대",
-            "schedule-meeting": "일정 잡기"
-          }
-        }
-      },
-      "details": {
-        "title": "세부 정보",
-        "visit-profile": "프로필 방문",
-        "schedule": {
-          "title": "일정"
+      "invitations": {
+        "back": "프로젝트 대시보드로 돌아가기",
+        "heading": "초대",
+        "empty": {
+          "title": "받은 초대가 없습니다",
+          "description": "새로운 프로젝트 초대를 받으면 여기에 표시됩니다."
         },
-        "memo": {
-          "title": "메모"
-        },
-        "settings": {
-          "title": "대화 설정",
-          "block": "차단"
-        }
-      }
-    },
-    "my-providers": {
-      "title": "내가 관리하는 페이지",
-      "description": "내가 관리하는 페이지를 한 곳에서 확인하세요",
-      "empty": "아직 관리하는 페이지가 없습니다.",
-      "loading": "내가 관리하는 페이지를 불러오는 중...",
-      "load-more": "더 불러오기",
-      "error": "페이지를 불러오는 중 오류가 발생했습니다.",
-      "provider": {
-        "unverified": {
-          "tooltip": "이 기관은 아직 검증되지 않았습니다."
-        }
-      }
-    },
-    "create-provider": {
-      "title": "찾는 기관이 없으신가요?",
-      "description": "직접 페이지를 만들어 보세요.",
-      "or-other": {
-        "label": "또는"
-      },
-      "links": {
-        "company": {
-          "title": "기업",
-          "description": "소규모, 중견 기업 및 대기업"
-        },
-        "school": {
-          "title": "교육 기관",
-          "description": "학교 및 대학교"
-        },
-        "contest": {
-          "title": "대회",
-          "description": "대회 및 공모전 페이지"
-        },
-        "project": {
-          "title": "프로젝트",
-          "description": "개인 및 팀 프로젝트"
-        }
-      }
-    },
-    "contest": {
-      "about": {
-        "label": "소개"
-      },
-      "occurrences": {
-        "label": "회차",
-        "title": "회차",
-        "table": {
-          "title": "제목",
-          "empty": "회차가 없습니다.",
-          "load-more": "더 불러오기",
-          "loading": "회차를 불러오는 중..."
-        },
-        "details": {
-          "back-to-occurrences": "회차 목록으로 돌아가기"
-        }
-      }
-    },
-    "trending-projects": {
-      "loading": "인기 프로젝트를 불러오는 중...",
-      "empty": "프로젝트가 없습니다.",
-      "load-more": "더 불러오기"
-    },
-    "provider": {
-      "review": {
-        "button": "리뷰 작성",
-        "form": {
-          "title": "리뷰 작성",
-          "description": "이 기관에 대한 리뷰를 작성하세요",
-          "anonymous": "익명으로 작성",
-          "fields": {
-            "academicQuality": "학업 수준",
-            "campusFacilities": "캠퍼스 시설",
-            "studentLife": "학생 생활",
-            "valueForMoney": "가성비"
-          },
-          "submit": {
-            "label": "리뷰 제출",
-            "error": "리뷰 제출에 실패했습니다. 나중에 다시 시도하세요."
-          }
-        }
-      },
-      "actions": {
-        "follow": "팔로우",
-        "view": "프로필 보기",
-        "moreReviews": "리뷰 더 보기",
-        "collapseReviews": "접기"
-      },
-      "overview": {
-        "unverified": {
-          "tooltip": "이 기관은 아직 검증되지 않았습니다."
-        }
-      },
-      "stats": {
-        "followers": "팔로워",
-        "projects": "프로젝트",
-        "rating": "평점"
-      },
-      "sections": {
-        "about": "소개",
-        "people": "관련 인물",
-        "reviews": "리뷰",
-        "jobs": "채용 공고"
-      },
-      "about": {
-        "loading": "불러오는 중...",
-        "fallbacks": {
-          "longDescription": "상세 소개가 아직 입력되지 않았습니다.",
-          "website": "등록된 웹사이트가 없습니다.",
-          "industry": "입력된 업계 정보가 없습니다.",
-          "size": "입력된 규모 정보가 없습니다.",
-          "location": "입력된 위치 정보가 없습니다.",
-          "subcategory": "입력된 세부 분야 정보가 없습니다.",
-          "schoolType": "입력된 학교 구분 정보가 없습니다."
-        },
-        "base-info": "기본 정보",
-        "actions": {
-          "edit": "소개 수정"
-        },
-        "edit-dialog": {
-          "title": "소개 수정",
-          "description": "소개 탭에 표시할 정보를 입력하세요.",
-          "actions": {
-            "cancel": "취소",
-            "save": "저장"
-          },
-          "fields": {
-            "longDescription": "상세 소개",
-            "website": "웹사이트",
-            "industry": "업계",
-            "size": "규모",
-            "location": "위치",
-            "subcategory": "세부 분야"
-          }
-        },
-        "fields": {
-          "website": "웹사이트",
-          "industry": "업계",
-          "size": "규모",
-          "schoolType": "학교 구분",
-          "headquarters": "본사",
-          "location": "위치",
-          "subcategory": "세부 분야"
-        },
-        "school-type": {
-          "types": {
-            "UNIVERSITY": "대학교",
-            "HIGH_SCHOOL": "고등학교"
-          }
-        }
-      },
-      "admin": {
-        "viewing-as-member": {
-          "title": "현재 {name}를 일반 사용자로 보고 있습니다.",
-          "description": "관리자가 아닌 일반 사용자는 이 페이지를 이렇게 보게 됩니다.",
-          "view-as-admin": "관리자로 보기"
-        }
-      }
-    },
-    "provider-admin": {
-      "sections": {
-        "about": "소개",
-        "settings": "설정"
-      },
-      "view-as-member": "일반 사용자로 보기"
-    },
-    "company": {
-      "about": {
-        "label": "소개"
-      },
-      "job-postings": {
-        "label": "채용 공고",
-        "title": "채용 공고",
-        "empty": "이 회사에는 현재 채용 공고가 없습니다.",
-        "table": {
-          "error": "채용 공고를 불러오는 중 오류가 발생했습니다.",
-          "job-title": "직책",
-          "location": "근무 지역",
-          "posted-date": "게시 날짜"
-        },
-        "posting": {
-          "view-all": "모든 채용 공고 보기",
-          "loading": "채용 공고를 불러오는 중...",
-          "empty": {
-            "title": "채용 공고가 없습니다."
-          },
-          "posted-on": "게시 날짜",
-          "save-to-my-applications": "내 지원 내역에 저장"
-        },
-        "create-posting": {
-          "form": {
-            "label": "채용 공고 만들기",
-            "title": "채용 공고 만들기",
-            "description": "이 회사에 대한 새로운 채용 공고를 작성하세요",
-            "job-title": {
-              "label": "직책",
-              "placeholder": "예: 소프트웨어 엔지니어"
-            },
-            "job-description": {
-              "label": "직무 설명",
-              "placeholder": "이 직책에 대한 자세한 설명을 입력하세요"
-            },
-            "location": {
-              "label": "근무 지역",
-              "placeholder": "예: 서울시 강남구"
-            },
-            "submit": {
-              "label": "채용 공고 제출"
-            },
-            "messages": {
-              "success": "채용 공고가 성공적으로 생성되었습니다.",
-              "error": "채용 공고 생성에 실패했습니다."
-            },
-            "errors": {
-              "required-job-title": "직책은 필수 항목입니다.",
-              "required-job-description": "직무 설명은 필수 항목입니다."
-            }
-          }
+        "invited-by": "초대자: {name}",
+        "role": { "admin": "관리자", "member": "멤버" },
+        "actions": { "accept": "수락", "decline": "거절" },
+        "messages": {
+          "accept-success": "초대를 수락했습니다.",
+          "accept-error": "초대 수락에 실패했습니다.",
+          "decline-success": "초대를 거절했습니다.",
+          "decline-error": "초대 거절에 실패했습니다."
         }
       }
     },
@@ -481,6 +443,8 @@
     },
     "tags": {
       "label": "태그",
+      "error": "게시물을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
+      "end": "모든 게시물을 확인했습니다.",
       "empty": {
         "title": "{name} 태그의 공개 게시물이 없습니다.",
         "description": "다른 태그를 검색해보세요."
@@ -571,36 +535,98 @@
         "badge": "sync 소개",
         "title": "배움을 기록하고, 함께 성장하세요",
         "description": "sync는 기술팀을 위한 지식 플랫폼입니다. TIL과 블로그, 질문을 기록하고 프로젝트를 통해 동료들과 함께 성장하세요.",
+        "audience": "5~50명 규모의 기술 팀과 개발자 커뮤니티를 위해 설계됐어요.",
+        "demo": {
+          "tag": "question · #배포",
+          "badge": "정본 답변",
+          "question": "스테이징 서버는 어떻게 재배포하나요?",
+          "answer": "한 줄이면 충분해요. 파이프라인이 이미지 빌드부터 헬스체크까지 자동으로 처리해요.",
+          "verifiedAt": "last_verified_at · 3일 전",
+          "freshBadge": "최신 상태 유지 중"
+        },
         "actions": {
           "explore": "공개 글 둘러보기",
           "register": "무료로 시작하기",
           "login": "로그인"
         }
       },
-      "features": {
-        "title": "sync로 할 수 있는 것",
+      "bento": {
+        "eyebrow": "무엇이 다른가",
+        "title": "지식 도구는 저장이 아니라 신뢰와 검색에서 무너져요.",
+        "titleTail": "sync는 그 두 가지에 집중해요.",
         "items": {
-          "record": {
-            "title": "기록",
-            "description": "TIL, 블로그, 질문 등 다양한 형태로 학습 과정을 기록하세요."
+          "freshness": {
+            "eyebrow": "Freshness & Trust",
+            "title": "6개월 뒤에도 믿을 수 있는 답변",
+            "description": "모든 정본 지식에는 검증일, 담당자, 그리고 자동으로 계산되는 노후도가 붙어요. 오래된 문서는 스스로 표시되고, 담당자는 한 번의 클릭으로 '여전히 맞음'을 확인해요.",
+            "rows": {
+              "apiAuth": {
+                "label": "API 인증 흐름",
+                "state": "검증됨 · 2일 전"
+              },
+              "onboarding": {
+                "label": "온보딩 체크리스트",
+                "state": "검증됨 · 3주 전"
+              },
+              "legacyDeploy": {
+                "label": "레거시 배포 스크립트",
+                "state": "확인 필요 · 5개월 전"
+              }
+            }
           },
-          "collaborate": {
-            "title": "협업",
-            "description": "프로젝트를 만들고 팀원과 함께 진행 상황을 공유하세요."
+          "search": {
+            "eyebrow": "Search & Relevance",
+            "title": "오타에 강하고, 관련도로 정렬되는 검색",
+            "description": "시간순도, 정확히 일치하는 것만도 아니에요. 필드 가중치와 트라이그램 유사도로 원하는 답이 먼저 떠요.",
+            "example": "디플로이 롤백",
+            "latency": "~12ms"
           },
-          "grow": {
-            "title": "성장",
-            "description": "동료들의 피드백과 경험을 통해 함께 성장하세요."
+          "realtime": {
+            "eyebrow": "Real-time",
+            "title": "새로고침 없이 살아 움직이는 지식",
+            "description": "새 글과 답변이 즉시 반영되고, 누가 보고 있는지, 무엇을 아직 안 읽었는지 실시간으로 이어져요.",
+            "activeUsers": "3명 접속 중"
+          },
+          "backlinks": {
+            "eyebrow": "Backlinks",
+            "title": "쌓이지 않고 이어지는 지식 그래프",
+            "description": "어떤 글이든 서로 참조하면 양방향으로 연결돼요."
+          },
+          "canonical": {
+            "eyebrow": "Canonical answers",
+            "title": "흩어진 답을 하나로 수렴",
+            "description": "최고의 답변을 정본으로 승격해, 같은 질문을 다시 묻지 않게."
+          },
+          "chatIngestion": {
+            "eyebrow": "Chat ingestion",
+            "title": "Slack·Discord 스레드를 질문으로",
+            "description": "지식이 만들어지는 곳에서, 한 번의 동작으로 옮겨 담아요."
           }
         }
       },
+      "postTypes": {
+        "eyebrow": "세 가지 글 유형",
+        "title": "팀이 이미 하고 있는 대화를, 제자리에 담아요.",
+        "items": {
+          "short": {
+            "description": "Slack에서 흘러가 버리는 공지와 '참고하세요'를 대신해요."
+          },
+          "question": {
+            "description": "DM과 스레드에서 한 번 답하고 사라지던 Q&A를 붙잡아 둬요."
+          },
+          "long": {
+            "description": "위키에 넣자마자 낡기 시작하던 결정과 가이드를 대신해요."
+          }
+        }
+      },
+      "finalCta": {
+        "eyebrow": "지금은 베타",
+        "title": "팀의 지식이 낡지 않도록.",
+        "description": "가장 먼저 sync를 사용해 볼 팀을 찾고 있어요. 함께 만들어 가요.",
+        "action": "베타 시작하기"
+      },
       "footer": {
         "description": "기술팀을 위한 지식 플랫폼",
-        "product": {
-          "title": "제품",
-          "home": "홈",
-          "explore": "탐색"
-        },
         "account": {
           "title": "계정",
           "login": "로그인",
@@ -787,9 +813,6 @@
               "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
               "maxSize": "파일 크기는 5MB 이하여야 합니다.",
               "uploadFailed": "프로필 사진 업로드에 실패했습니다."
-            },
-            "name": {
-              "label": "이름"
             }
           },
           "errors": {
@@ -805,144 +828,31 @@
         "messages": {
           "success": "프로필이 성공적으로 업데이트되었습니다.",
           "error": "프로필 업데이트에 실패했습니다."
-        },
-        "profile": {
-          "image": {
-            "errors": {
-              "unsupportedType": "JPG, PNG 형식만 업로드할 수 있습니다.",
-              "maxSize": "파일 크기는 5MB 이하여야 합니다.",
-              "uploadFailed": "프로필 사진 업로드에 실패했습니다."
-            }
-          }
         }
       },
       "header": {
         "follow": "팔로우",
         "unfollow": "언팔로우",
         "message": "메시지 보내기",
+        "followers": "팔로워",
+        "following": "팔로잉",
         "contacts": {
           "show-more": "연락처 더 보기",
           "show-less": "연락처 접기"
         }
       },
-      "experience": {
-        "menu": {
-          "visibility": {
-            "title": "경력 공개 설정",
-            "options": {
-              "PUBLIC": "공개",
-              "PRIVATE": "비공개"
-            }
-          }
-        },
-        "form": {
-          "major": {
-            "label": "전공",
-            "placeholder": "전공을 입력하세요"
-          },
-          "actions": {
-            "submit": {
-              "label": "저장"
-            },
-            "cancel": {
-              "label": "취소"
-            }
-          },
-          "errors": {
-            "required-provider": "기관은 필수 항목입니다.",
-            "required-major": "전공은 필수 항목입니다."
-          }
-        },
-        "add-experience": {
-          "title": {
-            "EMPLOYMENT": "경력 추가",
-            "EDUCATION": "학력 추가"
-          },
-          "description": {
-            "EMPLOYMENT": "이전 및 현재 직장 정보를 추가하세요",
-            "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
-          }
-        },
-        "update-experience": {
-          "menu": "경력 업데이트",
-          "title": "경력 업데이트",
-          "description": "이 경력에 대한 정보를 업데이트하세요"
-        },
-        "delete-experience": {
-          "menu": "경력 삭제",
-          "title": "경력 삭제",
-          "description": "이 경력을 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
-          "actions": {
-            "confirm": "삭제",
-            "cancel": "취소"
-          }
-        },
-        "reflection": {
-          "title": "경력 회고",
-          "not-found": "회고가 없습니다. 회고를 작성하여 경험을 공유하세요.",
-          "add-reflection": {
-            "title": "회고 추가",
-            "description": "이 경험에서 배운 점과 느낀 점을 공유하세요.",
-            "form": {
-              "content": {
-                "label": "회고 내용",
-                "description": "이 경험에서 배운 점과 느낀 점을 공유하세요.",
-                "placeholder": "회고 내용을 입력하세요"
-              },
-              "cancel": {
-                "label": "취소"
-              },
-              "submit": {
-                "label": "저장"
-              }
-            }
-          }
-        }
-      },
-      "employment": {
-        "title": "회사 경력"
-      },
-      "education": {
-        "title": "학력"
-      }
-    },
-    "network": {
       "connections": {
-        "title": "네트워크",
-        "table": {
-          "name": "이름",
-          "providerName": "소속",
-          "profession": "직무",
-          "message": "메시지 보내기",
-          "empty": "네트워크에 연결된 사람이 없습니다."
-        }
-      }
-    },
-    "add-experience": {
-      "title": {
-        "EMPLOYMENT": "경력 추가",
-        "EDUCATION": "학력 추가"
-      },
-      "description": {
-        "EMPLOYMENT": "이전 및 현재 직장 정보를 추가하세요",
-        "EDUCATION": "이전 및 현재 학교 정보를 추가하세요"
-      },
-      "form": {
-        "major": {
-          "label": "전공",
-          "placeholder": "전공을 입력하세요"
+        "tabs": {
+          "followers": "팔로워",
+          "following": "팔로잉"
         },
-        "actions": {
-          "submit": {
-            "label": "저장"
-          },
-          "cancel": {
-            "label": "취소"
-          }
+        "followers": {
+          "empty": "아직 팔로워가 없습니다.",
+          "error": "팔로워 목록을 불러오는 중 오류가 발생했습니다."
         },
-        "errors": {
-          "required-provider": "기관은 필수 항목입니다.",
-          "required-major": "전공은 필수 항목입니다."
+        "following": {
+          "empty": "아직 팔로우한 사용자가 없습니다.",
+          "error": "팔로잉 목록을 불러오는 중 오류가 발생했습니다."
         }
       }
     },
@@ -1093,25 +1003,42 @@
         "DRAFT": "임시저장",
         "PUBLISHED": "게시됨"
       },
-      "actions": {
-        "menu": "포스트 메뉴",
-        "copy-link": "링크 복사",
-        "copy-success": "링크를 복사했습니다.",
-        "copy-error": "링크 복사에 실패했습니다.",
-        "report": "신고",
-        "delete": "삭제",
-        "deleting": "삭제 중...",
-        "cancel": "취소",
-        "delete-title": "포스트를 삭제할까요?",
-        "delete-description": "삭제한 포스트는 되돌릴 수 없습니다.",
-        "delete-success": "포스트를 삭제했습니다.",
-        "delete-error": "포스트 삭제에 실패했습니다."
+      "viewer": {
+        "options": "게시물 옵션",
+        "reviewStatus": {
+          "verified": "검증됨",
+          "verify-soon": "곧 검증 예정"
+        },
+        "votes": "투표",
+        "answers": "답변",
+        "answered": "답변 완료",
+        "article": "아티클",
+        "minRead": "읽는 데 {minutes}분",
+        "empty": {
+          "title": "표시할 포스트가 없습니다",
+          "description": "더 많은 사용자, 프로젝트, 태그를 팔로우하면 여기에 포스트가 모입니다."
+        }
+      }
+    },
+    "project": {
+      "card": {
+        "memberCount": "멤버 {count}명",
+        "role": {
+          "admin": "관리자",
+          "member": "멤버"
+        },
+        "fresh": "최신",
+        "toReview": "검토 대기",
+        "unanswered": "미답변",
+        "open": "프로젝트 열기"
       }
     },
     "navigation": {
       "search": {
         "placeholder": "검색...",
-        "placeholder-scoped": "이 프로젝트에서 검색..."
+        "placeholder-scoped": "이 프로젝트에서 검색...",
+        "aria-open": "검색",
+        "aria-close": "검색 닫기"
       },
       "menu": {
         "bookmarks": "북마크",
@@ -1127,13 +1054,83 @@
         "errors": {
           "sign-out": "로그아웃에 실패했습니다. 다시 시도해주세요."
         }
+      },
+      "notifications": {
+        "aria-label": "알림",
+        "placeholder": "준비 중입니다"
       }
     },
     "footer": {
       "about": "소개",
       "contact": "문의하기",
       "terms": "이용 약관",
-      "privacy": "개인정보 처리방침"
+      "privacy": "개인정보 처리방침",
+      "cookies": "쿠키"
+    },
+    "layout": {
+      "sidebar": {
+        "ask-write": "게시물 작성",
+        "yours": "내 활동",
+        "your-projects": "내 프로젝트",
+        "projects": "프로젝트",
+        "my-contributions": "내 기여",
+        "see-more": "더보기",
+        "nav": {
+          "home": "홈",
+          "trending-posts": "인기 게시물",
+          "explore-projects": "프로젝트 탐색",
+          "tags": "태그",
+          "drafts": "임시저장",
+          "feed": "피드",
+          "questions": "질문",
+          "guides": "가이드",
+          "browse": "둘러보기",
+          "my-posts": "내 게시물",
+          "my-comments": "내 댓글",
+          "settings": "설정"
+        }
+      }
+    },
+    "ui": {
+      "copyright": {
+        "text": "© {year} SKKiL. 모든 권리 보유."
+      },
+      "carousel": {
+        "previous-slide": "이전 슬라이드",
+        "next-slide": "다음 슬라이드"
+      },
+      "command": {
+        "title": "명령 팔레트",
+        "description": "실행할 명령 검색"
+      },
+      "logo": {
+        "alt": "로고"
+      },
+      "pagination": {
+        "navigation": "페이지네이션",
+        "previous-page": "이전 페이지",
+        "next-page": "다음 페이지",
+        "more-pages": "추가 페이지"
+      },
+      "sheet": {
+        "close": "닫기"
+      },
+      "sidebar": {
+        "title": "사이드바",
+        "description": "모바일 사이드바 표시",
+        "toggle": "사이드바 토글"
+      },
+      "spinner": {
+        "loading": "로딩 중"
+      },
+      "rating": {
+        "star": "별 {point}개",
+        "value": "별점 {value}점",
+        "label": "평점"
+      },
+      "unimplemented": {
+        "label": "준비 중입니다"
+      }
     },
     "editor": {
       "commands": {
@@ -1158,7 +1155,24 @@
           "description": ""
         },
         "ignore": {
-          "title": "/ 를 입력하기"
+          "title": "/ 를 입력하기",
+          "key": "ESC"
+        }
+      },
+      "image": {
+        "placeholders": {
+          "upload": "클릭해서 이미지를 업로드하세요"
+        },
+        "alt": "업로드된 이미지",
+        "messages": {
+          "upload-success": "이미지가 업로드되었습니다"
+        },
+        "errors": {
+          "upload-failed": "이미지 업로드에 실패했습니다",
+          "s3-upload-failed": "파일 업로드에 실패했습니다"
+        },
+        "actions": {
+          "retry": "다시 시도"
         }
       },
       "placeholders": {
@@ -1227,23 +1241,6 @@
         "loading": "태그를 검색하는 중...",
         "not-found": "태그를 찾을 수 없습니다"
       }
-    },
-    "provider": {
-      "maintainer": {
-        "view-as-public": "일반 사용자로 보기",
-        "viewing-as-public": {
-          "title": "현재 {name}를 일반 사용자로 보고 있습니다.",
-          "description": "관리자가 아닌 일반 사용자는 이 페이지를 이렇게 보게 됩니다.",
-          "view-as-admin": "관리자로 보기"
-        }
-      }
-    },
-    "select-providers": {
-      "label": "기관 선택",
-      "placeholder": "기관을 검색하세요",
-      "provider-not-found": "기관을 찾을 수 없으십니까?",
-      "create-link": "여기를 클릭하여 새 기관을 만드세요",
-      "enter-query": "검색어를 입력하세요"
     }
   },
   "errors": {

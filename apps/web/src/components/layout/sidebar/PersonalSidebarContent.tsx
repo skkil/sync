@@ -3,13 +3,17 @@
 import {
   BookmarkSimpleIcon,
   CompassIcon,
+  FileTextIcon,
   HouseIcon,
-  NotePencilIcon,
+  PencilSimpleIcon,
   PlusIcon,
+  TagIcon,
+  TrendUpIcon,
 } from '@phosphor-icons/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useSearchMyProjects } from '@/api/__generated__/project/project';
 import { ProjectAvatar } from '@/components/feature/project/avatar';
@@ -26,6 +30,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
+import { useMounted } from '@/hooks/use-mounted';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { isAuthenticated } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
@@ -33,35 +38,63 @@ import ROUTES from '@/util/routes';
 
 import SidebarCloseButton from './SidebarCloseButton';
 
-const global = [
-  { label: 'Home', href: ROUTES.HOME(), icon: HouseIcon, authenticated: false },
+const MAX_VISIBLE_PROJECTS = 5;
+
+const nav = [
   {
-    label: 'Explore',
-    href: ROUTES.EXPLORE(),
+    labelKey: 'nav.home',
+    href: ROUTES.HOME(),
+    icon: HouseIcon,
+    authenticated: false,
+  },
+  {
+    labelKey: 'nav.trending-posts',
+    href: ROUTES.EXPLORE_TRENDING(),
+    icon: TrendUpIcon,
+    authenticated: false,
+  },
+  {
+    labelKey: 'nav.explore-projects',
+    href: ROUTES.EXPLORE_PROJECTS(),
     icon: CompassIcon,
     authenticated: false,
   },
   {
-    label: 'New Post',
-    href: ROUTES.NEW_POST(),
-    icon: NotePencilIcon,
+    labelKey: 'nav.tags',
+    href: ROUTES.EXPLORE_TAGS(),
+    icon: TagIcon,
+    authenticated: false,
+  },
+] as const;
+
+const yours = [
+  {
+    labelKey: 'nav.drafts',
+    href: ROUTES.DRAFTS(),
+    icon: FileTextIcon,
     authenticated: true,
   },
   {
-    label: 'Bookmarks',
+    // Reuses `components.navigation.menu.bookmarks` — same bookmarks concept
+    // already translated for the top navigation bar.
+    labelKey: 'menu.bookmarks',
+    namespace: 'navigation' as const,
     href: ROUTES.BOOKMARKS(),
     icon: BookmarkSimpleIcon,
     authenticated: true,
   },
-];
+] as const;
 
 const footer = [
-  { label: 'Privacy', href: ROUTES.PRIVACY() },
-  { label: 'Terms', href: ROUTES.TERMS() },
-  { label: 'Cookies', href: ROUTES.COOKIES() },
-];
+  { labelKey: 'privacy', href: ROUTES.PRIVACY() },
+  { labelKey: 'terms', href: ROUTES.TERMS() },
+  { labelKey: 'cookies', href: ROUTES.COOKIES() },
+] as const;
 
 export default function PersonalSidebarContent() {
+  const t = useTranslations('components.layout.sidebar');
+  const tNav = useTranslations('components.navigation');
+  const tFooter = useTranslations('components.footer');
   const pathname = usePathname();
   const [query] = useState('');
   const { requireAuth } = useRequireAuth();
@@ -71,10 +104,7 @@ export default function PersonalSidebarContent() {
   // `mounted` keeps the first client render identical to the server-rendered
   // HTML so the project list doesn't shift Radix's useId-based ids and cause
   // a hydration mismatch.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   const { data: session } = useSession();
   const { data } = useSearchMyProjects(
@@ -94,7 +124,37 @@ export default function PersonalSidebarContent() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {global.map((item) => {
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="bg-success-tint text-success-text hover:bg-success-tint/80 active:bg-success-tint/70"
+                >
+                  <Link
+                    href={ROUTES.NEW_POST()}
+                    onClick={(event) => {
+                      if (
+                        !requireAuth({
+                          intent: 'write',
+                          redirectTo: ROUTES.NEW_POST(),
+                        })
+                      ) {
+                        event.preventDefault();
+                      }
+                    }}
+                  >
+                    <PencilSimpleIcon />
+                    {t('ask-write')}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {nav.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
                 return (
@@ -115,7 +175,46 @@ export default function PersonalSidebarContent() {
                         }}
                       >
                         <Icon />
-                        {item.label}
+                        {t(item.labelKey)}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup>
+          <SidebarGroupLabel>{t('yours')}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {yours.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <Link
+                        href={item.href}
+                        onClick={(event) => {
+                          if (
+                            item.authenticated &&
+                            !requireAuth({
+                              intent: 'write',
+                              redirectTo: item.href,
+                            })
+                          ) {
+                            event.preventDefault();
+                          }
+                        }}
+                      >
+                        <Icon />
+                        {'namespace' in item
+                          ? tNav(item.labelKey)
+                          : t(item.labelKey)}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -135,7 +234,7 @@ export default function PersonalSidebarContent() {
                     href={ROUTES.PROJECTS()}
                     className="grow hover:text-sidebar-foreground"
                   >
-                    Workspaces
+                    {t('projects')}
                   </Link>
 
                   <LinkButton href={ROUTES.NEW_PROJECT()} variant="ghost">
@@ -145,7 +244,7 @@ export default function PersonalSidebarContent() {
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {projects.map((project) => {
+                  {projects.slice(0, MAX_VISIBLE_PROJECTS).map((project) => {
                     const isActive =
                       pathname === ROUTES.PROJECT(project.handle);
                     return (
@@ -163,6 +262,18 @@ export default function PersonalSidebarContent() {
                       </SidebarMenuItem>
                     );
                   })}
+                  {projects.length > MAX_VISIBLE_PROJECTS && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <Link
+                          href={ROUTES.PROJECTS()}
+                          className="text-sidebar-foreground/60"
+                        >
+                          {t('see-more')}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -170,11 +281,11 @@ export default function PersonalSidebarContent() {
         )}
       </SidebarContent>
 
-      <SidebarFooter>
-        <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs text-sidebar-foreground/60">
+      <SidebarFooter className="p-4">
+        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-sidebar-foreground/60">
           {footer.map((link) => (
             <Link key={link.href} href={link.href} className="hover:underline">
-              {link.label}
+              {tFooter(link.labelKey)}
             </Link>
           ))}
         </div>

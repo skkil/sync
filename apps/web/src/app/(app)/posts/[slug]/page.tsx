@@ -3,9 +3,11 @@ import { notFound, redirect } from 'next/navigation';
 
 import { getGetPostCommentsInfiniteQueryOptions } from '@/api/__generated__/comment/comment';
 import { getGetPostBySlugQueryOptions } from '@/api/__generated__/post/post';
-import PostCardContainer from '@/components/feature/post/viewer/PostCardContainer';
-import PostComments from '@/components/feature/post/viewer/PostComments';
-import { COMMENT_PAGE_SIZE } from '@/components/feature/post/viewer/constants';
+import type { PostType } from '@/components/feature/post/types/post';
+import { PostCard } from '@/components/feature/post/viewer/PostCard';
+import PostComments, {
+  COMMENT_PAGE_SIZE,
+} from '@/components/feature/post/viewer/PostComments';
 import { TwoColumnLayout } from '@/components/layout/TwoColumnLayout';
 import SyncError, { ErrorCode } from '@/lib/error';
 import { getQueryClient } from '@/lib/query';
@@ -22,6 +24,7 @@ export default async function Post({ params }: PostProps) {
 
   const queryClient = getQueryClient();
   let commentsEnabled = false;
+  let postType: PostType | undefined;
 
   try {
     const { data: post } = await queryClient.fetchQuery(
@@ -29,6 +32,7 @@ export default async function Post({ params }: PostProps) {
     );
 
     commentsEnabled = post.summary.status === 'PUBLISHED';
+    postType = post.summary.type as PostType;
 
     if (post.summary.project?.handle) {
       redirect(ROUTES.PROJECT_POST(post.summary.project.handle, slug));
@@ -66,8 +70,12 @@ export default async function Post({ params }: PostProps) {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <TwoColumnLayout
-        main={<PostCardContainer slug={slug} />}
-        side={commentsEnabled ? <PostComments slug={slug} /> : null}
+        main={<PostCard slug={slug} />}
+        side={
+          commentsEnabled && postType ? (
+            <PostComments slug={slug} postType={postType} />
+          ) : null
+        }
       />
     </HydrationBoundary>
   );

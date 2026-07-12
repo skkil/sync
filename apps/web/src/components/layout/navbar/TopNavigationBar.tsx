@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/ui/logo';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useMounted } from '@/hooks/use-mounted';
 import { isAuthenticated } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
 import ROUTES from '@/util/routes';
@@ -43,9 +44,15 @@ function LeftSection({ showSidebarTrigger }: { showSidebarTrigger: boolean }) {
 function RightSection() {
   const t = useTranslations('components.navigation');
 
+  // `useSession` can resolve synchronously from its client-side cache before
+  // hydration, while SSR always renders the pending state. Gating on
+  // `mounted` keeps the first client render identical to the server-rendered
+  // HTML so this subtree doesn't diverge and trigger a hydration mismatch.
+  const mounted = useMounted();
+
   const { data: session, isPending } = useSession();
 
-  if (isPending) {
+  if (!mounted || isPending) {
     return <div className="flex items-center gap-1" />;
   }
 

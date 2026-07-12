@@ -69,14 +69,6 @@ public class PostAssembler {
     return toPostResponses(posts, null);
   }
 
-  public GetPostsResponse.Post toBookmarkedPostResponse(
-      PostDto post, UserSummary author, Long requesterId) {
-    return GetPostsResponse.Post.builder()
-        .summary(toPostSummary(post, author, requesterId))
-        .content(post.content())
-        .build();
-  }
-
   private PostSummary toPostSummary(PostDto post, UserSummary author, Long requesterId) {
     var project = post.projectHandle() == null ? null : postMapper.toProjectSummary(post);
     var isAuthor = requesterId != null && requesterId.equals(post.authorId());

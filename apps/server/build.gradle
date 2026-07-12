@@ -106,6 +106,7 @@ dependencies {
 	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
 	implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
 	implementation 'org.bouncycastle:bcprov-jdk18on:1.82'
+	implementation 'com.bucket4j:bucket4j_jdk17-postgresql:8.18.0'
 	implementation platform('io.awspring.cloud:spring-cloud-aws-dependencies:4.0.0-RC1')
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 	implementation 'org.mapstruct:mapstruct:1.6.3'

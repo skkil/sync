@@ -5,8 +5,10 @@ import com.skkil.sync.common.util.pagination.service.PaginationService;
 import com.skkil.sync.post.dto.data.PostDto;
 import com.skkil.sync.post.dto.response.GetPostRecommendationsResponse;
 import com.skkil.sync.post.mapper.PostAssembler;
+import com.skkil.sync.post.model.PostRecommendationType;
 import com.skkil.sync.post.repository.PostQueryRepository;
 import com.skkil.sync.post.service.recommendation.PostRecommendationChannel;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,17 +19,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostRecommendationService {
 
-  private final PostRecommendationChannel recommendationChannel;
+  private final PostRecommendationChannel defaultChannel;
+  private final Map<PostRecommendationType, PostRecommendationChannel> channelsByType;
   private final PostQueryRepository postQueryRepository;
   private final PostAssembler postAssembler;
   private final PaginationService paginationService;
 
   public PostRecommendationService(
-      @Qualifier("recentPostRecommendationChannel") PostRecommendationChannel recommendationChannel,
+      @Qualifier("recentPostRecommendationChannel") PostRecommendationChannel defaultChannel,
+      @Qualifier("followingPostRecommendationChannel") PostRecommendationChannel followingChannel,
+      @Qualifier("trendingPostRecommendationChannel") PostRecommendationChannel trendingChannel,
       PostQueryRepository postQueryRepository,
       PostAssembler postAssembler,
       PaginationService paginationService) {
-    this.recommendationChannel = recommendationChannel;
+    this.defaultChannel = defaultChannel;
+    this.channelsByType = new EnumMap<>(PostRecommendationType.class);
+    this.channelsByType.put(PostRecommendationType.FOLLOWING, followingChannel);
+    this.channelsByType.put(PostRecommendationType.TRENDING, trendingChannel);
     this.postQueryRepository = postQueryRepository;
     this.postAssembler = postAssembler;
     this.paginationService = paginationService;
@@ -35,7 +43,9 @@ public class PostRecommendationService {
 
   @Transactional(readOnly = true)
   public GetPostRecommendationsResponse getRecommendations(
-      Long requesterId, CursorPaginationRequest pagination) {
+      Long requesterId, PostRecommendationType type, CursorPaginationRequest pagination) {
+    var recommendationChannel =
+        type == null ? defaultChannel : channelsByType.getOrDefault(type, defaultChannel);
     var candidates =
         paginationService.paginate(
             recommendationChannel.getCandidateFetcher(requesterId),

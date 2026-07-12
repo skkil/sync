@@ -20,8 +20,6 @@ public class UserConnectionAssembler {
         connections.mapWithLookup(
             UserConnectionDto::userId,
             userAssembler::toUserSummaries,
-            (dto, summaries) ->
-                new GetConnectionsResponse.Connection(
-                    dto.userId().toString(), summaries.get(dto.userId()))));
+            (dto, summaries) -> summaries.get(dto.userId())));
   }
 }

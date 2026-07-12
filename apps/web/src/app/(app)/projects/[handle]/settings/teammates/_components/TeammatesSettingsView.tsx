@@ -1,6 +1,7 @@
 'use client';
 
 import { PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
+import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -29,13 +30,17 @@ import {
 
 import AddTeammateDropdown from './AddTeammateDropdown';
 
-const ROLE_LABEL: Record<GetProjectTeammatesResponseTeammatesItemRole, string> =
-  {
-    [GetProjectTeammatesResponseTeammatesItemRole.Admin]: '관리자',
-    [GetProjectTeammatesResponseTeammatesItemRole.Member]: '멤버',
+export default function TeammatesSettingsView() {
+  const t = useTranslations('pages.projects.project.settings.teammates');
+
+  const ROLE_LABEL: Record<
+    GetProjectTeammatesResponseTeammatesItemRole,
+    string
+  > = {
+    [GetProjectTeammatesResponseTeammatesItemRole.Admin]: t('role.admin'),
+    [GetProjectTeammatesResponseTeammatesItemRole.Member]: t('role.member'),
   };
 
-export default function TeammatesSettingsView() {
   const { handle } = useParams<{ handle: string }>();
   const { data: teammatesData, isPending: isTeammatesPending } =
     useGetProjectTeammates(handle);
@@ -51,9 +56,9 @@ export default function TeammatesSettingsView() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">팀원</h2>
+          <h2 className="text-lg font-semibold">{t('heading')}</h2>
           <p className="text-sm text-muted-foreground">
-            프로젝트의 팀원 {teammates.length}명
+            {t('member-count', { count: teammates.length })}
           </p>
         </div>
 
@@ -68,8 +73,12 @@ export default function TeammatesSettingsView() {
         <Table className="border-separate border-spacing-y-1">
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="border-l-0">이름</TableHead>
-              <TableHead className="border-l-0">역할</TableHead>
+              <TableHead className="border-l-0">
+                {t('table.columns.name')}
+              </TableHead>
+              <TableHead className="border-l-0">
+                {t('table.columns.role')}
+              </TableHead>
               <TableHead className="w-0 border-l-0" />
             </TableRow>
           </TableHeader>
@@ -105,20 +114,16 @@ export default function TeammatesSettingsView() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label="역할 수정"
-                        onClick={() =>
-                          toast.info('아직 지원되지 않는 기능입니다.')
-                        }
+                        aria-label={t('actions.edit-role')}
+                        onClick={() => toast.info(t('messages.unsupported'))}
                       >
                         <PencilSimpleIcon className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label="팀원 삭제"
-                        onClick={() =>
-                          toast.info('아직 지원되지 않는 기능입니다.')
-                        }
+                        aria-label={t('actions.remove')}
+                        onClick={() => toast.info(t('messages.unsupported'))}
                       >
                         <TrashIcon className="h-4 w-4" />
                       </Button>
@@ -156,6 +161,8 @@ function PendingInvitationRow({
   name: string;
   handle: string;
 }) {
+  const t = useTranslations('pages.projects.project.settings.teammates');
+
   const { mutate: cancelInvitation, isPending } = useCancelProjectInvitation();
 
   const onCancel = () => {
@@ -166,10 +173,10 @@ function PendingInvitationRow({
       },
       {
         onSuccess: () => {
-          toast.success('초대를 취소했습니다.');
+          toast.success(t('messages.cancel-success'));
         },
         onError: () => {
-          toast.error('초대 취소에 실패했습니다.');
+          toast.error(t('messages.cancel-error'));
         },
       },
     );
@@ -189,14 +196,14 @@ function PendingInvitationRow({
         </div>
       </TableCell>
       <TableCell className="border-l-0">
-        <Badge variant="secondary">초대 대기 중</Badge>
+        <Badge variant="secondary">{t('status.pending')}</Badge>
       </TableCell>
       <TableCell className="border-l-0">
         <div className="flex items-center justify-end">
           <Button
             variant="ghost"
             size="icon"
-            aria-label="초대 취소"
+            aria-label={t('actions.cancel-invitation')}
             disabled={isPending}
             onClick={onCancel}
           >

@@ -29,6 +29,7 @@ import type { ErrorType } from '../../../lib/server';
 import type {
   CreatePostRequest,
   CreatePostResponse,
+  GetCommentedPostsParams,
   GetLikedPostsParams,
   GetPostActivitiesParams,
   GetPostActivitiesResponse,
@@ -39,6 +40,7 @@ import type {
   GetPostsByTagParams,
   GetPostsParams,
   GetPostsResponse,
+  GetPublicPostsByTagParams,
   GetUserPostsParams,
   SearchPostsParams,
   SearchPostsResponse,
@@ -2602,7 +2604,7 @@ export type getPostsByTagResponseSuccess = getPostsByTagResponse200 & {
 export type getPostsByTagResponse = getPostsByTagResponseSuccess;
 
 export const getGetPostsByTagUrl = (
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
 ) => {
   const normalizedParams = new URLSearchParams();
@@ -2616,41 +2618,41 @@ export const getGetPostsByTagUrl = (
   const stringifiedParams = normalizedParams.toString();
 
   return stringifiedParams.length > 0
-    ? `/tags/${name}/posts?${stringifiedParams}`
-    : `/tags/${name}/posts`;
+    ? `/tags/${tagId}/posts?${stringifiedParams}`
+    : `/tags/${tagId}/posts`;
 };
 
 /**
- * 태그가 붙은 공개 게시글 목록을 조회합니다.
+ * Get Posts By Tag
  * @summary Get Posts By Tag
  */
 export const getPostsByTag = async (
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: RequestInit,
 ): Promise<getPostsByTagResponse> => {
-  return api<getPostsByTagResponse>(getGetPostsByTagUrl(name, params), {
+  return api<getPostsByTagResponse>(getGetPostsByTagUrl(tagId, params), {
     ...options,
     method: 'GET',
   });
 };
 
 export const getGetPostsByTagInfiniteQueryKey = (
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
 ) => {
   return [
     'infinite',
-    `/tags/${name}/posts`,
+    `/tags/${tagId}/posts`,
     ...(params ? [params] : []),
   ] as const;
 };
 
 export const getGetPostsByTagQueryKey = (
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
 ) => {
-  return [`/tags/${name}/posts`, ...(params ? [params] : [])] as const;
+  return [`/tags/${tagId}/posts`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetPostsByTagInfiniteQueryOptions = <
@@ -2660,7 +2662,7 @@ export const getGetPostsByTagInfiniteQueryOptions = <
   >,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: {
     query?: Partial<
@@ -2678,7 +2680,7 @@ export const getGetPostsByTagInfiniteQueryOptions = <
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetPostsByTagInfiniteQueryKey(name, params);
+    queryOptions?.queryKey ?? getGetPostsByTagInfiniteQueryKey(tagId, params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getPostsByTag>>,
@@ -2686,7 +2688,7 @@ export const getGetPostsByTagInfiniteQueryOptions = <
     GetPostsByTagParams['after']
   > = ({ signal, pageParam }) =>
     getPostsByTag(
-      name,
+      tagId,
       { ...params, after: pageParam ?? params?.['after'] },
       { signal, ...requestOptions },
     );
@@ -2694,7 +2696,7 @@ export const getGetPostsByTagInfiniteQueryOptions = <
   return {
     queryKey,
     queryFn,
-    enabled: name !== null && name !== undefined,
+    enabled: tagId !== null && tagId !== undefined,
     ...queryOptions,
   } as UseInfiniteQueryOptions<
     Awaited<ReturnType<typeof getPostsByTag>>,
@@ -2717,7 +2719,7 @@ export function useGetPostsByTagInfinite<
   >,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params: undefined | GetPostsByTagParams,
   options: {
     query: Partial<
@@ -2751,7 +2753,7 @@ export function useGetPostsByTagInfinite<
   >,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: {
     query?: Partial<
@@ -2785,7 +2787,7 @@ export function useGetPostsByTagInfinite<
   >,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: {
     query?: Partial<
@@ -2814,7 +2816,7 @@ export function useGetPostsByTagInfinite<
   >,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: {
     query?: Partial<
@@ -2833,7 +2835,7 @@ export function useGetPostsByTagInfinite<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetPostsByTagInfiniteQueryOptions(
-    name,
+    tagId,
     params,
     options,
   );
@@ -2852,7 +2854,7 @@ export const getGetPostsByTagQueryOptions = <
   TData = Awaited<ReturnType<typeof getPostsByTag>>,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: {
     query?: Partial<
@@ -2864,16 +2866,16 @@ export const getGetPostsByTagQueryOptions = <
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey =
-    queryOptions?.queryKey ?? getGetPostsByTagQueryKey(name, params);
+    queryOptions?.queryKey ?? getGetPostsByTagQueryKey(tagId, params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsByTag>>> = ({
     signal,
-  }) => getPostsByTag(name, params, { signal, ...requestOptions });
+  }) => getPostsByTag(tagId, params, { signal, ...requestOptions });
 
   return {
     queryKey,
     queryFn,
-    enabled: name !== null && name !== undefined,
+    enabled: tagId !== null && tagId !== undefined,
     ...queryOptions,
   } as UseQueryOptions<
     Awaited<ReturnType<typeof getPostsByTag>>,
@@ -2891,7 +2893,7 @@ export function useGetPostsByTag<
   TData = Awaited<ReturnType<typeof getPostsByTag>>,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params: undefined | GetPostsByTagParams,
   options: {
     query: Partial<
@@ -2915,7 +2917,7 @@ export function useGetPostsByTag<
   TData = Awaited<ReturnType<typeof getPostsByTag>>,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: {
     query?: Partial<
@@ -2939,7 +2941,7 @@ export function useGetPostsByTag<
   TData = Awaited<ReturnType<typeof getPostsByTag>>,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: {
     query?: Partial<
@@ -2959,7 +2961,7 @@ export function useGetPostsByTag<
   TData = Awaited<ReturnType<typeof getPostsByTag>>,
   TError = ErrorType<unknown>,
 >(
-  name: string,
+  tagId: string,
   params?: GetPostsByTagParams,
   options?: {
     query?: Partial<
@@ -2971,7 +2973,427 @@ export function useGetPostsByTag<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetPostsByTagQueryOptions(name, params, options);
+  const queryOptions = getGetPostsByTagQueryOptions(tagId, params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type getPublicPostsByTagResponse200 = {
+  data: GetPostsResponse;
+  status: 200;
+};
+
+export type getPublicPostsByTagResponseSuccess =
+  getPublicPostsByTagResponse200 & {
+    headers: Headers;
+  };
+export type getPublicPostsByTagResponse = getPublicPostsByTagResponseSuccess;
+
+export const getGetPublicPostsByTagUrl = (
+  name: string,
+  params?: GetPublicPostsByTagParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value));
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/tags/by-name/${name}/posts?${stringifiedParams}`
+    : `/tags/by-name/${name}/posts`;
+};
+
+/**
+ * 태그가 붙은 공개 게시글 목록을 조회합니다.
+ * @summary Get Public Posts By Tag
+ */
+export const getPublicPostsByTag = async (
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: RequestInit,
+): Promise<getPublicPostsByTagResponse> => {
+  return api<getPublicPostsByTagResponse>(
+    getGetPublicPostsByTagUrl(name, params),
+    {
+      ...options,
+      method: 'GET',
+    },
+  );
+};
+
+export const getGetPublicPostsByTagInfiniteQueryKey = (
+  name: string,
+  params?: GetPublicPostsByTagParams,
+) => {
+  return [
+    'infinite',
+    `/tags/by-name/${name}/posts`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPublicPostsByTagQueryKey = (
+  name: string,
+  params?: GetPublicPostsByTagParams,
+) => {
+  return [`/tags/by-name/${name}/posts`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetPublicPostsByTagInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>,
+    GetPublicPostsByTagParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPublicPostsByTagParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetPublicPostsByTagInfiniteQueryKey(name, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>,
+    QueryKey,
+    GetPublicPostsByTagParams['after']
+  > = ({ signal, pageParam }) =>
+    getPublicPostsByTag(
+      name,
+      { ...params, after: pageParam ?? params?.['after'] },
+      { signal, ...requestOptions },
+    );
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: name !== null && name !== undefined,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>,
+    TError,
+    TData,
+    QueryKey,
+    GetPublicPostsByTagParams['after']
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPublicPostsByTagInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicPostsByTag>>
+>;
+export type GetPublicPostsByTagInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetPublicPostsByTagInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>,
+    GetPublicPostsByTagParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params: undefined | GetPublicPostsByTagParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPublicPostsByTagParams['after']
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicPostsByTag>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicPostsByTag>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicPostsByTagInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>,
+    GetPublicPostsByTagParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPublicPostsByTagParams['after']
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicPostsByTag>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicPostsByTag>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicPostsByTagInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>,
+    GetPublicPostsByTagParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPublicPostsByTagParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Public Posts By Tag
+ */
+
+export function useGetPublicPostsByTagInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>,
+    GetPublicPostsByTagParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData,
+        QueryKey,
+        GetPublicPostsByTagParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPublicPostsByTagInfiniteQueryOptions(
+    name,
+    params,
+    options,
+  );
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const getGetPublicPostsByTagQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPublicPostsByTag>>,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPublicPostsByTagQueryKey(name, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>
+  > = ({ signal }) =>
+    getPublicPostsByTag(name, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: name !== null && name !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicPostsByTag>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPublicPostsByTagQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicPostsByTag>>
+>;
+export type GetPublicPostsByTagQueryError = ErrorType<unknown>;
+
+export function useGetPublicPostsByTag<
+  TData = Awaited<ReturnType<typeof getPublicPostsByTag>>,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params: undefined | GetPublicPostsByTagParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicPostsByTag>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicPostsByTag>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicPostsByTag<
+  TData = Awaited<ReturnType<typeof getPublicPostsByTag>>,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPublicPostsByTag>>,
+          TError,
+          Awaited<ReturnType<typeof getPublicPostsByTag>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPublicPostsByTag<
+  TData = Awaited<ReturnType<typeof getPublicPostsByTag>>,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Public Posts By Tag
+ */
+
+export function useGetPublicPostsByTag<
+  TData = Awaited<ReturnType<typeof getPublicPostsByTag>>,
+  TError = ErrorType<unknown>,
+>(
+  name: string,
+  params?: GetPublicPostsByTagParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPublicPostsByTag>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPublicPostsByTagQueryOptions(
+    name,
+    params,
+    options,
+  );
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -3362,6 +3784,428 @@ export function useGetUserPosts<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetUserPostsQueryOptions(userId, params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type getCommentedPostsResponse200 = {
+  data: GetPostsResponse;
+  status: 200;
+};
+
+export type getCommentedPostsResponseSuccess = getCommentedPostsResponse200 & {
+  headers: Headers;
+};
+export type getCommentedPostsResponse = getCommentedPostsResponseSuccess;
+
+export const getGetCommentedPostsUrl = (
+  userId: string,
+  params?: GetCommentedPostsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value));
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/users/${userId}/posts/commented?${stringifiedParams}`
+    : `/users/${userId}/posts/commented`;
+};
+
+/**
+ * Get Commented Posts
+ * @summary Get Commented Posts
+ */
+export const getCommentedPosts = async (
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: RequestInit,
+): Promise<getCommentedPostsResponse> => {
+  return api<getCommentedPostsResponse>(
+    getGetCommentedPostsUrl(userId, params),
+    {
+      ...options,
+      method: 'GET',
+    },
+  );
+};
+
+export const getGetCommentedPostsInfiniteQueryKey = (
+  userId: string,
+  params?: GetCommentedPostsParams,
+) => {
+  return [
+    'infinite',
+    `/users/${userId}/posts/commented`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetCommentedPostsQueryKey = (
+  userId: string,
+  params?: GetCommentedPostsParams,
+) => {
+  return [
+    `/users/${userId}/posts/commented`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetCommentedPostsInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getCommentedPosts>>,
+    GetCommentedPostsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentedPostsParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetCommentedPostsInfiniteQueryKey(userId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCommentedPosts>>,
+    QueryKey,
+    GetCommentedPostsParams['after']
+  > = ({ signal, pageParam }) =>
+    getCommentedPosts(
+      userId,
+      { ...params, after: pageParam ?? params?.['after'] },
+      { signal, ...requestOptions },
+    );
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: userId !== null && userId !== undefined,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getCommentedPosts>>,
+    TError,
+    TData,
+    QueryKey,
+    GetCommentedPostsParams['after']
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCommentedPostsInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCommentedPosts>>
+>;
+export type GetCommentedPostsInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetCommentedPostsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getCommentedPosts>>,
+    GetCommentedPostsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params: undefined | GetCommentedPostsParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentedPostsParams['after']
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCommentedPosts>>,
+          TError,
+          Awaited<ReturnType<typeof getCommentedPosts>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCommentedPostsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getCommentedPosts>>,
+    GetCommentedPostsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentedPostsParams['after']
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCommentedPosts>>,
+          TError,
+          Awaited<ReturnType<typeof getCommentedPosts>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCommentedPostsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getCommentedPosts>>,
+    GetCommentedPostsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentedPostsParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Commented Posts
+ */
+
+export function useGetCommentedPostsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getCommentedPosts>>,
+    GetCommentedPostsParams['after']
+  >,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentedPostsParams['after']
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCommentedPostsInfiniteQueryOptions(
+    userId,
+    params,
+    options,
+  );
+
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const getGetCommentedPostsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCommentedPosts>>,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCommentedPostsQueryKey(userId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCommentedPosts>>
+  > = ({ signal }) =>
+    getCommentedPosts(userId, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: userId !== null && userId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCommentedPosts>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCommentedPostsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCommentedPosts>>
+>;
+export type GetCommentedPostsQueryError = ErrorType<unknown>;
+
+export function useGetCommentedPosts<
+  TData = Awaited<ReturnType<typeof getCommentedPosts>>,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params: undefined | GetCommentedPostsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCommentedPosts>>,
+          TError,
+          Awaited<ReturnType<typeof getCommentedPosts>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCommentedPosts<
+  TData = Awaited<ReturnType<typeof getCommentedPosts>>,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCommentedPosts>>,
+          TError,
+          Awaited<ReturnType<typeof getCommentedPosts>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCommentedPosts<
+  TData = Awaited<ReturnType<typeof getCommentedPosts>>,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Commented Posts
+ */
+
+export function useGetCommentedPosts<
+  TData = Awaited<ReturnType<typeof getCommentedPosts>>,
+  TError = ErrorType<unknown>,
+>(
+  userId: string,
+  params?: GetCommentedPostsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCommentedPosts>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCommentedPostsQueryOptions(
+    userId,
+    params,
+    options,
+  );
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

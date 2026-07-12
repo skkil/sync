@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable react-hooks/immutability -- this whole file's job is composing ref callbacks that mutate .current on DOM attach/detach, never during render; the rule can't distinguish that from a render-time mutation */
 import { useCallback, useRef } from 'react';
 
 // basically Exclude<React.ClassAttributes<T>["ref"], string>

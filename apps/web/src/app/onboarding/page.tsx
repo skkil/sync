@@ -22,7 +22,7 @@ export interface OnboardingStepContentProps {
 }
 
 const steps: {
-  id: string;
+  id: 'welcome' | 'choose-handle' | 'follow' | 'finished';
   content: ReturnType<
     typeof forwardRef<OnboardingStepContentRef, OnboardingStepContentProps>
   > | null;
@@ -139,10 +139,10 @@ export default function Onboarding() {
       <div className="flex flex-col gap-8">
         <div>
           <h1 className="text-2xl font-light mb-2">
-            {t(`steps.${step?.id}.title`)}
+            {t(`steps.${step?.id ?? 'welcome'}.title`)}
           </h1>
           <p className="text-muted-foreground">
-            {t(`steps.${step?.id}.description`)}
+            {t(`steps.${step?.id ?? 'welcome'}.description`)}
           </p>
         </div>
 

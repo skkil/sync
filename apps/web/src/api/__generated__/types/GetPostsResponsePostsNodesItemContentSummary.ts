@@ -13,11 +13,6 @@ import type { GetPostsResponsePostsNodesItemContentSummaryType } from './GetPost
  * Post Summary
  */
 export type GetPostsResponsePostsNodesItemContentSummary = {
-  /**
-   * Liked At
-   * @nullable
-   */
-  likedAt?: string | null;
   /** Whether the current user bookmarked this post */
   bookmarked: boolean;
   /** 작성자 정보 */
@@ -43,11 +38,6 @@ export type GetPostsResponsePostsNodesItemContentSummary = {
   createdAt: string;
   /** Post ID */
   id: number;
-  /**
-   * Bookmarked At
-   * @nullable
-   */
-  bookmarkedAt?: string | null;
   /** Post Slug */
   slug: string;
   /** Whether the question post has been resolved */

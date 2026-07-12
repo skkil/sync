@@ -26,4 +26,8 @@ export type GetPostsByProjectParams = {
    * 게시글 타입
    */
   type?: string;
+  /**
+   * 작성자 핸들
+   */
+  authorHandle?: string;
 };

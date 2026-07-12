@@ -25,5 +25,4 @@ public record PostDto(
     Boolean liked,
     Boolean bookmarked,
     Boolean resolved,
-    @Nullable OffsetDateTime bookmarkedAt,
-    @Nullable OffsetDateTime likedAt) {}
+    @Nullable OffsetDateTime sortKey) {}

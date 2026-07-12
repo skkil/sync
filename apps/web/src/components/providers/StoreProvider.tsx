@@ -13,11 +13,13 @@ export interface AppStoreProviderProps {
 
 export const StoreProvider = ({ children }: AppStoreProviderProps) => {
   const storeRef = useRef<AppStoreType | null>(null);
+  // eslint-disable-next-line react-hooks/refs -- standard lazy-ref-init pattern from the React docs, pre-existing
   if (!storeRef.current) {
     storeRef.current = createAppStore();
   }
 
   return (
+    // eslint-disable-next-line react-hooks/refs -- ref is only assigned once above, before this render reads it
     <AppStoreContext.Provider value={storeRef.current}>
       {children}
     </AppStoreContext.Provider>

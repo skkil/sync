@@ -2,9 +2,7 @@ package com.skkil.sync.post.listener;
 
 import com.skkil.sync.post.dto.data.PostSummaryDto;
 import com.skkil.sync.post.event.PostCreatedEvent;
-import com.skkil.sync.post.exception.PostNotFoundException;
-import com.skkil.sync.post.model.Post;
-import com.skkil.sync.post.repository.PostRepository;
+import com.skkil.sync.post.service.PostSummaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
@@ -16,8 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
@@ -29,16 +25,15 @@ public class PostCreatedEventListener {
   @Value("classpath:/prompts/post/summary.st")
   private Resource resource;
 
-  private final PostRepository postRepository;
   private final ChatModel chatModel;
+  private final PostSummaryService postSummaryService;
 
-  public PostCreatedEventListener(PostRepository postRepository, ChatModel chatModel) {
-    this.postRepository = postRepository;
+  public PostCreatedEventListener(ChatModel chatModel, PostSummaryService postSummaryService) {
     this.chatModel = chatModel;
+    this.postSummaryService = postSummaryService;
   }
 
   @Async
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @TransactionalEventListener
   public void createPostSummary(PostCreatedEvent event) {
     log.debug("Handling PostCreatedEvent {}", event.getPostId());
@@ -59,11 +54,7 @@ public class PostCreatedEventListener {
         ChatClient.create(chatModel).prompt(prompt).call().entity(PostSummaryDto.class);
     log.debug("Summarized post {}", event.getPostId());
 
-    Post post =
-        postRepository
-            .findById(event.getPostId())
-            .orElseThrow(() -> new PostNotFoundException(event.getPostId()));
-    post.updateSummary(response.summary());
+    postSummaryService.updateGeneratedSummary(event.getPostId(), response.summary());
 
     log.debug("Saved summary for post {}", event.getPostId());
   }

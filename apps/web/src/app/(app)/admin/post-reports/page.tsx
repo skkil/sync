@@ -19,6 +19,7 @@ import {
   useReviewPostReport,
 } from '@/api/__generated__/post-report/post-report';
 import type { GetPostReportsResponseReportsContentItem } from '@/api/__generated__/types/GetPostReportsResponseReportsContentItem';
+import { ReportPostRequestReason } from '@/api/__generated__/types/ReportPostRequestReason';
 import { ReviewPostReportRequestResolution } from '@/api/__generated__/types/ReviewPostReportRequestResolution';
 import { ImageNode } from '@/components/feature/post/editor/extensions/nodes/image';
 import { deserialize } from '@/components/feature/post/editor/utils/serializer';
@@ -209,7 +210,11 @@ export default function AdminPostReportsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1">
-                      <span>{t(`reasons.${report.reason}`)}</span>
+                      <span>
+                        {t(
+                          `reasons.${report.reason as ReportPostRequestReason}`,
+                        )}
+                      </span>
                       {report.description && (
                         <span className="max-w-56 whitespace-normal text-xs text-muted-foreground">
                           {report.description}
@@ -219,7 +224,7 @@ export default function AdminPostReportsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
-                      {t(`statuses.${report.status}`)}
+                      {t(`statuses.${report.status as ReportStatus}`)}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatDate(report.createdAt)}</TableCell>

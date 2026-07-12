@@ -9,10 +9,10 @@ export function PostTypeBadge({ type }: { type: PostType }) {
 
   switch (type) {
     case PostType.LONG:
-      return <Badge color="blue">{t(type)}</Badge>;
+      return <Badge color="long">{t(type)}</Badge>;
     case PostType.QUESTION:
-      return <Badge color="amber">{t(type)}</Badge>;
+      return <Badge color="question">{t(type)}</Badge>;
     case PostType.SHORT:
-      return <Badge variant="secondary">{t(type)}</Badge>;
+      return <Badge color="short">{t(type)}</Badge>;
   }
 }

@@ -3,16 +3,19 @@ import {
   CaretRightIcon,
   DotsThreeIcon,
 } from '@phosphor-icons/react';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
+  const t = useTranslations('components.ui.pagination');
+
   return (
     <nav
       role="navigation"
-      aria-label="pagination"
+      aria-label={t('navigation')}
       data-slot="pagination"
       className={cn('mx-auto flex w-full justify-center', className)}
       {...props}
@@ -74,9 +77,11 @@ function PaginationPrevious({
   text?: string;
   disabled?: boolean;
 }) {
+  const t = useTranslations('components.ui.pagination');
+
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label={t('previous-page')}
       size="default"
       className={cn(
         'pl-2!',
@@ -100,9 +105,11 @@ function PaginationNext({
   text?: string;
   disabled?: boolean;
 }) {
+  const t = useTranslations('components.ui.pagination');
+
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label={t('next-page')}
       size="default"
       className={cn(
         'pr-2!',
@@ -121,6 +128,8 @@ function PaginationEllipsis({
   className,
   ...props
 }: React.ComponentProps<'span'>) {
+  const t = useTranslations('components.ui.pagination');
+
   return (
     <span
       aria-hidden
@@ -132,7 +141,7 @@ function PaginationEllipsis({
       {...props}
     >
       <DotsThreeIcon />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">{t('more-pages')}</span>
     </span>
   );
 }

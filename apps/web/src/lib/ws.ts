@@ -23,6 +23,7 @@ export function getStompClient(): Client {
       return new SockJS(url);
     },
     debug: (message) => {
+      // eslint-disable-next-line no-console -- intentional STOMP protocol debug logging, pre-existing
       console.log(`[STOMP] ${message}`);
     },
     reconnectDelay: 5000,

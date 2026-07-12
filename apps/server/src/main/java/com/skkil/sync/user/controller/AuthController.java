@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 class AuthController {
 
   private final AuthService authService;
+  private final SecurityContextHolderStrategy securityContextHolderStrategy =
+      SecurityContextHolder.getContextHolderStrategy();
 
   public AuthController(AuthService authService) {
     this.authService = authService;
@@ -30,11 +33,12 @@ class AuthController {
   public void login(HttpServletRequest http, @RequestBody @Validated LoginRequest request) {
     Authentication authentication = authService.authenticate(request);
 
-    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+    SecurityContext securityContext = securityContextHolderStrategy.createEmptyContext();
     securityContext.setAuthentication(authentication);
-    SecurityContextHolder.setContext(securityContext);
+    securityContextHolderStrategy.setContext(securityContext);
 
     HttpSession session = http.getSession(true);
+    http.changeSessionId();
     session.setAttribute(
         HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
   }

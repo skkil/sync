@@ -7,6 +7,10 @@
 
 export type SearchTagsParams = {
   /**
+   * 프로젝트 핸들 (지정 시 프로젝트 범위로 검색)
+   */
+  handle?: string;
+  /**
    * 태그 검색어
    */
   query: string;

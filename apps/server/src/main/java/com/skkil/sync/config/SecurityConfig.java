@@ -68,7 +68,7 @@ public class SecurityConfig {
                         "/posts/**",
                         "/comments/**",
                         "/users/**",
-                        "/tags/**",
+                        "/tags/by-name/*/posts",
                         "/team-building/**",
                         "/projects/**",
                         "/contests/**")

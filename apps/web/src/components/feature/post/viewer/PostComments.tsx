@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import { useGetPostCommentsInfinite } from '@/api/__generated__/comment/comment';
 import type { GetCommentsResponseCommentsNodesItemContent } from '@/api/__generated__/types';
 import { useCreateComment } from '@/components/feature/post/hooks/useCreateComment';
+import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,10 +19,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useSession } from '@/lib/auth/client';
 
-import { COMMENT_PAGE_SIZE } from './constants';
+import type { PostType } from '../types/post';
+
+export const COMMENT_PAGE_SIZE = '20';
 
 interface PostCommentsProps {
   slug: string;
+  // TODO: comments aren't rendered differently per post type yet — this is
+  // threaded through now so that can change without touching every call site.
+  postType: PostType;
 }
 
 function PostCommentItem({
@@ -34,13 +40,12 @@ function PostCommentItem({
 
   return (
     <div className="flex items-start gap-3 py-4">
-      <Avatar size="sm">
-        <AvatarImage
-          src={author?.profileImageUrl ?? undefined}
-          alt={author?.name}
-        />
-        <AvatarFallback>{author?.name?.[0] ?? '?'}</AvatarFallback>
-      </Avatar>
+      <ProfileHoverCard
+        handle={author?.handle ?? ''}
+        name={author?.name ?? '?'}
+        imageUrl={author?.profileImageUrl ?? undefined}
+        size="sm"
+      />
 
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">

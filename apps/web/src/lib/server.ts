@@ -1,5 +1,6 @@
 import ky from 'ky';
 
+import koMessages from '@/public/locales/ko.json';
 import ROUTES from '@/util/routes';
 import { getCookies, getCsrfToken, isServer } from '@/util/server';
 
@@ -97,7 +98,7 @@ export const api = async <T>(url: string, options: RequestInit): Promise<T> => {
     }
 
     throw new SyncError(
-      '서버에 연결할 수 없습니다. 나중에 다시 시도하세요.',
+      koMessages.errors['connection-failed'],
       ErrorCode.NETWORK_ERROR,
     );
   }

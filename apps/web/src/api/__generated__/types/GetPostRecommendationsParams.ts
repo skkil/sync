@@ -22,4 +22,8 @@ export type GetPostRecommendationsParams = {
    * Cursor for pagination, indicating the position before which to return items
    */
   before?: string;
+  /**
+   * 추천 게시글 종류
+   */
+  type?: string;
 };

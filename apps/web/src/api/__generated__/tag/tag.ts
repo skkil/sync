@@ -4,22 +4,30 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
 
 import { api } from '../../../lib/server';
 import type { ErrorType } from '../../../lib/server';
-import type { SearchTagsParams, SearchTagsResponse } from '../types';
+import type {
+  CreateTagRequest,
+  CreateTagResponse,
+  GetTagsResponse,
+  SearchTagsParams,
+} from '../types';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
@@ -41,8 +49,456 @@ const withQueryKey = <T extends object, K>(
   return result;
 };
 
+export type getProjectTagsResponse200 = {
+  data: GetTagsResponse;
+  status: 200;
+};
+
+export type getProjectTagsResponseSuccess = getProjectTagsResponse200 & {
+  headers: Headers;
+};
+export type getProjectTagsResponse = getProjectTagsResponseSuccess;
+
+export const getGetProjectTagsUrl = (handle: string) => {
+  return `/projects/${handle}/tags`;
+};
+
+/**
+ * 프로젝트의 태그 목록을 조회합니다.
+ * @summary Get Project Tags
+ */
+export const getProjectTags = async (
+  handle: string,
+  options?: RequestInit,
+): Promise<getProjectTagsResponse> => {
+  return api<getProjectTagsResponse>(getGetProjectTagsUrl(handle), {
+    ...options,
+    method: 'GET',
+  });
+};
+
+export const getGetProjectTagsQueryKey = (handle: string) => {
+  return [`/projects/${handle}/tags`] as const;
+};
+
+export const getGetProjectTagsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProjectTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProjectTags>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetProjectTagsQueryKey(handle);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProjectTags>>> = ({
+    signal,
+  }) => getProjectTags(handle, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: handle !== null && handle !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getProjectTags>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProjectTagsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProjectTags>>
+>;
+export type GetProjectTagsQueryError = ErrorType<unknown>;
+
+export function useGetProjectTags<
+  TData = Awaited<ReturnType<typeof getProjectTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProjectTags>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectTags>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectTags>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectTags<
+  TData = Awaited<ReturnType<typeof getProjectTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProjectTags>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectTags>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectTags>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectTags<
+  TData = Awaited<ReturnType<typeof getProjectTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProjectTags>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Project Tags
+ */
+
+export function useGetProjectTags<
+  TData = Awaited<ReturnType<typeof getProjectTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getProjectTags>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetProjectTagsQueryOptions(handle, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type createProjectTagResponse201 = {
+  data: CreateTagResponse;
+  status: 201;
+};
+
+export type createProjectTagResponseSuccess = createProjectTagResponse201 & {
+  headers: Headers;
+};
+export type createProjectTagResponse = createProjectTagResponseSuccess;
+
+export const getCreateProjectTagUrl = (handle: string) => {
+  return `/projects/${handle}/tags`;
+};
+
+/**
+ * 프로젝트 태그를 생성합니다. 프로젝트 관리자만 접근할 수 있습니다.
+ * @summary Create Project Tag
+ */
+export const createProjectTag = async (
+  handle: string,
+  createTagRequest?: CreateTagRequest,
+  options?: RequestInit,
+): Promise<createProjectTagResponse> => {
+  return api<createProjectTagResponse>(getCreateProjectTagUrl(handle), {
+    ...options,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+      ...options?.headers,
+    },
+    body: JSON.stringify(createTagRequest),
+  });
+};
+
+export const getCreateProjectTagMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createProjectTag>>,
+    TError,
+    { handle: string; data?: CreateTagRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createProjectTag>>,
+  TError,
+  { handle: string; data?: CreateTagRequest },
+  TContext
+> => {
+  const mutationKey = ['createProjectTag'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createProjectTag>>,
+    { handle: string; data?: CreateTagRequest }
+  > = (props) => {
+    const { handle, data } = props ?? {};
+
+    return createProjectTag(handle, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateProjectTagMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createProjectTag>>
+>;
+export type CreateProjectTagMutationBody = CreateTagRequest | undefined;
+export type CreateProjectTagMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create Project Tag
+ */
+export const useCreateProjectTag = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createProjectTag>>,
+      TError,
+      { handle: string; data?: CreateTagRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createProjectTag>>,
+  TError,
+  { handle: string; data?: CreateTagRequest },
+  TContext
+> => {
+  return useMutation(getCreateProjectTagMutationOptions(options), queryClient);
+};
+export type getProjectUnverifiedTagsResponse200 = {
+  data: GetTagsResponse;
+  status: 200;
+};
+
+export type getProjectUnverifiedTagsResponseSuccess =
+  getProjectUnverifiedTagsResponse200 & {
+    headers: Headers;
+  };
+export type getProjectUnverifiedTagsResponse =
+  getProjectUnverifiedTagsResponseSuccess;
+
+export const getGetProjectUnverifiedTagsUrl = (handle: string) => {
+  return `/projects/${handle}/tags/unverified`;
+};
+
+/**
+ * 프로젝트의 인증되지 않은 태그 목록을 조회합니다. 프로젝트 관리자만 접근할 수 있습니다.
+ * @summary Get Project Unverified Tags
+ */
+export const getProjectUnverifiedTags = async (
+  handle: string,
+  options?: RequestInit,
+): Promise<getProjectUnverifiedTagsResponse> => {
+  return api<getProjectUnverifiedTagsResponse>(
+    getGetProjectUnverifiedTagsUrl(handle),
+    {
+      ...options,
+      method: 'GET',
+    },
+  );
+};
+
+export const getGetProjectUnverifiedTagsQueryKey = (handle: string) => {
+  return [`/projects/${handle}/tags/unverified`] as const;
+};
+
+export const getGetProjectUnverifiedTagsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetProjectUnverifiedTagsQueryKey(handle);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProjectUnverifiedTags>>
+  > = ({ signal }) =>
+    getProjectUnverifiedTags(handle, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: handle !== null && handle !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProjectUnverifiedTagsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProjectUnverifiedTags>>
+>;
+export type GetProjectUnverifiedTagsQueryError = ErrorType<unknown>;
+
+export function useGetProjectUnverifiedTags<
+  TData = Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectUnverifiedTags>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectUnverifiedTags<
+  TData = Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectUnverifiedTags>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectUnverifiedTags<
+  TData = Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Project Unverified Tags
+ */
+
+export function useGetProjectUnverifiedTags<
+  TData = Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  handle: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectUnverifiedTags>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetProjectUnverifiedTagsQueryOptions(handle, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
 export type searchTagsResponse200 = {
-  data: SearchTagsResponse;
+  data: GetTagsResponse;
   status: 200;
 };
 
@@ -206,3 +662,363 @@ export function useSearchTags<
 
   return withQueryKey(query, queryOptions.queryKey);
 }
+
+export type createTagResponse201 = {
+  data: CreateTagResponse;
+  status: 201;
+};
+
+export type createTagResponseSuccess = createTagResponse201 & {
+  headers: Headers;
+};
+export type createTagResponse = createTagResponseSuccess;
+
+export const getCreateTagUrl = () => {
+  return `/tags`;
+};
+
+/**
+ * 전역 태그를 생성합니다. 관리자만 접근할 수 있습니다.
+ * @summary Create Tag
+ */
+export const createTag = async (
+  createTagRequest?: CreateTagRequest,
+  options?: RequestInit,
+): Promise<createTagResponse> => {
+  return api<createTagResponse>(getCreateTagUrl(), {
+    ...options,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+      ...options?.headers,
+    },
+    body: JSON.stringify(createTagRequest),
+  });
+};
+
+export const getCreateTagMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createTag>>,
+    TError,
+    { data?: CreateTagRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createTag>>,
+  TError,
+  { data?: CreateTagRequest },
+  TContext
+> => {
+  const mutationKey = ['createTag'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createTag>>,
+    { data?: CreateTagRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createTag(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateTagMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createTag>>
+>;
+export type CreateTagMutationBody = CreateTagRequest | undefined;
+export type CreateTagMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create Tag
+ */
+export const useCreateTag = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createTag>>,
+      TError,
+      { data?: CreateTagRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createTag>>,
+  TError,
+  { data?: CreateTagRequest },
+  TContext
+> => {
+  return useMutation(getCreateTagMutationOptions(options), queryClient);
+};
+export type getUnverifiedTagsResponse200 = {
+  data: GetTagsResponse;
+  status: 200;
+};
+
+export type getUnverifiedTagsResponseSuccess = getUnverifiedTagsResponse200 & {
+  headers: Headers;
+};
+export type getUnverifiedTagsResponse = getUnverifiedTagsResponseSuccess;
+
+export const getGetUnverifiedTagsUrl = () => {
+  return `/tags/unverified`;
+};
+
+/**
+ * 인증되지 않은 전역 태그 목록을 조회합니다. 관리자만 접근할 수 있습니다.
+ * @summary Get Unverified Tags
+ */
+export const getUnverifiedTags = async (
+  options?: RequestInit,
+): Promise<getUnverifiedTagsResponse> => {
+  return api<getUnverifiedTagsResponse>(getGetUnverifiedTagsUrl(), {
+    ...options,
+    method: 'GET',
+  });
+};
+
+export const getGetUnverifiedTagsQueryKey = () => {
+  return [`/tags/unverified`] as const;
+};
+
+export const getGetUnverifiedTagsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getUnverifiedTags>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof api>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetUnverifiedTagsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getUnverifiedTags>>
+  > = ({ signal }) => getUnverifiedTags({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUnverifiedTags>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetUnverifiedTagsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getUnverifiedTags>>
+>;
+export type GetUnverifiedTagsQueryError = ErrorType<unknown>;
+
+export function useGetUnverifiedTags<
+  TData = Awaited<ReturnType<typeof getUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUnverifiedTags>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUnverifiedTags>>,
+          TError,
+          Awaited<ReturnType<typeof getUnverifiedTags>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUnverifiedTags<
+  TData = Awaited<ReturnType<typeof getUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUnverifiedTags>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUnverifiedTags>>,
+          TError,
+          Awaited<ReturnType<typeof getUnverifiedTags>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUnverifiedTags<
+  TData = Awaited<ReturnType<typeof getUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUnverifiedTags>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Unverified Tags
+ */
+
+export function useGetUnverifiedTags<
+  TData = Awaited<ReturnType<typeof getUnverifiedTags>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUnverifiedTags>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetUnverifiedTagsQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type verifyTagResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type verifyTagResponseSuccess = verifyTagResponse204 & {
+  headers: Headers;
+};
+export type verifyTagResponse = verifyTagResponseSuccess;
+
+export const getVerifyTagUrl = (tagId: string) => {
+  return `/tags/${tagId}/verify`;
+};
+
+/**
+ * 태그를 인증합니다. 전역 태그는 관리자만, 프로젝트 태그는 프로젝트 관리자만 인증할 수 있습니다.
+ * @summary Verify Tag
+ */
+export const verifyTag = async (
+  tagId: string,
+  options?: RequestInit,
+): Promise<verifyTagResponse> => {
+  return api<verifyTagResponse>(getVerifyTagUrl(tagId), {
+    ...options,
+    method: 'PATCH',
+  });
+};
+
+export const getVerifyTagMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyTag>>,
+    TError,
+    { tagId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof verifyTag>>,
+  TError,
+  { tagId: string },
+  TContext
+> => {
+  const mutationKey = ['verifyTag'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof verifyTag>>,
+    { tagId: string }
+  > = (props) => {
+    const { tagId } = props ?? {};
+
+    return verifyTag(tagId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type VerifyTagMutationResult = NonNullable<
+  Awaited<ReturnType<typeof verifyTag>>
+>;
+
+export type VerifyTagMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Verify Tag
+ */
+export const useVerifyTag = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof verifyTag>>,
+      TError,
+      { tagId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof verifyTag>>,
+  TError,
+  { tagId: string },
+  TContext
+> => {
+  return useMutation(getVerifyTagMutationOptions(options), queryClient);
+};

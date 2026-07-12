@@ -29,7 +29,7 @@ import { NodeType } from './nodes';
 const MAX_COMMAND_QUERY_LENGTH = 6;
 
 interface CommandsItemProps {
-  name: string;
+  name: 'h1' | 'h2' | 'bold' | 'italic' | 'image';
   icon: React.ReactNode;
   command: (props: { editor: Editor; range: Range }) => void;
 }
@@ -287,7 +287,7 @@ const Commands = forwardRef<CommandsRef, CommandsProps>((props, ref) => {
 
       <div className="flex items-center justify-between px-3 py-2">
         <span className="text-sm">{t('ignore.title')}</span>
-        <span className="text-xs">ESC</span>
+        <span className="text-xs">{t('ignore.key')}</span>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CaretLeftIcon } from '@phosphor-icons/react';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -13,13 +12,6 @@ import z from 'zod';
 import { useGetProjectHandleAvailability } from '@/api/__generated__/project/project';
 import { useCreateProject } from '@/components/feature/project/hooks/useCreateProject';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import {
   Field,
   FieldError,
@@ -122,126 +114,113 @@ export default function CreateProjectPage() {
   return (
     <div>
       <form onSubmit={form.handleSubmit(formSubmitHandler)}>
-        <Card>
-          <CardHeader>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => router.back()}
-            >
-              <CaretLeftIcon />
-            </Button>
+        <h1 className="text-lg font-semibold">{t('title')}</h1>
 
-            <CardTitle className="text-lg">{t('title')}</CardTitle>
-          </CardHeader>
+        <div className="mt-4">
+          <FieldGroup>
+            <Controller
+              name="name"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <div className="flex items-center justify-between">
+                    <FieldLabel>{t('form.name.label')}</FieldLabel>
+                    <FieldError errors={[fieldState.error]} />
+                  </div>
+                  <Input
+                    {...field}
+                    aria-invalid={fieldState.invalid}
+                    placeholder={t('form.name.placeholder')}
+                  />
+                </Field>
+              )}
+            />
+            <Controller
+              name="handle"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <div className="flex items-center justify-between">
+                    <FieldLabel>{t('form.handle.label')}</FieldLabel>
+                    <FieldError errors={[fieldState.error]} />
+                  </div>
+                  <Input
+                    {...field}
+                    aria-invalid={fieldState.invalid}
+                    placeholder={t('form.handle.placeholder')}
+                  />
+                </Field>
+              )}
+            />
+            <Controller
+              name="description"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <div className="flex items-center justify-between">
+                    <FieldLabel>{t('form.description.label')}</FieldLabel>
+                    <FieldError errors={[fieldState.error]} />
+                  </div>
+                  <Textarea
+                    {...field}
+                    aria-invalid={fieldState.invalid}
+                    placeholder={t('form.description.placeholder')}
+                  />
+                </Field>
+              )}
+            />
+            <Controller
+              name="isPublic"
+              control={form.control}
+              render={({ field }) => (
+                <Field>
+                  <FieldLabel>{t('form.visibility.label')}</FieldLabel>
+                  <RadioGroup
+                    value={field.value ? 'public' : 'private'}
+                    onValueChange={(v) => field.onChange(v === 'public')}
+                    className="mt-1"
+                  >
+                    <label className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[[data-state=checked]]:border-primary">
+                      <RadioGroupItem value="public" className="mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">
+                          {t('form.visibility.public')}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          {t('form.visibility.public_description')}
+                        </p>
+                      </div>
+                    </label>
+                    <label className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[[data-state=checked]]:border-primary">
+                      <RadioGroupItem value="private" className="mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">
+                          {t('form.visibility.private')}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          {t('form.visibility.private_description')}
+                        </p>
+                      </div>
+                    </label>
+                  </RadioGroup>
+                </Field>
+              )}
+            />
+          </FieldGroup>
+        </div>
 
-          <CardContent>
-            <FieldGroup>
-              <Controller
-                name="name"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <div className="flex items-center justify-between">
-                      <FieldLabel>{t('form.name.label')}</FieldLabel>
-                      <FieldError errors={[fieldState.error]} />
-                    </div>
-                    <Input
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      placeholder={t('form.name.placeholder')}
-                    />
-                  </Field>
-                )}
-              />
-              <Controller
-                name="handle"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <div className="flex items-center justify-between">
-                      <FieldLabel>{t('form.handle.label')}</FieldLabel>
-                      <FieldError errors={[fieldState.error]} />
-                    </div>
-                    <Input
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      placeholder={t('form.handle.placeholder')}
-                    />
-                  </Field>
-                )}
-              />
-              <Controller
-                name="description"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <div className="flex items-center justify-between">
-                      <FieldLabel>{t('form.description.label')}</FieldLabel>
-                      <FieldError errors={[fieldState.error]} />
-                    </div>
-                    <Textarea
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      placeholder={t('form.description.placeholder')}
-                    />
-                  </Field>
-                )}
-              />
-              <Controller
-                name="isPublic"
-                control={form.control}
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel>{t('form.visibility.label')}</FieldLabel>
-                    <RadioGroup
-                      value={field.value ? 'public' : 'private'}
-                      onValueChange={(v) => field.onChange(v === 'public')}
-                      className="mt-1"
-                    >
-                      <label className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[[data-state=checked]]:border-primary">
-                        <RadioGroupItem value="public" className="mt-0.5" />
-                        <div>
-                          <p className="text-sm font-medium">
-                            {t('form.visibility.public')}
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            {t('form.visibility.public_description')}
-                          </p>
-                        </div>
-                      </label>
-                      <label className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[[data-state=checked]]:border-primary">
-                        <RadioGroupItem value="private" className="mt-0.5" />
-                        <div>
-                          <p className="text-sm font-medium">
-                            {t('form.visibility.private')}
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            {t('form.visibility.private_description')}
-                          </p>
-                        </div>
-                      </label>
-                    </RadioGroup>
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </CardContent>
-
-          <CardFooter className="flex justify-end">
-            <Button
-              type="submit"
-              disabled={
-                isPending ||
-                isAvailabilityPending ||
-                handleAvailability?.data.available === false
-              }
-            >
-              {isPending ? t('form.submit.creating') : t('form.submit.label')}
-            </Button>
-          </CardFooter>
-        </Card>
+        <div className="mt-4 flex justify-end">
+          <Button
+            type="submit"
+            disabled={
+              isPending ||
+              isAvailabilityPending ||
+              handleAvailability?.data.available === false
+            }
+          >
+            {isPending ? t('form.submit.creating') : t('form.submit.label')}
+          </Button>
+        </div>
       </form>
     </div>
   );

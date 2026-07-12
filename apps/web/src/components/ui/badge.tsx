@@ -22,9 +22,12 @@ const badgeVariants = cva(
       },
       color: {
         default: '',
-        amber: 'bg-amber-900 text-white',
-        blue: 'bg-blue-500 text-white',
-        white: 'bg-white text-black border-black',
+        success: 'bg-success-tint text-success-text',
+        warning: 'bg-warning-tint text-warning-text',
+        danger: 'bg-danger-tint text-danger-text',
+        short: 'bg-type-short-tint text-type-short',
+        question: 'bg-type-question-tint text-type-question',
+        long: 'bg-type-long-tint text-type-long',
       },
     },
     defaultVariants: {

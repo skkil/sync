@@ -4,10 +4,12 @@ import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.docume
 import static com.epages.restdocs.apispec.Schema.schema;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,6 +21,7 @@ import com.skkil.sync.common.security.WithAuthenticatedUserSecurityContextFactor
 import com.skkil.sync.common.util.pagination.snippets.CursorPaginationRequestSnippets;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.post.dto.response.GetPostRecommendationsResponse;
+import com.skkil.sync.post.model.PostRecommendationType;
 import com.skkil.sync.post.service.PostRecommendationService;
 import com.skkil.sync.post.snippets.GetPostRecommendationsResponseSnippets;
 import java.util.function.Function;
@@ -56,7 +59,7 @@ class PostRecommendationControllerTests {
     MultiValueMap<String, String> queryParams =
         CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams();
 
-    when(postRecommendationService.getRecommendations(eq(user.userId()), any()))
+    when(postRecommendationService.getRecommendations(eq(user.userId()), isNull(), any()))
         .thenReturn(response);
 
     mockMvc
@@ -73,8 +76,26 @@ class PostRecommendationControllerTests {
                 preprocessRequest(),
                 preprocessResponse(prettyPrint()),
                 Function.identity(),
-                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
+                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters()
+                    .and(parameterWithName("type").description("추천 게시글 종류").optional()),
                 GetPostRecommendationsResponseSnippets.getGetPostRecommendationsResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getRecommendations] type 파라미터가 주어지면 해당 추천 방식만 사용한다")
+  @WithAuthenticatedUser
+  void getRecommendations_withType_shouldUseOnlyThatChannel() throws Exception {
+    AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
+    GetPostRecommendationsResponse response =
+        GetPostRecommendationsResponseSnippets.getGetPostRecommendationsResponse();
+
+    when(postRecommendationService.getRecommendations(
+            eq(user.userId()), eq(PostRecommendationType.TRENDING), any()))
+        .thenReturn(response);
+
+    mockMvc
+        .perform(get("/posts/recommendations").queryParam("type", "TRENDING"))
+        .andExpect(status().isOk());
   }
 
   @Test

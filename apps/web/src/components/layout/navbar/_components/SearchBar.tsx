@@ -63,7 +63,7 @@ export default function SearchBar({ variant }: SearchBarProps) {
             variant="ghost"
             size="icon"
             onClick={() => setIsExpanded(true)}
-            aria-label="검색"
+            aria-label={t('search.aria-open')}
           >
             <MagnifyingGlassIcon size={20} />
           </Button>
@@ -93,7 +93,7 @@ export default function SearchBar({ variant }: SearchBarProps) {
                 setIsExpanded(false);
                 setQuery('');
               }}
-              aria-label="검색 닫기"
+              aria-label={t('search.aria-close')}
             >
               <XIcon size={20} />
             </Button>

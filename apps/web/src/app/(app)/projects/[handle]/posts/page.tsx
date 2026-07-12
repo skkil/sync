@@ -11,12 +11,19 @@ interface ProjectPostsPageProps {
   params: Promise<{
     handle: string;
   }>;
+  searchParams: Promise<{
+    type?: string;
+    authorHandle?: string;
+    tagId?: string;
+  }>;
 }
 
 export default async function ProjectPostsPage({
   params,
+  searchParams,
 }: ProjectPostsPageProps) {
   const { handle } = await params;
+  const { type, authorHandle, tagId } = await searchParams;
 
   const queryClient = getQueryClient();
 
@@ -33,7 +40,12 @@ export default async function ProjectPostsPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProjectPosts handle={handle} />
+      <ProjectPosts
+        handle={handle}
+        type={type}
+        authorHandle={authorHandle}
+        tagId={tagId}
+      />
     </HydrationBoundary>
   );
 }

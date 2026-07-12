@@ -78,13 +78,14 @@ public class PostService {
             .title(request.title())
             .content(request.content().json());
 
+    Project project = null;
     if (request.project() != null) {
-      Project project = projectDomainService.getProjectByHandle(request.project().handle());
+      project = projectDomainService.getProjectByHandle(request.project().handle());
       postBuilder.project(project);
     }
 
     Post post = postBuilder.build();
-    tagService.addTagsToPost(post, request.tags());
+    tagService.addTagsToPost(post, project, request.tags());
 
     post = postRepository.save(post);
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { StarIcon } from '@phosphor-icons/react';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -30,6 +31,7 @@ const RatingItem = ({
   onValueChange,
   onValueHover,
 }: RatingItemProps) => {
+  const t = useTranslations('components.ui.rating');
   const Comp = readOnly ? 'span' : 'label';
   const ref = React.useRef<HTMLLabelElement>(null);
   const isFirstRender = React.useRef(true);
@@ -98,7 +100,7 @@ const RatingItem = ({
       <Comp
         ref={ref}
         htmlFor={`${ratingIconId}-${point}`}
-        aria-label={`${point} Stars`}
+        aria-label={t('star', { point })}
         onClick={!readOnly ? handleClick : undefined}
         onMouseMove={!readOnly ? handleMouseMove : undefined}
         onMouseLeave={!readOnly ? onMouseLeave : undefined}
@@ -150,6 +152,7 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
     },
     ref,
   ) => {
+    const t = useTranslations('components.ui.rating');
     const id = React.useId();
     const ratingName = name ?? `rating-${id}`;
     const [hoveredValue, setHoveredValue] = React.useState<number>(0);
@@ -208,7 +211,7 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         onKeyDown={!readOnly ? handleKeyDown : undefined}
         tabIndex={!readOnly && value === 0 ? 0 : undefined}
         className={cn('flex', className)}
-        aria-label={readOnly ? `${value} stars` : 'Rating'}
+        aria-label={readOnly ? t('value', { value }) : t('label')}
         aria-valuemin={0}
         aria-valuenow={value}
         aria-valuemax={5}

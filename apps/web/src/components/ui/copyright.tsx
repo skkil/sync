@@ -1,3 +1,7 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
 import { cn } from '@/lib/utils';
 
 interface CopyrightProps {
@@ -5,9 +9,11 @@ interface CopyrightProps {
 }
 
 export function Copyright({ className }: CopyrightProps) {
+  const t = useTranslations('components.ui.copyright');
+
   return (
     <span className={cn('text-xs text-muted-foreground', className)}>
-      © {new Date().getFullYear()} SKKiL. All rights reserved.
+      {t('text', { year: new Date().getFullYear() })}
     </span>
   );
 }

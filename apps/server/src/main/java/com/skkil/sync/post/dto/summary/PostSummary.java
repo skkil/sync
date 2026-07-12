@@ -23,6 +23,4 @@ public record PostSummary(
     Long likeCount,
     boolean liked,
     Long commentCount,
-    boolean bookmarked,
-    @Nullable OffsetDateTime bookmarkedAt,
-    @Nullable OffsetDateTime likedAt) {}
+    boolean bookmarked) {}

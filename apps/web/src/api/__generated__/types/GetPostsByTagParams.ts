@@ -22,8 +22,4 @@ export type GetPostsByTagParams = {
    * Cursor for pagination, indicating the position before which to return items
    */
   before?: string;
-  /**
-   * 게시글 타입
-   */
-  type?: string;
 };

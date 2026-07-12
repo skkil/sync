@@ -2,6 +2,7 @@
 
 import { PlusIcon, UserCircleIcon } from '@phosphor-icons/react';
 import { useDebounce } from '@uidotdev/usehooks';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -31,6 +32,10 @@ interface AddTeammateDropdownProps {
 export default function AddTeammateDropdown({
   projectHandle,
 }: AddTeammateDropdownProps) {
+  const t = useTranslations(
+    'pages.projects.project.settings.teammates.add-dropdown',
+  );
+
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 300);
@@ -55,12 +60,12 @@ export default function AddTeammateDropdown({
       },
       {
         onSuccess: () => {
-          toast.success('초대를 보냈습니다.');
+          toast.success(t('messages.success'));
           setQuery('');
           setOpen(false);
         },
         onError: () => {
-          toast.error('초대에 실패했습니다.');
+          toast.error(t('messages.error'));
         },
       },
     );
@@ -79,24 +84,24 @@ export default function AddTeammateDropdown({
       <PopoverTrigger asChild>
         <Button size="sm">
           <PlusIcon className="h-4 w-4" />
-          팀원 추가
+          {t('trigger')}
         </Button>
       </PopoverTrigger>
 
       <PopoverContent className="w-72 p-0" align="end">
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder="이름 또는 핸들로 검색"
+            placeholder={t('search-placeholder')}
             value={query}
             onValueChange={setQuery}
           />
           <CommandList>
             {query.trim().length === 0 ? (
-              <CommandEmpty>검색어를 입력하세요.</CommandEmpty>
+              <CommandEmpty>{t('empty-query')}</CommandEmpty>
             ) : isFetching ? (
-              <CommandEmpty>검색하는 중...</CommandEmpty>
+              <CommandEmpty>{t('searching')}</CommandEmpty>
             ) : users.length === 0 ? (
-              <CommandEmpty>사용자를 찾을 수 없습니다.</CommandEmpty>
+              <CommandEmpty>{t('no-results')}</CommandEmpty>
             ) : (
               <CommandGroup>
                 {users.map((user) => (

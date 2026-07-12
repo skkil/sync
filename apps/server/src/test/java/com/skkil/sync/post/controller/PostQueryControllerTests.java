@@ -143,22 +143,96 @@ class PostQueryControllerTests {
   }
 
   @Test
-  @DisplayName("[getPostsByProject] API 문서화 테스트")
-  void getPostsByProject() throws Exception {
-    String handle = "project";
-    PostType type = PostType.SHORT;
+  @DisplayName("[getCommentedPosts] API 문서화 테스트")
+  void getCommentedPosts() throws Exception {
+    Long userId = 1L;
 
     CursorPaginationRequest pagination =
         CursorPaginationRequestSnippets.getCursorPaginationRequest();
     GetPostsResponse response = GetPostsResponseSnippets.getGetPostsResponse();
 
-    when(postQueryService.getPostsByProject(any(), eq(handle), eq(type), eq(pagination)))
+    String projectHandle = "sync";
+
+    when(postQueryService.getCommentedPosts(any(), eq(userId), eq(projectHandle), eq(pagination)))
+        .thenReturn(response);
+
+    mockMvc
+        .perform(
+            get("/users/{userId}/posts/commented", userId)
+                .queryParam("projectHandle", projectHandle)
+                .queryParams(
+                    CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetCommentedPosts",
+                ResourceSnippetParameters.builder()
+                    .tag("post")
+                    .summary("Get Commented Posts")
+                    .description("Get Commented Posts")
+                    .responseSchema(schema("GetPostsResponse")),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("userId").description("User ID")),
+                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters()
+                    .and(parameterWithName("projectHandle").description("프로젝트 핸들").optional()),
+                GetPostsResponseSnippets.getPostsResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getPostsByTag] API 문서화 테스트")
+  void getPostsByTag() throws Exception {
+    Long tagId = 1L;
+
+    CursorPaginationRequest pagination =
+        CursorPaginationRequestSnippets.getCursorPaginationRequest();
+    GetPostsResponse response = GetPostsResponseSnippets.getGetPostsResponse();
+
+    when(postQueryService.getPostsByTag(any(), eq(tagId), eq(pagination))).thenReturn(response);
+
+    mockMvc
+        .perform(
+            get("/tags/{tagId}/posts", tagId)
+                .queryParams(
+                    CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetPostsByTag",
+                ResourceSnippetParameters.builder()
+                    .tag("post")
+                    .summary("Get Posts By Tag")
+                    .description("Get Posts By Tag")
+                    .responseSchema(schema(GetPostsResponse.class.getSimpleName())),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("tagId").description("태그 ID")),
+                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
+                GetPostsResponseSnippets.getPostsResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getPostsByProject] API 문서화 테스트")
+  void getPostsByProject() throws Exception {
+    String handle = "project";
+    PostType type = PostType.SHORT;
+    String authorHandle = "author";
+
+    CursorPaginationRequest pagination =
+        CursorPaginationRequestSnippets.getCursorPaginationRequest();
+    GetPostsResponse response = GetPostsResponseSnippets.getGetPostsResponse();
+
+    when(postQueryService.getPostsByProject(
+            any(), eq(handle), eq(type), eq(authorHandle), eq(pagination)))
         .thenReturn(response);
 
     mockMvc
         .perform(
             get("/projects/{handle}/posts", handle)
                 .queryParam("type", type.name())
+                .queryParam("authorHandle", authorHandle)
                 .queryParams(
                     CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
         .andExpect(status().isOk())
@@ -175,13 +249,14 @@ class PostQueryControllerTests {
                 Function.identity(),
                 pathParameters(parameterWithName("handle").description("프로젝트 핸들")),
                 CursorPaginationRequestSnippets.getCursorPaginationRequestParameters()
-                    .and(parameterWithName("type").description("게시글 타입").optional()),
+                    .and(parameterWithName("type").description("게시글 타입").optional())
+                    .and(parameterWithName("authorHandle").description("작성자 핸들").optional()),
                 GetPostsResponseSnippets.getPostsResponseFields()));
   }
 
   @Test
-  @DisplayName("[getPostsByTag] API 문서화 테스트")
-  void getPostsByTag() throws Exception {
+  @DisplayName("[getPublicPostsByTag] API 문서화 테스트")
+  void getPublicPostsByTag() throws Exception {
     String name = "spring";
     PostType type = PostType.LONG;
 
@@ -189,22 +264,22 @@ class PostQueryControllerTests {
         CursorPaginationRequestSnippets.getCursorPaginationRequest();
     GetPostsResponse response = GetPostsResponseSnippets.getGetPostsResponse();
 
-    when(postQueryService.getPostsByTag(any(), eq(name), eq(type), eq(pagination)))
+    when(postQueryService.getPublicPostsByTag(any(), eq(name), eq(type), eq(pagination)))
         .thenReturn(response);
 
     mockMvc
         .perform(
-            get("/tags/{name}/posts", name)
+            get("/tags/by-name/{name}/posts", name)
                 .queryParam("type", type.name())
                 .queryParams(
                     CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
         .andExpect(status().isOk())
         .andDo(
             document(
-                "GetPostsByTag",
+                "GetPublicPostsByTag",
                 ResourceSnippetParameters.builder()
                     .tag("post")
-                    .summary("Get Posts By Tag")
+                    .summary("Get Public Posts By Tag")
                     .description("태그가 붙은 공개 게시글 목록을 조회합니다.")
                     .responseSchema(schema(GetPostsResponse.class.getSimpleName())),
                 null,

@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -60,18 +61,24 @@ class DataSeeder implements ApplicationRunner {
   private final ProjectSeeder projectSeeder;
   private final PostSeeder postSeeder;
   private final SocialGraphSeeder socialGraphSeeder;
+  private final String testAccountEmail;
+  private final String testAccountPassword;
 
   DataSeeder(
       UserRepository userRepository,
       UserSeeder userSeeder,
       ProjectSeeder projectSeeder,
       PostSeeder postSeeder,
-      SocialGraphSeeder socialGraphSeeder) {
+      SocialGraphSeeder socialGraphSeeder,
+      @Value("${app.seed.account.email}") String testAccountEmail,
+      @Value("${app.seed.account.password}") String testAccountPassword) {
     this.userRepository = userRepository;
     this.userSeeder = userSeeder;
     this.projectSeeder = projectSeeder;
     this.postSeeder = postSeeder;
     this.socialGraphSeeder = socialGraphSeeder;
+    this.testAccountEmail = testAccountEmail;
+    this.testAccountPassword = testAccountPassword;
   }
 
   @Override
@@ -95,7 +102,11 @@ class DataSeeder implements ApplicationRunner {
   }
 
   private List<User> seedUsers(Faker faker, Random random) {
-    List<User> users = new ArrayList<>(USER_COUNT);
+    List<User> users = new ArrayList<>(USER_COUNT + 1);
+    users.add(
+        userSeeder.seed(
+            testAccountEmail, testAccountPassword, "tester", "테스트 계정", "테스터", "로컬 개발용 테스트 계정입니다."));
+
     for (int i = 0; i < USER_COUNT; i++) {
       String email = "user" + i + "@example.com";
       String handle = uniqueHandle(faker);

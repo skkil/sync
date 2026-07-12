@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -23,6 +24,8 @@ const PROJECT_ICON_ALLOWED_TYPES = 'image/*';
 const PROJECT_ICON_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
 export default function WorkspaceSettingsView() {
+  const t = useTranslations('pages.projects.project.settings.workspace');
+
   const { handle } = useParams<{ handle: string }>();
   const { data, isPending } = useGetProjectByHandle(handle);
 
@@ -37,19 +40,17 @@ export default function WorkspaceSettingsView() {
   return (
     <div className="space-y-7">
       <div>
-        <h2 className="text-lg font-semibold">워크스페이스 설정</h2>
-        <p className="text-sm text-muted-foreground">
-          프로젝트의 기본 정보를 관리합니다.
-        </p>
+        <h2 className="text-lg font-semibold">{t('heading')}</h2>
+        <p className="text-sm text-muted-foreground">{t('description')}</p>
       </div>
 
       <Separator />
 
       <section className="space-y-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-medium">프로젝트 아이콘</h3>
+          <h3 className="text-sm font-medium">{t('icon.heading')}</h3>
           <p className="text-xs text-muted-foreground">
-            프로젝트를 대표하는 아이콘 이미지입니다.
+            {t('icon.description')}
           </p>
         </div>
         <ProjectIconField handle={handle} isAdmin={isAdmin} />
@@ -59,13 +60,13 @@ export default function WorkspaceSettingsView() {
 
       <section className="space-y-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-medium">프로젝트 이름</h3>
+          <h3 className="text-sm font-medium">{t('name.heading')}</h3>
           <p className="text-xs text-muted-foreground">
-            프로젝트의 표시 이름입니다.
+            {t('name.description')}
           </p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="project-name">이름</Label>
+          <Label htmlFor="project-name">{t('name.label')}</Label>
           <Input
             id="project-name"
             defaultValue={project?.summary.name ?? ''}
@@ -73,7 +74,7 @@ export default function WorkspaceSettingsView() {
           />
         </div>
         <Button disabled={!isAdmin} size="sm">
-          저장
+          {t('name.save')}
         </Button>
       </section>
 
@@ -81,13 +82,13 @@ export default function WorkspaceSettingsView() {
 
       <section className="space-y-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-medium">URL 슬러그</h3>
+          <h3 className="text-sm font-medium">{t('handle.heading')}</h3>
           <p className="text-xs text-muted-foreground">
-            프로젝트 URL에 사용되는 고유 식별자입니다.
+            {t('handle.description')}
           </p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="project-handle">슬러그</Label>
+          <Label htmlFor="project-handle">{t('handle.label')}</Label>
           <Input
             id="project-handle"
             defaultValue={project?.summary.handle ?? ''}
@@ -95,7 +96,7 @@ export default function WorkspaceSettingsView() {
           />
         </div>
         <Button disabled={!isAdmin} size="sm">
-          저장
+          {t('handle.save')}
         </Button>
       </section>
 
@@ -103,17 +104,21 @@ export default function WorkspaceSettingsView() {
 
       <section className="space-y-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-medium text-destructive">위험 구역</h3>
+          <h3 className="text-sm font-medium text-destructive">
+            {t('danger-zone.heading')}
+          </h3>
           <p className="text-xs text-muted-foreground">
-            이 작업은 되돌릴 수 없습니다. 신중하게 진행하세요.
+            {t('danger-zone.description')}
           </p>
         </div>
         <div className="rounded-md border border-destructive/30 divide-y divide-destructive/20">
           <div className="flex items-center justify-between p-4">
             <div>
-              <p className="text-sm font-medium">워크스페이스 나가기</p>
+              <p className="text-sm font-medium">
+                {t('danger-zone.leave.title')}
+              </p>
               <p className="text-xs text-muted-foreground">
-                이 프로젝트에서 탈퇴합니다.
+                {t('danger-zone.leave.description')}
               </p>
             </div>
             <Button
@@ -122,18 +127,20 @@ export default function WorkspaceSettingsView() {
               disabled={!isMember}
               className="border-destructive/50 text-destructive hover:bg-destructive/10 disabled:opacity-50"
             >
-              나가기
+              {t('danger-zone.leave.action')}
             </Button>
           </div>
           <div className="flex items-center justify-between p-4">
             <div>
-              <p className="text-sm font-medium">워크스페이스 삭제</p>
+              <p className="text-sm font-medium">
+                {t('danger-zone.delete.title')}
+              </p>
               <p className="text-xs text-muted-foreground">
-                프로젝트와 모든 데이터를 영구적으로 삭제합니다.
+                {t('danger-zone.delete.description')}
               </p>
             </div>
             <Button variant="destructive" size="sm" disabled={!isAdmin}>
-              삭제
+              {t('danger-zone.delete.action')}
             </Button>
           </div>
         </div>
@@ -149,6 +156,8 @@ function ProjectIconField({
   handle: string;
   isAdmin: boolean;
 }) {
+  const t = useTranslations('pages.projects.project.settings.workspace.icon');
+
   const { data } = useGetProjectByHandle(handle);
   const project = data?.data;
 
@@ -173,9 +182,9 @@ function ProjectIconField({
 
   const handleFileError = (error: FileInputError) => {
     if (error === 'size') {
-      setError('파일 크기는 5MB 이하여야 합니다.');
+      setError(t('errors.size'));
     } else if (error === 'type') {
-      setError('지원하지 않는 파일 형식입니다.');
+      setError(t('errors.type'));
     }
   };
 
@@ -207,7 +216,7 @@ function ProjectIconField({
     });
 
     if (!uploadSuccess) {
-      toast.error('업로드에 실패했습니다.');
+      toast.error(t('errors.upload-failed'));
       setSelectedIcon(null);
       return;
     }
@@ -221,7 +230,7 @@ function ProjectIconField({
       },
       {
         onSuccess: () => {
-          toast.success('프로젝트 아이콘이 변경되었습니다.');
+          toast.success(t('messages.success'));
           setSelectedIcon(null);
         },
         onError: (error) => {
@@ -229,11 +238,11 @@ function ProjectIconField({
             error instanceof SyncError &&
             error.code === ErrorCode.NETWORK_ERROR
           ) {
-            setError('서버에 연결할 수 없습니다. 나중에 다시 시도하세요.');
+            setError(t('errors.network'));
           } else if (error instanceof SyncError) {
             setError(error.message);
           } else {
-            setError('업로드에 실패했습니다.');
+            setError(t('errors.upload-failed'));
           }
         },
       },
@@ -279,7 +288,9 @@ function ProjectIconField({
             disabled={!isAdmin || isUploadMediaPending}
           >
             <Button type="button" size="sm" disabled={!isAdmin}>
-              {project.summary.iconUrl || selectedIcon ? '변경' : '업로드'}
+              {project.summary.iconUrl || selectedIcon
+                ? t('change')
+                : t('upload')}
             </Button>
           </FileInput>
 
@@ -291,7 +302,7 @@ function ProjectIconField({
               disabled={!isAdmin}
               onClick={() => handleRemoveIcon()}
             >
-              제거
+              {t('remove')}
             </Button>
           )}
         </div>

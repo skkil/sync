@@ -7,7 +7,8 @@ public enum PermissionEvaluatorType {
   POST("POST"),
   COMMENT("COMMENT"),
   JOB_APPLICATION("JOB_APPLICATION"),
-  PROJECT("PROJECT");
+  PROJECT("PROJECT"),
+  TAG("TAG");
 
   private final String value;
 

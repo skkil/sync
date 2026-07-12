@@ -28,12 +28,22 @@ function useLikeToggle(
   const { mutate: unlikePost } = useUnlikePost();
 
   const toggle = () => {
+    const prevLiked = liked;
+    const prevLikeCount = likeCount;
     const nextLiked = !liked;
     setLiked(nextLiked);
     setLikeCount((count) => count + (nextLiked ? 1 : -1));
 
     const mutate = nextLiked ? likePost : unlikePost;
-    mutate({ postId: String(postId) });
+    mutate(
+      { postId: String(postId) },
+      {
+        onError: () => {
+          setLiked(prevLiked);
+          setLikeCount(prevLikeCount);
+        },
+      },
+    );
   };
 
   return { liked, likeCount, toggle };
@@ -46,11 +56,19 @@ function useBookmarkToggle(postId: number, initialBookmarked: boolean) {
   const { mutate: unbookmarkPost } = useUnbookmarkPost();
 
   const toggle = () => {
+    const prevBookmarked = bookmarked;
     const nextBookmarked = !bookmarked;
     setBookmarked(nextBookmarked);
 
     const mutate = nextBookmarked ? bookmarkPost : unbookmarkPost;
-    mutate({ postId: String(postId) });
+    mutate(
+      { postId: String(postId) },
+      {
+        onError: () => {
+          setBookmarked(prevBookmarked);
+        },
+      },
+    );
   };
 
   return { bookmarked, toggle };

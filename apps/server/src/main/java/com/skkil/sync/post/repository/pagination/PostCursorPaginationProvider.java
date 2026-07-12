@@ -20,11 +20,13 @@ public class PostCursorPaginationProvider
 
   @Override
   protected List<KeysetField<PostCursor, ?>> getKeysetFields() {
-    return List.of(KeysetField.asc(POSTS.ID, PostCursor::id));
+    return List.of(
+        KeysetField.desc(POSTS.CREATED_AT, PostCursor::sortKey),
+        KeysetField.desc(POSTS.ID, PostCursor::postId));
   }
 
   @Override
   public PostCursor convert(PostDto entity) {
-    return new PostCursor(entity.id());
+    return new PostCursor(entity.sortKey(), entity.id());
   }
 }

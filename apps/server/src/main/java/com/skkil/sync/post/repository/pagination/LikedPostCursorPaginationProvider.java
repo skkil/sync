@@ -5,29 +5,29 @@ import static com.skkil.sync.jooq.tables.Posts.POSTS;
 
 import com.skkil.sync.common.util.pagination.keyset.KeysetCursorPaginationProvider;
 import com.skkil.sync.common.util.pagination.keyset.KeysetField;
-import com.skkil.sync.post.dto.data.LikedPostCursor;
+import com.skkil.sync.post.dto.data.PostCursor;
 import com.skkil.sync.post.dto.data.PostDto;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LikedPostCursorPaginationProvider
-    extends KeysetCursorPaginationProvider<PostDto, LikedPostCursor> {
+    extends KeysetCursorPaginationProvider<PostDto, PostCursor> {
 
   @Override
-  public Class<LikedPostCursor> getCursorClass() {
-    return LikedPostCursor.class;
+  public Class<PostCursor> getCursorClass() {
+    return PostCursor.class;
   }
 
   @Override
-  protected List<KeysetField<LikedPostCursor, ?>> getKeysetFields() {
+  protected List<KeysetField<PostCursor, ?>> getKeysetFields() {
     return List.of(
-        KeysetField.desc(POST_LIKES.CREATED_AT, LikedPostCursor::likedAt),
-        KeysetField.desc(POSTS.ID, LikedPostCursor::postId));
+        KeysetField.desc(POST_LIKES.CREATED_AT, PostCursor::sortKey),
+        KeysetField.desc(POSTS.ID, PostCursor::postId));
   }
 
   @Override
-  public LikedPostCursor convert(PostDto entity) {
-    return new LikedPostCursor(entity.likedAt(), entity.id());
+  public PostCursor convert(PostDto entity) {
+    return new PostCursor(entity.sortKey(), entity.id());
   }
 }

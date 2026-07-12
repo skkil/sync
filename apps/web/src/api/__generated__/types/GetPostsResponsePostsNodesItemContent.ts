@@ -12,6 +12,6 @@ import type { GetPostsResponsePostsNodesItemContentSummary } from './GetPostsRes
 export type GetPostsResponsePostsNodesItemContent = {
   /** Post Summary */
   summary: GetPostsResponsePostsNodesItemContentSummary;
-  /** Post Content */
+  /** Content */
   content: string;
 };

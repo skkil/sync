@@ -34,7 +34,7 @@ export default function NotFound() {
 
           <div className="mt-8 flex items-center gap-3">
             <LinkButton href={ROUTES.HOME()}>{t('back')}</LinkButton>
-            <LinkButton href={ROUTES.EXPLORE()} variant="outline">
+            <LinkButton href={ROUTES.EXPLORE_TRENDING()} variant="outline">
               {t('explore')}
             </LinkButton>
           </div>

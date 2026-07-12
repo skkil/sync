@@ -55,7 +55,7 @@ export default function SearchTagResults({ query }: SearchTagResultsProps) {
     <div className="divide-y">
       {tags.map((tag) => (
         <Link
-          key={tag.name}
+          key={tag.id}
           href={ROUTES.TAG(tag.name)}
           className="flex items-center justify-between gap-4 py-4"
         >

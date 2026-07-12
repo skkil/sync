@@ -139,12 +139,15 @@ Run `direnv allow` once after cloning to activate `.envrc`.
 
 Both `ci-web.yml` and `ci-server.yml`:
 
-1. Run the respective build/format command
+1. Run the respective build/format/lint command(s)
 2. Check `git status --porcelain` — **fails if any files changed**
 
 This means:
 
-- Web: run `pnpm format && pnpm build` before committing
+- Web: run `pnpm format && pnpm lint && pnpm build` before committing
+  (`pnpm lint` includes `i18next/no-literal-string`, which fails the build on
+  hardcoded JSX text/attributes not routed through next-intl's
+  `t()`/`useTranslations()`/`getTranslations()` — see `eslint.config.mjs`)
 - Server: run `./gradlew build` (which applies spotless) before committing
 
 ---

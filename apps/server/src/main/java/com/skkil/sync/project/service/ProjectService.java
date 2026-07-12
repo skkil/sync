@@ -18,6 +18,7 @@ import com.skkil.sync.project.repository.TeammateRepository;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -93,7 +94,11 @@ public class ProjectService {
 
   @Transactional(readOnly = true)
   public GetProjectHandleAvailabilityResponse isProjectHandleAvailable(String handle) {
-    return new GetProjectHandleAvailabilityResponse(!projectRepository.existsByHandle(handle));
+    boolean isReserved =
+        ProjectConstants.RESERVED_HANDLES.contains(handle.toLowerCase(Locale.ROOT));
+
+    return new GetProjectHandleAvailabilityResponse(
+        !isReserved && !projectRepository.existsByHandle(handle));
   }
 
   @Transactional(readOnly = true)

@@ -4,6 +4,7 @@ import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from 'embla-carousel-react';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -95,6 +96,7 @@ function Carousel({
 
   React.useEffect(() => {
     if (!api) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs local scroll-button state with the embla carousel instance, pre-existing
     onSelect(api);
     api.on('reInit', onSelect);
     api.on('select', onSelect);
@@ -178,6 +180,7 @@ function CarouselPrevious({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();
+  const t = useTranslations('components.ui.carousel');
 
   return (
     <Button
@@ -196,7 +199,7 @@ function CarouselPrevious({
       {...props}
     >
       <CaretLeftIcon />
-      <span className="sr-only">Previous slide</span>
+      <span className="sr-only">{t('previous-slide')}</span>
     </Button>
   );
 }
@@ -208,6 +211,7 @@ function CarouselNext({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const t = useTranslations('components.ui.carousel');
 
   return (
     <Button
@@ -226,7 +230,7 @@ function CarouselNext({
       {...props}
     >
       <CaretRightIcon />
-      <span className="sr-only">Next slide</span>
+      <span className="sr-only">{t('next-slide')}</span>
     </Button>
   );
 }

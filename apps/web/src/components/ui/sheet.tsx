@@ -1,6 +1,7 @@
 'use client';
 
 import { XIcon } from '@phosphor-icons/react';
+import { useTranslations } from 'next-intl';
 import { Dialog as SheetPrimitive } from 'radix-ui';
 import * as React from 'react';
 
@@ -55,6 +56,8 @@ function SheetContent({
   side?: 'top' | 'right' | 'bottom' | 'left';
   showCloseButton?: boolean;
 }) {
+  const t = useTranslations('components.ui.sheet');
+
   return (
     <SheetPortal>
       <SheetOverlay />
@@ -76,7 +79,7 @@ function SheetContent({
               size="icon-sm"
             >
               <XIcon />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{t('close')}</span>
             </Button>
           </SheetPrimitive.Close>
         )}

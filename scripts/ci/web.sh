@@ -10,4 +10,6 @@ pnpm install --frozen-lockfile
 
 pnpm run format
 
+pnpm run lint
+
 pnpm run build

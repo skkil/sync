@@ -6,6 +6,7 @@ import {
   ReactNodeViewRenderer,
   mergeAttributes,
 } from '@tiptap/react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
@@ -87,6 +88,7 @@ function ImageNodeComponent({
 }: NodeViewProps) {
   const { src, status } = node.attrs as ImageNodeAttributes;
 
+  const t = useTranslations('components.editor.image');
   const { mutateAsync: uploadImage } = useUploadMedia();
 
   const objectURLRef = useRef<string | null>(null);
@@ -132,17 +134,17 @@ function ImageNodeComponent({
       })
       .then(({ success }) => {
         if (!success) {
-          throw new Error('Failed to upload file to S3');
+          throw new Error(t('errors.s3-upload-failed'));
         }
 
         updateAttributes({
           status: 'uploaded',
         });
-        toast.success('Image uploaded successfully');
+        toast.success(t('messages.upload-success'));
       })
       .catch((error) => {
         toast.error(
-          error instanceof Error ? error.message : 'Failed to upload image',
+          error instanceof Error ? error.message : t('errors.upload-failed'),
         );
 
         updateAttributes({
@@ -168,7 +170,7 @@ function ImageNodeComponent({
             <div className="flex w-full flex-col items-center justify-center gap-2 bg-muted py-10 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/50 hover:text-foreground">
               <ImageIcon className="size-8" />
               <span className="text-sm font-medium">
-                Click to upload an image
+                {t('placeholders.upload')}
               </span>
             </div>
           </FileInput>
@@ -177,7 +179,7 @@ function ImageNodeComponent({
             {src && (
               <Image
                 src={src}
-                alt="Uploaded image"
+                alt={t('alt')}
                 fill
                 className={cn(
                   'object-cover',
@@ -198,7 +200,7 @@ function ImageNodeComponent({
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="flex w-full flex-col items-center justify-center gap-3 rounded-lg py-10">
                   <span className="text-xl text-destructive">
-                    Failed to upload image
+                    {t('errors.upload-failed')}
                   </span>
 
                   <FileInput
@@ -208,7 +210,7 @@ function ImageNodeComponent({
                   >
                     <Button variant="outline" size="sm">
                       <ArrowCounterClockwiseIcon className="size-4" />
-                      Try again
+                      {t('actions.retry')}
                     </Button>
                   </FileInput>
                 </div>
@@ -223,6 +225,7 @@ function ImageNodeComponent({
 
 function ReadOnlyImageNodeComponent({ node }: NodeViewProps) {
   const { src } = node.attrs as ImageNodeAttributes;
+  const t = useTranslations('components.editor.image');
 
   return (
     <NodeViewWrapper>
@@ -231,7 +234,7 @@ function ReadOnlyImageNodeComponent({ node }: NodeViewProps) {
           {src && (
             <Image
               src={src}
-              alt="Uploaded image"
+              alt={t('alt')}
               fill
               className="object-cover"
               unoptimized

@@ -5,8 +5,9 @@ import { useTranslations } from 'next-intl';
 import { useGetUserPostsInfinite } from '@/api/__generated__/post/post';
 import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { PostType } from '@/components/feature/post/types/post';
-
-import PostFeedList from './PostFeedList';
+import PostList from '@/components/feature/post/viewer/PostList';
+import PostListMessage from '@/components/feature/post/viewer/error/PostListMessage';
+import { toPostViewSource } from '@/components/feature/post/viewer/types';
 
 const QUESTIONS_PAGE_SIZE = '10';
 
@@ -59,18 +60,20 @@ export default function ProfileQuestions({ handle }: ProfileQuestionsProps) {
   const isError = isProfileError || isQuestionsError;
 
   return (
-    <PostFeedList
-      posts={posts}
+    <PostList
+      items={posts.map((post) => toPostViewSource(post.content))}
       isPending={isPending}
       isError={isError}
-      hasNextPage={hasNextPage}
+      hasNextPage={!!hasNextPage}
       isFetchingNextPage={isFetchingNextPage}
       fetchNextPage={fetchNextPage}
-      messages={{
-        empty: t('empty'),
-        error: t('error'),
-        end: t('end'),
-      }}
+      empty={<PostListMessage message={t('empty')} />}
+      error={<PostListMessage message={t('error')} variant="destructive" />}
+      end={
+        <div className="py-4 text-center">
+          <p className="text-xs text-muted-foreground">{t('end')}</p>
+        </div>
+      }
     />
   );
 }

@@ -15,12 +15,9 @@ import {
   useGetProfileByHandle,
 } from '@/api/__generated__/profile/profile';
 import { uploadFileToS3 } from '@/api/s3';
+import { FollowButton } from '@/components/feature/profile/FollowButton';
 import { ContactFields } from '@/components/feature/profile/contacts';
 import { useUpdateProfile } from '@/components/feature/profile/hooks/useUpdateProfile';
-import {
-  useFollowUser,
-  useUnfollowUser,
-} from '@/components/feature/user/hooks/useFollowUser';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -48,7 +45,6 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
-import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useSession } from '@/lib/auth/client';
 import SyncError, { ErrorCode } from '@/lib/error';
 import ROUTES from '@/util/routes';
@@ -117,6 +113,31 @@ export default function ProfileOverview({ handle }: ProfileOverviewProps) {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="flex items-center gap-4 text-sm">
+            <Link
+              href={ROUTES.PROFILE_FOLLOWERS(handle)}
+              className="hover:underline"
+            >
+              <span className="font-semibold">
+                {profile.data.followerCount}
+              </span>{' '}
+              <span className="text-muted-foreground">
+                {t('header.followers')}
+              </span>
+            </Link>
+            <Link
+              href={ROUTES.PROFILE_FOLLOWING(handle)}
+              className="hover:underline"
+            >
+              <span className="font-semibold">
+                {profile.data.followingCount}
+              </span>{' '}
+              <span className="text-muted-foreground">
+                {t('header.following')}
+              </span>
+            </Link>
           </div>
 
           {profile.data.bio && (
@@ -581,61 +602,5 @@ function ProfileImageField() {
 
       {error && <div className="text-destructive">{error}</div>}
     </Field>
-  );
-}
-
-interface FollowButtonProps {
-  handle: string;
-}
-
-function FollowButton({ handle }: FollowButtonProps) {
-  const t = useTranslations('pages.profile.header');
-
-  const { data: session } = useSession();
-  const { requireAuth } = useRequireAuth();
-  const { data: profile, isPending } = useGetProfileByHandle(handle);
-
-  const { mutate: followUser } = useFollowUser();
-  const { mutate: unfollowUser } = useUnfollowUser();
-
-  if (isPending || !profile) {
-    return null;
-  }
-
-  if (String(session?.user.id) === String(profile.data.userId)) {
-    return null;
-  }
-
-  const followeeId = String(profile.data.userId);
-
-  if (profile.data.isFollowing) {
-    return (
-      <Button
-        variant="outline"
-        onClick={() => {
-          if (!requireAuth({ intent: 'follow' })) {
-            return;
-          }
-
-          unfollowUser({ followeeId });
-        }}
-      >
-        {t('unfollow')}
-      </Button>
-    );
-  }
-
-  return (
-    <Button
-      onClick={() => {
-        if (!requireAuth({ intent: 'follow' })) {
-          return;
-        }
-
-        followUser({ followeeId });
-      }}
-    >
-      {t('follow')}
-    </Button>
   );
 }

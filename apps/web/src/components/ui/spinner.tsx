@@ -1,6 +1,10 @@
+import { useTranslations } from 'next-intl';
+
 import { cn } from '@/lib/utils';
 
 function Spinner({ className, ...props }: React.ComponentProps<'div'>) {
+  const t = useTranslations('components.ui.spinner');
+
   return (
     <div
       className={cn(
@@ -8,7 +12,7 @@ function Spinner({ className, ...props }: React.ComponentProps<'div'>) {
         className,
       )}
       role="status"
-      aria-label="Loading"
+      aria-label={t('loading')}
       {...props}
     />
   );

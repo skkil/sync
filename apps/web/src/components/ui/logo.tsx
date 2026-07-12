@@ -1,10 +1,13 @@
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 function Icon() {
+  const t = useTranslations('components.ui.logo');
+
   return (
     <Image
       src="/assets/icons/sync_logo.svg"
-      alt="logo"
+      alt={t('alt')}
       width={20}
       height={20}
     />
