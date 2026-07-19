@@ -5,17 +5,16 @@
  * OpenAPI spec version: 0.0.1
  */
 
+/**
+ * Comment author
+ */
 export type GetCommentsResponseCommentsNodesItemContentAuthor = {
-  /** Whether the author is the post author */
-  isPostAuthor: boolean;
-  /** Author name */
+  /** 유저 이름 */
   name: string;
-  /** Author handle */
+  /** 유저 핸들 */
   handle: string;
-  /** Author user ID */
-  id: number;
   /**
-   * Author profile image URL
+   * 유저 프로필 이미지 URL
    * @nullable
    */
   profileImageUrl?: string | null;

@@ -20,8 +20,6 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -32,10 +30,7 @@ public class SecurityConfig {
   @Order(2)
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.securityMatcher("/**")
-        .csrf(
-            csrf ->
-                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+        .csrf(csrf -> csrf.spa())
         .formLogin(formLogin -> formLogin.disable())
         .logout(
             logout ->
@@ -59,6 +54,12 @@ public class SecurityConfig {
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/posts/recommendations")
                     .authenticated()
+                    .requestMatchers(HttpMethod.GET, "/posts/drafts")
+                    .authenticated()
+                    .requestMatchers(HttpMethod.GET, "/projects/recommendations")
+                    .authenticated()
+                    .requestMatchers(HttpMethod.GET, "/tags/recommendations", "/tags/unverified")
+                    .authenticated()
                     .requestMatchers("/search/**")
                     .authenticated()
                     .requestMatchers(
@@ -68,7 +69,8 @@ public class SecurityConfig {
                         "/posts/**",
                         "/comments/**",
                         "/users/**",
-                        "/tags/by-name/*/posts",
+                        "/tags/{tagId}",
+                        "/tags/{tagId}/posts",
                         "/team-building/**",
                         "/projects/**",
                         "/contests/**")
@@ -78,6 +80,7 @@ public class SecurityConfig {
                     .requestMatchers(
                         "/users/**",
                         "/profiles/me",
+                        "/profiles/me/**",
                         "/media/**",
                         "/providers/my/**",
                         "/preferences/**")
@@ -87,6 +90,7 @@ public class SecurityConfig {
                         "/profiles/**",
                         "/auth/login",
                         "/auth/register",
+                        "/auth/csrf",
                         "/providers/**")
                     .permitAll()
                     .anyRequest()

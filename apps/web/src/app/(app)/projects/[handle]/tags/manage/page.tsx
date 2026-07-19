@@ -1,4 +1,5 @@
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr';
+import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
@@ -11,6 +12,12 @@ interface ProjectTagsManagePageProps {
   params: Promise<{
     handle: string;
   }>;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pages.projects.project.tags');
+
+  return { title: t('manage-link') };
 }
 
 export default async function ProjectTagsManagePage({

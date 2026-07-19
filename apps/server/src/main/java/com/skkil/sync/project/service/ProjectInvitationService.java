@@ -118,6 +118,13 @@ public class ProjectInvitationService {
     User user = userDomainService.getUserReference(userId);
     ProjectInvitation invitation = getInvitationForUser(user, token);
 
+    if (teammateRepository
+        .findByProjectIdAndUserId(invitation.getProject().getId(), user.getId())
+        .isPresent()) {
+      invitation.accept();
+      return;
+    }
+
     Teammate teammate = Teammate.member(invitation.getProject(), user);
     teammate.setRole(invitation.getRole());
     invitation.getProject().addTeammate(teammate);

@@ -32,6 +32,9 @@ public class Comment extends BaseEntity {
   @Column(name = "deleted_at")
   private Instant deletedAt;
 
+  @Column(name = "is_accepted", nullable = false)
+  private boolean accepted;
+
   protected Comment() {}
 
   @Builder
@@ -51,5 +54,13 @@ public class Comment extends BaseEntity {
 
   public void delete() {
     this.deletedAt = Instant.now();
+  }
+
+  public void accept() {
+    this.accepted = true;
+  }
+
+  public void unaccept() {
+    this.accepted = false;
   }
 }

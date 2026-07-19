@@ -91,6 +91,10 @@ public class TeammateService {
             .findByProjectIdAndUserHandle(project.getId(), teammateHandle)
             .orElseThrow(TeammateNotFoundException::new);
 
+    if (teammate.isProjectOwner()) {
+      throw new ProjectOwnerCannotBeModifiedException();
+    }
+
     teammate.setRole(request.role());
   }
 }

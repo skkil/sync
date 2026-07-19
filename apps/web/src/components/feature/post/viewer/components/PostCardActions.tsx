@@ -7,11 +7,10 @@ import {
 } from '@phosphor-icons/react';
 import { useState } from 'react';
 
-import {
-  useBookmarkPost,
-  useUnbookmarkPost,
-} from '@/api/__generated__/bookmark/bookmark';
-import { useLikePost, useUnlikePost } from '@/api/__generated__/post/post';
+import { useBookmarkPost } from '@/components/feature/post/hooks/useBookmarkPost';
+import { useLikePost } from '@/components/feature/post/hooks/useLikePost';
+import { useUnbookmarkPost } from '@/components/feature/post/hooks/useUnbookmarkPost';
+import { useUnlikePost } from '@/components/feature/post/hooks/useUnlikePost';
 import { Button } from '@/components/ui/button';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { cn } from '@/lib/utils';
@@ -80,6 +79,7 @@ interface PostCardActionsProps {
   likeCount: number;
   commentCount: number;
   bookmarked: boolean;
+  variant?: 'default' | 'bookmark-only';
 }
 
 export function PostCardActions({
@@ -88,6 +88,7 @@ export function PostCardActions({
   likeCount: initialLikeCount,
   commentCount,
   bookmarked: initialBookmarked,
+  variant = 'default',
 }: PostCardActionsProps) {
   const { requireAuth } = useRequireAuth();
   const {
@@ -99,6 +100,31 @@ export function PostCardActions({
     postId,
     initialBookmarked,
   );
+
+  const bookmarkButton = (
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      onClick={(event) => {
+        event.stopPropagation();
+
+        if (!requireAuth({ intent: 'bookmark' })) {
+          return;
+        }
+
+        toggleBookmark();
+      }}
+    >
+      <BookmarkSimpleIcon
+        className={cn(bookmarked && 'fill-primary text-primary')}
+        weight={bookmarked ? 'fill' : 'regular'}
+      />
+    </Button>
+  );
+
+  if (variant === 'bookmark-only') {
+    return bookmarkButton;
+  }
 
   return (
     <div className="flex items-center justify-between">
@@ -137,24 +163,7 @@ export function PostCardActions({
         </Button>
       </div>
 
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        onClick={(event) => {
-          event.stopPropagation();
-
-          if (!requireAuth({ intent: 'bookmark' })) {
-            return;
-          }
-
-          toggleBookmark();
-        }}
-      >
-        <BookmarkSimpleIcon
-          className={cn(bookmarked && 'fill-primary text-primary')}
-          weight={bookmarked ? 'fill' : 'regular'}
-        />
-      </Button>
+      {bookmarkButton}
     </div>
   );
 }

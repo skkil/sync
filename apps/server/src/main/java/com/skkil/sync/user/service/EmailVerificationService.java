@@ -3,6 +3,9 @@ package com.skkil.sync.user.service;
 import com.skkil.sync.common.integration.email.EmailService;
 import com.skkil.sync.common.integration.email.dto.EmailMessage;
 import com.skkil.sync.user.constant.EmailVerificationConstants;
+import com.skkil.sync.user.dto.request.VerifyEmailRequest;
+import com.skkil.sync.user.dto.response.SendVerificationEmailResponse;
+import com.skkil.sync.user.exception.EmailAlreadyVerifiedException;
 import com.skkil.sync.user.exception.EmailVerificationTokenExpiredException;
 import com.skkil.sync.user.exception.EmailVerificationTokenInvalidException;
 import com.skkil.sync.user.exception.UserNotFoundException;
@@ -10,21 +13,23 @@ import com.skkil.sync.user.model.EmailVerificationToken;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.EmailVerificationTokenRepository;
 import com.skkil.sync.user.repository.UserRepository;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
+@Slf4j
 public class EmailVerificationService {
 
   private final UserRepository userRepository;
   private final EmailVerificationTokenRepository tokenRepository;
   private final EmailService emailService;
   private final SpringTemplateEngine templateEngine;
-
   private final Random random;
 
   public EmailVerificationService(
@@ -32,7 +37,7 @@ public class EmailVerificationService {
       EmailVerificationTokenRepository tokenRepository,
       EmailService emailService,
       SpringTemplateEngine templateEngine)
-      throws Exception {
+      throws NoSuchAlgorithmException {
     this.userRepository = userRepository;
     this.tokenRepository = tokenRepository;
     this.emailService = emailService;
@@ -41,9 +46,14 @@ public class EmailVerificationService {
   }
 
   @Transactional
-  public void sendVerificationEmail(Long userId) {
+  public SendVerificationEmailResponse sendVerificationEmail(Long userId) {
     User user =
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+    if (user.isVerified()) {
+      log.debug("User {} has already verified their email.", userId);
+      throw new EmailAlreadyVerifiedException();
+    }
 
     EmailVerificationToken token =
         tokenRepository
@@ -74,18 +84,32 @@ public class EmailVerificationService {
             .text(templateEngine.process("email/verify-email", context))
             .build();
 
-    emailService.sendMessage(email);
+    log.debug("Sending email verification to user {}", userId);
+    emailService
+        .sendMessage(email)
+        .exceptionally(
+            e -> {
+              log.error("Failed to send verification email to user {}", userId, e);
+              return null;
+            });
+
+    return new SendVerificationEmailResponse(
+        token.getExpiresAt(), EmailVerificationConstants.EMAIL_VERIFICATION_TOKEN_TTL.toSeconds());
   }
 
   @Transactional
-  public void verifyEmail(Long userId, String token) {
+  public void verifyEmail(Long userId, VerifyEmailRequest request) {
     User user =
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
+    if (user.isVerified()) {
+      throw new EmailAlreadyVerifiedException();
+    }
+
     EmailVerificationToken verificationToken =
         tokenRepository
-            .findByUserAndToken(user, token)
-            .orElseThrow(() -> new EmailVerificationTokenInvalidException());
+            .findByUserAndToken(user, request.token())
+            .orElseThrow(EmailVerificationTokenInvalidException::new);
 
     if (verificationToken.isExpired()) {
       throw new EmailVerificationTokenExpiredException();

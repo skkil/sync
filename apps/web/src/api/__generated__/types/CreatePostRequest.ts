@@ -5,14 +5,11 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { CreatePostRequestContent } from './CreatePostRequestContent';
-import type { CreatePostRequestProject } from './CreatePostRequestProject';
 import type { CreatePostRequestStatus } from './CreatePostRequestStatus';
 import type { CreatePostRequestTagsItem } from './CreatePostRequestTagsItem';
 import type { CreatePostRequestType } from './CreatePostRequestType';
 
 export interface CreatePostRequest {
-  /** 프로젝트 */
-  project?: CreatePostRequestProject;
   /** Post Type */
   type: CreatePostRequestType;
   /**

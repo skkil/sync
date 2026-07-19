@@ -3,6 +3,8 @@ package com.skkil.sync.user.controller;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.Schema.schema;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -14,6 +16,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
@@ -25,8 +28,11 @@ import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.user.constant.Role;
 import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
+import com.skkil.sync.user.exception.EmailNotVerifiedException;
+import com.skkil.sync.user.exception.HandleNotSetException;
 import com.skkil.sync.user.service.ProfileService;
 import java.util.function.Function;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,6 +137,51 @@ class ProfileControllerTests {
                 updateProfileRequestFields()));
   }
 
+  @Test
+  @DisplayName("[onboard] API 문서화 테스트")
+  @WithAuthenticatedUser(id = 1L)
+  void onboard() throws Exception {
+    mockMvc
+        .perform(post("/profiles/me/onboard").contentType(MediaType.APPLICATION_JSON).with(csrf()))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "OnboardProfile",
+                ResourceSnippetParameters.builder()
+                    .tag("profile")
+                    .summary("Complete Onboarding")
+                    .description("핸들 설정 및 이메일 인증 여부를 검증한 뒤 온보딩을 완료 처리합니다."),
+                null,
+                null,
+                Function.identity()));
+
+    verify(profileService).completeOnboarding(eq(1L));
+  }
+
+  @Test
+  @DisplayName("[onboard] 로그인하지 않은 사용자는 접근할 수 없다")
+  void onboard_unauthenticatedUser_shouldReturnUnauthorized() throws Exception {
+    mockMvc.perform(post("/profiles/me/onboard").with(csrf())).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @DisplayName("[onboard] 핸들이 설정되어 있지 않으면 400을 반환한다")
+  @WithAuthenticatedUser(id = 1L)
+  void onboard_handleNotSet_returnsBadRequest() throws Exception {
+    doThrow(new HandleNotSetException()).when(profileService).completeOnboarding(eq(1L));
+
+    mockMvc.perform(post("/profiles/me/onboard").with(csrf())).andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("[onboard] 이메일이 인증되어 있지 않으면 409를 반환한다")
+  @WithAuthenticatedUser(id = 1L)
+  void onboard_emailNotVerified_returnsConflict() throws Exception {
+    doThrow(new EmailNotVerifiedException()).when(profileService).completeOnboarding(eq(1L));
+
+    mockMvc.perform(post("/profiles/me/onboard").with(csrf())).andExpect(status().isConflict());
+  }
+
   private static GetProfileResponse createGetProfileResponse(Long userId) {
     GetProfileResponse response =
         GetProfileResponse.builder()
@@ -146,6 +197,7 @@ class ProfileControllerTests {
             .followerCount(3L)
             .followingCount(5L)
             .isOnboarded(true)
+            .isEmailVerified(true)
             .isAuthenticatedUser(false)
             .build();
 
@@ -159,7 +211,6 @@ class ProfileControllerTests {
             .handle("username")
             .profileImageId("1")
             .removeProfileImage(false)
-            .isOnboarded(true)
             .bio("bio")
             .profession("profession")
             .contacts(
@@ -188,7 +239,14 @@ class ProfileControllerTests {
         fieldWithPath("isFollowing").type(JsonFieldType.BOOLEAN).description("Is Following"),
         fieldWithPath("followerCount").type(JsonFieldType.NUMBER).description("Follower Count"),
         fieldWithPath("followingCount").type(JsonFieldType.NUMBER).description("Following Count"),
-        fieldWithPath("isOnboarded").type(JsonFieldType.BOOLEAN).description("Is Onboarded"),
+        fieldWithPath("isOnboarded")
+            .type(JsonFieldType.BOOLEAN)
+            .description("Is Onboarded (본인 프로필 조회 시에만 포함, 그 외에는 null)")
+            .optional(),
+        fieldWithPath("isEmailVerified")
+            .type(JsonFieldType.BOOLEAN)
+            .description("Is Email Verified (본인 프로필 조회 시에만 포함, 그 외에는 null)")
+            .optional(),
         fieldWithPath("isAuthenticatedUser")
             .type(JsonFieldType.BOOLEAN)
             .description("Is Authenticated User"),
@@ -227,10 +285,6 @@ class ProfileControllerTests {
         fieldWithPath("removeProfileImage")
             .type(JsonFieldType.BOOLEAN)
             .description("Remove Profile Image")
-            .optional(),
-        fieldWithPath("isOnboarded")
-            .type(JsonFieldType.BOOLEAN)
-            .description("Is Onboarded")
             .optional(),
         fieldWithPath("bio").type(JsonFieldType.STRING).description("Bio").optional(),
         fieldWithPath("profession").type(JsonFieldType.STRING).description("Profession").optional(),

@@ -7,9 +7,8 @@ import { useParams } from 'next/navigation';
 import { useGetProjectByHandle } from '@/api/__generated__/project/project';
 import { useGetProjectTags } from '@/api/__generated__/tag/tag';
 import { GetProjectResponseRole } from '@/api/__generated__/types';
-import { Badge } from '@/components/ui/badge';
+import { TagList, TagListItem } from '@/components/feature/tag/TagList';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import ROUTES from '@/util/routes';
 
 export default function ProjectTags() {
@@ -35,49 +34,23 @@ export default function ProjectTags() {
         </div>
       )}
 
-      {isPending ? (
-        <ProjectTagsSkeleton />
-      ) : isError ? (
-        <div className="rounded-md border px-4 py-8 text-center">
-          <p className="text-sm text-destructive">{t('list.error')}</p>
-        </div>
-      ) : tags.length === 0 ? (
-        <div className="rounded-md border px-4 py-8 text-center">
-          <p className="text-sm text-muted-foreground">{t('list.empty')}</p>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {tags.map((tag) => (
-            <Link
-              key={tag.id}
-              href={ROUTES.PROJECT_TAG_POSTS(handle, String(tag.id))}
-              className="flex items-center gap-4 rounded-md border p-4 hover:bg-accent"
-            >
-              <Badge variant="secondary" className="w-fit shrink-0">
-                {tag.name}
-              </Badge>
-
-              <p className="flex-1 truncate text-sm text-muted-foreground">
-                {tag.description || t('no-description')}
-              </p>
-
-              <p className="shrink-0 text-xs text-muted-foreground">
-                {t('post-count', { count: tag.postCount })}
-              </p>
-            </Link>
-          ))}
-        </div>
-      )}
+      <TagList
+        tags={tags}
+        getKey={(tag) => tag.id}
+        isPending={isPending}
+        isError={isError}
+        emptyMessage={t('list.empty')}
+        errorMessage={t('list.error')}
+        renderItem={(tag) => (
+          <TagListItem
+            name={tag.name}
+            description={tag.description}
+            noDescriptionLabel={t('no-description')}
+            postCountLabel={t('post-count', { count: tag.postCount })}
+            href={ROUTES.PROJECT_TAG(handle, String(tag.id))}
+          />
+        )}
+      />
     </section>
-  );
-}
-
-function ProjectTagsSkeleton() {
-  return (
-    <div className="flex flex-col gap-3">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <Skeleton key={index} className="h-16 w-full rounded-md" />
-      ))}
-    </div>
   );
 }

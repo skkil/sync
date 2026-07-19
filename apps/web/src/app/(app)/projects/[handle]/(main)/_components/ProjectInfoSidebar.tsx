@@ -57,8 +57,13 @@ function MembersWidget({ handle }: ProjectInfoSidebarProps) {
   const hiddenCount = teammates.length - visibleTeammates.length;
 
   return (
-    <Card>
-      <CardContent className="space-y-4">
+    <Card className="relative transition-colors hover:bg-muted/30">
+      <Link
+        href={ROUTES.PROJECT_SETTINGS_TEAMMATES(handle)}
+        aria-label={t('manage')}
+        className="focus-visible:ring-ring absolute inset-0 rounded-lg focus-visible:ring-2 focus-visible:outline-none"
+      />
+      <CardContent className="pointer-events-none relative z-10 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold">{t('heading')}</h2>
           <span className="text-muted-foreground text-xs">
@@ -80,13 +85,18 @@ function MembersWidget({ handle }: ProjectInfoSidebarProps) {
             {visibleTeammates.map(({ user }) => (
               <Tooltip key={user.handle}>
                 <TooltipTrigger asChild>
-                  <Avatar size="sm">
-                    <AvatarImage
-                      src={user.profileImageUrl ?? undefined}
-                      alt={user.name}
-                    />
-                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
+                  <Link
+                    href={ROUTES.PROJECT_SETTINGS_TEAMMATES(handle)}
+                    className="pointer-events-auto rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <Avatar size="sm">
+                      <AvatarImage
+                        src={user.profileImageUrl ?? undefined}
+                        alt={user.name}
+                      />
+                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </Link>
                 </TooltipTrigger>
                 <TooltipContent>{user.name}</TooltipContent>
               </Tooltip>
@@ -99,15 +109,17 @@ function MembersWidget({ handle }: ProjectInfoSidebarProps) {
           </AvatarGroup>
         )}
 
-        <AddTeammatePopover
-          projectHandle={handle}
-          trigger={
-            <Button variant="outline" className="w-full">
-              <UserPlusIcon />
-              {t('invite')}
-            </Button>
-          }
-        />
+        <div className="pointer-events-auto">
+          <AddTeammatePopover
+            projectHandle={handle}
+            trigger={
+              <Button variant="outline" className="w-full">
+                <UserPlusIcon />
+                {t('invite')}
+              </Button>
+            }
+          />
+        </div>
       </CardContent>
     </Card>
   );
@@ -121,7 +133,7 @@ function OpenQuestionsWidget({ handle }: ProjectInfoSidebarProps) {
   });
 
   const nodes = data?.data.posts?.nodes ?? [];
-  const openQuestions = nodes.filter((node) => !node.content.summary.resolved);
+  const openQuestions = nodes.filter((node) => !node.content.resolved);
   const visibleQuestions = openQuestions.slice(0, MAX_OPEN_QUESTIONS);
 
   return (
@@ -146,12 +158,12 @@ function OpenQuestionsWidget({ handle }: ProjectInfoSidebarProps) {
         ) : (
           <ul className="space-y-2">
             {visibleQuestions.map((node) => (
-              <li key={node.content.summary.id}>
+              <li key={node.content.id}>
                 <Link
-                  href={ROUTES.PROJECT_POST(handle, node.content.summary.slug)}
+                  href={ROUTES.PROJECT_POST(handle, node.content.slug)}
                   className="text-sm hover:underline"
                 >
-                  {node.content.summary.title}
+                  {node.content.title}
                 </Link>
               </li>
             ))}
@@ -188,7 +200,7 @@ function TopTagsWidget({ handle }: ProjectInfoSidebarProps) {
             {tags.map((tag) => (
               <Link
                 key={tag.id}
-                href={ROUTES.PROJECT_TAG_POSTS(handle, String(tag.id))}
+                href={ROUTES.PROJECT_TAG(handle, String(tag.id))}
               >
                 <Badge variant="secondary">#{tag.name}</Badge>
               </Link>

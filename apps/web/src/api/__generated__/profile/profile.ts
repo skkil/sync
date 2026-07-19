@@ -493,3 +493,98 @@ export function useGetProfileByHandle<
 
   return withQueryKey(query, queryOptions.queryKey);
 }
+
+export type onboardProfileResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type onboardProfileResponseSuccess = onboardProfileResponse204 & {
+  headers: Headers;
+};
+export type onboardProfileResponse = onboardProfileResponseSuccess;
+
+export const getOnboardProfileUrl = () => {
+  return `/profiles/me/onboard`;
+};
+
+/**
+ * 핸들 설정 및 이메일 인증 여부를 검증한 뒤 온보딩을 완료 처리합니다.
+ * @summary Complete Onboarding
+ */
+export const onboardProfile = async (
+  options?: RequestInit,
+): Promise<onboardProfileResponse> => {
+  return api<onboardProfileResponse>(getOnboardProfileUrl(), {
+    ...options,
+    method: 'POST',
+  });
+};
+
+export const getOnboardProfileMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof onboardProfile>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof onboardProfile>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['onboardProfile'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof onboardProfile>>,
+    void
+  > = () => {
+    return onboardProfile(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type OnboardProfileMutationResult = NonNullable<
+  Awaited<ReturnType<typeof onboardProfile>>
+>;
+
+export type OnboardProfileMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Complete Onboarding
+ */
+export const useOnboardProfile = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof onboardProfile>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof onboardProfile>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getOnboardProfileMutationOptions(options), queryClient);
+};

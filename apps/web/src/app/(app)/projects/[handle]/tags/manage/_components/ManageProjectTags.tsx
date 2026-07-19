@@ -155,7 +155,7 @@ function UnverifiedTagsSection() {
 
   const onVerify = (tag: GetTagsResponseTagsItem) => {
     verifyTag(
-      { tagId: tag.id.toString() },
+      { name: tag.name },
       {
         onSuccess: async () => {
           toast.success(t('unverified.messages.success', { name: tag.name }));

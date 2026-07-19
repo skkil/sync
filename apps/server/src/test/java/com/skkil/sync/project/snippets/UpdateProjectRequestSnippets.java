@@ -10,7 +10,8 @@ import org.springframework.restdocs.payload.RequestFieldsSnippet;
 public class UpdateProjectRequestSnippets {
 
   public static UpdateProjectRequest getUpdateProjectRequest() {
-    return new UpdateProjectRequest("프로젝트 설명입니다.", "https://example.com", null, null);
+    return new UpdateProjectRequest(
+        "프로젝트 설명입니다.", "https://example.com", null, null, "프로젝트 이름", "project-handle");
   }
 
   public static RequestFieldsSnippet getUpdateProjectRequestFields() {
@@ -24,6 +25,8 @@ public class UpdateProjectRequestSnippets {
         fieldWithPath("removeIcon")
             .type(JsonFieldType.BOOLEAN)
             .optional()
-            .description("프로젝트 아이콘 제거 여부"));
+            .description("프로젝트 아이콘 제거 여부"),
+        fieldWithPath("name").type(JsonFieldType.STRING).optional().description("프로젝트 이름"),
+        fieldWithPath("handle").type(JsonFieldType.STRING).optional().description("프로젝트 핸들"));
   }
 }

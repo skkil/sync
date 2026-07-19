@@ -39,9 +39,4 @@ export interface UpdateProfileRequest {
   removeProfileImage?: boolean | null;
   /** Contacts */
   contacts?: UpdateProfileRequestContacts;
-  /**
-   * Is Onboarded
-   * @nullable
-   */
-  isOnboarded?: boolean | null;
 }

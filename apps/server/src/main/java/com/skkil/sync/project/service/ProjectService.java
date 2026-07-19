@@ -9,10 +9,14 @@ import com.skkil.sync.project.dto.response.CreateProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectsResponse;
+import com.skkil.sync.project.exception.ProjectHandleAlreadyExistsException;
 import com.skkil.sync.project.exception.ProjectNotFoundException;
 import com.skkil.sync.project.mapper.ProjectAssembler;
+import com.skkil.sync.project.model.InvitationStatus;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.model.Teammate;
+import com.skkil.sync.project.repository.ProjectFollowRelationshipRepository;
+import com.skkil.sync.project.repository.ProjectInvitationRepository;
 import com.skkil.sync.project.repository.ProjectRepository;
 import com.skkil.sync.project.repository.TeammateRepository;
 import com.skkil.sync.user.model.User;
@@ -37,17 +41,25 @@ public class ProjectService {
 
   private final MediaDomainService mediaDomainService;
 
+  private final ProjectFollowRelationshipRepository projectFollowRelationshipRepository;
+
+  private final ProjectInvitationRepository projectInvitationRepository;
+
   public ProjectService(
       UserDomainService userDomainService,
       ProjectRepository projectRepository,
       TeammateRepository teammateRepository,
       ProjectAssembler projectAssembler,
-      MediaDomainService mediaDomainService) {
+      MediaDomainService mediaDomainService,
+      ProjectFollowRelationshipRepository projectFollowRelationshipRepository,
+      ProjectInvitationRepository projectInvitationRepository) {
     this.userDomainService = userDomainService;
     this.projectRepository = projectRepository;
     this.teammateRepository = teammateRepository;
     this.projectAssembler = projectAssembler;
     this.mediaDomainService = mediaDomainService;
+    this.projectFollowRelationshipRepository = projectFollowRelationshipRepository;
+    this.projectInvitationRepository = projectInvitationRepository;
   }
 
   @Transactional
@@ -85,11 +97,23 @@ public class ProjectService {
                 .findByProjectIdAndUserId(project.getId(), requesterId)
                 .orElse(null);
 
+    boolean isFollowing =
+        requesterId != null
+            && projectFollowRelationshipRepository.existsByFollowerAndProject(
+                requesterId, project.getId());
+
+    boolean hasPendingInvitation =
+        requesterId != null
+            && projectInvitationRepository.existsByProjectIdAndInviteeIdAndStatus(
+                project.getId(), requesterId, InvitationStatus.PENDING);
+
     return projectAssembler.toGetProjectResponse(
         project,
         teammates,
         teammates.size() > ProjectConstants.INITIAL_TEAMMATE_LOAD_LIMIT,
-        requester != null ? requester.getRole() : null);
+        requester != null ? requester.getRole() : null,
+        isFollowing,
+        hasPendingInvitation);
   }
 
   @Transactional(readOnly = true)
@@ -125,7 +149,19 @@ public class ProjectService {
     Project project =
         projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
 
-    project.update(request.description(), request.website());
+    project.update(request.name(), request.description(), request.website());
+
+    if (request.handle() != null) {
+      String trimmedHandle = request.handle().trim();
+
+      if (!trimmedHandle.equals(project.getHandle())) {
+        if (projectRepository.existsByHandle(trimmedHandle)) {
+          throw new ProjectHandleAlreadyExistsException();
+        }
+
+        project.updateHandle(trimmedHandle);
+      }
+    }
 
     if (Boolean.TRUE.equals(request.removeIcon())) {
       project.removeIcon();

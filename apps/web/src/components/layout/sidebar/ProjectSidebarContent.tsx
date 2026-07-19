@@ -2,6 +2,7 @@
 
 import {
   BookOpenIcon,
+  BookmarkSimpleIcon,
   CaretDownIcon,
   ChatCircleIcon,
   DotsThreeIcon,
@@ -55,6 +56,8 @@ export default function ProjectSidebarContent({
   handle,
 }: ProjectSidebarContentProps) {
   const { isAuthenticated } = useRequireAuth();
+  const { data: projectData } = useGetProjectByHandle(handle);
+  const isViewer = !!projectData?.data.isViewer;
 
   return (
     <>
@@ -65,7 +68,7 @@ export default function ProjectSidebarContent({
 
         <ProjectSwitcher handle={handle} />
 
-        <AskOrWriteButton handle={handle} />
+        {isViewer && <AskOrWriteButton handle={handle} />}
       </SidebarHeader>
 
       <SidebarContent>
@@ -74,10 +77,14 @@ export default function ProjectSidebarContent({
         {isAuthenticated && (
           <>
             <SidebarSeparator />
-            <MyContributions handle={handle} />
+            <MyContributions handle={handle} isViewer={isViewer} />
 
-            <SidebarSeparator />
-            <Settings handle={handle} />
+            {isViewer && (
+              <>
+                <SidebarSeparator />
+                <Settings handle={handle} />
+              </>
+            )}
           </>
         )}
       </SidebarContent>
@@ -199,7 +206,7 @@ function Browse({ handle }: SectionProps) {
   const isPostsPath = pathname === ROUTES.PROJECT_POSTS(handle);
   const type = searchParams.get('type');
   const authorHandle = searchParams.get('authorHandle');
-  const tagId = searchParams.get('tagId');
+  const isTagsPath = pathname.startsWith(ROUTES.PROJECT_TAGS(handle));
 
   const items = [
     {
@@ -212,7 +219,7 @@ function Browse({ handle }: SectionProps) {
       labelKey: 'nav.feed',
       href: ROUTES.PROJECT_FEED(handle),
       icon: RssIcon,
-      isActive: isPostsPath && !type && !authorHandle && !tagId,
+      isActive: isPostsPath && !type && !authorHandle,
     },
     {
       labelKey: 'nav.questions',
@@ -230,8 +237,7 @@ function Browse({ handle }: SectionProps) {
       labelKey: 'nav.tags',
       href: ROUTES.PROJECT_TAGS(handle),
       icon: TagIcon,
-      isActive:
-        pathname === ROUTES.PROJECT_TAGS(handle) || (isPostsPath && !!tagId),
+      isActive: isTagsPath,
     },
   ] as const;
 
@@ -259,7 +265,11 @@ function Browse({ handle }: SectionProps) {
   );
 }
 
-function MyContributions({ handle }: SectionProps) {
+interface MyContributionsProps extends SectionProps {
+  isViewer: boolean;
+}
+
+function MyContributions({ handle, isViewer }: MyContributionsProps) {
   const t = useTranslations('components.layout.sidebar');
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -282,6 +292,22 @@ function MyContributions({ handle }: SectionProps) {
       icon: ChatCircleIcon,
       isActive: pathname === ROUTES.PROJECT_MY_COMMENTS(handle),
     },
+    ...(isViewer
+      ? ([
+          {
+            labelKey: 'nav.bookmarks',
+            href: ROUTES.PROJECT_BOOKMARKS(handle),
+            icon: BookmarkSimpleIcon,
+            isActive: pathname === ROUTES.PROJECT_BOOKMARKS(handle),
+          },
+          {
+            labelKey: 'nav.drafts',
+            href: ROUTES.PROJECT_DRAFTS(handle),
+            icon: NotePencilIcon,
+            isActive: pathname === ROUTES.PROJECT_DRAFTS(handle),
+          },
+        ] as const)
+      : []),
   ] as const;
 
   return (

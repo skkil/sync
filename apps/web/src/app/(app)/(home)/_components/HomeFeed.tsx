@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react';
 import { useGetPostRecommendationsInfinite } from '@/api/__generated__/post/post';
 import { PostType } from '@/components/feature/post/types/post';
 import PostList from '@/components/feature/post/viewer/PostList';
-import { toPostViewSource } from '@/components/feature/post/viewer/types';
+import { toPostSummary } from '@/components/feature/post/viewer/types';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const FEED_PAGE_SIZE = '50';
@@ -49,7 +49,7 @@ export default function HomeFeed() {
     const activeFilter = FILTERS.find((item) => item.value === filter);
 
     return activeFilter?.type
-      ? nodes.filter((node) => node.content.summary.type === activeFilter.type)
+      ? nodes.filter((node) => node.content.type === activeFilter.type)
       : nodes;
   }, [data, filter]);
 
@@ -70,7 +70,7 @@ export default function HomeFeed() {
       </div>
 
       <PostList
-        items={posts.map((post) => toPostViewSource(post.content))}
+        items={posts.map((post) => toPostSummary(post.content))}
         isPending={isPending}
         hasNextPage={!!hasNextPage}
         isFetchingNextPage={isFetchingNextPage}

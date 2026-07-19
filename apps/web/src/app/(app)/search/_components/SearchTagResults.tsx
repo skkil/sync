@@ -56,7 +56,7 @@ export default function SearchTagResults({ query }: SearchTagResultsProps) {
       {tags.map((tag) => (
         <Link
           key={tag.id}
-          href={ROUTES.TAG(tag.name)}
+          href={ROUTES.TAG(String(tag.id))}
           className="flex items-center justify-between gap-4 py-4"
         >
           <div className="flex min-w-0 items-center gap-3">

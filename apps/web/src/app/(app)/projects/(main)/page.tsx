@@ -1,4 +1,5 @@
 import { EnvelopeSimpleIcon, PlusIcon } from '@phosphor-icons/react/dist/ssr';
+import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
@@ -8,6 +9,12 @@ import ROUTES from '@/util/routes';
 
 import FollowingProjects from './_components/FollowingProjects';
 import UserProjects from './_components/UserProjects';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pages.projects.list');
+
+  return { title: t('title') };
+}
 
 export default async function Projects() {
   await requireSession();

@@ -9,6 +9,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
+import ROUTES from '@/util/routes';
 
 interface SearchQueryInputProps {
   query: string;
@@ -25,9 +26,7 @@ export default function SearchQueryInput({
   const handleSearch = () => {
     const trimmed = value.trim();
     if (!trimmed) return;
-    const params = new URLSearchParams({ q: trimmed });
-    if (projectHandle) params.set('projectHandle', projectHandle);
-    router.push(`/search?${params.toString()}`);
+    router.push(ROUTES.SEARCH(trimmed, projectHandle));
   };
 
   return (

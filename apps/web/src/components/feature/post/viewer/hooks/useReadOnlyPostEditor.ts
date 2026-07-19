@@ -1,3 +1,4 @@
+import type { JSONContent } from '@tiptap/react';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
@@ -6,10 +7,22 @@ import type { GetPostResponse } from '@/api/__generated__/types';
 import { ReadOnlyImageNode } from '../../editor/extensions/nodes/image';
 import { deserialize } from '../../editor/utils/serializer';
 
-export function useReadOnlyPostEditor(content: GetPostResponse['content']) {
+const EMPTY_DOC: JSONContent = { type: 'doc', content: [] };
+
+export function useReadOnlyPostEditor(
+  content: Pick<GetPostResponse['content'], 'json' | 'media'>,
+) {
+  let doc: JSONContent;
+  try {
+    doc = deserialize(content.json, content.media);
+  } catch (error) {
+    console.error('Failed to parse post content', error);
+    doc = EMPTY_DOC;
+  }
+
   return useEditor({
     extensions: [StarterKit, ReadOnlyImageNode],
-    content: deserialize(content.json, content.media),
+    content: doc,
     editable: false,
     immediatelyRender: false,
   });

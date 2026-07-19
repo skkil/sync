@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,6 +28,15 @@ class AuthController {
   public AuthController(AuthService authService) {
     this.authService = authService;
   }
+
+  /**
+   * Primes the XSRF-TOKEN cookie for clients that have none yet. Spring Security's {@code spa()}
+   * CSRF configuration resolves and writes the cookie on every request; this endpoint's only job is
+   * to be a safe, permitAll GET that clients can call on bootstrap before any mutating request.
+   */
+  @GetMapping("/auth/csrf")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void csrf() {}
 
   @PostMapping("/auth/login")
   @ResponseStatus(HttpStatus.NO_CONTENT)

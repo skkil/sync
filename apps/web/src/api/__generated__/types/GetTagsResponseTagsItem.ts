@@ -6,6 +6,8 @@
  */
 
 export type GetTagsResponseTagsItem = {
+  /** 요청자가 해당 태그를 팔로우하고 있는지 여부 (프로젝트 태그는 항상 false) */
+  isFollowing: boolean;
   /** 태그 이름 */
   name: string;
   /** 태그가 사용된 게시물 수 */
@@ -14,4 +16,11 @@ export type GetTagsResponseTagsItem = {
   description: string;
   /** 태그 ID */
   id: number;
+  /** 태그를 팔로우하는 사용자 수 */
+  followerCount: number;
+  /**
+   * 프로젝트 태그인 경우 해당 프로젝트의 핸들 (전역 태그인 경우 없음)
+   * @nullable
+   */
+  projectHandle?: string | null;
 };

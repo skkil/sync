@@ -46,7 +46,8 @@ spring:
 
   ai:
     model:
-      chat: ${AI_PROVIDER}
+      chat: ${AI_PROVIDER:none}
+      embedding: ${AI_PROVIDER:none}
     ollama:
       base-url: ${OLLAMA_URL:http://localhost:11434}
       chat:
@@ -68,6 +69,9 @@ spring:
           auth: true
           starttls:
             enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
   cloud:
     aws:
@@ -80,6 +84,11 @@ app:
     frontend-redirect-uri: http://localhost:3000
   slack:
     webhook-url: ${SLACK_WEBHOOK_URL:}
+  # 초기 출시 범위에서 제외 — 기능 완성 후 활성화 예정.
+  websocket:
+    enabled: ${WEBSOCKET_ENABLED:false}
+  ai:
+    enabled: ${AI_FEATURES_ENABLED:true}
 
 management:
   observations:

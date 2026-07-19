@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useGetCommentedPostsInfinite } from '@/api/__generated__/post/post';
 import PostList from '@/components/feature/post/viewer/PostList';
 import PostListMessage from '@/components/feature/post/viewer/error/PostListMessage';
-import { toPostViewSource } from '@/components/feature/post/viewer/types';
+import { toPostSummary } from '@/components/feature/post/viewer/types';
 import { useSession } from '@/lib/auth/client';
 
 const PAGE_SIZE = '10';
@@ -50,7 +50,7 @@ export default function ProjectMyComments({ handle }: ProjectMyCommentsProps) {
       <h1 className="text-xl font-semibold">{t('heading')}</h1>
 
       <PostList
-        items={posts.map((post) => toPostViewSource(post.content))}
+        items={posts.map((post) => toPostSummary(post.content))}
         isPending={isPending || !userId}
         isError={isError}
         hasNextPage={!!hasNextPage}

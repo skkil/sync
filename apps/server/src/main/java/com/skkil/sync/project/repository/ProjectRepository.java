@@ -26,7 +26,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
       """
       SELECT p
       FROM Project p
-      WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(p.handle) LIKE LOWER(CONCAT('%', :query, '%'))
+      WHERE p.isPublic = true
+      AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(p.handle) LIKE LOWER(CONCAT('%', :query, '%')))
       LIMIT 10
       """)
   List<Project> searchProjects(String query);

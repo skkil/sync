@@ -1,4 +1,6 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/project';
@@ -14,8 +16,13 @@ interface ProjectPostsPageProps {
   searchParams: Promise<{
     type?: string;
     authorHandle?: string;
-    tagId?: string;
   }>;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pages.projects.project.posts');
+
+  return { title: t('label') };
 }
 
 export default async function ProjectPostsPage({
@@ -23,7 +30,7 @@ export default async function ProjectPostsPage({
   searchParams,
 }: ProjectPostsPageProps) {
   const { handle } = await params;
-  const { type, authorHandle, tagId } = await searchParams;
+  const { type, authorHandle } = await searchParams;
 
   const queryClient = getQueryClient();
 
@@ -40,12 +47,7 @@ export default async function ProjectPostsPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProjectPosts
-        handle={handle}
-        type={type}
-        authorHandle={authorHandle}
-        tagId={tagId}
-      />
+      <ProjectPosts handle={handle} type={type} authorHandle={authorHandle} />
     </HydrationBoundary>
   );
 }

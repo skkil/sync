@@ -13,7 +13,6 @@ public record UpdateProfileRequest(
     @ValidUsername @Size(min = Handle.MIN_LENGTH, max = Handle.MAX_LENGTH) String handle,
     String profileImageId,
     Boolean removeProfileImage,
-    Boolean isOnboarded,
     @Size(max = 1000) String bio,
     @Size(max = 255) String profession,
     @Valid Contacts contacts) {

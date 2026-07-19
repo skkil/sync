@@ -28,7 +28,13 @@ export default function WebSocketProvider({
 
   const client = useRef<Client | null>(null);
 
+  const websocketEnabled = process.env.NEXT_PUBLIC_WEBSOCKET_ENABLED === 'true';
+
   useEffect(() => {
+    if (!websocketEnabled) {
+      return;
+    }
+
     if (!client.current) {
       client.current = getStompClient();
     }
@@ -40,7 +46,7 @@ export default function WebSocketProvider({
         client.current.deactivate();
       }
     };
-  }, [client]);
+  }, [client, websocketEnabled]);
 
   return (
     <WebSocketContext.Provider

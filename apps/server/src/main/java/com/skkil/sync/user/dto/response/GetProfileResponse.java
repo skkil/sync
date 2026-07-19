@@ -15,7 +15,8 @@ public record GetProfileResponse(
     boolean isFollowing,
     long followerCount,
     long followingCount,
-    boolean isOnboarded,
+    Boolean isOnboarded,
+    Boolean isEmailVerified,
     boolean isAuthenticatedUser,
     Role role,
     Contacts contacts) {

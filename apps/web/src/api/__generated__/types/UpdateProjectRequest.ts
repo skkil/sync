@@ -12,6 +12,11 @@ export interface UpdateProjectRequest {
    */
   website?: string | null;
   /**
+   * 프로젝트 이름
+   * @nullable
+   */
+  name?: string | null;
+  /**
    * 프로젝트 아이콘 제거 여부
    * @nullable
    */
@@ -21,6 +26,11 @@ export interface UpdateProjectRequest {
    * @nullable
    */
   description?: string | null;
+  /**
+   * 프로젝트 핸들
+   * @nullable
+   */
+  handle?: string | null;
   /**
    * 프로젝트 아이콘으로 설정할 미디어 ID
    * @nullable

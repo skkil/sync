@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useGetLikedPostsInfinite } from '@/api/__generated__/post/post';
 import PostList from '@/components/feature/post/viewer/PostList';
 import PostListMessage from '@/components/feature/post/viewer/error/PostListMessage';
-import { toPostViewSource } from '@/components/feature/post/viewer/types';
+import { toPostSummary } from '@/components/feature/post/viewer/types';
 
 const LIKES_PAGE_SIZE = '10';
 
@@ -41,7 +41,7 @@ export default function ProfileLikes() {
 
   return (
     <PostList
-      items={posts.map((post) => toPostViewSource(post.content))}
+      items={posts.map((post) => toPostSummary(post.content))}
       isPending={isPending}
       isError={isError}
       hasNextPage={!!hasNextPage}

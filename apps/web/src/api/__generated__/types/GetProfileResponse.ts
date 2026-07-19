@@ -24,6 +24,11 @@ export interface GetProfileResponse {
   followingCount: number;
   /** ID */
   userId: string;
+  /**
+   * Is Email Verified (본인 프로필 조회 시에만 포함, 그 외에는 null)
+   * @nullable
+   */
+  isEmailVerified?: boolean | null;
   /** Is Authenticated User */
   isAuthenticatedUser: boolean;
   /** Full Name */
@@ -36,6 +41,9 @@ export interface GetProfileResponse {
   contacts?: GetProfileResponseContacts;
   /** E-mail */
   email: string;
-  /** Is Onboarded */
-  isOnboarded: boolean;
+  /**
+   * Is Onboarded (본인 프로필 조회 시에만 포함, 그 외에는 null)
+   * @nullable
+   */
+  isOnboarded?: boolean | null;
 }

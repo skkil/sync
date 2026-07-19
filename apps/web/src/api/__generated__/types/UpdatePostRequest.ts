@@ -4,8 +4,26 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
+import type { UpdatePostRequestContent } from './UpdatePostRequestContent';
+import type { UpdatePostRequestStatus } from './UpdatePostRequestStatus';
+import type { UpdatePostRequestTagsItem } from './UpdatePostRequestTagsItem';
+import type { UpdatePostRequestType } from './UpdatePostRequestType';
 
 export interface UpdatePostRequest {
+  /** Post Type */
+  type: UpdatePostRequestType;
+  /**
+   * Title
+   * @nullable
+   */
+  title?: string | null;
   /** Content */
-  content: string;
+  content: UpdatePostRequestContent;
+  /**
+   * 전역 태그 목록
+   * @nullable
+   */
+  tags?: UpdatePostRequestTagsItem[] | null;
+  /** Post Status */
+  status: UpdatePostRequestStatus;
 }

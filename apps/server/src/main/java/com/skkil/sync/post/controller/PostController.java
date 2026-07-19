@@ -2,8 +2,10 @@ package com.skkil.sync.post.controller;
 
 import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.post.dto.request.CreatePostRequest;
+import com.skkil.sync.post.dto.request.CreateProjectPostRequest;
 import com.skkil.sync.post.dto.request.UpdatePostRequest;
 import com.skkil.sync.post.dto.request.UpdatePostSummaryRequest;
+import com.skkil.sync.post.dto.request.UpdateProjectPostRequest;
 import com.skkil.sync.post.dto.response.CreatePostResponse;
 import com.skkil.sync.post.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -34,11 +36,29 @@ public class PostController {
     return postService.createPost(user.userId(), request);
   }
 
+  @PostMapping("/projects/{handle}/posts")
+  @ResponseStatus(HttpStatus.CREATED)
+  public CreatePostResponse createProjectPost(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable String handle,
+      @RequestBody @Validated CreateProjectPostRequest request) {
+    return postService.createProjectPost(user.userId(), handle, request);
+  }
+
   @PatchMapping("/posts/{postId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updatePost(
       @PathVariable Long postId, @RequestBody @Validated UpdatePostRequest request) {
     postService.updatePost(postId, request);
+  }
+
+  @PatchMapping("/projects/{handle}/posts/{postId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updateProjectPost(
+      @PathVariable String handle,
+      @PathVariable Long postId,
+      @RequestBody @Validated UpdateProjectPostRequest request) {
+    postService.updateProjectPost(postId, handle, request);
   }
 
   @PatchMapping("/posts/{postId}/summary")

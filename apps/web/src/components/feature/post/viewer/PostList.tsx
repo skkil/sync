@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 
 import { PostPreviewCard } from './PostCard';
-import type { PostViewSource } from './types';
+import type { PostSummary } from './types';
 
 function DefaultEmpty() {
   const t = useTranslations('components.post.viewer.empty');
@@ -23,7 +23,7 @@ function DefaultEmpty() {
 }
 
 interface PostListProps {
-  items: PostViewSource[];
+  items: PostSummary[];
   isPending: boolean;
   isError?: boolean;
   hasNextPage: boolean;
@@ -80,7 +80,7 @@ export default function PostList({
   return (
     <div className="space-y-4">
       {items.map((item) => (
-        <PostPreviewCard key={item.summary.id} source={item} />
+        <PostPreviewCard key={item.id} summary={item} />
       ))}
 
       <div ref={ref} className="py-4">

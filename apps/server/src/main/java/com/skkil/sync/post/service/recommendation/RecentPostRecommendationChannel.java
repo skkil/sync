@@ -4,12 +4,13 @@ import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetc
 import com.skkil.sync.common.util.pagination.keyset.KeysetCursorPaginationProvider;
 import com.skkil.sync.post.dto.data.PostRecommendationCandidate;
 import com.skkil.sync.post.dto.data.PostRecommendationCursor;
+import com.skkil.sync.post.model.PostRecommendationType;
 import com.skkil.sync.post.repository.PostRecommendationQueryRepository;
 import com.skkil.sync.post.repository.pagination.PostRecommendationPaginationProvider;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 
-@Component("recentPostRecommendationChannel")
+@Component
 public class RecentPostRecommendationChannel implements PostRecommendationChannel {
 
   private final PostRecommendationQueryRepository postRecommendationQueryRepository;
@@ -17,6 +18,11 @@ public class RecentPostRecommendationChannel implements PostRecommendationChanne
   public RecentPostRecommendationChannel(
       PostRecommendationQueryRepository postRecommendationQueryRepository) {
     this.postRecommendationQueryRepository = postRecommendationQueryRepository;
+  }
+
+  @Override
+  public PostRecommendationType getType() {
+    return PostRecommendationType.RECENT;
   }
 
   @Override

@@ -24,12 +24,12 @@
           "questions": "질문"
         }
       },
-      "recently-viewed": {
-        "title": "최근 본 게시물"
-      },
       "trending-tags": {
         "title": "인기 태그",
-        "post-count": "게시물 {count}개"
+        "explore": "탐색",
+        "post-count": "게시물 {count}개",
+        "follow": "팔로우",
+        "following": "팔로잉"
       }
     },
     "explore": {
@@ -43,6 +43,33 @@
         },
         "TRENDING": {
           "title": "인기 포스트가 없습니다",
+          "description": "잠시 후 다시 확인해 주세요."
+        }
+      },
+      "tags": {
+        "title": "태그",
+        "description": "관심 있는 태그를 팔로우하고 관련 글을 모아보세요.",
+        "following": {
+          "title": "팔로우 중인 태그",
+          "empty": "아직 팔로우 중인 태그가 없습니다."
+        },
+        "all": {
+          "title": "전체 태그"
+        },
+        "list": {
+          "empty": "태그가 없습니다.",
+          "error": "태그를 불러오는 중 오류가 발생했습니다."
+        },
+        "post-count": "게시물 {count}개",
+        "no-description": "설명이 없습니다.",
+        "follow": "팔로우",
+        "unfollow": "팔로잉"
+      },
+      "projects": {
+        "title": "이번 달 인기 프로젝트",
+        "description": "팔로우할 가치가 있는 프로젝트를 만나보세요.",
+        "empty": {
+          "title": "추천 프로젝트가 없습니다",
           "description": "잠시 후 다시 확인해 주세요."
         }
       }
@@ -105,6 +132,42 @@
           "error": "링크 복사에 실패했습니다."
         }
       },
+      "edit": {
+        "trigger": "수정",
+        "title": "글 수정"
+      },
+      "new": {
+        "title": "새 글 작성"
+      },
+      "drafts": {
+        "title": "내 초안",
+        "new-post": "새 글",
+        "filters": {
+          "all": "전체",
+          "public": "공개",
+          "workspace": "워크스페이스",
+          "all-types": "모든 타입"
+        },
+        "empty": {
+          "title": "저장된 초안이 없습니다",
+          "description": "초안으로 저장한 글이 이곳에 표시됩니다.",
+          "action": "글 작성"
+        },
+        "error": {
+          "title": "초안을 불러올 수 없습니다",
+          "description": "잠시 후 다시 시도해주세요.",
+          "load-more": "초안을 더 불러오지 못했습니다.",
+          "retry": "다시 시도"
+        },
+        "actions": {
+          "edit": "수정"
+        },
+        "untitled": {
+          "SHORT": "제목 없는 TIL",
+          "LONG": "제목 없는 블로그",
+          "QUESTION": "제목 없는 질문"
+        }
+      },
       "render-error": {
         "title": "포스트를 표시할 수 없습니다",
         "description": "이 포스트의 내용을 불러오는 중 문제가 발생했습니다."
@@ -120,7 +183,10 @@
           "submit": "댓글 작성",
           "login": "로그인하고 댓글 작성하기"
         },
-        "author-badge": "작성자"
+        "author-badge": "작성자",
+        "accepted-badge": "채택된 댓글",
+        "accept-button": "채택하기",
+        "unaccept-button": "채택 취소"
       },
       "not-found": {
         "title": "포스트를 찾을 수 없습니다",
@@ -150,6 +216,7 @@
       },
       "new": {
         "title": "만들고자 하는 프로젝트에 대해 알려주세요",
+        "metaTitle": "새 프로젝트",
         "form": {
           "name": {
             "label": "이름",
@@ -202,6 +269,10 @@
             "actions": {
               "cancel": "취소",
               "invite": "초대"
+            },
+            "messages": {
+              "success": "초대를 보냈습니다.",
+              "error": "초대를 보내지 못했습니다. 잠시 후 다시 시도해 주세요."
             }
           }
         },
@@ -211,8 +282,7 @@
             "feed": "피드",
             "questions": "질문",
             "guides": "가이드",
-            "my-posts": "내 게시물",
-            "tag": "#{name}"
+            "my-posts": "내 게시물"
           },
           "list": {
             "empty": "게시물이 없습니다.",
@@ -231,6 +301,16 @@
           "empty": "아직 댓글을 남긴 게시물이 없어요.",
           "error": "게시물을 불러오지 못했습니다.",
           "end": "마지막 게시물입니다."
+        },
+        "bookmarks": {
+          "heading": "북마크",
+          "empty": "아직 저장한 게시물이 없어요."
+        },
+        "drafts": {
+          "heading": "초안",
+          "new-post": "새 글",
+          "empty": "아직 작성한 초안이 없어요.",
+          "error": "초안을 불러오지 못했습니다."
         },
         "tags": {
           "label": "태그",
@@ -251,7 +331,7 @@
               "cancel": "취소",
               "submit": "생성",
               "messages": {
-                "success": "'{name}' 태그를 생성했습니다.",
+                "success": "‘{name}’ 태그를 생성했습니다.",
                 "error": "태그 생성에 실패했습니다."
               }
             },
@@ -261,7 +341,7 @@
               "empty": "인증되지 않은 태그가 없습니다.",
               "verify": "인증",
               "messages": {
-                "success": "'{name}' 태그를 인증했습니다.",
+                "success": "‘{name}’ 태그를 인증했습니다.",
                 "error": "태그 인증에 실패했습니다."
               }
             },
@@ -320,7 +400,8 @@
         "sidebar": {
           "members": {
             "heading": "멤버",
-            "invite": "멤버 초대하기"
+            "invite": "멤버 초대하기",
+            "manage": "멤버 관리"
           },
           "open-questions": {
             "heading": "미해결 질문",
@@ -354,13 +435,26 @@
               "heading": "프로젝트 이름",
               "description": "프로젝트의 표시 이름입니다.",
               "label": "이름",
-              "save": "저장"
+              "save": "저장",
+              "errors": {
+                "invalid": "이름은 6자 이상 50자 이하로 입력해주세요.",
+                "network": "서버에 연결할 수 없습니다. 나중에 다시 시도하세요.",
+                "unknown": "이름을 변경하지 못했습니다."
+              },
+              "messages": { "success": "프로젝트 이름이 변경되었습니다." }
             },
             "handle": {
               "heading": "URL 슬러그",
               "description": "프로젝트 URL에 사용되는 고유 식별자입니다.",
               "label": "슬러그",
-              "save": "저장"
+              "save": "저장",
+              "errors": {
+                "invalid": "슬러그는 6자 이상 30자 이하로 입력해주세요.",
+                "already-exists": "이미 사용 중인 슬러그입니다.",
+                "network": "서버에 연결할 수 없습니다. 나중에 다시 시도하세요.",
+                "unknown": "슬러그를 변경하지 못했습니다."
+              },
+              "messages": { "success": "프로젝트 슬러그가 변경되었습니다." }
             },
             "danger-zone": {
               "heading": "위험 구역",
@@ -388,8 +482,18 @@
               "remove": "팀원 삭제",
               "cancel-invitation": "초대 취소"
             },
+            "remove-dialog": {
+              "title": "팀원을 삭제할까요?",
+              "description": "{name}님을 이 워크스페이스에서 삭제합니다.",
+              "cancel": "취소",
+              "confirm": "삭제"
+            },
             "messages": {
-              "unsupported": "아직 지원되지 않는 기능입니다.",
+              "update-success": "팀원 역할을 수정했습니다.",
+              "update-error": "팀원 역할 수정에 실패했습니다.",
+              "remove-success": "팀원을 삭제했습니다.",
+              "remove-error": "팀원 삭제에 실패했습니다.",
+              "owner-protected": "워크스페이스 소유자는 수정하거나 삭제할 수 없습니다.",
               "cancel-success": "초대를 취소했습니다.",
               "cancel-error": "초대 취소에 실패했습니다."
             },
@@ -426,6 +530,7 @@
       }
     },
     "search": {
+      "title": "검색",
       "empty-query": "검색어를 입력해 주세요.",
       "results": {
         "title": "{query}에 대한 검색 결과",
@@ -439,15 +544,6 @@
       },
       "tags": {
         "post-count": "{count}개의 게시물"
-      }
-    },
-    "tags": {
-      "label": "태그",
-      "error": "게시물을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
-      "end": "모든 게시물을 확인했습니다.",
-      "empty": {
-        "title": "{name} 태그의 공개 게시물이 없습니다.",
-        "description": "다른 태그를 검색해보세요."
       }
     },
     "auth": {
@@ -526,6 +622,7 @@
       }
     },
     "about": {
+      "metaTitle": "소개",
       "nav": {
         "login": "로그인",
         "register": "가입하기",
@@ -640,23 +737,26 @@
       }
     },
     "onboarding": {
+      "metaTitle": "온보딩",
       "brand": {
         "title": "거의 다 왔어요",
         "description": "몇 가지만 더 알려주시면 sync를 시작할 준비가 끝나요."
       },
       "steps": {
-        "welcome": {
-          "title": "sync에 오신 것을 환영합니다!",
-          "description": "시작하려면 몇 가지 질문에 답해주세요."
-        },
-        "choose-handle": {
-          "title": "사용자 이름 선택",
-          "description": "다른 사용자가 볼 수 있는 고유한 사용자 이름을 선택하세요.",
+        "profile": {
+          "title": "프로필을 설정해주세요",
+          "description": "다른 사용자에게 보여질 이름과 사용자 이름을 확인하고 필요하면 수정하세요.",
           "form": {
+            "name": {
+              "label": "이름",
+              "placeholder": "이름을 입력하세요"
+            },
             "handle": {
+              "label": "사용자 이름",
               "placeholder": "사용자 이름을 입력하세요 (예: username123)"
             },
             "errors": {
+              "required_name": "이름은 필수 항목입니다.",
               "invalid_characters": "사용자 이름에는 영문자, 숫자, 밑줄만 사용할 수 있습니다.",
               "minimum_length": "사용자 이름은 최소 {length}자 이상이어야 합니다.",
               "maximum_length": "사용자 이름은 최대 {length}자 이하여야 합니다.",
@@ -664,12 +764,58 @@
             }
           }
         },
+        "tags": {
+          "title": "관심 있는 태그를 팔로우하세요",
+          "description": "관심 분야의 태그를 검색해서 팔로우하면 관련된 글을 피드에서 먼저 만나볼 수 있어요.",
+          "search": {
+            "placeholder": "태그 검색하기",
+            "empty": "검색 결과가 없어요. 다른 검색어로 시도해보세요."
+          },
+          "recommendations": {
+            "empty": "아직 추천할 태그가 없어요. 나중에 다시 확인해보세요."
+          },
+          "selected": {
+            "title": "선택한 태그",
+            "empty": "아직 선택한 태그가 없어요."
+          },
+          "progress-below-minimum": "최소 {minimum}개는 선택해주세요.",
+          "progress-success": "좋아요! 다음으로 넘어가볼까요?",
+          "progress-max-reached": "지금은 {maximum}개까지만 선택해봐요.",
+          "max-tags": "태그는 최대 {count}개까지 팔로우할 수 있어요."
+        },
         "follow": {
           "title": "관심사가 비슷한 사람들",
           "description": "회원님과 잘 맞을 만한 사람들이에요. 지금 팔로우하고 피드를 채워보세요.",
           "follow": "팔로우",
           "following": "팔로잉",
           "empty": "아직 추천할 사용자가 없어요. 나중에 다시 확인해보세요."
+        },
+        "email-verification": {
+          "title": "이메일을 인증해주세요",
+          "description": "계정 보호를 위해 이메일 인증이 필요해요. 인증 코드를 받고 입력해주세요.",
+          "form": {
+            "token": {
+              "label": "인증 코드",
+              "placeholder": "이메일로 받은 인증 코드를 입력하세요"
+            }
+          },
+          "actions": {
+            "send": "인증 코드 보내기",
+            "resend": "인증 코드 다시 보내기",
+            "verify": "인증하기"
+          },
+          "messages": {
+            "sent": "인증 코드를 보냈어요. 이메일을 확인해주세요.",
+            "verified": "이메일이 인증되었어요.",
+            "alreadyVerified": "이미 인증된 이메일이에요.",
+            "expiresIn": "인증 코드는 {time} 후 만료돼요.",
+            "expired": "인증 코드가 만료됐어요. 다시 받아주세요."
+          },
+          "errors": {
+            "send": "인증 코드를 보내지 못했어요. 다시 시도해주세요.",
+            "invalidToken": "인증 코드가 올바르지 않아요.",
+            "useEnglishInput": "영문 입력으로 전환해주세요."
+          }
         },
         "finished": {
           "title": "이제 sync를 사용할 준비가 끝났습니다!",
@@ -857,6 +1003,7 @@
       }
     },
     "admin": {
+      "title": "관리자",
       "post-reports": {
         "title": "신고 큐",
         "empty": "신고가 없습니다.",
@@ -910,6 +1057,14 @@
         "actions": {
           "verify": "검증"
         }
+      }
+    },
+    "legal": {
+      "privacy": {
+        "title": "개인정보처리방침"
+      },
+      "terms": {
+        "title": "이용약관"
       }
     },
     "not-found": {
@@ -976,6 +1131,11 @@
                 "description": "시스템 설정에 따라 테마가 자동으로 변경됩니다."
               }
             }
+          },
+          "messages": { "success": "테마가 저장되었습니다." },
+          "errors": {
+            "network": "서버에 연결할 수 없습니다. 나중에 다시 시도하세요.",
+            "unknown": "테마를 저장하지 못했습니다."
           }
         }
       },
@@ -1000,15 +1160,11 @@
         "QUESTION": "질문"
       },
       "status": {
-        "DRAFT": "임시저장",
+        "DRAFT": "초안",
         "PUBLISHED": "게시됨"
       },
       "viewer": {
         "options": "게시물 옵션",
-        "reviewStatus": {
-          "verified": "검증됨",
-          "verify-soon": "곧 검증 예정"
-        },
         "votes": "투표",
         "answers": "답변",
         "answered": "답변 완료",
@@ -1017,6 +1173,28 @@
         "empty": {
           "title": "표시할 포스트가 없습니다",
           "description": "더 많은 사용자, 프로젝트, 태그를 팔로우하면 여기에 포스트가 모입니다."
+        }
+      }
+    },
+    "tag": {
+      "detail": {
+        "description-empty": "설명이 없습니다.",
+        "meta": "게시물 {postCount}개 · 팔로워 {followerCount}명",
+        "follow": {
+          "follow": "팔로우",
+          "following": "팔로잉"
+        },
+        "posts": {
+          "list": {
+            "empty": "게시물이 없습니다.",
+            "end": "게시물이 더 이상 없습니다.",
+            "error": "게시물을 불러오는 중 오류가 발생했습니다."
+          }
+        },
+        "not-found": {
+          "title": "태그를 찾을 수 없습니다",
+          "description": "요청하신 태그가 존재하지 않거나 삭제되었습니다.",
+          "back": "홈으로 돌아가기"
         }
       }
     },
@@ -1080,13 +1258,14 @@
           "trending-posts": "인기 게시물",
           "explore-projects": "프로젝트 탐색",
           "tags": "태그",
-          "drafts": "임시저장",
+          "drafts": "초안",
           "feed": "피드",
           "questions": "질문",
           "guides": "가이드",
           "browse": "둘러보기",
           "my-posts": "내 게시물",
           "my-comments": "내 댓글",
+          "bookmarks": "북마크",
           "settings": "설정"
         }
       }
@@ -1187,12 +1366,15 @@
       "submit": "게시하기",
       "posting-to": "{project}에 게시",
       "actions": {
-        "save-draft": "임시저장",
-        "publish": "게시하기"
+        "save-draft": "초안으로 저장",
+        "publish": "게시하기",
+        "update-draft": "초안으로 저장",
+        "update-published": "변경사항 저장"
       },
       "scope": {
         "public": "공개",
         "workspace": "워크스페이스: {workspace}",
+        "workspace-generic": "워크스페이스",
         "workspace-loading": "불러오는 중"
       },
       "validation": {
@@ -1202,6 +1384,10 @@
       "messages": {
         "create-success": "게시글이 작성되었습니다.",
         "create-error": "게시글 작성에 실패했습니다.",
+        "update-success": "게시글이 수정되었습니다.",
+        "update-error": "게시글 수정에 실패했습니다.",
+        "edit-forbidden": "이 게시글을 수정할 수 없습니다.",
+        "edit-unavailable": "게시글을 불러올 수 없습니다.",
         "empty-content": "내용을 입력해주세요."
       },
       "sidebar": {
@@ -1239,7 +1425,8 @@
         "post-count": "{count}개의 게시물",
         "max-tags": "태그는 최대 {count}개까지 추가할 수 있습니다",
         "loading": "태그를 검색하는 중...",
-        "not-found": "태그를 찾을 수 없습니다"
+        "not-found": "태그를 찾을 수 없습니다",
+        "project-tag": "프로젝트 태그입니다"
       }
     }
   },

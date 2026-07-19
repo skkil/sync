@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useGetPostRecommendationsInfinite } from '@/api/__generated__/post/post';
 import { PostRecommendationType } from '@/components/feature/post/types/post';
 import PostList from '@/components/feature/post/viewer/PostList';
-import { toPostViewSource } from '@/components/feature/post/viewer/types';
+import { toPostSummary } from '@/components/feature/post/viewer/types';
 import { Empty, EmptyDescription, EmptyTitle } from '@/components/ui/empty';
 
 const FEED_PAGE_SIZE = '50';
@@ -40,7 +40,7 @@ export default function ExplorePosts({ type }: ExplorePostsProps) {
 
   return (
     <PostList
-      items={posts.map((post) => toPostViewSource(post.content))}
+      items={posts.map((post) => toPostSummary(post.content))}
       isPending={isPending}
       hasNextPage={!!hasNextPage}
       isFetchingNextPage={isFetchingNextPage}

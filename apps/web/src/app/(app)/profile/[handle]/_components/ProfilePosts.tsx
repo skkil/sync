@@ -6,7 +6,7 @@ import { useGetUserPostsInfinite } from '@/api/__generated__/post/post';
 import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import PostList from '@/components/feature/post/viewer/PostList';
 import PostListMessage from '@/components/feature/post/viewer/error/PostListMessage';
-import { toPostViewSource } from '@/components/feature/post/viewer/types';
+import { toPostSummary } from '@/components/feature/post/viewer/types';
 
 const POSTS_PAGE_SIZE = '10';
 
@@ -59,7 +59,7 @@ export default function ProfilePosts({ handle }: ProfilePostsProps) {
 
   return (
     <PostList
-      items={posts.map((post) => toPostViewSource(post.content))}
+      items={posts.map((post) => toPostSummary(post.content))}
       isPending={isPending}
       isError={isError}
       hasNextPage={!!hasNextPage}

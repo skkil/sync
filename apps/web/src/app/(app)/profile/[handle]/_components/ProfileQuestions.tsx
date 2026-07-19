@@ -7,7 +7,7 @@ import { useGetProfileByHandle } from '@/api/__generated__/profile/profile';
 import { PostType } from '@/components/feature/post/types/post';
 import PostList from '@/components/feature/post/viewer/PostList';
 import PostListMessage from '@/components/feature/post/viewer/error/PostListMessage';
-import { toPostViewSource } from '@/components/feature/post/viewer/types';
+import { toPostSummary } from '@/components/feature/post/viewer/types';
 
 const QUESTIONS_PAGE_SIZE = '10';
 
@@ -61,7 +61,7 @@ export default function ProfileQuestions({ handle }: ProfileQuestionsProps) {
 
   return (
     <PostList
-      items={posts.map((post) => toPostViewSource(post.content))}
+      items={posts.map((post) => toPostSummary(post.content))}
       isPending={isPending}
       isError={isError}
       hasNextPage={!!hasNextPage}

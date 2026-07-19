@@ -11,7 +11,6 @@ import { isAuthenticated } from '@/lib/auth';
 import { useSession } from '@/lib/auth/client';
 import ROUTES from '@/util/routes';
 
-import NotificationsButton from './_components/NotificationsButton';
 import SearchBar from './_components/SearchBar';
 import UserAvatar from './_components/UserAvatar';
 
@@ -66,8 +65,6 @@ function RightSection() {
           <SearchBar variant="mobile" />
         </div>
       </>
-
-      {isAuthenticated(session) && <NotificationsButton />}
 
       {isAuthenticated(session) ? (
         <UserAvatar />

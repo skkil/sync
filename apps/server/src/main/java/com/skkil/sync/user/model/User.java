@@ -114,6 +114,10 @@ public class User extends BaseEntity {
     this.isOnboarded = true;
   }
 
+  public boolean isVerified() {
+    return isEmailVerified;
+  }
+
   public void verifyEmail() {
     this.isEmailVerified = true;
   }

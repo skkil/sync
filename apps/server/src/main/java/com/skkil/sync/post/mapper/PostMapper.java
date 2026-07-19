@@ -4,6 +4,7 @@ import com.skkil.sync.media.dto.MediaDto;
 import com.skkil.sync.post.dto.data.PostDto;
 import com.skkil.sync.post.dto.response.GetPostResponse;
 import com.skkil.sync.post.dto.summary.PostSummary;
+import com.skkil.sync.post.dto.summary.TagSummary;
 import com.skkil.sync.project.dto.summary.ProjectSummary;
 import com.skkil.sync.user.dto.summary.UserSummary;
 import java.util.List;
@@ -16,7 +17,14 @@ import org.mapstruct.Mappings;
 public interface PostMapper {
 
   PostSummary toPostSummary(
-      PostDto post, UserSummary author, @Nullable ProjectSummary project, boolean isAuthor);
+      PostDto post,
+      UserSummary author,
+      @Nullable ProjectSummary project,
+      boolean isAuthor,
+      List<TagSummary> tags,
+      List<GetPostResponse.Media> previewMedia);
+
+  List<GetPostResponse.Media> toPreviewMedia(List<MediaDto> media);
 
   @Mappings({
     @Mapping(target = "json", source = "post.content"),

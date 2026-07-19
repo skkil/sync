@@ -5,6 +5,8 @@ import com.skkil.sync.media.model.Media;
 import com.skkil.sync.media.service.domain.MediaDomainService;
 import com.skkil.sync.user.dto.request.UpdateProfileRequest;
 import com.skkil.sync.user.dto.response.GetProfileResponse;
+import com.skkil.sync.user.exception.EmailNotVerifiedException;
+import com.skkil.sync.user.exception.HandleNotSetException;
 import com.skkil.sync.user.exception.UserNotFoundException;
 import com.skkil.sync.user.mapper.ProfileAssembler;
 import com.skkil.sync.user.mapper.ProfileMapper;
@@ -123,13 +125,25 @@ public class ProfileService {
       profileImage.markAsUploaded();
     }
 
-    if (request.isOnboarded() != null) {
-      user.onboard();
-    }
-
     if (request.contacts() != null) {
       UserContacts contacts = profileMapper.toUserContacts(request.contacts());
       user.setContacts(contacts);
     }
+  }
+
+  @Transactional
+  public void completeOnboarding(Long userId) {
+    var user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+    log.debug("Completing onboarding for user {}", userId);
+
+    if (user.getHandle() == null) {
+      throw new HandleNotSetException();
+    }
+    if (!user.isVerified()) {
+      throw new EmailNotVerifiedException();
+    }
+
+    user.onboard();
   }
 }

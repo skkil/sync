@@ -14,7 +14,12 @@ import type {
 
 import { api } from '../../../lib/server';
 import type { ErrorType } from '../../../lib/server';
-import type { LoginRequest, RegisterRequest } from '../types';
+import type {
+  LoginRequest,
+  RegisterRequest,
+  SendVerificationEmailResponse,
+  VerifyEmailRequest,
+} from '../types';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
@@ -300,4 +305,199 @@ export const useRegister = <TError = ErrorType<unknown>, TContext = unknown>(
   TContext
 > => {
   return useMutation(getRegisterMutationOptions(options), queryClient);
+};
+export type sendVerificationEmailResponse200 = {
+  data: SendVerificationEmailResponse;
+  status: 200;
+};
+
+export type sendVerificationEmailResponseSuccess =
+  sendVerificationEmailResponse200 & {
+    headers: Headers;
+  };
+export type sendVerificationEmailResponse =
+  sendVerificationEmailResponseSuccess;
+
+export const getSendVerificationEmailUrl = () => {
+  return `/auth/email-verification/send`;
+};
+
+/**
+ * 로그인한 사용자에게 이메일 인증 코드를 발송합니다.
+ * @summary Send Verification Email
+ */
+export const sendVerificationEmail = async (
+  options?: RequestInit,
+): Promise<sendVerificationEmailResponse> => {
+  return api<sendVerificationEmailResponse>(getSendVerificationEmailUrl(), {
+    ...options,
+    method: 'POST',
+  });
+};
+
+export const getSendVerificationEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof sendVerificationEmail>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof sendVerificationEmail>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['sendVerificationEmail'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof sendVerificationEmail>>,
+    void
+  > = () => {
+    return sendVerificationEmail(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SendVerificationEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof sendVerificationEmail>>
+>;
+
+export type SendVerificationEmailMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Send Verification Email
+ */
+export const useSendVerificationEmail = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof sendVerificationEmail>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof sendVerificationEmail>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(
+    getSendVerificationEmailMutationOptions(options),
+    queryClient,
+  );
+};
+export type verifyEmailResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type verifyEmailResponseSuccess = verifyEmailResponse204 & {
+  headers: Headers;
+};
+export type verifyEmailResponse = verifyEmailResponseSuccess;
+
+export const getVerifyEmailUrl = () => {
+  return `/auth/email-verification/verify`;
+};
+
+/**
+ * 발송된 이메일 인증 코드를 확인하여 이메일 인증을 완료합니다.
+ * @summary Verify Email
+ */
+export const verifyEmail = async (
+  verifyEmailRequest?: VerifyEmailRequest,
+  options?: RequestInit,
+): Promise<verifyEmailResponse> => {
+  return api<verifyEmailResponse>(getVerifyEmailUrl(), {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(verifyEmailRequest),
+  });
+};
+
+export const getVerifyEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyEmail>>,
+    TError,
+    { data?: VerifyEmailRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof verifyEmail>>,
+  TError,
+  { data?: VerifyEmailRequest },
+  TContext
+> => {
+  const mutationKey = ['verifyEmail'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof verifyEmail>>,
+    { data?: VerifyEmailRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return verifyEmail(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type VerifyEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof verifyEmail>>
+>;
+export type VerifyEmailMutationBody = VerifyEmailRequest | undefined;
+export type VerifyEmailMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Verify Email
+ */
+export const useVerifyEmail = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof verifyEmail>>,
+      TError,
+      { data?: VerifyEmailRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof verifyEmail>>,
+  TError,
+  { data?: VerifyEmailRequest },
+  TContext
+> => {
+  return useMutation(getVerifyEmailMutationOptions(options), queryClient);
 };

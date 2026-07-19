@@ -6,7 +6,7 @@ import {
   useCreateComment as useCreateCommentMutation,
 } from '@/api/__generated__/comment/comment';
 
-import { COMMENT_PAGE_SIZE } from '../viewer/PostComments';
+import { COMMENT_PAGE_SIZE } from '../constants';
 
 export function useCreateComment() {
   const queryClient = useQueryClient();

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 import { useSearchPosts } from '@/api/__generated__/post/post';
-import { PreviewTagChips } from '@/components/feature/post/viewer/components/PreviewTagChips';
+import { PostTagChips } from '@/components/feature/post/viewer/components/PostTagChips';
 import { Badge } from '@/components/ui/badge';
 import {
   Empty,
@@ -60,37 +60,38 @@ export default function SearchPostResults({
   return (
     <div className="divide-y">
       {posts.map((post) => {
-        const href = post.summary.project?.handle
-          ? ROUTES.PROJECT_POST(post.summary.project.handle, post.summary.slug)
-          : ROUTES.POST(post.summary.slug);
+        const href = post.project?.handle
+          ? ROUTES.PROJECT_POST(post.project.handle, post.slug)
+          : ROUTES.POST(post.slug);
 
         return (
-          <Link key={post.summary.id} href={href} className="block py-4">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-semibold">{post.summary.author.name}</span>
-              <span className="text-muted-foreground">
-                @{post.summary.author.handle} ·{' '}
-                <RelativeTime date={post.summary.createdAt} />
-              </span>
-              {post.summary.project?.name && (
-                <Badge variant="secondary">{post.summary.project.name}</Badge>
+          <article key={post.id} className="py-4">
+            <Link href={href} className="block">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="font-semibold">{post.author.name}</span>
+                <span className="text-muted-foreground">
+                  @{post.author.handle} · <RelativeTime date={post.createdAt} />
+                </span>
+                {post.project?.name && (
+                  <Badge variant="secondary">{post.project.name}</Badge>
+                )}
+              </div>
+
+              {post.title && (
+                <h3 className="mt-1 font-semibold">{post.title}</h3>
               )}
-            </div>
 
-            {post.summary.title && (
-              <h3 className="mt-1 font-semibold">{post.summary.title}</h3>
-            )}
+              <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                {post.preview}
+              </p>
+            </Link>
 
-            <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
-              {post.content}
-            </p>
-
-            {post.summary.tags.length > 0 && (
+            {post.tags.length > 0 && (
               <div className="mt-2">
-                <PreviewTagChips tags={post.summary.tags} />
+                <PostTagChips tags={post.tags} />
               </div>
             )}
-          </Link>
+          </article>
         );
       })}
     </div>

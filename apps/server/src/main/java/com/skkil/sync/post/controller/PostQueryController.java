@@ -4,6 +4,7 @@ import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
 import com.skkil.sync.post.dto.response.GetPostResponse;
 import com.skkil.sync.post.dto.response.GetPostsResponse;
+import com.skkil.sync.post.model.PostScope;
 import com.skkil.sync.post.model.PostType;
 import com.skkil.sync.post.service.PostQueryService;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Validated
 public class PostQueryController {
 
   private final PostQueryService postQueryService;
@@ -30,6 +32,17 @@ public class PostQueryController {
       @AuthenticationPrincipal AuthenticatedUser user,
       @Validated CursorPaginationRequest pagination) {
     return postQueryService.getPosts(user == null ? null : user.userId(), pagination);
+  }
+
+  @GetMapping("/posts/drafts")
+  @ResponseStatus(HttpStatus.OK)
+  public GetPostsResponse getDrafts(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @RequestParam(required = false) PostType type,
+      @RequestParam(required = false) PostScope scope,
+      @RequestParam(required = false) String projectHandle,
+      @Validated CursorPaginationRequest pagination) {
+    return postQueryService.getDrafts(user.userId(), type, scope, projectHandle, pagination);
   }
 
   @GetMapping("/posts/{slug}")
@@ -66,8 +79,10 @@ public class PostQueryController {
   public GetPostsResponse getPostsByTag(
       @AuthenticationPrincipal AuthenticatedUser user,
       @PathVariable Long tagId,
+      @RequestParam(required = false) PostType type,
       @Validated CursorPaginationRequest pagination) {
-    return postQueryService.getPostsByTag(user == null ? null : user.userId(), tagId, pagination);
+    return postQueryService.getPostsByTag(
+        user == null ? null : user.userId(), tagId, type, pagination);
   }
 
   @GetMapping("/projects/{handle}/posts")
@@ -80,16 +95,5 @@ public class PostQueryController {
       @Validated CursorPaginationRequest pagination) {
     return postQueryService.getPostsByProject(
         user == null ? null : user.userId(), handle, type, authorHandle, pagination);
-  }
-
-  @GetMapping("/tags/by-name/{name}/posts")
-  @ResponseStatus(HttpStatus.OK)
-  public GetPostsResponse getPublicPostsByTag(
-      @AuthenticationPrincipal AuthenticatedUser user,
-      @PathVariable String name,
-      @RequestParam(required = false) PostType type,
-      @Validated CursorPaginationRequest pagination) {
-    return postQueryService.getPublicPostsByTag(
-        user == null ? null : user.userId(), name, type, pagination);
   }
 }

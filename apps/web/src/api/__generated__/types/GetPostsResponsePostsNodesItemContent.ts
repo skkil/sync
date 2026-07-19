@@ -4,14 +4,61 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetPostsResponsePostsNodesItemContentSummary } from './GetPostsResponsePostsNodesItemContentSummary';
+import type { GetPostsResponsePostsNodesItemContentAuthor } from './GetPostsResponsePostsNodesItemContentAuthor';
+import type { GetPostsResponsePostsNodesItemContentPreviewMediaItem } from './GetPostsResponsePostsNodesItemContentPreviewMediaItem';
+import type { GetPostsResponsePostsNodesItemContentProject } from './GetPostsResponsePostsNodesItemContentProject';
+import type { GetPostsResponsePostsNodesItemContentScope } from './GetPostsResponsePostsNodesItemContentScope';
+import type { GetPostsResponsePostsNodesItemContentStatus } from './GetPostsResponsePostsNodesItemContentStatus';
+import type { GetPostsResponsePostsNodesItemContentTagsItem } from './GetPostsResponsePostsNodesItemContentTagsItem';
+import type { GetPostsResponsePostsNodesItemContentType } from './GetPostsResponsePostsNodesItemContentType';
 
 /**
  * Node Content
  */
 export type GetPostsResponsePostsNodesItemContent = {
-  /** Post Summary */
-  summary: GetPostsResponsePostsNodesItemContentSummary;
-  /** Content */
-  content: string;
+  /** 게시물 내용의 일반 텍스트 미리보기 */
+  preview: string;
+  /** 게시물 본문의 단어 수 */
+  wordCount: number;
+  /** Whether the current user bookmarked this post */
+  bookmarked: boolean;
+  /** 작성자 정보 */
+  author: GetPostsResponsePostsNodesItemContentAuthor;
+  /** 소속 프로젝트 정보 */
+  project?: GetPostsResponsePostsNodesItemContentProject;
+  /** Number of Likes */
+  likeCount: number;
+  /** Post Type */
+  type: GetPostsResponsePostsNodesItemContentType;
+  /**
+   * Post Title
+   * @nullable
+   */
+  title?: string | null;
+  /** Whether the current user liked this post */
+  liked: boolean;
+  /** 게시물에 달린 태그 목록 */
+  tags: GetPostsResponsePostsNodesItemContentTagsItem[];
+  /** Number of Comments */
+  commentCount: number;
+  /** Whether the requesting user is the author of this post */
+  isAuthor: boolean;
+  /** Creation Timestamp */
+  createdAt: string;
+  /** 게시글 공개 범위 */
+  scope: GetPostsResponsePostsNodesItemContentScope;
+  /** 게시물에 첨부된 전체 미디어 수 */
+  mediaCount: number;
+  /** Post ID */
+  id: number;
+  /** 미리보기용 첨부 미디어 목록 (최대 2개) */
+  previewMedia: GetPostsResponsePostsNodesItemContentPreviewMediaItem[];
+  /** Post Slug */
+  slug: string;
+  /** Last Updated Timestamp */
+  updatedAt: string;
+  /** Whether the question post has been resolved */
+  resolved: boolean;
+  /** Post Status */
+  status: GetPostsResponsePostsNodesItemContentStatus;
 };

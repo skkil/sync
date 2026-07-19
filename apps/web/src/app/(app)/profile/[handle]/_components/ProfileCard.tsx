@@ -9,14 +9,13 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
 
-import { useUploadMedia } from '@/api/__generated__/media/media';
 import {
   useGetAuthenticatedUser,
   useGetProfileByHandle,
 } from '@/api/__generated__/profile/profile';
-import { uploadFileToS3 } from '@/api/s3';
 import { FollowButton } from '@/components/feature/profile/FollowButton';
 import { ContactFields } from '@/components/feature/profile/contacts';
+import { useProfileImageUpload } from '@/components/feature/profile/hooks/useProfileImageUpload';
 import { useUpdateProfile } from '@/components/feature/profile/hooks/useUpdateProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -36,7 +35,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/ui/field';
-import { FileInput, FileInputError, Input } from '@/components/ui/input';
+import { FileInput, Input } from '@/components/ui/input';
 import {
   InputGroup,
   InputGroupAddon,
@@ -452,103 +451,35 @@ function ProfileImageField() {
   const t = useTranslations('pages.profile.edit.form.image');
   const tCommon = useTranslations();
 
-  const { refetch: refetchSession } = useSession();
   const { data: profile } = useGetAuthenticatedUser();
 
-  const { mutate: updateProfile } = useUpdateProfile({
+  const {
+    selectedImage,
+    error,
+    isUploadMediaPending,
+    handleFileChange,
+    handleFileError,
+    handleRemoveImage,
+  } = useProfileImageUpload({
     handle: profile?.data.handle || '',
-    onSuccess: refetchSession,
+    onUploadSuccess: () => toast.success(t('messages.success')),
   });
-
-  const { mutateAsync: uploadMedia, isPending: isUploadMediaPending } =
-    useUploadMedia();
-
-  const [selectedImage, setSelectedImage] = useState<{
-    file: File;
-    src: string;
-  } | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleFileError = (error: FileInputError) => {
-    if (error === 'size') {
-      setError(t('errors.maxSize'));
-    } else if (error === 'type') {
-      setError(t('errors.unsupportedType'));
-    }
-  };
-
-  const handleFileChange = async (files: File[]) => {
-    const file = files[0];
-    if (!file) {
-      return;
-    }
-
-    setSelectedImage({
-      file,
-      src: URL.createObjectURL(file),
-    });
-    setError(null);
-
-    const {
-      data: { uploadUrl, mediaId },
-    } = await uploadMedia({
-      data: {
-        fileName: file.name,
-        fileSize: file.size,
-        mediaType: file.type,
-      },
-    });
-
-    const { success: uploadSuccess } = await uploadFileToS3({
-      file,
-      uploadUrl,
-    });
-
-    if (!uploadSuccess) {
-      toast.error(t('errors.uploadFailed'));
-      setSelectedImage(null);
-      return;
-    }
-
-    updateProfile(
-      {
-        data: {
-          profileImageId: mediaId,
-        },
-      },
-      {
-        onSuccess: () => {
-          toast.success(t('messages.success'));
-          setSelectedImage(null);
-        },
-        onError: (error) => {
-          if (
-            error instanceof SyncError &&
-            error.code === ErrorCode.NETWORK_ERROR
-          ) {
-            setError(tCommon('errors.connection-failed'));
-          } else if (error instanceof SyncError) {
-            setError(error.message);
-          } else {
-            setError(t('errors.uploadFailed'));
-          }
-        },
-      },
-    );
-  };
-
-  const handleRemoveImage = () => {
-    setSelectedImage(null);
-    updateProfile({
-      data: {
-        removeProfileImage: true,
-      },
-    });
-  };
 
   if (!profile) {
     return null;
   }
+
+  const errorMessage = error
+    ? error.code === 'maxSize'
+      ? t('errors.maxSize')
+      : error.code === 'unsupportedType'
+        ? t('errors.unsupportedType')
+        : error.code === 'network'
+          ? tCommon('errors.connection-failed')
+          : error.code === 'custom'
+            ? error.message
+            : t('errors.uploadFailed')
+    : null;
 
   return (
     <Field>
@@ -600,7 +531,7 @@ function ProfileImageField() {
         </div>
       </div>
 
-      {error && <div className="text-destructive">{error}</div>}
+      {errorMessage && <div className="text-destructive">{errorMessage}</div>}
     </Field>
   );
 }

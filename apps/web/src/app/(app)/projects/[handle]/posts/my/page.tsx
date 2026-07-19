@@ -1,4 +1,6 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/project';
@@ -12,6 +14,12 @@ interface ProjectMyPostsPageProps {
   params: Promise<{
     handle: string;
   }>;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('components.layout.sidebar.nav');
+
+  return { title: t('my-posts') };
 }
 
 export default async function ProjectMyPostsPage({

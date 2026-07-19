@@ -63,7 +63,11 @@ public class Project extends BaseEntity {
     teammate.setProject(this);
   }
 
-  public void update(String description, String website) {
+  public void update(String name, String description, String website) {
+    if (name != null) {
+      this.name = name;
+    }
+
     if (description != null) {
       this.description = description;
     }

@@ -1,10 +1,23 @@
 import { betterAuth } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
+import { setSessionCookie } from 'better-auth/cookies';
 import { nextCookies } from 'better-auth/next-js';
 import { HTTPError } from 'ky';
 
 import { getUserPreferences } from '@/api/__generated__/preferences/preferences';
 import { getAuthenticatedUser } from '@/api/__generated__/profile/profile';
+
+// spring session 쿠키는 http-only이므로 원본 값을 그대로 저장/노출하면 안 되고,
+// 동일 로그인 여부만 비교할 수 있으면 충분하므로 해시로 변환해 저장한다.
+async function hashSpringSessionCookie(value: string) {
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(value),
+  );
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
 
 export const auth = betterAuth({
   user: {
@@ -29,6 +42,14 @@ export const auth = betterAuth({
       },
     },
   },
+  session: {
+    additionalFields: {
+      springSessionHash: {
+        type: 'string',
+        input: false,
+      },
+    },
+  },
   plugins: [
     nextCookies(),
     {
@@ -42,6 +63,10 @@ export const auth = betterAuth({
               if (!sessionCookie) {
                 return null;
               }
+              const sessionCookieHash =
+                await hashSpringSessionCookie(sessionCookie);
+              const forceSync =
+                String(ctx.query?.disableCookieCache) === 'true';
 
               const existingToken = await ctx.getSignedCookie(
                 ctx.context.authCookies.sessionToken.name,
@@ -53,8 +78,11 @@ export const auth = betterAuth({
                   await ctx.context.internalAdapter.findSession(existingToken);
 
                 if (
+                  !forceSync &&
                   existingSession &&
-                  new Date(existingSession.session.expiresAt) > new Date()
+                  new Date(existingSession.session.expiresAt) > new Date() &&
+                  existingSession.session.springSessionHash ===
+                    sessionCookieHash
                 ) {
                   return null;
                 }
@@ -129,16 +157,10 @@ export const auth = betterAuth({
               const session = await ctx.context.internalAdapter.createSession(
                 userId,
                 true,
+                { springSessionHash: sessionCookieHash },
               );
 
-              await ctx.setSignedCookie(
-                ctx.context.authCookies.sessionToken.name,
-                session.token,
-                ctx.context.secret,
-                {
-                  ...ctx.context.authCookies.sessionToken.attributes,
-                },
-              );
+              await setSessionCookie(ctx, { session, user });
 
               return {
                 user,

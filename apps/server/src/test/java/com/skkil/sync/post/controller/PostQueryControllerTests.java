@@ -4,6 +4,7 @@ import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.docume
 import static com.epages.restdocs.apispec.Schema.schema;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -20,6 +21,7 @@ import com.skkil.sync.common.util.pagination.snippets.CursorPaginationRequestSni
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.post.dto.response.GetPostResponse;
 import com.skkil.sync.post.dto.response.GetPostsResponse;
+import com.skkil.sync.post.model.PostScope;
 import com.skkil.sync.post.model.PostType;
 import com.skkil.sync.post.service.PostQueryService;
 import com.skkil.sync.post.snippets.GetPostResponseSnippets;
@@ -38,7 +40,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PostQueryController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = true)
 @AutoConfigureRestDocs
 @ExtendWith(RestDocumentationExtension.class)
 @Import({SecurityConfig.class, TestSecurityConfig.class})
@@ -75,6 +77,51 @@ class PostQueryControllerTests {
                 null,
                 Function.identity(),
                 CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
+                GetPostsResponseSnippets.getPostsResponseFields()));
+  }
+
+  @Test
+  @DisplayName("[getDrafts] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void getDrafts() throws Exception {
+    AuthenticatedUser user = WithAuthenticatedUserSecurityContextFactory.getAuthenticatedUser();
+    PostType type = PostType.LONG;
+    PostScope scope = PostScope.PUBLIC;
+
+    CursorPaginationRequest pagination =
+        CursorPaginationRequestSnippets.getCursorPaginationRequest();
+    GetPostsResponse response = GetPostsResponseSnippets.getGetDraftPostsResponse();
+
+    when(postQueryService.getDrafts(
+            eq(user.userId()), eq(type), eq(scope), isNull(), eq(pagination)))
+        .thenReturn(response);
+
+    mockMvc
+        .perform(
+            get("/posts/drafts")
+                .queryParam("type", type.name())
+                .queryParam("scope", scope.name())
+                .queryParams(
+                    CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
+        .andExpect(status().isOk())
+        .andDo(
+            document(
+                "GetDraftPosts",
+                ResourceSnippetParameters.builder()
+                    .tag("post")
+                    .summary("Get Draft Posts")
+                    .description("Get Draft Posts")
+                    .responseSchema(schema("GetPostsResponse")),
+                null,
+                null,
+                Function.identity(),
+                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters()
+                    .and(parameterWithName("type").description("게시글 타입").optional())
+                    .and(parameterWithName("scope").description("게시글 공개 범위").optional())
+                    .and(
+                        parameterWithName("projectHandle")
+                            .description("프로젝트로 검색 범위 제한 (선택)")
+                            .optional()),
                 GetPostsResponseSnippets.getPostsResponseFields()));
   }
 
@@ -181,19 +228,22 @@ class PostQueryControllerTests {
   }
 
   @Test
-  @DisplayName("[getPostsByTag] API 문서화 테스트")
+  @DisplayName("[getPostsByTag] 공개 태그 게시글 API 문서화 테스트")
   void getPostsByTag() throws Exception {
     Long tagId = 1L;
+    PostType type = PostType.LONG;
 
     CursorPaginationRequest pagination =
         CursorPaginationRequestSnippets.getCursorPaginationRequest();
     GetPostsResponse response = GetPostsResponseSnippets.getGetPostsResponse();
 
-    when(postQueryService.getPostsByTag(any(), eq(tagId), eq(pagination))).thenReturn(response);
+    when(postQueryService.getPostsByTag(isNull(), eq(tagId), eq(type), eq(pagination)))
+        .thenReturn(response);
 
     mockMvc
         .perform(
             get("/tags/{tagId}/posts", tagId)
+                .queryParam("type", type.name())
                 .queryParams(
                     CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
         .andExpect(status().isOk())
@@ -203,13 +253,14 @@ class PostQueryControllerTests {
                 ResourceSnippetParameters.builder()
                     .tag("post")
                     .summary("Get Posts By Tag")
-                    .description("Get Posts By Tag")
+                    .description("태그가 붙은 공개 게시글 목록을 조회합니다.")
                     .responseSchema(schema(GetPostsResponse.class.getSimpleName())),
                 null,
                 null,
                 Function.identity(),
                 pathParameters(parameterWithName("tagId").description("태그 ID")),
-                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters(),
+                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters()
+                    .and(parameterWithName("type").description("게시글 타입").optional()),
                 GetPostsResponseSnippets.getPostsResponseFields()));
   }
 
@@ -255,39 +306,8 @@ class PostQueryControllerTests {
   }
 
   @Test
-  @DisplayName("[getPublicPostsByTag] API 문서화 테스트")
-  void getPublicPostsByTag() throws Exception {
-    String name = "spring";
-    PostType type = PostType.LONG;
-
-    CursorPaginationRequest pagination =
-        CursorPaginationRequestSnippets.getCursorPaginationRequest();
-    GetPostsResponse response = GetPostsResponseSnippets.getGetPostsResponse();
-
-    when(postQueryService.getPublicPostsByTag(any(), eq(name), eq(type), eq(pagination)))
-        .thenReturn(response);
-
-    mockMvc
-        .perform(
-            get("/tags/by-name/{name}/posts", name)
-                .queryParam("type", type.name())
-                .queryParams(
-                    CursorPaginationRequestSnippets.getCursorPaginationRequestQueryParams()))
-        .andExpect(status().isOk())
-        .andDo(
-            document(
-                "GetPublicPostsByTag",
-                ResourceSnippetParameters.builder()
-                    .tag("post")
-                    .summary("Get Public Posts By Tag")
-                    .description("태그가 붙은 공개 게시글 목록을 조회합니다.")
-                    .responseSchema(schema(GetPostsResponse.class.getSimpleName())),
-                null,
-                null,
-                Function.identity(),
-                pathParameters(parameterWithName("name").description("태그 이름")),
-                CursorPaginationRequestSnippets.getCursorPaginationRequestParameters()
-                    .and(parameterWithName("type").description("게시글 타입").optional()),
-                GetPostsResponseSnippets.getPostsResponseFields()));
+  @DisplayName("[getDrafts] 로그인하지 않은 사용자는 접근할 수 없다")
+  void getDrafts_unauthenticatedUser_shouldReturnUnauthorized() throws Exception {
+    mockMvc.perform(get("/posts/drafts")).andExpect(status().isUnauthorized());
   }
 }

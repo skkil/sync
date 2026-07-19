@@ -80,6 +80,14 @@ export const server = ky.extend({
   },
 });
 
+export async function primeCsrfToken() {
+  try {
+    await server.get('auth/csrf');
+  } catch {
+    // Best-effort — worst case the CSRF cookie stays unset until the next GET.
+  }
+}
+
 const getUrl = (url: string) => {
   if (url.startsWith('/')) {
     return url.slice(1);

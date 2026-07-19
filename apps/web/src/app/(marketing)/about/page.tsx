@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
@@ -123,6 +124,12 @@ function BentoTile({
       {children}
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pages.about');
+
+  return { title: t('metaTitle') };
 }
 
 export default async function About() {

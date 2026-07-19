@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
-import { useGetRecommendations } from '@/api/__generated__/user/user';
+import { useGetUserRecommendations } from '@/api/__generated__/user/user';
 import {
   useFollowUser,
   useFollowedRecommendedUserIds,
@@ -23,7 +23,7 @@ export const RecommendedFollows = forwardRef<
 >(({ onStateChange }, ref) => {
   const t = useTranslations('pages.onboarding.steps.follow');
 
-  const { data, isPending } = useGetRecommendations();
+  const { data, isPending } = useGetUserRecommendations();
   const followedIds = useFollowedRecommendedUserIds();
   const { mutate: followUser } = useFollowUser();
   const { mutate: unfollowUser } = useUnfollowUser();

@@ -14,6 +14,8 @@ export interface GetProjectResponse {
   summary: GetProjectResponseSummary;
   /** 팀원 목록 */
   teammates: GetProjectResponseTeammatesItem[];
+  /** 현재 사용자의 프로젝트 팔로우 여부 */
+  isFollowing: boolean;
   /**
    * 현재 사용자 역할
    * @nullable
@@ -21,6 +23,10 @@ export interface GetProjectResponse {
   role?: GetProjectResponseRole;
   /** 최근 활동 목록 */
   recentActivities?: GetProjectResponseRecentActivitiesItem[];
+  /** 현재 사용자의 프로젝트 팀원 여부 */
+  isViewer: boolean;
+  /** 현재 사용자의 대기 중인 초대 존재 여부 */
+  hasPendingInvitation: boolean;
   /** 추가 팀원 존재 여부 */
   hasMoreTeammates: boolean;
 }

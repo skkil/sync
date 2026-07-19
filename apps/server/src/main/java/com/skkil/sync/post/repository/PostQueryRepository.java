@@ -6,13 +6,13 @@ import static com.skkil.sync.jooq.tables.PostLikes.POST_LIKES;
 import static com.skkil.sync.jooq.tables.PostTags.POST_TAGS;
 import static com.skkil.sync.jooq.tables.Posts.POSTS;
 import static com.skkil.sync.jooq.tables.Projects.PROJECTS;
-import static com.skkil.sync.jooq.tables.Tags.TAGS;
 import static com.skkil.sync.jooq.tables.Teammates.TEAMMATES;
 import static com.skkil.sync.jooq.tables.Users.USERS;
 import static com.skkil.sync.post.repository.pagination.CommentedPostCursorPaginationProvider.COMMENTED_AT;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
 import com.skkil.sync.post.dto.data.PostDto;
+import com.skkil.sync.post.model.PostScope;
 import com.skkil.sync.post.model.PostStatus;
 import com.skkil.sync.post.model.PostType;
 import com.skkil.sync.post.model.PostVisibility;
@@ -39,13 +39,12 @@ public class PostQueryRepository {
   }
 
   public Optional<PostDto> getPostBySlug(Long requesterId, String slug) {
-    return dsl.select(post(requesterId))
+    return dsl.select(post(requesterId, true))
         .from(POSTS)
         .leftJoin(PROJECTS)
         .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
         .where(POSTS.SLUG.eq(slug).and(Conditions.readableCondition(requesterId)))
-        .fetchOptional()
-        .map(record -> record.into(PostDto.class));
+        .fetchOptionalInto(PostDto.class);
   }
 
   public CursorPaginationDataFetcher<PostDto> getPosts(Long requesterId) {
@@ -54,7 +53,7 @@ public class PostQueryRepository {
             .from(POSTS)
             .leftJoin(PROJECTS)
             .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
-            .where(condition.and(Conditions.publicPublishedCondition()))
+            .where(condition.and(Conditions.feedVisibleCondition()))
             .orderBy(orderFields)
             .limit(size)
             .fetchInto(PostDto.class);
@@ -73,9 +72,13 @@ public class PostQueryRepository {
     };
   }
 
-  public CursorPaginationDataFetcher<PostDto> getPostsByTag(Long requesterId, Long tagId) {
+  public CursorPaginationDataFetcher<PostDto> getPostsByTag(
+      Long requesterId, Long tagId, PostType type) {
     return (condition, orderFields, size) -> {
       Condition tagCondition = condition.and(POST_TAGS.TAG_ID.eq(tagId));
+      if (type != null) {
+        tagCondition = tagCondition.and(POSTS.POST_TYPE.eq(type.name()));
+      }
 
       return dsl.select(post(requesterId))
           .from(POSTS)
@@ -83,7 +86,7 @@ public class PostQueryRepository {
           .on(POST_TAGS.POST_ID.eq(POSTS.ID))
           .leftJoin(PROJECTS)
           .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
-          .where(tagCondition.and(Conditions.publicPublishedCondition()))
+          .where(tagCondition.and(Conditions.tagPostVisibilityCondition(requesterId)))
           .orderBy(orderFields)
           .limit(size)
           .fetchInto(PostDto.class);
@@ -97,7 +100,9 @@ public class PostQueryRepository {
           condition
               .and(PROJECTS.HANDLE.eq(handle))
               .and(Conditions.workspacePublishedCondition())
-              .and(Conditions.workspaceReadableCondition(requesterId));
+              .and(
+                  Conditions.publicProjectCondition()
+                      .or(Conditions.workspaceReadableCondition(requesterId)));
       if (type != null) {
         projectCondition = projectCondition.and(POSTS.POST_TYPE.eq(type.name()));
       }
@@ -118,27 +123,32 @@ public class PostQueryRepository {
     };
   }
 
-  public CursorPaginationDataFetcher<PostDto> getPublicPostsByTag(
-      Long requesterId, String tagName, PostType type) {
+  public CursorPaginationDataFetcher<PostDto> getDraftsByAuthor(
+      Long requesterId, PostType type, PostScope scope, String projectHandle) {
     return (condition, orderFields, size) -> {
-      Condition tagCondition =
+      Condition draftCondition =
           condition
-              .and(TAGS.NAME.eq(tagName))
-              .and(TAGS.PROJECT_ID.isNull())
-              .and(Conditions.publicPublishedCondition());
+              .and(POSTS.AUTHOR_ID.eq(requesterId))
+              .and(POSTS.STATUS.eq(PostStatus.DRAFT.name()))
+              .and(Conditions.visibleCondition());
+
       if (type != null) {
-        tagCondition = tagCondition.and(POSTS.POST_TYPE.eq(type.name()));
+        draftCondition = draftCondition.and(POSTS.POST_TYPE.eq(type.name()));
+      }
+
+      if (scope != null) {
+        draftCondition = draftCondition.and(POSTS.SCOPE.eq(scope.name()));
+      }
+
+      if (projectHandle != null) {
+        draftCondition = draftCondition.and(PROJECTS.HANDLE.eq(projectHandle));
       }
 
       return dsl.select(post(requesterId))
           .from(POSTS)
-          .join(POST_TAGS)
-          .on(POST_TAGS.POST_ID.eq(POSTS.ID))
-          .join(TAGS)
-          .on(TAGS.ID.eq(POST_TAGS.TAG_ID))
           .leftJoin(PROJECTS)
           .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
-          .where(tagCondition)
+          .where(draftCondition)
           .orderBy(orderFields)
           .limit(size)
           .fetchInto(PostDto.class);
@@ -230,7 +240,10 @@ public class PostQueryRepository {
         POSTS
             .ID
             .in(ids)
-            .and(Conditions.publicPublishedCondition())
+            .and(Conditions.workspacePublishedCondition())
+            .and(
+                Conditions.publicProjectCondition()
+                    .or(Conditions.workspaceReadableCondition(requesterId)))
             .and(PROJECTS.HANDLE.eq(projectHandle)));
   }
 
@@ -254,10 +267,23 @@ public class PostQueryRepository {
   }
 
   private List<SelectFieldOrAsterisk> post(Long requesterId) {
-    return post(requesterId, POSTS.CREATED_AT);
+    return post(requesterId, POSTS.CREATED_AT, false);
+  }
+
+  private List<SelectFieldOrAsterisk> post(Long requesterId, boolean shouldFetchContent) {
+    return post(requesterId, POSTS.CREATED_AT, shouldFetchContent);
   }
 
   private List<SelectFieldOrAsterisk> post(Long requesterId, Field<OffsetDateTime> sortKey) {
+    return post(requesterId, sortKey, false);
+  }
+
+  // Shared by every query method below. POSTS.CONTENT is only ever the real column for
+  // getPostBySlug (shouldFetchContent = true) — every list-shaped query gets a null
+  // placeholder in its place instead of paying for the unbounded payload, while still
+  // keeping the selected column count aligned with PostDto's record components.
+  private List<SelectFieldOrAsterisk> post(
+      Long requesterId, Field<OffsetDateTime> sortKey, boolean shouldFetchContent) {
     Field<Boolean> bookmarked =
         requesterId == null
             ? DSL.value(false)
@@ -278,10 +304,14 @@ public class PostQueryRepository {
                         .where(POST_LIKES.POST_ID.eq(POSTS.ID))
                         .and(POST_LIKES.USER_ID.eq(requesterId))));
 
+    Field<String> content =
+        shouldFetchContent ? POSTS.CONTENT : DSL.value((String) null, POSTS.CONTENT.getDataType());
+
     return List.of(
         POSTS.ID.as("id"),
         POSTS.POST_TYPE.as("type"),
         POSTS.STATUS.as("status"),
+        POSTS.SCOPE.as("scope"),
         POSTS.SLUG.as("slug"),
         POSTS.TITLE.as("title"),
         POSTS.AUTHOR_ID.as("authorId"),
@@ -290,8 +320,7 @@ public class PostQueryRepository {
         PROJECTS.DESCRIPTION.as("projectDescription"),
         PROJECTS.WEBSITE_URL.as("projectWebsite"),
         PROJECTS.IS_PUBLIC.as("projectIsPublic"),
-        tagNames(),
-        POSTS.CONTENT.as("content"),
+        content.as("content"),
         POSTS.CREATED_AT.as("createdAt"),
         POSTS.UPDATED_AT.as("updatedAt"),
         POSTS.LIKE_COUNT.as("likeCount"),
@@ -299,22 +328,10 @@ public class PostQueryRepository {
         liked.as("liked"),
         bookmarked.as("bookmarked"),
         POSTS.RESOLVED.as("resolved"),
+        POSTS.PREVIEW.as("preview"),
+        POSTS.MEDIA_COUNT.as("mediaCount"),
+        POSTS.WORD_COUNT.as("wordCount"),
         sortKey.as("sortKey"));
-  }
-
-  private Field<List<String>> tagNames() {
-    var responsePostTags = POST_TAGS.as("response_post_tags");
-    var responseTags = TAGS.as("response_tags");
-
-    return DSL.multiset(
-            dsl.select(responseTags.NAME)
-                .from(responsePostTags)
-                .join(responseTags)
-                .on(responseTags.ID.eq(responsePostTags.TAG_ID))
-                .where(responsePostTags.POST_ID.eq(POSTS.ID))
-                .orderBy(responseTags.NAME))
-        .convertFrom(records -> records.map(record -> record.value1()))
-        .as("tags");
   }
 
   private static final class Conditions {
@@ -322,16 +339,41 @@ public class PostQueryRepository {
       return POSTS.VISIBILITY.eq(PostVisibility.VISIBLE.name());
     }
 
+    private static Condition publishedCondition() {
+      return POSTS.STATUS.eq(PostStatus.PUBLISHED.name());
+    }
+
     private static Condition publicPublishedCondition() {
       return visibleCondition()
-          .and(POSTS.PROJECT_ID.isNull())
-          .and(POSTS.STATUS.eq(PostStatus.PUBLISHED.name()));
+          .and(POSTS.SCOPE.eq(PostScope.PUBLIC.name()))
+          .and(publishedCondition());
     }
 
     private static Condition workspacePublishedCondition() {
+      return visibleCondition().and(POSTS.PROJECT_ID.isNotNull()).and(publishedCondition());
+    }
+
+    // 프로젝트가 공개(public)로 설정된 경우, 해당 프로젝트의 게시글은 팀원이 아니어도 읽을 수 있다.
+    private static Condition publicProjectCondition() {
+      return PROJECTS.IS_PUBLIC.isTrue();
+    }
+
+    // 공개 피드(전체 게시글 목록)에 노출 가능한 게시글: 프로젝트에 속하지 않은 개인 게시글이거나,
+    // 공개 프로젝트에 속한 게시글. 비공개 프로젝트 게시글은 작성자/팀원 여부와 무관하게 피드에서 제외한다.
+    private static Condition feedVisibleCondition() {
+      return publicPublishedCondition()
+          .or(workspacePublishedCondition().and(publicProjectCondition()));
+    }
+
+    private static Condition tagPostVisibilityCondition(Long requesterId) {
       return visibleCondition()
-          .and(POSTS.PROJECT_ID.isNotNull())
-          .and(POSTS.STATUS.eq(PostStatus.PUBLISHED.name()));
+          .and(publishedCondition())
+          .and(
+              POSTS
+                  .SCOPE
+                  .eq(PostScope.PUBLIC.name())
+                  .or(publicProjectCondition())
+                  .or(workspaceReadableCondition(requesterId)));
     }
 
     private static Condition workspaceReadableCondition(Long requesterId) {
@@ -351,14 +393,16 @@ public class PostQueryRepository {
     }
 
     private static Condition readableCondition(Long requesterId) {
-      Condition publicPost = publicPublishedCondition();
+      Condition publiclyReadable =
+          publicPublishedCondition()
+              .or(workspacePublishedCondition().and(publicProjectCondition()));
       if (requesterId == null) {
-        return publicPost;
+        return publiclyReadable;
       }
 
       return visibleCondition()
           .and(
-              publicPost
+              publiclyReadable
                   .or(POSTS.AUTHOR_ID.eq(requesterId))
                   .or(workspacePublishedCondition().and(workspaceReadableCondition(requesterId))));
     }

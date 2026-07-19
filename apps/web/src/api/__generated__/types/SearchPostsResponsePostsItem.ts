@@ -4,11 +4,58 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { SearchPostsResponsePostsItemSummary } from './SearchPostsResponsePostsItemSummary';
+import type { SearchPostsResponsePostsItemAuthor } from './SearchPostsResponsePostsItemAuthor';
+import type { SearchPostsResponsePostsItemPreviewMediaItem } from './SearchPostsResponsePostsItemPreviewMediaItem';
+import type { SearchPostsResponsePostsItemProject } from './SearchPostsResponsePostsItemProject';
+import type { SearchPostsResponsePostsItemScope } from './SearchPostsResponsePostsItemScope';
+import type { SearchPostsResponsePostsItemStatus } from './SearchPostsResponsePostsItemStatus';
+import type { SearchPostsResponsePostsItemTagsItem } from './SearchPostsResponsePostsItemTagsItem';
+import type { SearchPostsResponsePostsItemType } from './SearchPostsResponsePostsItemType';
 
 export type SearchPostsResponsePostsItem = {
-  /** Post Summary */
-  summary: SearchPostsResponsePostsItemSummary;
-  /** Post Content */
-  content: string;
+  /** 게시물 내용의 일반 텍스트 미리보기 */
+  preview: string;
+  /** 게시물 본문의 단어 수 */
+  wordCount: number;
+  /** Whether the current user bookmarked this post */
+  bookmarked: boolean;
+  /** 작성자 정보 */
+  author: SearchPostsResponsePostsItemAuthor;
+  /** 소속 프로젝트 정보 */
+  project?: SearchPostsResponsePostsItemProject;
+  /** Number of Likes */
+  likeCount: number;
+  /** Post Type */
+  type: SearchPostsResponsePostsItemType;
+  /**
+   * Post Title
+   * @nullable
+   */
+  title?: string | null;
+  /** Whether the current user liked this post */
+  liked: boolean;
+  /** 게시물에 달린 태그 목록 */
+  tags: SearchPostsResponsePostsItemTagsItem[];
+  /** Number of Comments */
+  commentCount: number;
+  /** Whether the requesting user is the author of this post */
+  isAuthor: boolean;
+  /** Creation Timestamp */
+  createdAt: string;
+  /** 게시글 공개 범위 */
+  scope: SearchPostsResponsePostsItemScope;
+  /** 게시물에 첨부된 전체 미디어 수 */
+  mediaCount: number;
+  /** Post ID */
+  id: number;
+  /** 미리보기용 첨부 미디어 목록 (최대 2개) */
+  previewMedia: SearchPostsResponsePostsItemPreviewMediaItem[];
+  /** Post Slug */
+  slug: string;
+  /** Last Updated Timestamp */
+  updatedAt: string;
+  /** Whether the question post has been resolved */
+  resolved: boolean;
+  /** Post Status */
+  status: SearchPostsResponsePostsItemStatus;
 };

@@ -96,6 +96,7 @@ export default function SettingsModal() {
       open={isOpen}
       onOpenChange={(open) => {
         if (!open) {
+          contentRef.current?.reset();
           closeModal();
         }
       }}

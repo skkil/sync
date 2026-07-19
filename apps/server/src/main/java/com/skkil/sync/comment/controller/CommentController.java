@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,5 +56,17 @@ public class CommentController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteComment(@PathVariable Long commentId) {
     commentService.deleteComment(commentId);
+  }
+
+  @PutMapping("/comments/{commentId}/accept")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void acceptComment(@PathVariable Long commentId) {
+    commentService.acceptComment(commentId);
+  }
+
+  @DeleteMapping("/comments/{commentId}/accept")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void unacceptComment(@PathVariable Long commentId) {
+    commentService.unacceptComment(commentId);
   }
 }

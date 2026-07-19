@@ -9,6 +9,11 @@ export enum PostStatus {
   PUBLISHED = 'PUBLISHED',
 }
 
+export enum PostScope {
+  PUBLIC = 'PUBLIC',
+  WORKSPACE = 'WORKSPACE',
+}
+
 export enum PostRecommendationType {
   FOLLOWING = 'FOLLOWING',
   TRENDING = 'TRENDING',

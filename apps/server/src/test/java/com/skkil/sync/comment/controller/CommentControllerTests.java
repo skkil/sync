@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
@@ -167,6 +168,46 @@ class CommentControllerTests {
                     .tag("comment")
                     .summary("Delete Comment")
                     .description("Delete Comment"),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("commentId").description("Comment ID"))));
+  }
+
+  @Test
+  @DisplayName("[acceptComment] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void acceptComment() throws Exception {
+    mockMvc
+        .perform(put("/comments/{commentId}/accept", 1L))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "AcceptComment",
+                ResourceSnippetParameters.builder()
+                    .tag("comment")
+                    .summary("Accept Comment")
+                    .description("Accept Comment"),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("commentId").description("Comment ID"))));
+  }
+
+  @Test
+  @DisplayName("[unacceptComment] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void unacceptComment() throws Exception {
+    mockMvc
+        .perform(delete("/comments/{commentId}/accept", 1L))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "UnacceptComment",
+                ResourceSnippetParameters.builder()
+                    .tag("comment")
+                    .summary("Unaccept Comment")
+                    .description("Unaccept Comment"),
                 null,
                 null,
                 Function.identity(),

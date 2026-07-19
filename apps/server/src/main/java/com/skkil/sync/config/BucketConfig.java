@@ -57,7 +57,11 @@ public class BucketConfig {
   FilterRegistrationBean<RateLimitFilter> authRateLimitFilter() {
     FilterRegistrationBean<RateLimitFilter> registration = new FilterRegistrationBean<>();
     registration.setFilter(new RateLimitFilter(rateLimitProxyManager()));
-    registration.addUrlPatterns("/auth/login", "/auth/register");
+    registration.addUrlPatterns(
+        "/auth/login",
+        "/auth/register",
+        "/auth/email-verification/send",
+        "/auth/email-verification/verify");
     registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
 
     return registration;

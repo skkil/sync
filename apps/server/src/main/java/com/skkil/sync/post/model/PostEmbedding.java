@@ -35,4 +35,8 @@ public class PostEmbedding extends BaseEntity {
     this.post = post;
     this.embedding = Vector.of(embedding);
   }
+
+  public void updateEmbedding(float[] embedding) {
+    this.embedding = Vector.of(embedding);
+  }
 }

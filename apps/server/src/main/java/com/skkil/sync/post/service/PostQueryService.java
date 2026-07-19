@@ -10,11 +10,11 @@ import com.skkil.sync.post.dto.response.GetPostResponse;
 import com.skkil.sync.post.dto.response.GetPostsResponse;
 import com.skkil.sync.post.exception.PostNotFoundException;
 import com.skkil.sync.post.mapper.PostAssembler;
+import com.skkil.sync.post.model.PostScope;
 import com.skkil.sync.post.model.PostType;
 import com.skkil.sync.post.repository.PostQueryRepository;
 import com.skkil.sync.post.repository.pagination.CommentedPostCursorPaginationProvider;
 import com.skkil.sync.post.repository.pagination.PostCursorPaginationProvider;
-import com.skkil.sync.user.mapper.UserAssembler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,6 @@ public class PostQueryService {
   private final PostQueryRepository postQueryRepository;
   private final PostContentMediaService contentMediaService;
   private final PostAssembler postAssembler;
-  private final UserAssembler userAssembler;
 
   private final PaginationService paginationService;
   private final PostCursorPaginationProvider paginationProvider;
@@ -37,14 +36,12 @@ public class PostQueryService {
       PostQueryRepository postQueryRepository,
       PostContentMediaService contentMediaService,
       PostAssembler postAssembler,
-      UserAssembler userAssembler,
       PostCursorPaginationProvider paginationProvider,
       CommentedPostCursorPaginationProvider commentedPostPaginationProvider,
       PaginationService paginationService) {
     this.postQueryRepository = postQueryRepository;
     this.contentMediaService = contentMediaService;
     this.postAssembler = postAssembler;
-    this.userAssembler = userAssembler;
     this.paginationProvider = paginationProvider;
     this.commentedPostPaginationProvider = commentedPostPaginationProvider;
     this.paginationService = paginationService;
@@ -68,6 +65,20 @@ public class PostQueryService {
   }
 
   @Transactional(readOnly = true)
+  @PreAuthorize("#projectHandle == null or hasPermission(#projectHandle, 'PROJECT', 'READ')")
+  public GetPostsResponse getDrafts(
+      Long requesterId,
+      PostType type,
+      PostScope scope,
+      String projectHandle,
+      CursorPaginationRequest pagination) {
+    return getPostsResponse(
+        requesterId,
+        postQueryRepository.getDraftsByAuthor(requesterId, type, scope, projectHandle),
+        pagination);
+  }
+
+  @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#userId, 'PROFILE', 'READ')")
   public GetPostsResponse getUserPosts(
       Long requesterId, Long userId, PostType type, CursorPaginationRequest pagination) {
@@ -78,9 +89,9 @@ public class PostQueryService {
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#tagId, 'TAG', 'READ')")
   public GetPostsResponse getPostsByTag(
-      Long requesterId, Long tagId, CursorPaginationRequest pagination) {
+      Long requesterId, Long tagId, PostType type, CursorPaginationRequest pagination) {
     return getPostsResponse(
-        requesterId, postQueryRepository.getPostsByTag(requesterId, tagId), pagination);
+        requesterId, postQueryRepository.getPostsByTag(requesterId, tagId, type), pagination);
   }
 
   @Transactional(readOnly = true)
@@ -120,24 +131,9 @@ public class PostQueryService {
       CursorPaginationDataFetcher<PostDto> fetcher,
       CursorPaginationProvider<PostDto, C> provider,
       CursorPaginationRequest pagination) {
-    var posts =
-        paginationService
-            .paginate(fetcher, provider, pagination)
-            .mapWithLookup(
-                PostDto::authorId,
-                userAssembler::toUserSummaries,
-                (post, authors) ->
-                    postAssembler.toPostResponse(post, authors.get(post.authorId()), requesterId));
+    var page = paginationService.paginate(fetcher, provider, pagination);
+    var posts = postAssembler.toPostResponses(page, requesterId);
 
     return new GetPostsResponse(posts);
-  }
-
-  @Transactional(readOnly = true)
-  public GetPostsResponse getPublicPostsByTag(
-      Long requesterId, String tagName, PostType type, CursorPaginationRequest pagination) {
-    return getPostsResponse(
-        requesterId,
-        postQueryRepository.getPublicPostsByTag(requesterId, tagName, type),
-        pagination);
   }
 }

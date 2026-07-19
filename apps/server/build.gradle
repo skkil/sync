@@ -101,7 +101,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-log4j2"
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation "io.opentelemetry.instrumentation:opentelemetry-log4j-appender-2.17:2.26.1-alpha"
+	implementation "io.opentelemetry.instrumentation:opentelemetry-log4j-appender-2.17:2.21.0-alpha"
 	implementation platform("org.springframework.ai:spring-ai-bom:2.0.0-M3")
 	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
 	implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'

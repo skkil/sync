@@ -37,6 +37,8 @@ import type {
   GetProjectHandleAvailabilityParams,
   GetProjectHandleAvailabilityResponse,
   GetProjectInvitationsResponse,
+  GetProjectRecommendationsParams,
+  GetProjectRecommendationsResponse,
   GetProjectResponse,
   GetProjectTeammatesResponse,
   GetProjectsResponse,
@@ -547,6 +549,206 @@ export const useCreateProject = <
 > => {
   return useMutation(getCreateProjectMutationOptions(options), queryClient);
 };
+export type getProjectRecommendationsResponse200 = {
+  data: GetProjectRecommendationsResponse;
+  status: 200;
+};
+
+export type getProjectRecommendationsResponseSuccess =
+  getProjectRecommendationsResponse200 & {
+    headers: Headers;
+  };
+export type getProjectRecommendationsResponse =
+  getProjectRecommendationsResponseSuccess;
+
+export const getGetProjectRecommendationsUrl = (
+  params?: GetProjectRecommendationsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value));
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/projects/recommendations?${stringifiedParams}`
+    : `/projects/recommendations`;
+};
+
+/**
+ * 팔로우할 만한 프로젝트 목록을 추천합니다.
+ * @summary Get Project Recommendations
+ */
+export const getProjectRecommendations = async (
+  params?: GetProjectRecommendationsParams,
+  options?: RequestInit,
+): Promise<getProjectRecommendationsResponse> => {
+  return api<getProjectRecommendationsResponse>(
+    getGetProjectRecommendationsUrl(params),
+    {
+      ...options,
+      method: 'GET',
+    },
+  );
+};
+
+export const getGetProjectRecommendationsQueryKey = (
+  params?: GetProjectRecommendationsParams,
+) => {
+  return [`/projects/recommendations`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetProjectRecommendationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProjectRecommendations>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetProjectRecommendationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectRecommendations>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetProjectRecommendationsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProjectRecommendations>>
+  > = ({ signal }) =>
+    getProjectRecommendations(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getProjectRecommendations>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProjectRecommendationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProjectRecommendations>>
+>;
+export type GetProjectRecommendationsQueryError = ErrorType<unknown>;
+
+export function useGetProjectRecommendations<
+  TData = Awaited<ReturnType<typeof getProjectRecommendations>>,
+  TError = ErrorType<unknown>,
+>(
+  params: undefined | GetProjectRecommendationsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectRecommendations>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectRecommendations>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectRecommendations>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectRecommendations<
+  TData = Awaited<ReturnType<typeof getProjectRecommendations>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetProjectRecommendationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectRecommendations>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProjectRecommendations>>,
+          TError,
+          Awaited<ReturnType<typeof getProjectRecommendations>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProjectRecommendations<
+  TData = Awaited<ReturnType<typeof getProjectRecommendations>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetProjectRecommendationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectRecommendations>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Project Recommendations
+ */
+
+export function useGetProjectRecommendations<
+  TData = Awaited<ReturnType<typeof getProjectRecommendations>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetProjectRecommendationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProjectRecommendations>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetProjectRecommendationsQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
 export type getProjectByHandleResponse200 = {
   data: GetProjectResponse;
   status: 200;

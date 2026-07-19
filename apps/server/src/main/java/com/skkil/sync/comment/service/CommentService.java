@@ -6,7 +6,7 @@ import com.skkil.sync.comment.dto.request.UpdateCommentRequest;
 import com.skkil.sync.comment.dto.response.CreateCommentResponse;
 import com.skkil.sync.comment.dto.response.GetCommentsResponse;
 import com.skkil.sync.comment.exception.CommentNotFoundException;
-import com.skkil.sync.comment.mapper.CommentMapper;
+import com.skkil.sync.comment.mapper.CommentAssembler;
 import com.skkil.sync.comment.model.Comment;
 import com.skkil.sync.comment.repository.CommentQueryRepository;
 import com.skkil.sync.comment.repository.CommentRepository;
@@ -14,14 +14,10 @@ import com.skkil.sync.comment.repository.pagination.CommentCursorPaginationProvi
 import com.skkil.sync.common.util.pagination.dto.request.CursorPaginationRequest;
 import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
 import com.skkil.sync.common.util.pagination.service.PaginationService;
-import com.skkil.sync.media.service.domain.MediaDomainService;
 import com.skkil.sync.post.model.Post;
 import com.skkil.sync.post.service.PostDomainService;
 import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.service.domain.UserDomainService;
-import java.net.URL;
-import java.util.Map;
-import java.util.Objects;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,28 +29,25 @@ public class CommentService {
   private final CommentQueryRepository commentQueryRepository;
   private final PostDomainService postDomainService;
   private final UserDomainService userDomainService;
-  private final MediaDomainService mediaDomainService;
   private final PaginationService paginationService;
   private final CommentCursorPaginationProvider paginationProvider;
-  private final CommentMapper commentMapper;
+  private final CommentAssembler commentAssembler;
 
   public CommentService(
       CommentRepository commentRepository,
       CommentQueryRepository commentQueryRepository,
       PostDomainService postDomainService,
       UserDomainService userDomainService,
-      MediaDomainService mediaDomainService,
       PaginationService paginationService,
       CommentCursorPaginationProvider paginationProvider,
-      CommentMapper commentMapper) {
+      CommentAssembler commentAssembler) {
     this.commentRepository = commentRepository;
     this.commentQueryRepository = commentQueryRepository;
     this.postDomainService = postDomainService;
     this.userDomainService = userDomainService;
-    this.mediaDomainService = mediaDomainService;
     this.paginationService = paginationService;
     this.paginationProvider = paginationProvider;
-    this.commentMapper = commentMapper;
+    this.commentAssembler = commentAssembler;
   }
 
   @Transactional(readOnly = true)
@@ -65,17 +58,7 @@ public class CommentService {
         paginationService.paginate(
             commentQueryRepository.getCommentsByPost(post.getId()), paginationProvider, pagination);
 
-    Map<Long, URL> profileImageUrls =
-        mediaDomainService.generatePublicGetUrls(
-            comments.nodes().stream()
-                .map(CursorPaginationResponse.Node::content)
-                .map(CommentDto::authorProfileImageId)
-                .filter(Objects::nonNull)
-                .distinct()
-                .toList());
-
-    return commentMapper.toGetCommentsResponse(
-        comments, post.getAuthor().getId(), profileImageUrls);
+    return commentAssembler.toGetCommentsResponse(comments, post.getAuthor().getId());
   }
 
   @Transactional
@@ -110,5 +93,40 @@ public class CommentService {
         .orElseThrow(() -> new CommentNotFoundException(commentId))
         .delete();
     ;
+  }
+
+  @Transactional
+  @PreAuthorize("hasPermission(@commentService.resolvePostId(#commentId), 'POST', 'EDIT')")
+  public void acceptComment(Long commentId) {
+    setAccepted(commentId, true);
+  }
+
+  @Transactional
+  @PreAuthorize("hasPermission(@commentService.resolvePostId(#commentId), 'POST', 'EDIT')")
+  public void unacceptComment(Long commentId) {
+    setAccepted(commentId, false);
+  }
+
+  // @PreAuthorize는 메서드 본문 실행 전에 평가되므로, POST 'EDIT' 권한(게시글 작성자만 허용)을
+  // 검사하려면 댓글이 속한 게시글 ID를 미리 조회해야 한다.
+  public Long resolvePostId(Long commentId) {
+    return commentRepository
+        .findById(commentId)
+        .orElseThrow(() -> new CommentNotFoundException(commentId))
+        .getPost()
+        .getId();
+  }
+
+  private void setAccepted(Long commentId, boolean accepted) {
+    Comment comment =
+        commentRepository
+            .findById(commentId)
+            .orElseThrow(() -> new CommentNotFoundException(commentId));
+
+    if (accepted) {
+      comment.accept();
+    } else {
+      comment.unaccept();
+    }
   }
 }

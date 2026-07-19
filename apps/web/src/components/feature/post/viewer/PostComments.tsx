@@ -1,11 +1,12 @@
 'use client';
 
-import { PaperPlaneRightIcon } from '@phosphor-icons/react';
+import { CheckCircleIcon, PaperPlaneRightIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import { useGetPostCommentsInfinite } from '@/api/__generated__/comment/comment';
 import type { GetCommentsResponseCommentsNodesItemContent } from '@/api/__generated__/types';
+import { useCommentAcceptance } from '@/components/feature/post/hooks/useCommentAcceptance';
 import { useCreateComment } from '@/components/feature/post/hooks/useCreateComment';
 import { ProfileHoverCard } from '@/components/feature/profile/ProfileHoverCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,24 +20,34 @@ import { Textarea } from '@/components/ui/textarea';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useSession } from '@/lib/auth/client';
 
-import type { PostType } from '../types/post';
-
-export const COMMENT_PAGE_SIZE = '20';
+import { COMMENT_PAGE_SIZE } from '../constants';
+import { PostType } from '../types/post';
 
 interface PostCommentsProps {
   slug: string;
-  // TODO: comments aren't rendered differently per post type yet — this is
-  // threaded through now so that can change without touching every call site.
   postType: PostType;
+  // 현재 보고 있는 사용자가 게시글 작성자인지 여부 — 질문 게시글에서만,
+  // 그리고 작성자만 답변 채택/채택 취소를 할 수 있다.
+  isPostAuthor: boolean;
 }
 
 function PostCommentItem({
+  slug,
   comment,
+  showAcceptance,
+  canManageAcceptance,
 }: {
+  slug: string;
   comment: GetCommentsResponseCommentsNodesItemContent;
+  // 질문 게시글에서만: 채택 상태 배지를 표시할지 여부.
+  showAcceptance: boolean;
+  // 질문 게시글의 작성자에게만: 채택/채택 취소 액션을 노출할지 여부.
+  canManageAcceptance: boolean;
 }) {
   const t = useTranslations('pages.posts.comments');
   const author = comment.author;
+  const { acceptComment, unacceptComment, isPending } =
+    useCommentAcceptance(slug);
 
   return (
     <div className="flex items-start gap-3 py-4">
@@ -50,9 +61,15 @@ function PostCommentItem({
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm font-semibold">{author?.name}</span>
-          {author?.isPostAuthor && (
+          {comment.isPostAuthor && (
             <Badge variant="secondary" className="text-[10px]">
               {t('author-badge')}
+            </Badge>
+          )}
+          {showAcceptance && comment.isAccepted && !comment.isDeleted && (
+            <Badge color="success" className="text-[10px]">
+              <CheckCircleIcon weight="fill" />
+              {t('accepted-badge')}
             </Badge>
           )}
           <span className="text-muted-foreground text-xs">
@@ -67,15 +84,43 @@ function PostCommentItem({
             comment.content
           )}
         </p>
+
+        {canManageAcceptance && !comment.isDeleted && (
+          <div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-6 px-2 text-[11px]"
+              disabled={isPending}
+              onClick={() =>
+                comment.isAccepted
+                  ? unacceptComment(String(comment.id))
+                  : acceptComment(String(comment.id))
+              }
+            >
+              <CheckCircleIcon
+                weight={comment.isAccepted ? 'fill' : undefined}
+              />
+              {comment.isAccepted ? t('unaccept-button') : t('accept-button')}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-export default function PostComments({ slug }: PostCommentsProps) {
+export default function PostComments({
+  slug,
+  postType,
+  isPostAuthor,
+}: PostCommentsProps) {
   const t = useTranslations('pages.posts.comments');
   const { data: session } = useSession();
   const { requireAuth } = useRequireAuth();
+
+  const showAcceptance = postType === PostType.QUESTION;
+  const canManageAcceptance = showAcceptance && isPostAuthor;
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
     useGetPostCommentsInfinite(
@@ -199,7 +244,13 @@ export default function PostComments({ slug }: PostCommentsProps) {
         )}
 
         {comments.map((comment) => (
-          <PostCommentItem key={comment.id} comment={comment} />
+          <PostCommentItem
+            key={comment.id}
+            slug={slug}
+            comment={comment}
+            showAcceptance={showAcceptance}
+            canManageAcceptance={canManageAcceptance}
+          />
         ))}
 
         {hasNextPage && (

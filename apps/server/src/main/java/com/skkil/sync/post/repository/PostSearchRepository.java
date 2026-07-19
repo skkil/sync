@@ -20,7 +20,10 @@ public interface PostSearchRepository extends Repository<PostEmbedding, Long> {
           SELECT pe.post_id FROM post_embeddings pe
           JOIN posts p ON p.id = pe.post_id
           LEFT JOIN projects pr ON pr.id = p.project_id
-          WHERE (:projectHandle IS NULL OR pr.handle = :projectHandle)
+          WHERE p.visibility = 'VISIBLE'
+          AND p.status = 'PUBLISHED'
+          AND ((:projectHandle IS NULL AND p.scope = 'PUBLIC')
+            OR (:projectHandle IS NOT NULL AND p.scope = 'WORKSPACE' AND pr.handle = :projectHandle))
           ORDER BY pe.embedding <=> :embedding
           LIMIT :n
           """,
@@ -37,9 +40,10 @@ public interface PostSearchRepository extends Repository<PostEmbedding, Long> {
           LEFT JOIN projects pr ON pr.id = r.project_id
           WHERE r.visibility = 'VISIBLE'
           AND r.status = 'PUBLISHED'
-          AND ((:projectHandle IS NULL AND r.project_id IS NULL) OR pr.handle = :projectHandle)
-          AND r.content ILIKE '%' || :query || '%'
-          ORDER BY similarity(r.content, :query) DESC
+          AND ((:projectHandle IS NULL AND r.scope = 'PUBLIC')
+            OR (:projectHandle IS NOT NULL AND r.scope = 'WORKSPACE' AND pr.handle = :projectHandle))
+          AND (r.title ILIKE '%' || :query || '%' OR r.content ILIKE '%' || :query || '%')
+          ORDER BY GREATEST(similarity(r.title, :query), similarity(r.content, :query)) DESC
           LIMIT :n
           """,
       nativeQuery = true)

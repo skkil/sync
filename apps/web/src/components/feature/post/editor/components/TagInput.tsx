@@ -1,50 +1,70 @@
 'use client';
 
-import { XIcon } from '@phosphor-icons/react';
-import { useDebounce } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
-import { type KeyboardEvent, useRef, useState } from 'react';
+import { type KeyboardEvent } from 'react';
 import { toast } from 'sonner';
 
-import { useSearchTags } from '@/api/__generated__/tag/tag';
-import { Badge } from '@/components/ui/badge';
+import { RemovableTagBadge, TagBadge } from '@/components/feature/tag/TagBadge';
+import { useTagSearch } from '@/components/feature/tag/hooks/useTagSearch';
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  useComboboxAnchor,
+} from '@/components/ui/combobox';
 import { cn } from '@/lib/utils';
 
 const MAXIMUM_ALLOWED_TAGS = 5;
-const DEBOUNCE_MS = 300;
 
-interface TagInputProps {
-  tags: string[];
-  onChange: (tags: string[]) => void;
-  accentRing?: string;
+export interface TagValue {
+  name: string;
+  isProjectTag: boolean;
 }
 
-export function TagInput({ tags, onChange, accentRing }: TagInputProps) {
+interface TagOption extends TagValue {
+  postCount?: number;
+}
+
+interface TagInputProps {
+  tags: TagValue[];
+  onChange: (tags: TagValue[]) => void;
+  accentRing?: string;
+  projectHandle?: string;
+}
+
+export function TagInput({
+  tags,
+  onChange,
+  accentRing,
+  projectHandle,
+}: TagInputProps) {
   const t = useTranslations('components.editor.tags');
+  const anchor = useComboboxAnchor();
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [input, setInput] = useState('');
-  const debouncedInput = useDebounce(input, DEBOUNCE_MS);
+  const {
+    query: inputValue,
+    setQuery: setInputValue,
+    tags: searchedTags,
+    isPending,
+  } = useTagSearch({ handle: projectHandle });
 
-  const [focused, setFocused] = useState(false);
-  const [open, setOpen] = useState(false);
+  const suggestions: TagOption[] = isPending
+    ? []
+    : searchedTags.map((tag) => ({
+        name: tag.name,
+        isProjectTag: tag.projectHandle != null,
+        postCount: tag.postCount,
+      }));
 
-  const { data, isFetching } = useSearchTags(
-    { query: debouncedInput },
-    {
-      query: {
-        enabled: debouncedInput.trim().length > 0,
-        staleTime: 0,
-      },
-    },
-  );
+  const tagNames = tags.map((tag) => tag.name);
 
-  const suggestions = data?.data?.tags ?? [];
-  const showDropdown = open && focused && input.trim().length > 0;
-
-  const isPending = input !== debouncedInput || isFetching;
-
-  const addTag = (name: string) => {
+  const addTag = (name: string, isProjectTag: boolean) => {
     if (tags.length >= MAXIMUM_ALLOWED_TAGS) {
       toast.error(
         t('max-tags', {
@@ -55,112 +75,113 @@ export function TagInput({ tags, onChange, accentRing }: TagInputProps) {
     }
 
     const trimmed = name.trim().toLowerCase();
-    if (!trimmed || tags.includes(trimmed)) {
+    if (!trimmed || tagNames.includes(trimmed)) {
       return;
     }
 
-    onChange([...tags, trimmed]);
-    setInput('');
-    setOpen(false);
-  };
-
-  const removeTag = (name: string) => {
-    onChange(tags.filter((t) => t !== name));
+    onChange([...tags, { name: trimmed, isProjectTag }]);
+    setInputValue('');
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
-      addTag(input);
-    } else if (e.key === 'Backspace' && input === '' && tags.length > 0) {
-      const last = tags[tags.length - 1];
-      if (last) removeTag(last);
-    } else if (e.key === 'Escape') {
-      setOpen(false);
+      addTag(inputValue, !!projectHandle);
     }
   };
 
   return (
-    <div className="relative flex flex-col gap-2">
-      <div
+    <Combobox
+      items={suggestions}
+      multiple
+      value={tags}
+      onValueChange={(next) => {
+        if (next.length <= tags.length) {
+          onChange(next);
+          return;
+        }
+
+        if (next.length > MAXIMUM_ALLOWED_TAGS) {
+          toast.error(
+            t('max-tags', {
+              count: MAXIMUM_ALLOWED_TAGS,
+            }),
+          );
+          return;
+        }
+
+        onChange(next);
+        setInputValue('');
+      }}
+      inputValue={inputValue}
+      onInputValueChange={setInputValue}
+      isItemEqualToValue={(item, value) =>
+        item.name === value.name && item.isProjectTag === value.isProjectTag
+      }
+      itemToStringLabel={(item) => item.name}
+      filter={null}
+    >
+      <ComboboxChips
+        ref={anchor}
         className={cn(
-          'flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-transparent px-2.5 py-2 text-sm cursor-text min-h-9 transition-shadow focus-within:ring-2',
+          'focus-within:ring-2',
           accentRing ?? 'focus-within:ring-primary/30',
         )}
-        onClick={() => inputRef.current?.focus()}
       >
         {tags.map((tag) => (
-          <button
-            key={tag}
-            onClick={(e) => {
-              e.stopPropagation();
-              removeTag(tag);
-            }}
+          <ComboboxChip
+            key={`${tag.isProjectTag}:${tag.name}`}
+            showRemove={false}
+            className="bg-transparent px-0"
           >
-            <Badge
+            <RemovableTagBadge
+              name={tag.name}
+              isProjectTag={tag.isProjectTag}
               variant="secondary"
-              className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
-            >
-              {tag}
-              <XIcon size={10} />
-            </Badge>
-          </button>
+              onRemove={() =>
+                onChange(
+                  tags.filter(
+                    (t) =>
+                      !(
+                        t.name === tag.name &&
+                        t.isProjectTag === tag.isProjectTag
+                      ),
+                  ),
+                )
+              }
+            />
+          </ComboboxChip>
         ))}
 
-        <input
-          ref={inputRef}
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            setOpen(true);
-          }}
-          onKeyDown={handleKeyDown}
-          onFocus={() => {
-            setFocused(true);
-            if (input.length > 0) setOpen(true);
-          }}
-          onBlur={() => {
-            setFocused(false);
-            setTimeout(() => setOpen(false), 150);
-          }}
+        <ComboboxChipsInput
           placeholder={tags.length === 0 ? t('placeholder') : ''}
-          className="flex-1 min-w-16 bg-transparent outline-none placeholder:text-muted-foreground text-sm"
+          onKeyDown={handleKeyDown}
         />
-      </div>
+      </ComboboxChips>
 
-      {showDropdown && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 rounded-md border bg-popover shadow-md overflow-hidden min-h-10">
-          {isPending ? (
-            <div className="flex items-center justify-center px-3 py-3 text-sm text-muted-foreground">
-              {t('loading')}
-            </div>
-          ) : suggestions.length === 0 ? (
-            <div className="flex items-center justify-center px-3 py-3 text-sm text-muted-foreground">
-              {t('not-found')}
-            </div>
-          ) : (
-            suggestions.map((tag) => (
-              <button
-                key={tag.name}
-                type="button"
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  addTag(tag.name);
-                }}
-                className={cn(
-                  'w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-accent text-left transition-colors',
-                  tags.includes(tag.name) && 'opacity-50 cursor-not-allowed',
+      <ComboboxContent anchor={anchor}>
+        <ComboboxList>
+          <ComboboxCollection>
+            {(item: TagOption) => (
+              <ComboboxItem key={item.name} value={item}>
+                <TagBadge
+                  name={item.name}
+                  isProjectTag={item.isProjectTag}
+                  variant="secondary"
+                />
+                {item.postCount !== undefined && (
+                  <span className="text-xs text-muted-foreground">
+                    {t('post-count', { count: item.postCount })}
+                  </span>
                 )}
-              >
-                <span className="font-medium">{tag.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {t('post-count', { count: tag.postCount })}
-                </span>
-              </button>
-            ))
-          )}
-        </div>
-      )}
-    </div>
+              </ComboboxItem>
+            )}
+          </ComboboxCollection>
+          <ComboboxEmpty>
+            {isPending ? t('loading') : t('not-found')}
+          </ComboboxEmpty>
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }

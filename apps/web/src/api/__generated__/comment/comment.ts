@@ -251,6 +251,200 @@ export const useUpdateComment = <
 > => {
   return useMutation(getUpdateCommentMutationOptions(options), queryClient);
 };
+export type acceptCommentResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type acceptCommentResponseSuccess = acceptCommentResponse204 & {
+  headers: Headers;
+};
+export type acceptCommentResponse = acceptCommentResponseSuccess;
+
+export const getAcceptCommentUrl = (commentId: string) => {
+  return `/comments/${commentId}/accept`;
+};
+
+/**
+ * Accept Comment
+ * @summary Accept Comment
+ */
+export const acceptComment = async (
+  commentId: string,
+  options?: RequestInit,
+): Promise<acceptCommentResponse> => {
+  return api<acceptCommentResponse>(getAcceptCommentUrl(commentId), {
+    ...options,
+    method: 'PUT',
+  });
+};
+
+export const getAcceptCommentMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof acceptComment>>,
+    TError,
+    { commentId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof acceptComment>>,
+  TError,
+  { commentId: string },
+  TContext
+> => {
+  const mutationKey = ['acceptComment'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof acceptComment>>,
+    { commentId: string }
+  > = (props) => {
+    const { commentId } = props ?? {};
+
+    return acceptComment(commentId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AcceptCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof acceptComment>>
+>;
+
+export type AcceptCommentMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Accept Comment
+ */
+export const useAcceptComment = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof acceptComment>>,
+      TError,
+      { commentId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof acceptComment>>,
+  TError,
+  { commentId: string },
+  TContext
+> => {
+  return useMutation(getAcceptCommentMutationOptions(options), queryClient);
+};
+export type unacceptCommentResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type unacceptCommentResponseSuccess = unacceptCommentResponse204 & {
+  headers: Headers;
+};
+export type unacceptCommentResponse = unacceptCommentResponseSuccess;
+
+export const getUnacceptCommentUrl = (commentId: string) => {
+  return `/comments/${commentId}/accept`;
+};
+
+/**
+ * Unaccept Comment
+ * @summary Unaccept Comment
+ */
+export const unacceptComment = async (
+  commentId: string,
+  options?: RequestInit,
+): Promise<unacceptCommentResponse> => {
+  return api<unacceptCommentResponse>(getUnacceptCommentUrl(commentId), {
+    ...options,
+    method: 'DELETE',
+  });
+};
+
+export const getUnacceptCommentMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unacceptComment>>,
+    TError,
+    { commentId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unacceptComment>>,
+  TError,
+  { commentId: string },
+  TContext
+> => {
+  const mutationKey = ['unacceptComment'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unacceptComment>>,
+    { commentId: string }
+  > = (props) => {
+    const { commentId } = props ?? {};
+
+    return unacceptComment(commentId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnacceptCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unacceptComment>>
+>;
+
+export type UnacceptCommentMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Unaccept Comment
+ */
+export const useUnacceptComment = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof unacceptComment>>,
+      TError,
+      { commentId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof unacceptComment>>,
+  TError,
+  { commentId: string },
+  TContext
+> => {
+  return useMutation(getUnacceptCommentMutationOptions(options), queryClient);
+};
 export type getPostCommentsResponse200 = {
   data: GetCommentsResponse;
   status: 200;

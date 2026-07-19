@@ -3,6 +3,7 @@ package com.skkil.sync.post.model;
 import com.skkil.sync.common.domain.BaseEntity;
 import com.skkil.sync.post.constants.PostConstants;
 import com.skkil.sync.post.exception.PostTagLimitExceededException;
+import com.skkil.sync.post.util.PostContentUtils;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.user.model.User;
 import jakarta.persistence.CascadeType;
@@ -48,6 +49,10 @@ public class Post extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private PostStatus status = PostStatus.PUBLISHED;
 
+  @Column(name = "scope", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PostScope scope = PostScope.PUBLIC;
+
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String content;
 
@@ -74,6 +79,15 @@ public class Post extends BaseEntity {
   @Column(name = "hidden_reason", columnDefinition = "TEXT")
   private String hiddenReason;
 
+  @Column(name = "preview", columnDefinition = "TEXT", nullable = false)
+  private String preview;
+
+  @Column(name = "media_count", nullable = false)
+  private int mediaCount;
+
+  @Column(name = "word_count", nullable = false)
+  private int wordCount;
+
   @OneToMany(
       mappedBy = "post",
       fetch = FetchType.LAZY,
@@ -98,11 +112,23 @@ public class Post extends BaseEntity {
     this.title = title;
     this.type = type == null ? PostType.SHORT : type;
     this.status = status == null ? PostStatus.PUBLISHED : status;
+    this.scope = PostScope.fromProject(project);
     this.content = content;
   }
 
-  public void updateContent(String content) {
+  public void updateContent(String content, String text, int mediaCount) {
     this.content = content;
+    this.preview = PostContentUtils.getPreview(text);
+    this.mediaCount = mediaCount;
+    this.wordCount = PostContentUtils.getWordCount(text);
+  }
+
+  public void update(
+      String title, PostType type, PostStatus status, String content, String text, int mediaCount) {
+    this.title = title;
+    this.type = type;
+    this.status = status;
+    updateContent(content, text, mediaCount);
   }
 
   public void updateSummary(String summary) {
@@ -118,7 +144,7 @@ public class Post extends BaseEntity {
   }
 
   public void removeTag(Tag tag) {
-    this.tags.removeIf(postTag -> postTag.getTag().getName().equals(tag.getName()));
+    this.tags.removeIf(postTag -> postTag.getTag() == tag);
   }
 
   public boolean isVisible() {
@@ -130,7 +156,7 @@ public class Post extends BaseEntity {
   }
 
   public boolean isPublic() {
-    return project == null;
+    return scope == PostScope.PUBLIC;
   }
 
   public void hide(User reviewer, String reason) {

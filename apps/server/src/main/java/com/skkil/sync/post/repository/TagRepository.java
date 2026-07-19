@@ -6,11 +6,15 @@ import com.skkil.sync.post.model.Tag;
 import com.skkil.sync.project.model.Project;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
+
+  Page<Tag> findByProjectIsNullAndVerifiedTrueOrderByNameAsc(Pageable pageable);
 
   @Query(
       """
@@ -87,6 +91,10 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
   Optional<Tag> findByNameAndProject(String name, Project project);
 
+  Optional<Tag> findByIdAndProjectIsNull(Long id);
+
+  boolean existsByProjectIsNull();
+
   @Modifying
   @Query(
       """
@@ -104,4 +112,61 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
       WHERE t = :tag AND t.postCount > 0
       """)
   void decrementPostCount(Tag tag);
+
+  @Modifying
+  @Query(
+      """
+      UPDATE Tag t
+      SET t.followerCount = t.followerCount + 1
+      WHERE t = :tag
+      """)
+  void incrementFollowerCount(Tag tag);
+
+  @Modifying
+  @Query(
+      """
+      UPDATE Tag t
+      SET t.followerCount = t.followerCount - 1
+      WHERE t = :tag AND t.followerCount > 0
+      """)
+  void decrementFollowerCount(Tag tag);
+
+  @Modifying
+  @Query(
+      value =
+          "DELETE FROM post_tags WHERE tag_id = :sourceTagId AND post_id IN "
+              + "(SELECT post_id FROM post_tags WHERE tag_id = :targetTagId)",
+      nativeQuery = true)
+  void deleteDuplicatePostTags(Long sourceTagId, Long targetTagId);
+
+  @Modifying
+  @Query(
+      value = "UPDATE post_tags SET tag_id = :targetTagId WHERE tag_id = :sourceTagId",
+      nativeQuery = true)
+  void reassignPostTags(Long sourceTagId, Long targetTagId);
+
+  @Modifying
+  @Query(
+      value =
+          "DELETE FROM tag_follow_relationships WHERE tag_id = :sourceTagId AND follower_id IN "
+              + "(SELECT follower_id FROM tag_follow_relationships WHERE tag_id = :targetTagId)",
+      nativeQuery = true)
+  void deleteDuplicateTagFollows(Long sourceTagId, Long targetTagId);
+
+  @Modifying
+  @Query(
+      value =
+          "UPDATE tag_follow_relationships SET tag_id = :targetTagId WHERE tag_id = :sourceTagId",
+      nativeQuery = true)
+  void reassignTagFollows(Long sourceTagId, Long targetTagId);
+
+  @Modifying
+  @Query(
+      value =
+          "UPDATE tags SET "
+              + "post_count = (SELECT COUNT(*) FROM post_tags WHERE tag_id = :tagId), "
+              + "follower_count = (SELECT COUNT(*) FROM tag_follow_relationships WHERE tag_id = :tagId) "
+              + "WHERE id = :tagId",
+      nativeQuery = true)
+  void recomputeCounts(Long tagId);
 }

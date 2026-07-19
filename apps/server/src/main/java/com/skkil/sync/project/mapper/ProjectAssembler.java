@@ -16,11 +16,13 @@ import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.model.ProjectInvitation;
 import com.skkil.sync.project.model.Role;
 import com.skkil.sync.project.model.Teammate;
+import com.skkil.sync.project.repository.ProjectRepository;
 import com.skkil.sync.user.dto.summary.UserSummary;
 import com.skkil.sync.user.mapper.UserAssembler;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,22 +34,44 @@ public class ProjectAssembler {
 
   private final MediaDomainService mediaDomainService;
 
+  private final ProjectRepository projectRepository;
+
   public ProjectAssembler(
       ProjectMapper projectMapper,
       UserAssembler userAssembler,
-      MediaDomainService mediaDomainService) {
+      MediaDomainService mediaDomainService,
+      ProjectRepository projectRepository) {
     this.projectMapper = projectMapper;
     this.userAssembler = userAssembler;
     this.mediaDomainService = mediaDomainService;
+    this.projectRepository = projectRepository;
+  }
+
+  public Map<Long, ProjectSummary> toProjectSummaries(List<Long> projectIds) {
+    List<Project> projects = projectRepository.findAllById(projectIds);
+    Map<Long, URL> iconUrls = mediaDomainService.generatePublicGetUrls(projects, Project::getIcon);
+
+    return projects.stream()
+        .collect(
+            Collectors.toMap(
+                Project::getId, project -> toProjectSummary(project, iconUrls), (a, b) -> a));
   }
 
   public GetProjectResponse toGetProjectResponse(
-      Project project, List<Teammate> teammates, boolean hasMoreTeammates, Role requesterRole) {
+      Project project,
+      List<Teammate> teammates,
+      boolean hasMoreTeammates,
+      Role requesterRole,
+      boolean isFollowing,
+      boolean hasPendingInvitation) {
     return GetProjectResponse.builder()
         .summary(toProjectSummary(project))
         .teammates(toProjectTeammates(teammates))
         .hasMoreTeammates(hasMoreTeammates)
+        .isViewer(requesterRole != null)
         .role(requesterRole)
+        .isFollowing(isFollowing)
+        .hasPendingInvitation(hasPendingInvitation)
         .recentActivities(List.of())
         .build();
   }

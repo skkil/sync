@@ -1,7 +1,6 @@
 package com.skkil.sync.comment.repository;
 
 import static com.skkil.sync.jooq.tables.Comments.COMMENTS;
-import static com.skkil.sync.jooq.tables.Users.USERS;
 
 import com.skkil.sync.comment.dto.data.CommentDto;
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
@@ -22,16 +21,12 @@ public class CommentQueryRepository {
         dsl.select(
                 COMMENTS.ID.as("id"),
                 COMMENTS.AUTHOR_ID.as("authorId"),
-                USERS.HANDLE.as("authorHandle"),
-                USERS.FULL_NAME.as("authorName"),
-                USERS.PROFILE_IMAGE_ID.as("authorProfileImageId"),
                 COMMENTS.CONTENT.as("content"),
                 COMMENTS.DELETED_AT.isNotNull().as("deleted"),
+                COMMENTS.IS_ACCEPTED.as("accepted"),
                 COMMENTS.CREATED_AT.as("createdAt"),
                 COMMENTS.UPDATED_AT.as("updatedAt"))
             .from(COMMENTS)
-            .join(USERS)
-            .on(COMMENTS.AUTHOR_ID.eq(USERS.ID))
             .where(condition.and(COMMENTS.POST_ID.eq(postId)))
             .orderBy(orderFields)
             .limit(size)

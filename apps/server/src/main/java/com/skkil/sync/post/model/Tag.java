@@ -26,6 +26,9 @@ public class Tag extends BaseEntity {
   @Column(name = "post_count", nullable = false)
   private Long postCount;
 
+  @Column(name = "follower_count", nullable = false)
+  private Long followerCount;
+
   @Column(name = "verified", nullable = false)
   private boolean verified = false;
 
@@ -36,14 +39,23 @@ public class Tag extends BaseEntity {
   protected Tag() {}
 
   @Builder
-  public Tag(String name, Project project) {
+  public Tag(String name, String description, Project project) {
     this.name = name;
-    this.description = "";
+    this.description = description;
     this.postCount = 0L;
+    this.followerCount = 0L;
     this.project = project;
   }
 
   public void verify() {
     this.verified = true;
+  }
+
+  public void updateDescription(String description) {
+    this.description = description;
+  }
+
+  public void updateName(String name) {
+    this.name = name;
   }
 }

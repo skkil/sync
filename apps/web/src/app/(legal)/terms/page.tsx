@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-export const metadata: Metadata = {
-  title: '이용약관',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pages.legal.terms');
+
+  return { title: t('title') };
+}
 
 export default async function Terms() {
   const content = await readFile(

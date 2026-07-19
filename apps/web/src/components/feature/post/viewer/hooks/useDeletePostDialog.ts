@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useDeletePost } from '@/components/feature/post/hooks/useDeletePost';
-import ROUTES from '@/util/routes';
 
 export function useDeletePostDialog(
   postId: number,
-  { redirectOnSuccess }: { redirectOnSuccess: boolean },
+  { redirectTo }: { redirectTo?: string },
 ) {
   const tDelete = useTranslations('pages.posts.delete');
   const router = useRouter();
@@ -23,8 +22,9 @@ export function useDeletePostDialog(
           toast.success(tDelete('messages.success'));
           setIsOpen(false);
 
-          if (redirectOnSuccess) {
-            router.push(ROUTES.HOME());
+          if (redirectTo) {
+            router.push(redirectTo);
+            router.refresh();
           }
         },
         onError: () => {

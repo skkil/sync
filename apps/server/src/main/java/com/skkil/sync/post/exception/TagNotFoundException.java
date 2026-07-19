@@ -11,6 +11,10 @@ public class TagNotFoundException extends SyncException {
     super(String.format("Tag with id %d not found.", tagId));
   }
 
+  public TagNotFoundException(String name) {
+    super(String.format("Tag with name %s not found.", name));
+  }
+
   @Override
   public HttpStatusCode getStatusCode() {
     return HttpStatus.NOT_FOUND;

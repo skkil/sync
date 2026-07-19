@@ -36,6 +36,12 @@ public class TagPermissionEvaluator implements CustomPermissionEvaluator<Long> {
       return true;
     }
 
+    if (permission == PermissionOperation.READ
+        && tag.getProject() != null
+        && tag.getProject().isPublic()) {
+      return true;
+    }
+
     if (user == null) {
       return false;
     }

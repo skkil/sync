@@ -1,8 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useUploadMedia } from '@/api/__generated__/media/media';
@@ -19,9 +19,15 @@ import { FileInput, FileInputError, Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import SyncError, { ErrorCode } from '@/lib/error';
+import ROUTES from '@/util/routes';
 
 const PROJECT_ICON_ALLOWED_TYPES = 'image/*';
 const PROJECT_ICON_MAX_SIZE_BYTES = 5 * 1024 * 1024;
+
+const PROJECT_NAME_MIN_LENGTH = 6;
+const PROJECT_NAME_MAX_LENGTH = 50;
+const PROJECT_HANDLE_MIN_LENGTH = 6;
+const PROJECT_HANDLE_MAX_LENGTH = 30;
 
 export default function WorkspaceSettingsView() {
   const t = useTranslations('pages.projects.project.settings.workspace');
@@ -65,17 +71,7 @@ export default function WorkspaceSettingsView() {
             {t('name.description')}
           </p>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="project-name">{t('name.label')}</Label>
-          <Input
-            id="project-name"
-            defaultValue={project?.summary.name ?? ''}
-            disabled={!isAdmin}
-          />
-        </div>
-        <Button disabled={!isAdmin} size="sm">
-          {t('name.save')}
-        </Button>
+        <ProjectNameField handle={handle} isAdmin={isAdmin} />
       </section>
 
       <Separator />
@@ -87,17 +83,7 @@ export default function WorkspaceSettingsView() {
             {t('handle.description')}
           </p>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="project-handle">{t('handle.label')}</Label>
-          <Input
-            id="project-handle"
-            defaultValue={project?.summary.handle ?? ''}
-            disabled={!isAdmin}
-          />
-        </div>
-        <Button disabled={!isAdmin} size="sm">
-          {t('handle.save')}
-        </Button>
+        <ProjectHandleField handle={handle} isAdmin={isAdmin} />
       </section>
 
       <Separator />
@@ -310,6 +296,194 @@ function ProjectIconField({
         {error && <p className="text-xs text-destructive">{error}</p>}
       </div>
     </div>
+  );
+}
+
+function ProjectNameField({
+  handle,
+  isAdmin,
+}: {
+  handle: string;
+  isAdmin: boolean;
+}) {
+  const t = useTranslations('pages.projects.project.settings.workspace.name');
+
+  const { data } = useGetProjectByHandle(handle);
+  const project = data?.data;
+
+  const [name, setName] = useState(project?.summary.name ?? '');
+  const [isNameSeeded, setIsNameSeeded] = useState(!!project);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isNameSeeded || !project) {
+      return;
+    }
+
+    setName(project.summary.name);
+    setIsNameSeeded(true);
+  }, [isNameSeeded, project]);
+
+  const { mutate: updateProject, isPending } = useUpdateProject({
+    mutation: {
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+        await context.client.invalidateQueries(
+          getGetProjectByHandleQueryOptions(handle),
+        );
+        toast.success(t('messages.success'));
+      },
+      onError: (error) => {
+        if (
+          error instanceof SyncError &&
+          error.code === ErrorCode.NETWORK_ERROR
+        ) {
+          setError(t('errors.network'));
+        } else if (error instanceof SyncError) {
+          setError(error.message);
+        } else {
+          setError(t('errors.unknown'));
+        }
+      },
+    },
+  });
+
+  if (!project) {
+    return null;
+  }
+
+  const trimmedName = name.trim();
+  const isValid =
+    trimmedName.length >= PROJECT_NAME_MIN_LENGTH &&
+    trimmedName.length <= PROJECT_NAME_MAX_LENGTH;
+  const isDirty = trimmedName !== project.summary.name;
+
+  const handleSave = () => {
+    setError(null);
+
+    if (!isValid) {
+      setError(t('errors.invalid'));
+      return;
+    }
+
+    updateProject({ handle, data: { name: trimmedName } });
+  };
+
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="project-name">{t('label')}</Label>
+        <Input
+          id="project-name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          disabled={!isAdmin || isPending}
+        />
+      </div>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+      <Button
+        size="sm"
+        disabled={!isAdmin || !isDirty || isPending}
+        onClick={handleSave}
+      >
+        {t('save')}
+      </Button>
+    </>
+  );
+}
+
+function ProjectHandleField({
+  handle,
+  isAdmin,
+}: {
+  handle: string;
+  isAdmin: boolean;
+}) {
+  const t = useTranslations('pages.projects.project.settings.workspace.handle');
+  const router = useRouter();
+
+  const { data } = useGetProjectByHandle(handle);
+  const project = data?.data;
+
+  const [nextHandle, setNextHandle] = useState(project?.summary.handle ?? '');
+  const [isHandleSeeded, setIsHandleSeeded] = useState(!!project);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isHandleSeeded || !project) {
+      return;
+    }
+
+    setNextHandle(project.summary.handle);
+    setIsHandleSeeded(true);
+  }, [isHandleSeeded, project]);
+
+  const { mutate: updateProject, isPending } = useUpdateProject({
+    mutation: {
+      onSuccess: () => {
+        toast.success(t('messages.success'));
+        router.replace(ROUTES.PROJECT_SETTINGS(nextHandle.trim()));
+      },
+      onError: (error) => {
+        if (
+          error instanceof SyncError &&
+          error.code === ErrorCode.PROJECT_HANDLE_ALREADY_EXISTS
+        ) {
+          setError(t('errors.already-exists'));
+        } else if (
+          error instanceof SyncError &&
+          error.code === ErrorCode.NETWORK_ERROR
+        ) {
+          setError(t('errors.network'));
+        } else if (error instanceof SyncError) {
+          setError(error.message);
+        } else {
+          setError(t('errors.unknown'));
+        }
+      },
+    },
+  });
+
+  if (!project) {
+    return null;
+  }
+
+  const trimmedHandle = nextHandle.trim();
+  const isValid =
+    trimmedHandle.length >= PROJECT_HANDLE_MIN_LENGTH &&
+    trimmedHandle.length <= PROJECT_HANDLE_MAX_LENGTH;
+  const isDirty = trimmedHandle !== project.summary.handle;
+
+  const handleSave = () => {
+    setError(null);
+
+    if (!isValid) {
+      setError(t('errors.invalid'));
+      return;
+    }
+
+    updateProject({ handle, data: { handle: trimmedHandle } });
+  };
+
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="project-handle">{t('label')}</Label>
+        <Input
+          id="project-handle"
+          value={nextHandle}
+          onChange={(event) => setNextHandle(event.target.value)}
+          disabled={!isAdmin || isPending}
+        />
+      </div>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+      <Button
+        size="sm"
+        disabled={!isAdmin || !isDirty || isPending}
+        onClick={handleSave}
+      >
+        {t('save')}
+      </Button>
+    </>
   );
 }
 

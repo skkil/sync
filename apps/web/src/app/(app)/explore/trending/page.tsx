@@ -1,9 +1,16 @@
+import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
 import { PostRecommendationType } from '@/components/feature/post/types/post';
 import { requireOnboardedSession } from '@/lib/auth/guards';
 
 import ExplorePosts from '../_components/ExplorePosts';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('pages.explore');
+
+  return { title: t('title') };
+}
 
 export default async function ExploreTrendingPage() {
   await requireOnboardedSession();

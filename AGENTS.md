@@ -14,7 +14,9 @@ All code, comments, commit messages, PR descriptions, and reviews are written in
 ```
 apps/web/        Next.js 16 + React 19 frontend (pnpm)
 apps/server/     Spring Boot 4 + Java 25 backend (Gradle)
-docs/api/        Generated OpenAPI spec — do NOT edit by hand
+docs/api/        docs/api/openapi3.yaml is a generated OpenAPI spec — do NOT
+                 edit it by hand. Other files under docs/api/ (e.g. API docs
+                 preview tooling) are hand-maintained.
 infra/           Infrastructure configuration files and Docker Compose files
 scripts/         CI and setup scripts
 ```
@@ -112,6 +114,54 @@ diffs exist after build, so always run build before committing.
   are set to `ERROR`
 - NullAway annotated package: `com.skkil.sync`
 - NullAway disabled in test compilation
+
+### Tag & Post Permission Model
+
+Two independently-managed tag pools share one `tags` table, distinguished by
+`Tag.project_id`:
+
+- `project_id NULL` → **global tag**, unique by `name` platform-wide, verified
+  by platform `ADMIN`.
+- `project_id` set → **project tag**, unique by `(project_id, name)`, verified
+  by that project's managers.
+- A tag's pool is **fixed at creation** — no promote/demote between pools;
+  `TagService.mergeTags` only merges two tags already in the same pool.
+
+`PostTag` is a generic `post_id`/`tag_id` join with no pool awareness — a post
+can carry any number of global-tag rows and any number of project-tag rows at
+once. `TagFollowRelationship` is global-tags-only by construction
+(`findByIdAndProjectIsNull` gates every follow).
+
+Permission evaluators (`TagPermissionEvaluator`, `PostPermissionEvaluator`,
+`ProjectPermissionEvaluator`):
+
+- Tag `READ`: global tags always readable; project tags readable if the project
+  is public, else requires project teammate membership.
+- Tag reject (`DELETE /tags/{tagId}` vs
+  `DELETE /projects/{handle}/tags/{tagId}`): two endpoints, not one
+  ID-dispatched route — global reject is `ADMIN`-only, project reject requires
+  `hasPermission(#handle, 'PROJECT', 'EDIT')` **plus** an explicit check that
+  the tag actually belongs to `handle`'s project (the permission alone only
+  proves the caller manages _some_ project by that name).
+- Post creation is two endpoints: `POST /posts` (no project, global tags only,
+  authenticated-only) and `POST /projects/{handle}/posts` (global + project
+  tags, gated by `hasPermission(#handle, 'PROJECT', 'CREATE')`, which means "any
+  teammate," not manager-only).
+- Post `canEdit` is author-only; post `canDelete` is author **or** any teammate
+  with `canManageProject()` on the post's project — moderation power to remove,
+  not to rewrite.
+- Post `READ` (public feed, slug page, search, likes/bookmarks): a post's scope
+  is `PUBLIC` (no `project_id`, i.e. a personal post) or `WORKSPACE` (belongs
+  to a project) — `PostScope.fromProject()`. Personal posts are always
+  visible. Workspace posts are visible to non-teammates **iff** their project
+  is public (`Project.isPublic`); private-project posts are visible only to
+  the author or a project teammate, regardless of caller. This condition must
+  stay consistent across every read path — `PostQueryRepository.Conditions`
+  (`feedVisibleCondition`/`readableCondition`/`tagPostVisibilityCondition`/
+  `getPostsByProject`/`getPostsByIdsInProject`) and
+  `PostPermissionEvaluator.canRead` all encode the same rule; when adding a
+  new post-listing query, reuse or mirror these instead of writing an ad hoc
+  condition.
 
 ---
 
