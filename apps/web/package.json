@@ -10,6 +10,7 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "orval": "rm -rf ./src/api/__generated__ && orval --config orval.config.ts",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

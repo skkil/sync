@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { JetBrains_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
 
 import AppProvider from '@/components/providers/AppProvider';
 import { Toaster } from '@/components/ui/sonner';
+import { INDEXABLE_ROBOTS, getSiteUrl } from '@/lib/seo';
 import '@/styles/globals.css';
 
 const pretendard = localFont({
@@ -18,13 +20,22 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: 'sync',
-    template: '%s | sync',
-  },
-  description: '',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('metadata');
+
+  return {
+    metadataBase: getSiteUrl(),
+    title: {
+      default: 'sync',
+      template: '%s | sync',
+    },
+    description: t('description'),
+    applicationName: 'sync',
+    creator: 'sync',
+    publisher: 'sync',
+    robots: INDEXABLE_ROBOTS,
+  };
+}
 
 export default function RootLayout({
   children,
@@ -32,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={pretendard.variable}>
+    <html lang="ko" suppressHydrationWarning className={pretendard.variable}>
       <body className={`${jetbrainsMono.variable} antialiased`}>
         <AppProvider>{children}</AppProvider>
         <Toaster />

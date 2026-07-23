@@ -1,19 +1,19 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 
 import { getGetPostCommentsInfiniteQueryOptions } from '@/api/__generated__/comment/comment';
-import {
-  getGetPostBySlugQueryOptions,
-  getPostBySlug,
-} from '@/api/__generated__/post/post';
+import { getGetPostBySlugQueryKey } from '@/api/__generated__/post/post';
 import { COMMENT_PAGE_SIZE } from '@/components/feature/post/constants';
 import type { PostType } from '@/components/feature/post/types/post';
 import { PostCard } from '@/components/feature/post/viewer/PostCard';
 import PostComments from '@/components/feature/post/viewer/PostComments';
 import { TwoColumnLayout } from '@/components/layout/TwoColumnLayout';
 import SyncError, { ErrorCode } from '@/lib/error';
+import { getPostBySlugCached } from '@/lib/post-query';
 import { getQueryClient } from '@/lib/query';
+import { NON_INDEXABLE_METADATA, createPostMetadata } from '@/lib/seo';
 import ROUTES from '@/util/routes';
 
 interface PostProps {
@@ -26,15 +26,14 @@ export async function generateMetadata({
   params,
 }: PostProps): Promise<Metadata> {
   const { slug } = await params;
+  const t = await getTranslations('metadata');
 
   try {
-    const { data: post } = await getPostBySlug(slug);
-    const title =
-      post.summary.title ?? post.summary.preview.slice(0, 40) ?? undefined;
+    const { data: post } = await getPostBySlugCached(slug);
 
-    return { title };
+    return createPostMetadata(post.summary, t('description'));
   } catch {
-    return {};
+    return NON_INDEXABLE_METADATA;
   }
 }
 
@@ -47,9 +46,10 @@ export default async function Post({ params }: PostProps) {
   let isPostAuthor = false;
 
   try {
-    const { data: post } = await queryClient.fetchQuery(
-      getGetPostBySlugQueryOptions(slug),
-    );
+    const response = await getPostBySlugCached(slug);
+    const post = response.data;
+
+    queryClient.setQueryData(getGetPostBySlugQueryKey(slug), response);
 
     commentsEnabled = post.summary.status === 'PUBLISHED';
     postType = post.summary.type as PostType;
