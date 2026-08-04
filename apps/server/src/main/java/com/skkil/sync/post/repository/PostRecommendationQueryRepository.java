@@ -39,6 +39,20 @@ public class PostRecommendationQueryRepository {
    */
   public CursorPaginationDataFetcher<PostRecommendationCandidate> getCandidates(
       Condition channelCondition, PostRecommendationContext context) {
+    return getCandidates(
+        channelCondition, context, PostConditions.readablePublished(context.requesterId()));
+  }
+
+  /** 공개 탐색 화면에 노출할 수 있는 게시글만 추천 후보로 조회한다. 요청자가 비공개 프로젝트의 팀원이더라도 해당 프로젝트의 게시글은 탐색 후보에서 제외한다. */
+  public CursorPaginationDataFetcher<PostRecommendationCandidate> getDiscoveryCandidates(
+      Condition channelCondition, PostRecommendationContext context) {
+    return getCandidates(channelCondition, context, PostConditions.feedVisible());
+  }
+
+  private CursorPaginationDataFetcher<PostRecommendationCandidate> getCandidates(
+      Condition channelCondition,
+      PostRecommendationContext context,
+      Condition visibilityCondition) {
     return (condition, orderFields, size) ->
         dsl.select(
                 POSTS.ID.as("id"),
@@ -49,7 +63,7 @@ public class PostRecommendationQueryRepository {
             .on(POSTS.PROJECT_ID.eq(PROJECTS.ID))
             .where(
                 condition
-                    .and(PostConditions.readablePublished(context.requesterId()))
+                    .and(visibilityCondition)
                     .and(scopeCondition(context.scope()))
                     .and(channelCondition))
             .orderBy(orderFields)

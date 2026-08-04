@@ -28,7 +28,7 @@ public class TrendingPostRecommendationChannel implements PostRecommendationChan
   @Override
   public CursorPaginationDataFetcher<PostRecommendationCandidate> getCandidateFetcher(
       PostRecommendationContext context) {
-    return postRecommendationQueryRepository.getCandidates(
+    return postRecommendationQueryRepository.getDiscoveryCandidates(
         postRecommendationQueryRepository.trendingCondition(), context);
   }
 
