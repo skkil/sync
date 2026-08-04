@@ -10,13 +10,13 @@ import '@/styles/globals.css';
 
 const pretendard = localFont({
   src: '../../public/fonts/PretendardVariable.woff2',
-  variable: '--font-sans',
+  variable: '--font-pretendard',
   display: 'swap',
   weight: '45 920',
 });
 
 const jetbrainsMono = JetBrains_Mono({
-  variable: '--font-mono',
+  variable: '--font-jetbrains-mono',
   subsets: ['latin'],
 });
 
@@ -62,8 +62,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning className={pretendard.variable}>
-      <body className={`${jetbrainsMono.variable} antialiased`}>
+    <html
+      lang="ko"
+      suppressHydrationWarning
+      className={`${pretendard.variable} ${jetbrainsMono.variable}`}
+    >
+      <body className="antialiased">
         <AppProvider>{children}</AppProvider>
         <Toaster />
       </body>

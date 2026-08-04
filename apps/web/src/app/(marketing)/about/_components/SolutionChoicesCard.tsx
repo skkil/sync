@@ -11,18 +11,16 @@ export default async function SolutionChoicesCard() {
   return (
     <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
       <div>
-        <MonoLabel>{t('write.label')}</MonoLabel>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          <TypeTag label="SHORT" />
-          <TypeTag active label="QUESTION" />
-          <TypeTag label="LONG" />
+        <div className="flex flex-wrap gap-1.5">
+          <TypeTag label={t('write.short')} />
+          <TypeTag active label={t('write.question')} />
+          <TypeTag label={t('write.long')} />
         </div>
         <p className="mt-2 text-xs text-muted-foreground">{t('write.hint')}</p>
       </div>
 
       <div className="mt-5">
-        <MonoLabel>{t('place.label')}</MonoLabel>
-        <div className="mt-2 flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           <TypeTag label={t('place.personal')} />
           <TypeTag active label={t('place.project')} />
         </div>

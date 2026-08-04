@@ -26,15 +26,14 @@ export default async function ProblemSolutionSection() {
           <h2 className="whitespace-pre-line text-4xl font-medium leading-[1.12] tracking-tight md:text-5xl lg:text-[3.4rem]">
             {t('title')}
           </h2>
-          <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-6 max-w-lg whitespace-pre-line text-base leading-relaxed text-muted-foreground">
             {t('description')}
           </p>
         </div>
 
         <div className="mt-16 grid items-start gap-8 lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
           <div>
-            <MonoLabel>{t('before.label')}</MonoLabel>
-            <div className="mt-4 space-y-3">
+            <div className="space-y-3">
               {BEFORE_KEYS.map((key) => (
                 <BeforeCard
                   key={key}
@@ -49,13 +48,10 @@ export default async function ProblemSolutionSection() {
           <TurnArrow />
 
           <div>
-            <MonoLabel className="normal-case text-primary">
-              {t('after.label')}
-            </MonoLabel>
-            <h3 className="mt-3 text-2xl font-medium tracking-tight md:text-3xl">
+            <h3 className="text-2xl font-medium tracking-tight md:text-3xl">
               {t('after.title')}
             </h3>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
               {t('after.description')}
             </p>
             <div className="mt-5">

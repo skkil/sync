@@ -14,8 +14,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-sans:
+    var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui,
+    Roboto, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --font-mono:
+    var(--font-jetbrains-mono), var(--font-pretendard), ui-monospace,
+    'SFMono-Regular', Menlo, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -175,13 +179,6 @@
   --shadow-md: 0 4px 12px rgba(16, 18, 20, 0.08);
   --shadow-popover: 0 8px 24px rgba(16, 18, 20, 0.12);
   --focus-ring: 0 0 0 3px rgba(11, 122, 91, 0.45);
-  --font-mono:
-    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --font-sans:
-    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
-    system-ui, Roboto, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
-    sans-serif;
-
   /* ── shadcn semantic mapping ────────────────────────── */
   --background: var(--surface-canvas);
   --foreground: var(--text-primary);
