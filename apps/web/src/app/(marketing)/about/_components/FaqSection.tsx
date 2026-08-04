@@ -1,15 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 
-const FAQ_KEYS = [
-  'vsBlog',
-  'project',
-  'privacy',
-  'personalVsProject',
-  'answers',
-  'noScores',
-  'monetization',
-  'price',
-] as const;
+const FAQ_KEYS = ['vsBlog', 'project', 'privacy', 'personalVsProject'] as const;
 
 /** 4. FAQ. */
 export default async function FaqSection() {
