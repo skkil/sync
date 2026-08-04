@@ -1741,7 +1741,7 @@
     },
     "ui": {
       "copyright": {
-        "text": "© {year} SKKiL. 모든 권리 보유."
+        "text": "© {year} SKKiL. All rights reserved."
       },
       "carousel": {
         "previous-slide": "이전 슬라이드",
