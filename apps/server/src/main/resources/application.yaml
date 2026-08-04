@@ -75,6 +75,11 @@ spring:
     model:
       chat: ${AI_CHAT_PROVIDER:none}
       embedding: ${AI_EMBEDDING_PROVIDER:none}
+      audio:
+        speech: none
+        transcription: none
+      image: none
+      moderation: none
     ollama:
       base-url: ${OLLAMA_URL:http://localhost:11434}
       chat:
