@@ -41,6 +41,7 @@ public class TeammateService {
   }
 
   @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#handle, 'PROJECT', 'READ')")
   public GetProjectTeammatesResponse getProjectTeammates(String handle) {
     Project project =
         projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);

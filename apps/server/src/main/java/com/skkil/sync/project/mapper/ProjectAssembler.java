@@ -2,15 +2,18 @@ package com.skkil.sync.project.mapper;
 
 import com.skkil.sync.common.util.pagination.dto.response.CursorPaginationResponse;
 import com.skkil.sync.media.service.domain.MediaDomainService;
+import com.skkil.sync.project.dto.data.MyProjectDto;
 import com.skkil.sync.project.dto.data.ProjectFollowerDto;
 import com.skkil.sync.project.dto.response.GetMyProjectInvitationsResponse;
 import com.skkil.sync.project.dto.response.GetMyProjectJoinRequestsResponse;
+import com.skkil.sync.project.dto.response.GetMyProjectsResponse;
 import com.skkil.sync.project.dto.response.GetProjectFollowersResponse;
 import com.skkil.sync.project.dto.response.GetProjectInvitationsResponse;
 import com.skkil.sync.project.dto.response.GetProjectJoinRequestsResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectTeammatesResponse;
 import com.skkil.sync.project.dto.response.GetProjectsResponse;
+import com.skkil.sync.project.dto.summary.MyProjectSummary;
 import com.skkil.sync.project.dto.summary.ProjectInvitationSummary;
 import com.skkil.sync.project.dto.summary.ProjectSummary;
 import com.skkil.sync.project.dto.summary.ProjectTeammateSummary;
@@ -25,6 +28,7 @@ import com.skkil.sync.user.mapper.UserAssembler;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +84,6 @@ public class ProjectAssembler {
         .isFollowing(isFollowing)
         .hasPendingInvitation(hasPendingInvitation)
         .hasPendingJoinRequest(hasPendingJoinRequest)
-        .recentActivities(List.of())
         .build();
   }
 
@@ -94,6 +97,43 @@ public class ProjectAssembler {
 
     return new GetProjectsResponse(
         projects.stream().map(project -> toProjectSummary(project, iconUrls)).toList());
+  }
+
+  public GetMyProjectsResponse toGetMyProjectsResponse(List<MyProjectDto> projects) {
+    var iconMediaIds =
+        projects.stream()
+            .map(MyProjectDto::iconMediaId)
+            .filter(Objects::nonNull)
+            .distinct()
+            .toList();
+    Map<Long, URL> iconUrls =
+        iconMediaIds.isEmpty()
+            ? Map.of()
+            : mediaDomainService.generatePresignedGetUrlsByIds(iconMediaIds);
+
+    return new GetMyProjectsResponse(
+        projects.stream()
+            .map(
+                project -> {
+                  URL iconUrl =
+                      project.iconMediaId() == null ? null : iconUrls.get(project.iconMediaId());
+
+                  return MyProjectSummary.builder()
+                      .handle(project.handle())
+                      .name(project.name())
+                      .description(project.description())
+                      .website(project.website())
+                      .isPublic(project.isPublic())
+                      .joinPolicy(project.joinPolicy())
+                      .followerCount(project.followerCount())
+                      .iconUrl(iconUrl == null ? null : iconUrl.toExternalForm())
+                      .role(project.role())
+                      .isOwner(project.isOwner())
+                      .memberCount(project.memberCount())
+                      .unresolvedQuestionCount(project.unresolvedQuestionCount())
+                      .build();
+                })
+            .toList());
   }
 
   public GetProjectFollowersResponse toGetProjectFollowersResponse(

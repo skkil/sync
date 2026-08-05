@@ -1,11 +1,11 @@
 'use client';
 
-import { FolderSimpleIcon } from '@phosphor-icons/react';
+import { FolderSimpleIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 
-import { useGetProjectsByUser } from '@/api/__generated__/project/project';
+import { useGetMyProjects } from '@/api/__generated__/project/project';
 import { ProjectCard } from '@/components/feature/project/card';
-import { LinkButton } from '@/components/ui/button';
+import { Button, LinkButton } from '@/components/ui/button';
 import {
   Empty,
   EmptyContent,
@@ -15,24 +15,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSession } from '@/lib/auth/client';
 import ROUTES from '@/util/routes';
-
-// TODO: 멤버 수, 역할, 활동 지표를 반환하는 API가 추가되면 실제 데이터로 교체합니다.
-function mockProjectStats(handle: string) {
-  let hash = 0;
-  for (const char of handle) {
-    hash = (hash * 31 + char.charCodeAt(0)) % 1000;
-  }
-
-  return {
-    role: hash % 5 === 0 ? ('admin' as const) : ('member' as const),
-    memberCount: 4 + (hash % 40),
-    freshPercent: 60 + (hash % 40),
-    toReviewCount: hash % 8,
-    unansweredCount: hash % 5,
-  };
-}
 
 function UserProjectsSkeleton() {
   return (
@@ -45,20 +28,43 @@ function UserProjectsSkeleton() {
 }
 
 export default function UserProjects() {
-  const t = useTranslations('pages.projects.list.empty');
-  const { data: session } = useSession();
-
-  const { data: projectsData, isPending } = useGetProjectsByUser(
-    session?.user.handle || '',
-    {
-      query: {
-        enabled: !!session?.user.handle,
-      },
-    },
-  );
+  const t = useTranslations('pages.projects.list');
+  const {
+    data: projectsData,
+    isPending,
+    isError,
+    isFetching,
+    refetch,
+  } = useGetMyProjects({
+    query: { staleTime: 0 },
+  });
 
   if (isPending) {
     return <UserProjectsSkeleton />;
+  }
+
+  if (isError) {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <WarningCircleIcon />
+          </EmptyMedia>
+          <EmptyTitle>{t('error.title')}</EmptyTitle>
+          <EmptyDescription>{t('error.description')}</EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={isFetching}
+            onClick={() => void refetch()}
+          >
+            {t('error.retry')}
+          </Button>
+        </EmptyContent>
+      </Empty>
+    );
   }
 
   if (!projectsData) {
@@ -74,12 +80,12 @@ export default function UserProjects() {
           <EmptyMedia variant="icon">
             <FolderSimpleIcon />
           </EmptyMedia>
-          <EmptyTitle>{t('title')}</EmptyTitle>
-          <EmptyDescription>{t('description')}</EmptyDescription>
+          <EmptyTitle>{t('empty.title')}</EmptyTitle>
+          <EmptyDescription>{t('empty.description')}</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
           <LinkButton href={ROUTES.NEW_PROJECT()} size="sm">
-            {t('create')}
+            {t('empty.create')}
           </LinkButton>
         </EmptyContent>
       </Empty>
@@ -88,20 +94,23 @@ export default function UserProjects() {
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((project) => {
-        const stats = mockProjectStats(project.handle);
-
-        return (
-          <ProjectCard
-            key={project.handle}
-            name={project.name}
-            handle={project.handle}
-            iconUrl={project.iconUrl}
-            description={project.description}
-            {...stats}
-          />
-        );
-      })}
+      {projects.map((project) => (
+        <ProjectCard
+          key={project.handle}
+          variant="membership"
+          name={project.name}
+          handle={project.handle}
+          iconUrl={project.iconUrl}
+          description={project.description}
+          isPublic={project.isPublic}
+          joinPolicy={project.joinPolicy}
+          followerCount={project.followerCount}
+          role={project.role}
+          isOwner={project.isOwner}
+          memberCount={project.memberCount}
+          unresolvedQuestionCount={project.unresolvedQuestionCount}
+        />
+      ))}
     </div>
   );
 }

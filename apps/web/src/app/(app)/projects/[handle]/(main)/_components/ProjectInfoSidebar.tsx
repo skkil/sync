@@ -54,7 +54,11 @@ export default function ProjectInfoSidebar({
 function AboutCard({ handle }: ProjectInfoSidebarProps) {
   const t = useTranslations('pages.projects.project.sidebar.about');
   const { data, isPending } = useGetProjectByHandle(handle);
-  const { data: teammatesData } = useGetProjectTeammates(handle);
+  const {
+    data: teammatesData,
+    isPending: isTeammatesPending,
+    isError: isTeammatesError,
+  } = useGetProjectTeammates(handle);
 
   if (isPending || !data) {
     return (
@@ -69,7 +73,6 @@ function AboutCard({ handle }: ProjectInfoSidebarProps) {
   }
 
   const { summary } = data.data;
-  const memberCount = teammatesData?.data.teammates.length ?? 0;
   const websiteUrl = toSafeHttpUrl(summary.website);
 
   const joinPolicyLabel =
@@ -117,11 +120,19 @@ function AboutCard({ handle }: ProjectInfoSidebarProps) {
             count={summary.followerCount}
             label={t('stats.followers')}
           />
-          <StatItem
-            icon={<UsersIcon className="size-3.5" />}
-            count={memberCount}
-            label={t('stats.members')}
-          />
+          {!isTeammatesError && (
+            <StatItem
+              icon={<UsersIcon className="size-3.5" />}
+              count={
+                isTeammatesPending ? (
+                  <Skeleton className="h-4 w-5" />
+                ) : (
+                  teammatesData.data.teammates.length
+                )
+              }
+              label={t('stats.members')}
+            />
+          )}
         </div>
       </CardContent>
     </Card>
@@ -134,7 +145,7 @@ function StatItem({
   label,
 }: {
   icon: ReactNode;
-  count: number;
+  count: ReactNode;
   label: ReactNode;
 }) {
   return (
@@ -148,7 +159,11 @@ function StatItem({
 
 function ContributorsCard({ handle }: ProjectInfoSidebarProps) {
   const t = useTranslations('pages.projects.project.sidebar.contributors');
-  const { data, isPending } = useGetProjectTeammates(handle);
+  const { data, isPending, isError } = useGetProjectTeammates(handle);
+
+  if (isError) {
+    return null;
+  }
 
   const teammates = data?.data.teammates ?? [];
   const visibleTeammates = teammates.slice(0, MAX_VISIBLE_MEMBERS);
@@ -164,7 +179,8 @@ function ContributorsCard({ handle }: ProjectInfoSidebarProps) {
       <CardContent className="pointer-events-none relative z-10 space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold">
-            {t('heading')} · {teammates.length}
+            {t('heading')}
+            {!isPending && ` · ${teammates.length}`}
           </h2>
 
           <div className="pointer-events-auto">

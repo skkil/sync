@@ -2,12 +2,14 @@
 
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useUploadMedia } from '@/api/__generated__/media/media';
 import {
+  getGetMyProjectsQueryKey,
   getGetProjectByHandleQueryOptions,
+  getSearchMyProjectsQueryKey,
   useGetProjectByHandle,
   useUpdateProject,
 } from '@/api/__generated__/project/project';
@@ -172,9 +174,17 @@ function ProjectIconField({
   const { mutate: updateProject } = useUpdateProject({
     mutation: {
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        await context.client.invalidateQueries(
-          getGetProjectByHandleQueryOptions(handle),
-        );
+        await Promise.all([
+          context.client.invalidateQueries(
+            getGetProjectByHandleQueryOptions(handle),
+          ),
+          context.client.invalidateQueries({
+            queryKey: getGetMyProjectsQueryKey(),
+          }),
+          context.client.invalidateQueries({
+            queryKey: getSearchMyProjectsQueryKey(),
+          }),
+        ]);
       },
     },
   });
@@ -335,24 +345,22 @@ function ProjectNameField({
   const project = data?.data;
 
   const [name, setName] = useState(project?.summary.name ?? '');
-  const [isNameSeeded, setIsNameSeeded] = useState(!!project);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (isNameSeeded || !project) {
-      return;
-    }
-
-    setName(project.summary.name);
-    setIsNameSeeded(true);
-  }, [isNameSeeded, project]);
 
   const { mutate: updateProject, isPending } = useUpdateProject({
     mutation: {
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        await context.client.invalidateQueries(
-          getGetProjectByHandleQueryOptions(handle),
-        );
+        await Promise.all([
+          context.client.invalidateQueries(
+            getGetProjectByHandleQueryOptions(handle),
+          ),
+          context.client.invalidateQueries({
+            queryKey: getGetMyProjectsQueryKey(),
+          }),
+          context.client.invalidateQueries({
+            queryKey: getSearchMyProjectsQueryKey(),
+          }),
+        ]);
         toast.success(t('messages.success'));
       },
       onError: (error) => {
@@ -428,21 +436,19 @@ function ProjectHandleField({
   const project = data?.data;
 
   const [nextHandle, setNextHandle] = useState(project?.summary.handle ?? '');
-  const [isHandleSeeded, setIsHandleSeeded] = useState(!!project);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (isHandleSeeded || !project) {
-      return;
-    }
-
-    setNextHandle(project.summary.handle);
-    setIsHandleSeeded(true);
-  }, [isHandleSeeded, project]);
 
   const { mutate: updateProject, isPending } = useUpdateProject({
     mutation: {
-      onSuccess: () => {
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+        await Promise.all([
+          context.client.invalidateQueries({
+            queryKey: getGetMyProjectsQueryKey(),
+          }),
+          context.client.invalidateQueries({
+            queryKey: getSearchMyProjectsQueryKey(),
+          }),
+        ]);
         toast.success(t('messages.success'));
         router.replace(ROUTES.PROJECT_SETTINGS(nextHandle.trim()));
       },
@@ -527,9 +533,17 @@ function ProjectJoinPolicyField({
   const { mutate: updateProject, isPending } = useUpdateProject({
     mutation: {
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        await context.client.invalidateQueries(
-          getGetProjectByHandleQueryOptions(handle),
-        );
+        await Promise.all([
+          context.client.invalidateQueries(
+            getGetProjectByHandleQueryOptions(handle),
+          ),
+          context.client.invalidateQueries({
+            queryKey: getGetMyProjectsQueryKey(),
+          }),
+          context.client.invalidateQueries({
+            queryKey: getSearchMyProjectsQueryKey(),
+          }),
+        ]);
         toast.success(t('messages.success'));
       },
       onError: () => {

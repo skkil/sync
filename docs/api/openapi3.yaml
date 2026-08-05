@@ -1913,6 +1913,28 @@ paths:
               examples:
                 CreateProject:
                   value: "{\"handle\":\"my-project\"}"
+  /projects/my:
+    get:
+      tags:
+      - project
+      summary: Get My Projects
+      description: 현재 사용자가 참여 중인 프로젝트와 실제 운영 정보를 조회합니다.
+      operationId: GetMyProjects
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetMyProjectsResponse"
+              examples:
+                GetMyProjects:
+                  value: "{\"projects\":[{\"handle\":\"my-project\",\"name\":\"나의\
+                    \ 프로젝트\",\"description\":\"프로젝트 설명\",\"website\":\"https://example.com\"\
+                    ,\"isPublic\":false,\"joinPolicy\":\"INVITE\",\"followerCount\"\
+                    :3,\"iconUrl\":\"https://example.com/icon.png\",\"role\":\"ADMIN\"\
+                    ,\"isOwner\":true,\"memberCount\":8,\"unresolvedQuestionCount\"\
+                    :2}]}"
   /projects/recommendations:
     get:
       tags:
@@ -1974,8 +1996,7 @@ paths:
                     },\"role\":\"MEMBER\",\"isOwner\":false}],\"hasMoreTeammates\"\
                     :false,\"isViewer\":true,\"role\":\"ADMIN\",\"isOwner\":true,\"\
                     isFollowing\":false,\"hasPendingInvitation\":false,\"hasPendingJoinRequest\"\
-                    :false,\"recentActivities\":[{\"id\":\"1\",\"timestamp\":\"2024-01-01T00:00:00Z\"\
-                    ,\"text\":\"활동 내용\"}]}"
+                    :false}"
     patch:
       tags:
       - project
@@ -3724,7 +3745,7 @@ paths:
       tags:
       - project
       summary: Get Projects By User
-      description: 유저 핸들로 해당 유저의 프로젝트 목록을 조회합니다.
+      description: 유저 핸들로 해당 유저가 참여 중인 공개 프로젝트 목록을 조회합니다.
       operationId: GetProjectsByUser
       parameters:
       - name: handle
@@ -4791,6 +4812,121 @@ components:
           type: string
           description: 게시글이 속한 프로젝트의 핸들 (개인 게시글이면 생략)
           nullable: true
+    GetProjectResponse:
+      title: GetProjectResponse
+      required:
+      - hasMoreTeammates
+      - hasPendingInvitation
+      - hasPendingJoinRequest
+      - isFollowing
+      - isOwner
+      - isViewer
+      - summary
+      - teammates
+      type: object
+      properties:
+        summary:
+          required:
+          - followerCount
+          - handle
+          - isPublic
+          - joinPolicy
+          - name
+          type: object
+          properties:
+            website:
+              type: string
+              description: 프로젝트 웹사이트
+              nullable: true
+            name:
+              type: string
+              description: 프로젝트 이름
+            isPublic:
+              type: boolean
+              description: 공개 여부
+            description:
+              type: string
+              description: 프로젝트 설명
+              nullable: true
+            handle:
+              type: string
+              description: 프로젝트 핸들
+            iconUrl:
+              type: string
+              description: 프로젝트 아이콘 URL
+              nullable: true
+            joinPolicy:
+              type: string
+              description: 프로젝트 참여 정책
+              enum:
+              - OPEN
+              - REQUEST
+              - INVITE
+            followerCount:
+              type: number
+              description: 프로젝트 팔로워 수
+          description: 프로젝트 정보
+        hasPendingJoinRequest:
+          type: boolean
+          description: 현재 사용자의 대기 중인 가입 요청 존재 여부
+        teammates:
+          type: array
+          description: 팀원 목록
+          items:
+            required:
+            - isOwner
+            - role
+            - user
+            type: object
+            properties:
+              role:
+                type: string
+                description: 팀원 역할
+                enum:
+                - ADMIN
+                - MEMBER
+              isOwner:
+                type: boolean
+                description: 프로젝트 소유자 여부
+              user:
+                required:
+                - handle
+                - name
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 유저 이름
+                  handle:
+                    type: string
+                    description: 유저 핸들
+                  profileImageUrl:
+                    type: string
+                    description: 유저 프로필 이미지 URL
+                    nullable: true
+                description: 팀원 유저 정보
+        isFollowing:
+          type: boolean
+          description: 현재 사용자의 프로젝트 팔로우 여부
+        role:
+          type: string
+          description: 현재 사용자 역할
+          nullable: true
+          enum:
+          - ADMIN
+          - MEMBER
+        isOwner:
+          type: boolean
+          description: 현재 사용자의 프로젝트 소유자 여부
+        isViewer:
+          type: boolean
+          description: 현재 사용자의 프로젝트 팀원 여부
+        hasPendingInvitation:
+          type: boolean
+          description: 현재 사용자의 대기 중인 초대 존재 여부
+        hasMoreTeammates:
+          type: boolean
+          description: 추가 팀원 존재 여부
     GetPostResponse:
       title: GetPostResponse
       required:
@@ -6500,140 +6636,6 @@ components:
         externalId:
           type: string
           description: 생성된 컬렉션의 외부 식별자 (이후 모든 API 가 이 값으로 컬렉션을 참조한다)
-    GetProjectResponse:
-      title: GetProjectResponse
-      required:
-      - hasMoreTeammates
-      - hasPendingInvitation
-      - hasPendingJoinRequest
-      - isFollowing
-      - isOwner
-      - isViewer
-      - summary
-      - teammates
-      type: object
-      properties:
-        summary:
-          required:
-          - followerCount
-          - handle
-          - isPublic
-          - joinPolicy
-          - name
-          type: object
-          properties:
-            website:
-              type: string
-              description: 프로젝트 웹사이트
-              nullable: true
-            name:
-              type: string
-              description: 프로젝트 이름
-            isPublic:
-              type: boolean
-              description: 공개 여부
-            description:
-              type: string
-              description: 프로젝트 설명
-              nullable: true
-            handle:
-              type: string
-              description: 프로젝트 핸들
-            iconUrl:
-              type: string
-              description: 프로젝트 아이콘 URL
-              nullable: true
-            joinPolicy:
-              type: string
-              description: 프로젝트 참여 정책
-              enum:
-              - OPEN
-              - REQUEST
-              - INVITE
-            followerCount:
-              type: number
-              description: 프로젝트 팔로워 수
-          description: 프로젝트 정보
-        hasPendingJoinRequest:
-          type: boolean
-          description: 현재 사용자의 대기 중인 가입 요청 존재 여부
-        teammates:
-          type: array
-          description: 팀원 목록
-          items:
-            required:
-            - isOwner
-            - role
-            - user
-            type: object
-            properties:
-              role:
-                type: string
-                description: 팀원 역할
-                enum:
-                - ADMIN
-                - MEMBER
-              isOwner:
-                type: boolean
-                description: 프로젝트 소유자 여부
-              user:
-                required:
-                - handle
-                - name
-                type: object
-                properties:
-                  name:
-                    type: string
-                    description: 유저 이름
-                  handle:
-                    type: string
-                    description: 유저 핸들
-                  profileImageUrl:
-                    type: string
-                    description: 유저 프로필 이미지 URL
-                    nullable: true
-                description: 팀원 유저 정보
-        isFollowing:
-          type: boolean
-          description: 현재 사용자의 프로젝트 팔로우 여부
-        role:
-          type: string
-          description: 현재 사용자 역할
-          nullable: true
-          enum:
-          - ADMIN
-          - MEMBER
-        isOwner:
-          type: boolean
-          description: 현재 사용자의 프로젝트 소유자 여부
-        recentActivities:
-          type: array
-          description: 최근 활동 목록
-          items:
-            required:
-            - id
-            - text
-            - timestamp
-            type: object
-            properties:
-              text:
-                type: string
-                description: 활동 내용
-              id:
-                type: string
-                description: 활동 ID
-              timestamp:
-                type: string
-                description: 활동 시각
-        isViewer:
-          type: boolean
-          description: 현재 사용자의 프로젝트 팀원 여부
-        hasPendingInvitation:
-          type: boolean
-          description: 현재 사용자의 대기 중인 초대 존재 여부
-        hasMoreTeammates:
-          type: boolean
-          description: 추가 팀원 존재 여부
     SearchUsersResponse:
       title: SearchUsersResponse
       required:
@@ -7315,6 +7317,74 @@ components:
               count:
                 type: number
                 description: Number of Posts
+    GetMyProjectsResponse:
+      title: GetMyProjectsResponse
+      required:
+      - projects
+      type: object
+      properties:
+        projects:
+          type: array
+          description: 내 프로젝트 목록
+          items:
+            required:
+            - followerCount
+            - handle
+            - isOwner
+            - isPublic
+            - joinPolicy
+            - memberCount
+            - name
+            - role
+            - unresolvedQuestionCount
+            type: object
+            properties:
+              website:
+                type: string
+                description: 프로젝트 웹사이트
+                nullable: true
+              role:
+                type: string
+                description: 현재 사용자의 프로젝트 역할
+                enum:
+                - ADMIN
+                - MEMBER
+              isOwner:
+                type: boolean
+                description: 현재 사용자의 프로젝트 소유자 여부
+              memberCount:
+                type: number
+                description: 프로젝트 멤버 수
+              name:
+                type: string
+                description: 프로젝트 이름
+              isPublic:
+                type: boolean
+                description: 공개 여부
+              description:
+                type: string
+                description: 프로젝트 설명
+                nullable: true
+              handle:
+                type: string
+                description: 프로젝트 핸들
+              iconUrl:
+                type: string
+                description: 프로젝트 아이콘 URL
+                nullable: true
+              joinPolicy:
+                type: string
+                description: 프로젝트 참여 정책
+                enum:
+                - OPEN
+                - REQUEST
+                - INVITE
+              unresolvedQuestionCount:
+                type: number
+                description: 공개된 미해결 질문 수
+              followerCount:
+                type: number
+                description: 프로젝트 팔로워 수
     CreateProjectPostRequest:
       title: CreateProjectPostRequest
       required:

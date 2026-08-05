@@ -5,6 +5,7 @@ import com.skkil.sync.project.constants.ProjectConstants;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.request.UpdateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
+import com.skkil.sync.project.dto.response.GetMyProjectsResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectsResponse;
@@ -47,6 +48,13 @@ public class ProjectController {
   public GetProjectResponse getProjectByHandle(
       @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String handle) {
     return projectService.getProjectByHandle(user != null ? user.userId() : null, handle);
+  }
+
+  @GetMapping("/projects/my")
+  @ResponseStatus(HttpStatus.OK)
+  public GetMyProjectsResponse getMyProjects(
+      @AuthenticationPrincipal @NotNull AuthenticatedUser user) {
+    return projectService.getMyProjects(user.userId());
   }
 
   @GetMapping("/users/{handle}/projects")

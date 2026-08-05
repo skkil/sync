@@ -254,13 +254,17 @@
           "heading": "팔로우 중",
           "explore-more": "탐색 페이지에서 더 많은 프로젝트 찾아보기 →",
           "unfollow": "팔로우 중",
-          "no-new-posts": "새 게시물 없음",
-          "new-posts": "새 게시물 {count}개"
+          "follower-count": "팔로워 {count}명"
         },
         "empty": {
           "title": "참여 중인 프로젝트가 없습니다",
           "description": "새 프로젝트를 만들어 팀과 함께 지식을 쌓아보세요.",
           "create": "새 프로젝트 만들기"
+        },
+        "error": {
+          "title": "내 프로젝트를 불러오지 못했습니다",
+          "description": "잠시 후 다시 시도해 주세요.",
+          "retry": "다시 시도"
         }
       },
       "new": {
@@ -1645,13 +1649,22 @@
     "project": {
       "card": {
         "memberCount": "멤버 {count}명",
+        "followerCount": "팔로워 {count}명",
         "role": {
+          "owner": "소유자",
           "admin": "관리자",
           "member": "멤버"
         },
-        "fresh": "최신",
-        "toReview": "검토 대기",
-        "unanswered": "미답변",
+        "visibility": {
+          "public": "공개",
+          "private": "비공개"
+        },
+        "joinPolicy": {
+          "open": "누구나 참여",
+          "request": "승인 후 참여",
+          "invite": "초대 전용"
+        },
+        "unresolvedQuestionCount": "미해결 질문 {count}개",
         "open": "프로젝트 열기"
       },
       "hoverCard": {

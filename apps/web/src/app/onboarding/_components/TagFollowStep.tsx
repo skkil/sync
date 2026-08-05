@@ -84,6 +84,8 @@ export const TagFollowStep = forwardRef<
       return;
     }
 
+    // 서버에서 불러온 팔로우 태그를 이 편집 단계의 로컬 선택 상태에 최초 한 번만 반영합니다.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsSeeded(true);
     setSelectedTags(
       new Map(

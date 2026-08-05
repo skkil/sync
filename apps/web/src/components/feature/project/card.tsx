@@ -1,4 +1,3 @@
-import { CheckCircleIcon, ClockIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
@@ -8,101 +7,102 @@ import ROUTES from '@/util/routes';
 
 import { ProjectAvatar } from './avatar';
 
-interface ProjectCardProps {
+interface ProjectCardBaseProps {
   name: string;
   handle: string;
   iconUrl?: string | null;
   description?: string | null;
-  role?: 'admin' | 'member';
-  memberCount?: number;
-  freshPercent?: number;
-  toReviewCount?: number;
-  unansweredCount?: number;
+  isPublic: boolean;
+  joinPolicy: 'OPEN' | 'REQUEST' | 'INVITE';
+  followerCount: number;
 }
 
-function ProjectCard({
-  name,
-  handle,
-  iconUrl,
-  description,
-  role,
-  memberCount,
-  freshPercent,
-  toReviewCount,
-  unansweredCount,
-}: ProjectCardProps) {
+interface ProjectSummaryCardProps extends ProjectCardBaseProps {
+  variant: 'summary';
+}
+
+interface ProjectMembershipCardProps extends ProjectCardBaseProps {
+  variant: 'membership';
+  role: 'ADMIN' | 'MEMBER';
+  isOwner: boolean;
+  memberCount: number;
+  unresolvedQuestionCount: number;
+}
+
+type ProjectCardProps = ProjectSummaryCardProps | ProjectMembershipCardProps;
+
+function ProjectCard(props: ProjectCardProps) {
   const t = useTranslations('components.project.card');
-  const isFresh = freshPercent !== undefined && freshPercent >= 85;
+  const roleLabel =
+    props.variant === 'membership'
+      ? props.isOwner
+        ? t('role.owner')
+        : props.role === 'ADMIN'
+          ? t('role.admin')
+          : t('role.member')
+      : null;
+  const joinPolicyLabel =
+    props.joinPolicy === 'OPEN'
+      ? t('joinPolicy.open')
+      : props.joinPolicy === 'REQUEST'
+        ? t('joinPolicy.request')
+        : t('joinPolicy.invite');
 
   return (
     <Card className="gap-4 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <ProjectAvatar
-            name={name}
-            iconUrl={iconUrl}
+            name={props.name}
+            iconUrl={props.iconUrl}
             size="lg"
             className="size-10 text-lg"
           />
           <div className="min-w-0">
-            <p className="truncate font-semibold">{name}</p>
-            {memberCount !== undefined && (
+            <p className="truncate font-semibold">{props.name}</p>
+            {props.variant === 'membership' && (
               <p className="text-muted-foreground text-xs">
-                {t('memberCount', { count: memberCount })}
+                {t('memberCount', { count: props.memberCount })}
               </p>
             )}
           </div>
         </div>
 
-        {role && (
+        {roleLabel && (
           <Badge variant="outline" className="shrink-0 font-normal">
-            {role === 'admin' ? t('role.admin') : t('role.member')}
+            {roleLabel}
           </Badge>
         )}
       </div>
 
-      {description && (
+      {props.description && (
         <p className="text-muted-foreground line-clamp-2 text-sm">
-          {description}
+          {props.description}
         </p>
       )}
 
-      {freshPercent !== undefined &&
-        toReviewCount !== undefined &&
-        unansweredCount !== undefined && (
-          <div className="border-hairline flex items-center justify-between border-t pt-4 text-xs">
-            <div className="flex items-center gap-1">
-              {isFresh ? (
-                <CheckCircleIcon weight="fill" className="text-success-text" />
-              ) : (
-                <ClockIcon weight="fill" className="text-warning-text" />
-              )}
-              <span
-                className={isFresh ? 'text-success-text' : 'text-warning-text'}
-              >
-                {freshPercent}%
-              </span>
-              <span className="text-muted-foreground">{t('fresh')}</span>
-            </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge variant="secondary" className="font-normal">
+          {props.isPublic ? t('visibility.public') : t('visibility.private')}
+        </Badge>
+        <Badge variant="outline" className="font-normal">
+          {joinPolicyLabel}
+        </Badge>
+      </div>
 
-            <div className="text-muted-foreground">
-              <span className="text-foreground font-medium">
-                {toReviewCount}
-              </span>{' '}
-              {t('toReview')}
-            </div>
-
-            <div className="text-muted-foreground">
-              <span className="text-foreground font-medium">
-                {unansweredCount}
-              </span>{' '}
-              {t('unanswered')}
-            </div>
-          </div>
+      <div className="border-hairline text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 border-t pt-4 text-xs">
+        <span>{t('followerCount', { count: props.followerCount })}</span>
+        {props.variant === 'membership' && (
+          <span>
+            {t('unresolvedQuestionCount', {
+              count: props.unresolvedQuestionCount,
+            })}
+          </span>
         )}
+      </div>
 
       <LinkButton
-        href={ROUTES.PROJECT(handle)}
+        href={ROUTES.PROJECT(props.handle)}
         size="sm"
         variant="secondary"
         className="w-full"

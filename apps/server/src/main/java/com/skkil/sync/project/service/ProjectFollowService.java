@@ -145,7 +145,7 @@ public class ProjectFollowService {
     User user = userDomainService.getUserByHandle(userHandle);
 
     var projects =
-        projectFollowRelationshipRepository.findByFollowerId(user.getId()).stream()
+        projectFollowRelationshipRepository.findPublicByFollowerId(user.getId()).stream()
             .map(ProjectFollowRelationship::getProject)
             .toList();
 

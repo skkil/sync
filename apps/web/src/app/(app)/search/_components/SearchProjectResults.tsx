@@ -59,9 +59,14 @@ export default function SearchProjectResults({
       {visibleProjects.map((project) => (
         <ProjectCard
           key={project.handle}
+          variant="summary"
           name={project.name}
           handle={project.handle}
           iconUrl={project.iconUrl}
+          description={project.description}
+          isPublic={project.isPublic}
+          joinPolicy={project.joinPolicy}
+          followerCount={project.followerCount}
         />
       ))}
     </div>

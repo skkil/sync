@@ -4,7 +4,6 @@
  * sync
  * OpenAPI spec version: 0.0.1
  */
-import type { GetProjectResponseRecentActivitiesItem } from './GetProjectResponseRecentActivitiesItem';
 import type { GetProjectResponseRole } from './GetProjectResponseRole';
 import type { GetProjectResponseSummary } from './GetProjectResponseSummary';
 import type { GetProjectResponseTeammatesItem } from './GetProjectResponseTeammatesItem';
@@ -25,8 +24,6 @@ export interface GetProjectResponse {
   role?: GetProjectResponseRole;
   /** 현재 사용자의 프로젝트 소유자 여부 */
   isOwner: boolean;
-  /** 최근 활동 목록 */
-  recentActivities?: GetProjectResponseRecentActivitiesItem[];
   /** 현재 사용자의 프로젝트 팀원 여부 */
   isViewer: boolean;
   /** 현재 사용자의 대기 중인 초대 존재 여부 */

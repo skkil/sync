@@ -68,6 +68,8 @@ public class SecurityConfig {
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/projects/recommendations")
                     .authenticated()
+                    .requestMatchers(HttpMethod.GET, "/projects/my")
+                    .authenticated()
                     .requestMatchers(HttpMethod.GET, "/tags/recommendations", "/tags/unverified")
                     .authenticated()
                     .requestMatchers("/search/**")

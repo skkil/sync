@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import {
   getGetFollowedProjectsQueryKey,
+  getGetMyProjectsQueryKey,
   getGetProjectByHandleQueryOptions,
   useFollowProject as useFollowProjectMutation,
   useUnfollowProject as useUnfollowProjectMutation,
@@ -21,6 +22,9 @@ export function useFollowProject() {
         queryClient.invalidateQueries(
           getGetProjectByHandleQueryOptions(handle),
         );
+        queryClient.invalidateQueries({
+          queryKey: getGetMyProjectsQueryKey(),
+        });
 
         if (!session?.user.handle) {
           return;
@@ -47,6 +51,9 @@ export function useUnfollowProject() {
         queryClient.invalidateQueries(
           getGetProjectByHandleQueryOptions(handle),
         );
+        queryClient.invalidateQueries({
+          queryKey: getGetMyProjectsQueryKey(),
+        });
 
         if (!session?.user.handle) {
           return;

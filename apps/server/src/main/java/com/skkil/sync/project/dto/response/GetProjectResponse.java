@@ -16,8 +16,4 @@ public record GetProjectResponse(
     boolean isOwner,
     boolean isFollowing,
     boolean hasPendingInvitation,
-    boolean hasPendingJoinRequest,
-    List<Activity> recentActivities) {
-
-  public record Activity(String id, String timestamp, String text) {}
-}
+    boolean hasPendingJoinRequest) {}

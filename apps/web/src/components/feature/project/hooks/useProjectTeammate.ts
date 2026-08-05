@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { HTTPError } from 'ky';
 
 import {
+  getGetMyProjectsQueryOptions,
   getGetProjectByHandleQueryOptions,
   getGetProjectTeammatesQueryOptions,
   useRemoveTeammate as useRemoveTeammateMutation,
@@ -79,6 +80,7 @@ async function invalidateProjectTeammates(
   await Promise.all([
     queryClient.invalidateQueries(getGetProjectTeammatesQueryOptions(handle)),
     queryClient.invalidateQueries(getGetProjectByHandleQueryOptions(handle)),
+    queryClient.invalidateQueries(getGetMyProjectsQueryOptions()),
   ]);
 }
 

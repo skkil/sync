@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import {
   getGetMyProjectJoinRequestsQueryOptions,
+  getGetMyProjectsQueryKey,
   getGetProjectByHandleQueryOptions,
   getGetProjectJoinRequestsQueryOptions,
   getGetProjectTeammatesQueryKey,
@@ -29,6 +30,9 @@ export function useJoinProject() {
           // the "my projects" lists that drive the sidebar and project switcher.
           queryClient.invalidateQueries({
             queryKey: getSearchMyProjectsQueryKey(),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: getGetMyProjectsQueryKey(),
           }),
         ]);
       },
@@ -62,6 +66,9 @@ export function useApproveJoinRequest() {
           ),
           queryClient.invalidateQueries({
             queryKey: getGetProjectTeammatesQueryKey(handle),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: getGetMyProjectsQueryKey(),
           }),
         ]);
       },

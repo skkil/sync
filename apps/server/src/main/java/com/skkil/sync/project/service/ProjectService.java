@@ -6,6 +6,7 @@ import com.skkil.sync.project.constants.ProjectConstants;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.request.UpdateProjectRequest;
 import com.skkil.sync.project.dto.response.CreateProjectResponse;
+import com.skkil.sync.project.dto.response.GetMyProjectsResponse;
 import com.skkil.sync.project.dto.response.GetProjectHandleAvailabilityResponse;
 import com.skkil.sync.project.dto.response.GetProjectResponse;
 import com.skkil.sync.project.dto.response.GetProjectsResponse;
@@ -18,6 +19,7 @@ import com.skkil.sync.project.model.Teammate;
 import com.skkil.sync.project.repository.ProjectFollowRelationshipRepository;
 import com.skkil.sync.project.repository.ProjectInvitationRepository;
 import com.skkil.sync.project.repository.ProjectJoinRequestRepository;
+import com.skkil.sync.project.repository.ProjectQueryRepository;
 import com.skkil.sync.project.repository.ProjectRepository;
 import com.skkil.sync.project.repository.TeammateRepository;
 import com.skkil.sync.user.model.User;
@@ -36,6 +38,8 @@ public class ProjectService {
 
   private final ProjectRepository projectRepository;
 
+  private final ProjectQueryRepository projectQueryRepository;
+
   private final TeammateRepository teammateRepository;
 
   private final ProjectAssembler projectAssembler;
@@ -51,6 +55,7 @@ public class ProjectService {
   public ProjectService(
       UserDomainService userDomainService,
       ProjectRepository projectRepository,
+      ProjectQueryRepository projectQueryRepository,
       TeammateRepository teammateRepository,
       ProjectAssembler projectAssembler,
       MediaDomainService mediaDomainService,
@@ -59,6 +64,7 @@ public class ProjectService {
       ProjectJoinRequestRepository projectJoinRequestRepository) {
     this.userDomainService = userDomainService;
     this.projectRepository = projectRepository;
+    this.projectQueryRepository = projectQueryRepository;
     this.teammateRepository = teammateRepository;
     this.projectAssembler = projectAssembler;
     this.mediaDomainService = mediaDomainService;
@@ -88,6 +94,7 @@ public class ProjectService {
   }
 
   @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#handle, 'PROJECT', 'READ')")
   public GetProjectResponse getProjectByHandle(Long requesterId, String handle) {
     Project project =
         projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
@@ -142,7 +149,13 @@ public class ProjectService {
   public GetProjectsResponse getProjectsByUser(String handle) {
     User user = userDomainService.getUserByHandle(handle);
 
-    return projectAssembler.toGetProjectsResponse(projectRepository.findMyProjects(user.getId()));
+    return projectAssembler.toGetProjectsResponse(
+        projectRepository.findPublicProjectsByUserId(user.getId()));
+  }
+
+  @Transactional(readOnly = true)
+  public GetMyProjectsResponse getMyProjects(Long userId) {
+    return projectAssembler.toGetMyProjectsResponse(projectQueryRepository.getMyProjects(userId));
   }
 
   @Transactional(readOnly = true)

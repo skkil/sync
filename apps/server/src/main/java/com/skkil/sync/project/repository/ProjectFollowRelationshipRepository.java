@@ -11,7 +11,14 @@ public interface ProjectFollowRelationshipRepository
     extends JpaRepository<ProjectFollowRelationship, Long> {
 
   @EntityGraph(attributePaths = {"project"})
-  List<ProjectFollowRelationship> findByFollowerId(Long followerId);
+  @Query(
+      """
+      SELECT r
+      FROM ProjectFollowRelationship r
+      WHERE r.follower.id = :followerId
+      AND r.project.isPublic = true
+      """)
+  List<ProjectFollowRelationship> findPublicByFollowerId(Long followerId);
 
   @Query(
       """

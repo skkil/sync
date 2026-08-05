@@ -1,4 +1,5 @@
 import {
+  getGetMyProjectsQueryKey,
   getGetProjectsByUserQueryKey,
   getSearchMyProjectsQueryKey,
   useCreateProject as useCreateProjectMutation,
@@ -11,9 +12,14 @@ export function useCreateProject() {
   return useCreateProjectMutation({
     mutation: {
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        await context.client.invalidateQueries({
-          queryKey: getSearchMyProjectsQueryKey(),
-        });
+        await Promise.all([
+          context.client.invalidateQueries({
+            queryKey: getGetMyProjectsQueryKey(),
+          }),
+          context.client.invalidateQueries({
+            queryKey: getSearchMyProjectsQueryKey(),
+          }),
+        ]);
 
         if (session?.user.handle) {
           await context.client.invalidateQueries({

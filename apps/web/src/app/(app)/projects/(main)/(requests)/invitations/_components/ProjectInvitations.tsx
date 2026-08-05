@@ -7,7 +7,9 @@ import { toast } from 'sonner';
 
 import {
   getGetMyProjectInvitationsQueryOptions,
+  getGetMyProjectsQueryKey,
   getGetProjectTeammatesQueryKey,
+  getSearchMyProjectsQueryKey,
   useAcceptProjectInvitation,
   useDeclineProjectInvitation,
   useGetMyProjectInvitations,
@@ -103,6 +105,12 @@ export default function ProjectInvitations() {
             invalidateInvitations(),
             queryClient.invalidateQueries({
               queryKey: getGetProjectTeammatesQueryKey(projectHandle),
+            }),
+            queryClient.invalidateQueries({
+              queryKey: getGetMyProjectsQueryKey(),
+            }),
+            queryClient.invalidateQueries({
+              queryKey: getSearchMyProjectsQueryKey(),
             }),
           ]);
           toast.success(t('messages.accept-success'));
