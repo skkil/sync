@@ -15,8 +15,10 @@ import com.skkil.sync.post.model.PostStatus;
 import com.skkil.sync.post.model.PostTag;
 import com.skkil.sync.post.model.PostType;
 import com.skkil.sync.post.model.Tag;
+import com.skkil.sync.post.model.TagFollowRelationship;
 import com.skkil.sync.post.repository.PostMediaFileRepository;
 import com.skkil.sync.post.repository.PostRepository;
+import com.skkil.sync.post.repository.TagFollowRelationshipRepository;
 import com.skkil.sync.post.repository.TagRepository;
 import com.skkil.sync.project.model.Project;
 import com.skkil.sync.project.model.Teammate;
@@ -26,6 +28,7 @@ import com.skkil.sync.user.model.User;
 import com.skkil.sync.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,8 @@ class ProjectDeletionServiceTests {
 
   @Autowired private TagRepository tagRepository;
 
+  @Autowired private TagFollowRelationshipRepository tagFollowRelationshipRepository;
+
   @Autowired private MediaRepository mediaRepository;
 
   @Autowired private UserRepository userRepository;
@@ -73,19 +78,38 @@ class ProjectDeletionServiceTests {
     teammateRepository.saveAndFlush(Teammate.owner(project, owner));
 
     Tag globalTag = tagRepository.saveAndFlush(Tag.builder().name("global-tag").build());
+    Tag sharedGlobalTag =
+        tagRepository.saveAndFlush(Tag.builder().name("shared-global-tag").build());
     Tag projectTag =
         tagRepository.saveAndFlush(Tag.builder().name("project-tag").project(project).build());
 
-    Post post = savePost(owner, project, cover, globalTag, projectTag);
+    Post post =
+        savePost(
+            "project-post-to-delete",
+            owner,
+            project,
+            cover,
+            List.of(globalTag, sharedGlobalTag, projectTag));
+    Post retainedPost =
+        savePost("personal-post-to-keep", owner, null, null, List.of(sharedGlobalTag));
     postMediaFileRepository.saveAndFlush(new PostMediaFile(post, body, 0));
     Comment comment =
         commentRepository.saveAndFlush(
             Comment.builder().author(owner).post(post).content("댓글").build());
+    User follower =
+        userRepository.saveAndFlush(
+            User.builder().email("tag-follower@example.com").fullName("Tag Follower").build());
+    tagFollowRelationshipRepository.saveAndFlush(
+        TagFollowRelationship.builder().follower(follower).tag(sharedGlobalTag).build());
     tagRepository.incrementPostCount(globalTag);
+    tagRepository.incrementPostCount(sharedGlobalTag);
+    tagRepository.incrementPostCount(sharedGlobalTag);
+    tagRepository.incrementFollowerCount(sharedGlobalTag);
     tagRepository.flush();
 
     Long projectId = project.getId();
     Long postId = post.getId();
+    Long retainedPostId = retainedPost.getId();
     Long commentId = comment.getId();
     Long projectTagId = projectTag.getId();
     List<Long> mediaIds = List.of(icon.getId(), cover.getId(), body.getId());
@@ -98,9 +122,13 @@ class ProjectDeletionServiceTests {
 
     assertThat(projectRepository.existsById(projectId)).isFalse();
     assertThat(postRepository.existsById(postId)).isFalse();
+    assertThat(postRepository.existsById(retainedPostId)).isTrue();
     assertThat(commentRepository.existsById(commentId)).isFalse();
     assertThat(tagRepository.existsById(projectTagId)).isFalse();
     assertThat(tagRepository.findById(globalTag.getId()).orElseThrow().getPostCount()).isZero();
+    Tag retainedSharedGlobalTag = tagRepository.findById(sharedGlobalTag.getId()).orElseThrow();
+    assertThat(retainedSharedGlobalTag.getPostCount()).isOne();
+    assertThat(retainedSharedGlobalTag.getFollowerCount()).isOne();
     assertThat(mediaRepository.findAllByIdIn(mediaIds))
         .extracting(Media::getStatus)
         .containsOnly(MediaStatus.DELETED);
@@ -125,10 +153,11 @@ class ProjectDeletionServiceTests {
     return mediaRepository.saveAndFlush(media);
   }
 
-  private Post savePost(User author, Project project, Media cover, Tag globalTag, Tag projectTag) {
+  private Post savePost(
+      String slug, User author, @Nullable Project project, @Nullable Media cover, List<Tag> tags) {
     Post post =
         Post.builder()
-            .slug("project-post-to-delete")
+            .slug(slug)
             .author(author)
             .project(project)
             .coverMedia(cover)
@@ -138,8 +167,7 @@ class ProjectDeletionServiceTests {
             .content("본문")
             .build();
     post.updateContent("본문", "본문", 1);
-    post.addTag(PostTag.builder().post(post).tag(globalTag).build());
-    post.addTag(PostTag.builder().post(post).tag(projectTag).build());
+    tags.forEach(tag -> post.addTag(PostTag.builder().post(post).tag(tag).build()));
     return postRepository.saveAndFlush(post);
   }
 }

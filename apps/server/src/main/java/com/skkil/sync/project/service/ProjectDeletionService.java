@@ -40,6 +40,8 @@ public class ProjectDeletionService {
     projectRepository.delete(project);
     projectRepository.flush();
 
-    affectedGlobalTagIds.forEach(tagRepository::recomputeCounts);
+    if (!affectedGlobalTagIds.isEmpty()) {
+      tagRepository.recomputePostCounts(affectedGlobalTagIds);
+    }
   }
 }
