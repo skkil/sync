@@ -9,6 +9,15 @@ public interface PostTagRepository extends JpaRepository<PostTag, Long> {
 
   @Query(
       """
+      SELECT DISTINCT pt.tag.id
+      FROM PostTag pt
+      WHERE pt.post.project.id = :projectId
+        AND pt.tag.project IS NULL
+      """)
+  List<Long> findGlobalTagIdsByProjectId(Long projectId);
+
+  @Query(
+      """
       SELECT pt
       FROM PostTag pt
       JOIN FETCH pt.tag t

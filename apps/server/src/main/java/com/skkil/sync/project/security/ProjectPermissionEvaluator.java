@@ -45,10 +45,15 @@ public class ProjectPermissionEvaluator implements CustomPermissionEvaluator<Str
     return switch (permission) {
       case READ, CREATE ->
           teammateRepository.findByProjectHandleAndUserId(projectHandle, user.userId()).isPresent();
-      case EDIT, DELETE ->
+      case EDIT ->
           teammateRepository
               .findByProjectHandleAndUserId(projectHandle, user.userId())
               .map(Teammate::canManageProject)
+              .orElse(false);
+      case DELETE ->
+          teammateRepository
+              .findByProjectHandleAndUserId(projectHandle, user.userId())
+              .map(Teammate::isProjectOwner)
               .orElse(false);
     };
   }

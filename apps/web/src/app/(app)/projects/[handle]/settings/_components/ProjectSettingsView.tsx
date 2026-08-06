@@ -18,6 +18,17 @@ import {
   UpdateProjectRequestJoinPolicy,
 } from '@/api/__generated__/types';
 import { uploadFileToS3 } from '@/api/s3';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { FileInput, FileInputError, Input } from '@/components/ui/input';
@@ -32,6 +43,11 @@ import {
 import { Separator } from '@/components/ui/separator';
 import SyncError, { ErrorCode } from '@/lib/error';
 import ROUTES from '@/util/routes';
+
+import {
+  useDeleteProjectMutation,
+  useLeaveProjectMutation,
+} from '../_hooks/useProjectDangerActions';
 
 const PROJECT_ICON_ALLOWED_TYPES = 'image/*';
 const PROJECT_ICON_MAX_SIZE_BYTES = 5 * 1024 * 1024;
@@ -121,40 +137,162 @@ export default function ProjectSettingsView() {
             {t('danger-zone.description')}
           </p>
         </div>
-        <div className="rounded-md border border-destructive/30 divide-y divide-destructive/20">
-          <div className="flex items-center justify-between p-4">
-            <div>
-              <p className="text-sm font-medium">
-                {t('danger-zone.leave.title')}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('danger-zone.leave.description')}
-              </p>
-            </div>
+        <ProjectDangerZone
+          handle={handle}
+          isMember={isMember}
+          isOwner={project?.isOwner === true}
+        />
+      </section>
+    </div>
+  );
+}
+
+function ProjectDangerZone({
+  handle,
+  isMember,
+  isOwner,
+}: {
+  handle: string;
+  isMember: boolean;
+  isOwner: boolean;
+}) {
+  const t = useTranslations(
+    'pages.projects.project.settings.project.danger-zone',
+  );
+  const router = useRouter();
+  const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const leaveProject = useLeaveProjectMutation(handle);
+  const deleteProject = useDeleteProjectMutation(handle);
+  const isPending = leaveProject.isPending || deleteProject.isPending;
+  const canLeave = isMember && !isOwner;
+  const canDelete = isOwner;
+
+  const onLeave = () => {
+    leaveProject.mutate(undefined, {
+      onSuccess: () => {
+        toast.success(t('leave.messages.success'));
+        router.replace(ROUTES.PROJECTS());
+        router.refresh();
+      },
+      onError: () => {
+        toast.error(t('leave.messages.error'));
+      },
+    });
+  };
+
+  const onDelete = () => {
+    deleteProject.mutate(undefined, {
+      onSuccess: () => {
+        toast.success(t('delete.messages.success'));
+        router.replace(ROUTES.PROJECTS());
+        router.refresh();
+      },
+      onError: () => {
+        toast.error(t('delete.messages.error'));
+      },
+    });
+  };
+
+  return (
+    <div className="rounded-md border border-destructive/30 divide-y divide-destructive/20">
+      <div className="flex items-center justify-between gap-4 p-4">
+        <div>
+          <p className="text-sm font-medium">{t('leave.title')}</p>
+          <p className="text-xs text-muted-foreground">
+            {isOwner ? t('leave.owner-description') : t('leave.description')}
+          </p>
+        </div>
+        <AlertDialog
+          open={isLeaveDialogOpen}
+          onOpenChange={setIsLeaveDialogOpen}
+        >
+          <AlertDialogTrigger asChild>
             <Button
               variant="outline"
               size="sm"
-              disabled={!isMember}
+              disabled={!canLeave || isPending}
               className="border-destructive/50 text-destructive hover:bg-destructive/10 disabled:opacity-50"
             >
-              {t('danger-zone.leave.action')}
+              {t('leave.action')}
             </Button>
-          </div>
-          <div className="flex items-center justify-between p-4">
-            <div>
-              <p className="text-sm font-medium">
-                {t('danger-zone.delete.title')}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('danger-zone.delete.description')}
-              </p>
-            </div>
-            <Button variant="destructive" size="sm" disabled={!isAdmin}>
-              {t('danger-zone.delete.action')}
-            </Button>
-          </div>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('leave.dialog.title')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t('leave.dialog.description')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isPending}>
+                {t('leave.dialog.cancel')}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                disabled={isPending}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onLeave();
+                }}
+              >
+                {leaveProject.isPending
+                  ? t('leave.dialog.pending')
+                  : t('leave.dialog.confirm')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
+      <div className="flex items-center justify-between gap-4 p-4">
+        <div>
+          <p className="text-sm font-medium">{t('delete.title')}</p>
+          <p className="text-xs text-muted-foreground">
+            {t('delete.description')}
+          </p>
         </div>
-      </section>
+        <AlertDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+        >
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={!canDelete || isPending}
+            >
+              {t('delete.action')}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('delete.dialog.title')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t('delete.dialog.description')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isPending}>
+                {t('delete.dialog.cancel')}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                disabled={isPending}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onDelete();
+                }}
+              >
+                {deleteProject.isPending
+                  ? t('delete.dialog.pending')
+                  : t('delete.dialog.confirm')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }

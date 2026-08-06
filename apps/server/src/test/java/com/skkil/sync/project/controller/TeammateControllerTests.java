@@ -2,6 +2,7 @@ package com.skkil.sync.project.controller;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.Schema.schema;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -136,6 +137,30 @@ class TeammateControllerTests {
                 pathParameters(
                     parameterWithName("handle").description("프로젝트 핸들"),
                     parameterWithName("teammateHandle").description("제거할 팀원의 핸들"))));
+  }
+
+  @Test
+  @DisplayName("[leaveProject] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void leaveProject() throws Exception {
+    String projectHandle = "my-project";
+
+    doNothing().when(teammateService).leaveProject(anyLong(), eq(projectHandle));
+
+    mockMvc
+        .perform(delete("/projects/{handle}/teammates/me", projectHandle))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "LeaveProject",
+                ResourceSnippetParameters.builder()
+                    .tag("project")
+                    .summary("Leave Project")
+                    .description("현재 사용자가 프로젝트에서 나갑니다. 프로젝트 소유자는 나갈 수 없습니다."),
+                null,
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("handle").description("나갈 프로젝트 핸들"))));
   }
 
   @Test

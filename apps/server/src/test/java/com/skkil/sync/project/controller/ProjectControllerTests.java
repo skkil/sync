@@ -8,10 +8,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.skkil.sync.common.config.TestSecurityConfig;
 import com.skkil.sync.common.security.WithAuthenticatedUser;
+import com.skkil.sync.common.util.restdocs.RestDocsUtils;
 import com.skkil.sync.config.SecurityConfig;
 import com.skkil.sync.project.dto.request.CreateProjectRequest;
 import com.skkil.sync.project.dto.request.UpdateProjectRequest;
@@ -306,5 +309,29 @@ class ProjectControllerTests {
                 Function.identity(),
                 pathParameters(parameterWithName("handle").description("프로젝트 핸들")),
                 UpdateProjectRequestSnippets.getUpdateProjectRequestFields()));
+  }
+
+  @Test
+  @DisplayName("[deleteProject] API 문서화 테스트")
+  @WithAuthenticatedUser
+  void deleteProject() throws Exception {
+    String projectHandle = "my-project";
+
+    doNothing().when(projectService).deleteProject(projectHandle);
+
+    mockMvc
+        .perform(delete("/projects/{handle}", projectHandle).with(csrf()))
+        .andExpect(status().isNoContent())
+        .andDo(
+            document(
+                "DeleteProject",
+                ResourceSnippetParameters.builder()
+                    .tag("project")
+                    .summary("Delete Project")
+                    .description("프로젝트 소유자가 프로젝트와 프로젝트의 모든 게시글을 삭제합니다."),
+                preprocessRequest(RestDocsUtils.removeCsrfFormBody()),
+                null,
+                Function.identity(),
+                pathParameters(parameterWithName("handle").description("삭제할 프로젝트 핸들"))));
   }
 }

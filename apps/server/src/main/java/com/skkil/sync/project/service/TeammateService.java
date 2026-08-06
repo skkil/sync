@@ -5,6 +5,7 @@ import com.skkil.sync.project.dto.request.UpdateTeammateRequest;
 import com.skkil.sync.project.dto.response.GetProjectTeammatesResponse;
 import com.skkil.sync.project.exception.ProjectNotFoundException;
 import com.skkil.sync.project.exception.ProjectOwnerCannotBeModifiedException;
+import com.skkil.sync.project.exception.ProjectOwnerCannotLeaveException;
 import com.skkil.sync.project.exception.TeammateNotFoundException;
 import com.skkil.sync.project.mapper.ProjectAssembler;
 import com.skkil.sync.project.model.Project;
@@ -78,6 +79,24 @@ public class TeammateService {
     }
 
     teammateRepository.deleteByProjectIdAndUserHandle(project.getId(), teammateHandle);
+  }
+
+  @Transactional
+  @PreAuthorize("#userId == principal.userId")
+  public void leaveProject(Long userId, String projectHandle) {
+    Project project =
+        projectRepository.findByHandle(projectHandle).orElseThrow(ProjectNotFoundException::new);
+
+    Teammate teammate =
+        teammateRepository
+            .findByProjectIdAndUserId(project.getId(), userId)
+            .orElseThrow(TeammateNotFoundException::new);
+
+    if (teammate.isProjectOwner()) {
+      throw new ProjectOwnerCannotLeaveException();
+    }
+
+    teammateRepository.delete(teammate);
   }
 
   @Transactional

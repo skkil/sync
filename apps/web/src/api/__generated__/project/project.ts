@@ -1356,6 +1356,103 @@ export function useGetProjectByHandle<
   return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type deleteProjectResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type deleteProjectResponseSuccess = deleteProjectResponse204 & {
+  headers: Headers;
+};
+export type deleteProjectResponse = deleteProjectResponseSuccess;
+
+export const getDeleteProjectUrl = (handle: string) => {
+  return `/projects/${handle}`;
+};
+
+/**
+ * 프로젝트 소유자가 프로젝트와 프로젝트의 모든 게시글을 삭제합니다.
+ * @summary Delete Project
+ */
+export const deleteProject = async (
+  handle: string,
+  options?: RequestInit,
+): Promise<deleteProjectResponse> => {
+  return api<deleteProjectResponse>(getDeleteProjectUrl(handle), {
+    ...options,
+    method: 'DELETE',
+  });
+};
+
+export const getDeleteProjectMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProject>>,
+    TError,
+    { handle: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteProject>>,
+  TError,
+  { handle: string },
+  TContext
+> => {
+  const mutationKey = ['deleteProject'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteProject>>,
+    { handle: string }
+  > = (props) => {
+    const { handle } = props ?? {};
+
+    return deleteProject(handle, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteProject>>
+>;
+
+export type DeleteProjectMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete Project
+ */
+export const useDeleteProject = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteProject>>,
+      TError,
+      { handle: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteProject>>,
+  TError,
+  { handle: string },
+  TContext
+> => {
+  return useMutation(getDeleteProjectMutationOptions(options), queryClient);
+};
 export type updateProjectResponse204 = {
   data: void;
   status: 204;
@@ -3242,6 +3339,103 @@ export const useCancelProjectInvitation = <
     getCancelProjectInvitationMutationOptions(options),
     queryClient,
   );
+};
+export type leaveProjectResponse204 = {
+  data: void;
+  status: 204;
+};
+
+export type leaveProjectResponseSuccess = leaveProjectResponse204 & {
+  headers: Headers;
+};
+export type leaveProjectResponse = leaveProjectResponseSuccess;
+
+export const getLeaveProjectUrl = (handle: string) => {
+  return `/projects/${handle}/teammates/me`;
+};
+
+/**
+ * 현재 사용자가 프로젝트에서 나갑니다. 프로젝트 소유자는 나갈 수 없습니다.
+ * @summary Leave Project
+ */
+export const leaveProject = async (
+  handle: string,
+  options?: RequestInit,
+): Promise<leaveProjectResponse> => {
+  return api<leaveProjectResponse>(getLeaveProjectUrl(handle), {
+    ...options,
+    method: 'DELETE',
+  });
+};
+
+export const getLeaveProjectMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof leaveProject>>,
+    TError,
+    { handle: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof api>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof leaveProject>>,
+  TError,
+  { handle: string },
+  TContext
+> => {
+  const mutationKey = ['leaveProject'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof leaveProject>>,
+    { handle: string }
+  > = (props) => {
+    const { handle } = props ?? {};
+
+    return leaveProject(handle, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type LeaveProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof leaveProject>>
+>;
+
+export type LeaveProjectMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Leave Project
+ */
+export const useLeaveProject = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof leaveProject>>,
+      TError,
+      { handle: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof api>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof leaveProject>>,
+  TError,
+  { handle: string },
+  TContext
+> => {
+  return useMutation(getLeaveProjectMutationOptions(options), queryClient);
 };
 export type removeTeammateResponse204 = {
   data: void;

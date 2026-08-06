@@ -1,10 +1,13 @@
 package com.skkil.sync.project.controller;
 
+import com.skkil.sync.auth.AuthenticatedUser;
 import com.skkil.sync.project.dto.request.AddTeammateRequest;
 import com.skkil.sync.project.dto.request.UpdateTeammateRequest;
 import com.skkil.sync.project.dto.response.GetProjectTeammatesResponse;
 import com.skkil.sync.project.service.TeammateService;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +44,13 @@ public class TeammateController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void removeTeammate(@PathVariable String handle, @PathVariable String teammateHandle) {
     teammateService.removeTeammate(handle, teammateHandle);
+  }
+
+  @DeleteMapping("/projects/{handle}/teammates/me")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void leaveProject(
+      @AuthenticationPrincipal @NotNull AuthenticatedUser user, @PathVariable String handle) {
+    teammateService.leaveProject(user.userId(), handle);
   }
 
   @PatchMapping("/projects/{handle}/teammates/{teammateHandle}")

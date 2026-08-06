@@ -1997,6 +1997,22 @@ paths:
                     :false,\"isViewer\":true,\"role\":\"ADMIN\",\"isOwner\":true,\"\
                     isFollowing\":false,\"hasPendingInvitation\":false,\"hasPendingJoinRequest\"\
                     :false}"
+    delete:
+      tags:
+      - project
+      summary: Delete Project
+      description: 프로젝트 소유자가 프로젝트와 프로젝트의 모든 게시글을 삭제합니다.
+      operationId: DeleteProject
+      parameters:
+      - name: handle
+        in: path
+        description: 삭제할 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
     patch:
       tags:
       - project
@@ -2807,6 +2823,23 @@ paths:
             examples:
               UpdateProjectTag:
                 value: "{\"name\":\"kotlin\",\"description\":\"코틀린 관련 태그\"}"
+      responses:
+        "204":
+          description: "204"
+  /projects/{handle}/teammates/me:
+    delete:
+      tags:
+      - project
+      summary: Leave Project
+      description: 현재 사용자가 프로젝트에서 나갑니다. 프로젝트 소유자는 나갈 수 없습니다.
+      operationId: LeaveProject
+      parameters:
+      - name: handle
+        in: path
+        description: 나갈 프로젝트 핸들
+        required: true
+        schema:
+          type: string
       responses:
         "204":
           description: "204"

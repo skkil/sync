@@ -52,6 +52,8 @@ public class ProjectService {
 
   private final ProjectJoinRequestRepository projectJoinRequestRepository;
 
+  private final ProjectDeletionService projectDeletionService;
+
   public ProjectService(
       UserDomainService userDomainService,
       ProjectRepository projectRepository,
@@ -61,7 +63,8 @@ public class ProjectService {
       MediaDomainService mediaDomainService,
       ProjectFollowRelationshipRepository projectFollowRelationshipRepository,
       ProjectInvitationRepository projectInvitationRepository,
-      ProjectJoinRequestRepository projectJoinRequestRepository) {
+      ProjectJoinRequestRepository projectJoinRequestRepository,
+      ProjectDeletionService projectDeletionService) {
     this.userDomainService = userDomainService;
     this.projectRepository = projectRepository;
     this.projectQueryRepository = projectQueryRepository;
@@ -71,6 +74,7 @@ public class ProjectService {
     this.projectFollowRelationshipRepository = projectFollowRelationshipRepository;
     this.projectInvitationRepository = projectInvitationRepository;
     this.projectJoinRequestRepository = projectJoinRequestRepository;
+    this.projectDeletionService = projectDeletionService;
   }
 
   @Transactional
@@ -204,8 +208,8 @@ public class ProjectService {
   @PreAuthorize("hasPermission(#handle, 'PROJECT', 'DELETE')")
   public void deleteProject(String handle) {
     Project project =
-        projectRepository.findByHandle(handle).orElseThrow(ProjectNotFoundException::new);
+        projectRepository.findByHandleForUpdate(handle).orElseThrow(ProjectNotFoundException::new);
 
-    projectRepository.delete(project);
+    projectDeletionService.delete(project);
   }
 }
