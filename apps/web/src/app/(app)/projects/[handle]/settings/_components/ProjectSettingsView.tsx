@@ -41,8 +41,8 @@ const PROJECT_NAME_MAX_LENGTH = 50;
 const PROJECT_HANDLE_MIN_LENGTH = 6;
 const PROJECT_HANDLE_MAX_LENGTH = 30;
 
-export default function WorkspaceSettingsView() {
-  const t = useTranslations('pages.projects.project.settings.workspace');
+export default function ProjectSettingsView() {
+  const t = useTranslations('pages.projects.project.settings.project');
 
   const { handle } = useParams<{ handle: string }>();
   const { data, isPending } = useGetProjectByHandle(handle);
@@ -52,7 +52,7 @@ export default function WorkspaceSettingsView() {
   const isMember = project?.role != null;
 
   if (isPending) {
-    return <WorkspaceSettingsSkeleton />;
+    return <ProjectSettingsSkeleton />;
   }
 
   return (
@@ -166,7 +166,7 @@ function ProjectIconField({
   handle: string;
   isAdmin: boolean;
 }) {
-  const t = useTranslations('pages.projects.project.settings.workspace.icon');
+  const t = useTranslations('pages.projects.project.settings.project.icon');
 
   const { data } = useGetProjectByHandle(handle);
   const project = data?.data;
@@ -339,7 +339,7 @@ function ProjectNameField({
   handle: string;
   isAdmin: boolean;
 }) {
-  const t = useTranslations('pages.projects.project.settings.workspace.name');
+  const t = useTranslations('pages.projects.project.settings.project.name');
 
   const { data } = useGetProjectByHandle(handle);
   const project = data?.data;
@@ -429,7 +429,7 @@ function ProjectHandleField({
   handle: string;
   isAdmin: boolean;
 }) {
-  const t = useTranslations('pages.projects.project.settings.workspace.handle');
+  const t = useTranslations('pages.projects.project.settings.project.handle');
   const router = useRouter();
 
   const { data } = useGetProjectByHandle(handle);
@@ -524,7 +524,7 @@ function ProjectJoinPolicyField({
   isAdmin: boolean;
 }) {
   const t = useTranslations(
-    'pages.projects.project.settings.workspace.join-policy',
+    'pages.projects.project.settings.project.join-policy',
   );
 
   const { data } = useGetProjectByHandle(handle);
@@ -605,7 +605,7 @@ function ProjectJoinPolicyField({
   );
 }
 
-function WorkspaceSettingsSkeleton() {
+function ProjectSettingsSkeleton() {
   return (
     <div className="max-w-2xl space-y-6">
       <div className="space-y-2">

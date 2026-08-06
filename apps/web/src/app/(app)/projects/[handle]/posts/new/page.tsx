@@ -38,7 +38,7 @@ export default function CreateProjectPostPage() {
       isSubmitting={isCreatingPost || !projectData}
       project={{
         handle,
-        name: projectData?.data.summary.name ?? t('workspace-loading'),
+        name: projectData?.data.summary.name ?? t('project-loading'),
       }}
       onSubmit={({
         title,

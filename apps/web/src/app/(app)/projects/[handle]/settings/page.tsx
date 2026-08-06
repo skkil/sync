@@ -7,23 +7,23 @@ import { getGetProjectByHandleQueryOptions } from '@/api/__generated__/project/p
 import SyncError, { ErrorCode } from '@/lib/error';
 import { getQueryClient } from '@/lib/query';
 
-import WorkspaceSettingsView from './_components/WorkspaceSettingsView';
+import ProjectSettingsView from './_components/ProjectSettingsView';
 
-interface WorkspaceSettingsPageProps {
+interface ProjectSettingsPageProps {
   params: Promise<{
     handle: string;
   }>;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('pages.projects.project.settings.workspace');
+  const t = await getTranslations('pages.projects.project.settings.project');
 
   return { title: t('heading') };
 }
 
-export default async function WorkspaceSettingsPage({
+export default async function ProjectSettingsPage({
   params,
-}: WorkspaceSettingsPageProps) {
+}: ProjectSettingsPageProps) {
   const { handle } = await params;
 
   const queryClient = getQueryClient();
@@ -41,7 +41,7 @@ export default async function WorkspaceSettingsPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <WorkspaceSettingsView />
+      <ProjectSettingsView />
     </HydrationBoundary>
   );
 }

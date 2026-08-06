@@ -519,11 +519,11 @@
         },
         "settings": {
           "tabs": {
-            "workspace": "워크스페이스",
+            "project": "프로젝트",
             "teammates": "팀원"
           },
-          "workspace": {
-            "heading": "워크스페이스 설정",
+          "project": {
+            "heading": "프로젝트 설정",
             "description": "프로젝트의 기본 정보를 관리합니다.",
             "icon": {
               "heading": "프로젝트 아이콘",
@@ -574,12 +574,12 @@
               "heading": "위험 구역",
               "description": "이 작업은 되돌릴 수 없습니다. 신중하게 진행하세요.",
               "leave": {
-                "title": "워크스페이스 나가기",
+                "title": "프로젝트 나가기",
                 "description": "이 프로젝트에서 탈퇴합니다.",
                 "action": "나가기"
               },
               "delete": {
-                "title": "워크스페이스 삭제",
+                "title": "프로젝트 삭제",
                 "description": "프로젝트와 모든 데이터를 영구적으로 삭제합니다.",
                 "action": "삭제"
               }
@@ -635,7 +635,7 @@
             },
             "remove-dialog": {
               "title": "팀원을 삭제할까요?",
-              "description": "{name}님을 이 워크스페이스에서 삭제합니다.",
+              "description": "{name}님을 이 프로젝트에서 삭제합니다.",
               "cancel": "취소",
               "confirm": "삭제"
             },
@@ -644,7 +644,7 @@
               "update-error": "팀원 역할 수정에 실패했습니다.",
               "remove-success": "팀원을 삭제했습니다.",
               "remove-error": "팀원 삭제에 실패했습니다.",
-              "owner-protected": "워크스페이스 소유자는 수정하거나 삭제할 수 없습니다.",
+              "owner-protected": "프로젝트 소유자는 수정하거나 삭제할 수 없습니다.",
               "cancel-success": "초대를 취소했습니다.",
               "cancel-error": "초대 취소에 실패했습니다.",
               "approve-success": "가입 요청을 승인했습니다.",
@@ -1982,9 +1982,9 @@
       },
       "scope": {
         "public": "공개",
-        "workspace": "워크스페이스: {workspace}",
-        "workspace-generic": "워크스페이스",
-        "workspace-loading": "불러오는 중"
+        "project": "프로젝트: {project}",
+        "project-generic": "프로젝트",
+        "project-loading": "불러오는 중"
       },
       "validation": {
         "title-required": "게시하려면 제목을 입력해주세요."

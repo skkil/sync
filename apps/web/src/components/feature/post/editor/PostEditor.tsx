@@ -384,9 +384,9 @@ export default function PostEditor({
       ? t('placeholders.title-question')
       : t('placeholders.title-long');
   const scopeLabel = project
-    ? t('scope.workspace', { workspace: project.name })
+    ? t('scope.project', { project: project.name })
     : initialScope === PostScope.WORKSPACE
-      ? t('scope.workspace-generic')
+      ? t('scope.project-generic')
       : t('scope.public');
   const canSaveDraft = !isEditing || initialStatus === PostStatus.DRAFT;
   const draftActionLabel = isEditing

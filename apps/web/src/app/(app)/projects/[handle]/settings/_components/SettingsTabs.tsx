@@ -23,8 +23,8 @@ export default function SettingsTabs({ children }: SettingsTabsProps) {
     href: (handle: string) => string;
   }[] = [
     {
-      id: 'workspace',
-      label: t('workspace'),
+      id: 'project',
+      label: t('project'),
       href: ROUTES.PROJECT_SETTINGS,
     },
     {
