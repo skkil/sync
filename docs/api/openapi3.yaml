@@ -1192,6 +1192,12 @@ paths:
         required: false
         schema:
           type: string
+      - name: postType
+        in: query
+        description: "게시글 형태 필터. SHORT, LONG, QUESTION 중 하나를 사용한다."
+        required: false
+        schema:
+          type: string
       responses:
         "200":
           description: "200"

@@ -12,11 +12,29 @@
         "title": "팔로우할 사람 추천",
         "explore": "탐색",
         "follow": "팔로우",
-        "following": "팔로잉"
+        "following": "팔로잉",
+        "empty": "지금 추천할 사용자가 없어요.",
+        "error": {
+          "description": "추천 사용자를 불러오지 못했어요.",
+          "retry": "다시 시도"
+        }
       },
       "feed": {
         "title": "홈",
         "description": "팔로우하는 사람, 프로젝트, 태그의 소식입니다.",
+        "empty": {
+          "title": "아직 표시할 소식이 없어요",
+          "description": "관심 있는 사용자, 프로젝트, 태그를 팔로우하면 여기에 새 글이 모여요."
+        },
+        "error": {
+          "title": "피드를 불러오지 못했어요",
+          "description": "잠시 후 다시 시도해 주세요.",
+          "retry": "다시 시도"
+        },
+        "pagination-error": {
+          "description": "다음 게시글을 불러오지 못했어요.",
+          "retry": "다시 시도"
+        },
         "tabs": {
           "all": "전체",
           "shorts": "TIL",
@@ -29,7 +47,15 @@
         "explore": "탐색",
         "post-count": "게시물 {count}개",
         "follow": "팔로우",
-        "following": "팔로잉"
+        "following": "팔로잉",
+        "empty": "표시할 인기 태그가 없어요.",
+        "error": {
+          "description": "인기 태그를 불러오지 못했어요.",
+          "retry": "다시 시도"
+        },
+        "messages": {
+          "follow-error": "태그 팔로우 상태를 변경하지 못했어요."
+        }
       }
     },
     "explore": {

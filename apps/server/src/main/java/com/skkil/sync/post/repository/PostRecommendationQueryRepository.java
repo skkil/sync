@@ -1,14 +1,18 @@
 package com.skkil.sync.post.repository;
 
+import static com.skkil.sync.jooq.tables.PostTags.POST_TAGS;
 import static com.skkil.sync.jooq.tables.Posts.POSTS;
 import static com.skkil.sync.jooq.tables.ProjectFollowRelationships.PROJECT_FOLLOW_RELATIONSHIPS;
 import static com.skkil.sync.jooq.tables.Projects.PROJECTS;
+import static com.skkil.sync.jooq.tables.TagFollowRelationships.TAG_FOLLOW_RELATIONSHIPS;
+import static com.skkil.sync.jooq.tables.Tags.TAGS;
 import static com.skkil.sync.jooq.tables.UserFollowRelationships.USER_FOLLOW_RELATIONSHIPS;
 
 import com.skkil.sync.common.util.pagination.interfaces.CursorPaginationDataFetcher;
 import com.skkil.sync.post.dto.data.PostRecommendationCandidate;
 import com.skkil.sync.post.dto.data.PostRecommendationContext;
 import com.skkil.sync.post.model.PostScope;
+import com.skkil.sync.post.model.PostType;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import org.jooq.Condition;
@@ -65,6 +69,7 @@ public class PostRecommendationQueryRepository {
                 condition
                     .and(visibilityCondition)
                     .and(scopeCondition(context.scope()))
+                    .and(postTypeCondition(context.postType()))
                     .and(channelCondition))
             .orderBy(orderFields)
             .limit(size)
@@ -84,7 +89,19 @@ public class PostRecommendationQueryRepository {
                     .from(PROJECT_FOLLOW_RELATIONSHIPS)
                     .where(
                         PROJECT_FOLLOW_RELATIONSHIPS.FOLLOWER_ID.eq(requesterId),
-                        PROJECT_FOLLOW_RELATIONSHIPS.PROJECT_ID.eq(POSTS.PROJECT_ID))));
+                        PROJECT_FOLLOW_RELATIONSHIPS.PROJECT_ID.eq(POSTS.PROJECT_ID))))
+        .or(
+            DSL.exists(
+                dsl.selectOne()
+                    .from(POST_TAGS)
+                    .join(TAG_FOLLOW_RELATIONSHIPS)
+                    .on(TAG_FOLLOW_RELATIONSHIPS.TAG_ID.eq(POST_TAGS.TAG_ID))
+                    .join(TAGS)
+                    .on(TAGS.ID.eq(POST_TAGS.TAG_ID))
+                    .where(
+                        POST_TAGS.POST_ID.eq(POSTS.ID),
+                        TAG_FOLLOW_RELATIONSHIPS.FOLLOWER_ID.eq(requesterId),
+                        TAGS.PROJECT_ID.isNull())));
   }
 
   public Condition trendingCondition() {
@@ -94,5 +111,9 @@ public class PostRecommendationQueryRepository {
 
   private Condition scopeCondition(@Nullable PostScope scope) {
     return scope == null ? DSL.noCondition() : PostConditions.scope(scope);
+  }
+
+  private Condition postTypeCondition(@Nullable PostType postType) {
+    return postType == null ? DSL.noCondition() : POSTS.POST_TYPE.eq(postType.name());
   }
 }

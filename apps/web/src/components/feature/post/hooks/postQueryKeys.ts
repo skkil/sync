@@ -32,6 +32,16 @@ export function isPostRelatedQueryKey(queryKey: readonly unknown[]) {
   );
 }
 
+export function isPostRecommendationQueryKey(queryKey: readonly unknown[]) {
+  return getQueryPath(queryKey) === '/posts/recommendations';
+}
+
+export function invalidatePostRecommendationQueries(queryClient: QueryClient) {
+  return queryClient.invalidateQueries({
+    predicate: (query) => isPostRecommendationQueryKey(query.queryKey),
+  });
+}
+
 export function invalidatePostQueries(queryClient: QueryClient) {
   return queryClient.invalidateQueries({
     predicate: (query) => isPostRelatedQueryKey(query.queryKey),

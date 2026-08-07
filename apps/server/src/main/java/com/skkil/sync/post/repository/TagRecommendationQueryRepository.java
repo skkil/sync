@@ -2,11 +2,10 @@ package com.skkil.sync.post.repository;
 
 import static com.skkil.sync.jooq.tables.PostTags.POST_TAGS;
 import static com.skkil.sync.jooq.tables.Posts.POSTS;
+import static com.skkil.sync.jooq.tables.Projects.PROJECTS;
 import static com.skkil.sync.jooq.tables.TagFollowRelationships.TAG_FOLLOW_RELATIONSHIPS;
 import static com.skkil.sync.jooq.tables.Tags.TAGS;
 
-import com.skkil.sync.post.model.PostStatus;
-import com.skkil.sync.post.model.PostVisibility;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -36,13 +35,14 @@ public class TagRecommendationQueryRepository {
         .from(POST_TAGS)
         .join(POSTS)
         .on(POSTS.ID.eq(POST_TAGS.POST_ID))
+        .leftJoin(PROJECTS)
+        .on(PROJECTS.ID.eq(POSTS.PROJECT_ID))
         .where(POSTS.CREATED_AT.ge(since))
-        .and(visibleCondition())
-        .and(publicPublishedCondition())
+        .and(PostConditions.feedVisible())
         .and(isGlobalVerifiedTag(POST_TAGS.TAG_ID))
         .andNotExists(alreadyFollowing(userId, POST_TAGS.TAG_ID))
         .groupBy(POST_TAGS.TAG_ID)
-        .orderBy(DSL.count().desc())
+        .orderBy(DSL.count().desc(), POST_TAGS.TAG_ID.desc())
         .limit(limit)
         .fetch(POST_TAGS.TAG_ID);
   }
@@ -53,7 +53,7 @@ public class TagRecommendationQueryRepository {
         .from(TAGS)
         .where(TAGS.PROJECT_ID.isNull(), TAGS.VERIFIED.isTrue())
         .andNotExists(alreadyFollowing(userId, TAGS.ID))
-        .orderBy(TAGS.CREATED_AT.desc())
+        .orderBy(TAGS.CREATED_AT.desc(), TAGS.ID.desc())
         .limit(limit)
         .fetch(TAGS.ID);
   }
@@ -71,13 +71,5 @@ public class TagRecommendationQueryRepository {
         .where(
             TAG_FOLLOW_RELATIONSHIPS.FOLLOWER_ID.eq(userId),
             TAG_FOLLOW_RELATIONSHIPS.TAG_ID.eq(tagId));
-  }
-
-  private Condition visibleCondition() {
-    return POSTS.VISIBILITY.eq(PostVisibility.VISIBLE.name());
-  }
-
-  private Condition publicPublishedCondition() {
-    return POSTS.PROJECT_ID.isNull().and(POSTS.STATUS.eq(PostStatus.PUBLISHED.name()));
   }
 }

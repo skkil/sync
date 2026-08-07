@@ -4,6 +4,7 @@ import { TrendUpIcon } from '@phosphor-icons/react/dist/ssr';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { useGetTagRecommendations } from '@/api/__generated__/tag/tag';
 import { useFollowTag } from '@/components/feature/tag/hooks/useFollowTag';
@@ -21,8 +22,10 @@ export default function TrendingTags() {
   const { data: session } = useSession();
   const handle = session?.user.handle ?? '';
 
-  const { data, isPending } = useGetTagRecommendations();
+  const { data, isPending, isError, isFetching, refetch } =
+    useGetTagRecommendations({ type: 'TRENDING' });
   const tags = (data?.data.tags ?? []).slice(0, MAX_TRENDING_TAGS);
+  const hasInitialError = isError && !data;
 
   const [followingOverrides, setFollowingOverrides] = useState<
     Record<number, boolean>
@@ -47,12 +50,16 @@ export default function TrendingTags() {
     setPending(tagId, true);
     setFollowingOverrides((prev) => ({ ...prev, [tagId]: !isFollowing }));
 
+    const onError = () => {
+      setFollowingOverrides((prev) => ({ ...prev, [tagId]: isFollowing }));
+      toast.error(t('messages.follow-error'));
+    };
     const onSettled = () => setPending(tagId, false);
 
     if (isFollowing) {
-      unfollowTag({ tagId: String(tagId) }, { onSettled });
+      unfollowTag({ tagId: String(tagId) }, { onError, onSettled });
     } else {
-      followTag({ tagId: String(tagId) }, { onSettled });
+      followTag({ tagId: String(tagId) }, { onError, onSettled });
     }
   };
 
@@ -72,48 +79,64 @@ export default function TrendingTags() {
       </div>
 
       <div className="space-y-3">
-        {isPending
-          ? Array.from({ length: MAX_TRENDING_TAGS }).map((_, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className="flex-1 space-y-1">
-                  <Skeleton className="h-3 w-20" />
-                  <Skeleton className="h-3 w-14" />
-                </div>
-                <Skeleton className="h-7 w-16" />
+        {isPending ? (
+          Array.from({ length: MAX_TRENDING_TAGS }).map((_, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div className="flex-1 space-y-1">
+                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-3 w-14" />
               </div>
-            ))
-          : tags.map((tag) => {
-              const isFollowing = followingOverrides[tag.id] ?? tag.isFollowing;
+              <Skeleton className="h-7 w-16" />
+            </div>
+          ))
+        ) : hasInitialError ? (
+          <div role="alert" className="flex flex-col items-start gap-2 py-2">
+            <p className="text-muted-foreground text-sm">
+              {t('error.description')}
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={isFetching}
+              onClick={() => void refetch()}
+            >
+              {t('error.retry')}
+            </Button>
+          </div>
+        ) : tags.length === 0 ? (
+          <p className="text-muted-foreground py-2 text-sm">{t('empty')}</p>
+        ) : (
+          tags.map((tag) => {
+            const isFollowing = followingOverrides[tag.id] ?? tag.isFollowing;
 
-              return (
-                <div key={tag.id} className="flex items-center gap-2">
-                  <Link
-                    href={
-                      tag.projectHandle
-                        ? ROUTES.PROJECT_TAG(tag.projectHandle, String(tag.id))
-                        : ROUTES.TAG(String(tag.id))
-                    }
-                    className="min-w-0 flex-1 rounded-md hover:underline"
-                  >
-                    <p className="truncate text-sm font-semibold">
-                      #{tag.name}
-                    </p>
-                    <p className="text-muted-foreground truncate text-xs">
-                      {t('post-count', { count: tag.postCount })}
-                    </p>
-                  </Link>
+            return (
+              <div key={tag.id} className="flex items-center gap-2">
+                <Link
+                  href={
+                    tag.projectHandle
+                      ? ROUTES.PROJECT_TAG(tag.projectHandle, String(tag.id))
+                      : ROUTES.TAG(String(tag.id))
+                  }
+                  className="min-w-0 flex-1 rounded-md hover:underline"
+                >
+                  <p className="truncate text-sm font-semibold">#{tag.name}</p>
+                  <p className="text-muted-foreground truncate text-xs">
+                    {t('post-count', { count: tag.postCount })}
+                  </p>
+                </Link>
 
-                  <Button
-                    size="sm"
-                    variant={isFollowing ? 'outline' : 'default'}
-                    isPending={pendingIds.has(tag.id)}
-                    onClick={() => toggleFollow(tag.id, isFollowing)}
-                  >
-                    {isFollowing ? t('following') : t('follow')}
-                  </Button>
-                </div>
-              );
-            })}
+                <Button
+                  size="sm"
+                  variant={isFollowing ? 'outline' : 'default'}
+                  isPending={pendingIds.has(tag.id)}
+                  onClick={() => toggleFollow(tag.id, isFollowing)}
+                >
+                  {isFollowing ? t('following') : t('follow')}
+                </Button>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

@@ -28,9 +28,11 @@ interface PostListProps {
   isError?: boolean;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
+  isFetchNextPageError?: boolean;
   fetchNextPage: () => void;
   empty?: ReactNode;
   error?: ReactNode;
+  nextPageError?: ReactNode;
   end?: ReactNode;
   skeletonCount?: number;
 }
@@ -41,9 +43,11 @@ export default function PostList({
   isError,
   hasNextPage,
   isFetchingNextPage,
+  isFetchNextPageError = false,
   fetchNextPage,
   empty = <DefaultEmpty />,
   error,
+  nextPageError,
   end,
   skeletonCount = 3,
 }: PostListProps) {
@@ -54,10 +58,21 @@ export default function PostList({
   });
 
   useEffect(() => {
-    if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+    if (
+      entry?.isIntersecting &&
+      hasNextPage &&
+      !isFetchingNextPage &&
+      !isFetchNextPageError
+    ) {
       fetchNextPage();
     }
-  }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [
+    entry?.isIntersecting,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    fetchNextPage,
+  ]);
 
   if (isPending) {
     return (
@@ -96,6 +111,7 @@ export default function PostList({
             <Spinner />
           </div>
         )}
+        {isFetchNextPageError && nextPageError}
       </div>
 
       {!hasNextPage && end}

@@ -25,8 +25,12 @@ export const RecommendedFollows = forwardRef<
 
   const { data, isPending } = useGetUserRecommendations();
   const followedIds = useFollowedRecommendedUserIds();
-  const { mutate: followUser } = useFollowUser();
-  const { mutate: unfollowUser } = useUnfollowUser();
+  const { mutate: followUser } = useFollowUser({
+    invalidateUserRecommendations: false,
+  });
+  const { mutate: unfollowUser } = useUnfollowUser({
+    invalidateUserRecommendations: false,
+  });
 
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
 

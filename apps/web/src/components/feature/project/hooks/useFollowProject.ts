@@ -1,14 +1,27 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 
 import {
   getGetFollowedProjectsQueryKey,
   getGetMyProjectsQueryKey,
   getGetProjectByHandleQueryOptions,
+  getGetProjectRecommendationsQueryKey,
   useFollowProject as useFollowProjectMutation,
   useUnfollowProject as useUnfollowProjectMutation,
 } from '@/api/__generated__/project/project';
 import type { GetProjectsResponse } from '@/api/__generated__/types/GetProjectsResponse';
+import { getGetUserRecommendationsQueryKey } from '@/api/__generated__/user/user';
+import { invalidatePostRecommendationQueries } from '@/components/feature/post/hooks/postQueryKeys';
 import { useSession } from '@/lib/auth/client';
+
+function invalidateProjectFollowRecommendations(queryClient: QueryClient) {
+  queryClient.invalidateQueries({
+    queryKey: getGetProjectRecommendationsQueryKey(),
+  });
+  queryClient.invalidateQueries({
+    queryKey: getGetUserRecommendationsQueryKey(),
+  });
+  invalidatePostRecommendationQueries(queryClient);
+}
 
 export function useFollowProject() {
   const queryClient = useQueryClient();
@@ -25,6 +38,7 @@ export function useFollowProject() {
         queryClient.invalidateQueries({
           queryKey: getGetMyProjectsQueryKey(),
         });
+        invalidateProjectFollowRecommendations(queryClient);
 
         if (!session?.user.handle) {
           return;
@@ -54,6 +68,7 @@ export function useUnfollowProject() {
         queryClient.invalidateQueries({
           queryKey: getGetMyProjectsQueryKey(),
         });
+        invalidateProjectFollowRecommendations(queryClient);
 
         if (!session?.user.handle) {
           return;

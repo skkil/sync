@@ -7,6 +7,7 @@ import static com.skkil.sync.jooq.tables.Users.USERS;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
@@ -28,7 +29,10 @@ public class UserRecommendationQueryRepository {
         .from(mine)
         .join(other)
         .on(other.PROJECT_ID.eq(mine.PROJECT_ID), other.FOLLOWER_ID.ne(userId))
+        .join(USERS)
+        .on(USERS.ID.eq(other.FOLLOWER_ID))
         .where(mine.FOLLOWER_ID.eq(userId))
+        .and(recommendableUserCondition())
         .andNotExists(
             dsl.selectOne()
                 .from(USER_FOLLOW_RELATIONSHIPS)
@@ -36,7 +40,7 @@ public class UserRecommendationQueryRepository {
                     USER_FOLLOW_RELATIONSHIPS.FOLLOWER_ID.eq(userId),
                     USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID.eq(other.FOLLOWER_ID)))
         .groupBy(other.FOLLOWER_ID)
-        .orderBy(DSL.count().desc())
+        .orderBy(DSL.count().desc(), other.FOLLOWER_ID.desc())
         .limit(limit)
         .fetch(other.FOLLOWER_ID);
   }
@@ -47,8 +51,11 @@ public class UserRecommendationQueryRepository {
 
     return dsl.select(USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID)
         .from(USER_FOLLOW_RELATIONSHIPS)
+        .join(USERS)
+        .on(USERS.ID.eq(USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID))
         .where(USER_FOLLOW_RELATIONSHIPS.CREATED_AT.ge(since))
         .and(USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID.ne(userId))
+        .and(recommendableUserCondition())
         .andNotExists(
             dsl.selectOne()
                 .from(mine)
@@ -56,7 +63,7 @@ public class UserRecommendationQueryRepository {
                     mine.FOLLOWER_ID.eq(userId),
                     mine.FOLLOWEE_ID.eq(USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID)))
         .groupBy(USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID)
-        .orderBy(DSL.count().desc())
+        .orderBy(DSL.count().desc(), USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID.desc())
         .limit(limit)
         .fetch(USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID);
   }
@@ -65,15 +72,19 @@ public class UserRecommendationQueryRepository {
   public List<Long> findRecentlyJoinedCandidateIds(Long userId, int limit) {
     return dsl.select(USERS.ID)
         .from(USERS)
-        .where(USERS.ID.ne(userId), USERS.DELETED_AT.isNull())
+        .where(USERS.ID.ne(userId), recommendableUserCondition())
         .andNotExists(
             dsl.selectOne()
                 .from(USER_FOLLOW_RELATIONSHIPS)
                 .where(
                     USER_FOLLOW_RELATIONSHIPS.FOLLOWER_ID.eq(userId),
                     USER_FOLLOW_RELATIONSHIPS.FOLLOWEE_ID.eq(USERS.ID)))
-        .orderBy(USERS.CREATED_AT.desc())
+        .orderBy(USERS.CREATED_AT.desc(), USERS.ID.desc())
         .limit(limit)
         .fetch(USERS.ID);
+  }
+
+  private Condition recommendableUserCondition() {
+    return USERS.DELETED_AT.isNull().and(USERS.IS_ONBOARDED.isTrue()).and(USERS.HANDLE.isNotNull());
   }
 }
