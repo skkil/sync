@@ -1,13 +1,21 @@
 'use client';
 
-import { TagIcon, UsersIcon } from '@phosphor-icons/react';
+import { TagIcon, UsersIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 import { useGetProjectRecommendations } from '@/api/__generated__/project/project';
 import { GetProjectRecommendationsResponseProjectsItemJoinPolicy } from '@/api/__generated__/types/GetProjectRecommendationsResponseProjectsItemJoinPolicy';
 import { ProjectAvatar } from '@/components/feature/project/avatar';
-import { Empty, EmptyDescription, EmptyTitle } from '@/components/ui/empty';
+import { Button } from '@/components/ui/button';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
 import ROUTES from '@/util/routes';
 
@@ -50,9 +58,8 @@ export default function ExploreProjects() {
   const t = useTranslations('pages.explore.projects');
   const { spaceLabel, joinLabel } = useProjectMeta();
 
-  const { data, isPending } = useGetProjectRecommendations();
-
-  const projects = data?.data.projects ?? [];
+  const { data, isPending, isError, isFetching, refetch } =
+    useGetProjectRecommendations();
 
   if (isPending) {
     return (
@@ -71,6 +78,32 @@ export default function ExploreProjects() {
       </ul>
     );
   }
+
+  if (isError) {
+    return (
+      <Empty className="min-h-80">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <WarningCircleIcon />
+          </EmptyMedia>
+          <EmptyTitle>{t('error.title')}</EmptyTitle>
+          <EmptyDescription>{t('error.description')}</EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={isFetching}
+            onClick={() => void refetch()}
+          >
+            {t('error.retry')}
+          </Button>
+        </EmptyContent>
+      </Empty>
+    );
+  }
+
+  const projects = data?.data.projects ?? [];
 
   if (projects.length === 0) {
     return (
