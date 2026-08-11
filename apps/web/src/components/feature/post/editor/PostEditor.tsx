@@ -37,7 +37,7 @@ import { EditorTemplates } from './components/EditorTemplates';
 import { MathDialog } from './components/MathDialog';
 import { PostTypeSelector } from './components/PostTypeSelector';
 import { SeriesSelect, SeriesSelection } from './components/SeriesSelect';
-import { TagInput, TagValue } from './components/TagInput';
+import { TagInput, type TagInputHandle, TagValue } from './components/TagInput';
 import { CoverPicker } from './cover/CoverPicker';
 import { type CoverState, initialCoverState } from './cover/coverState';
 import { renderCoverToFile } from './cover/generators';
@@ -159,6 +159,19 @@ export default function PostEditor({
       .filter((tag) => tag.projectHandle)
       .map((tag) => ({ name: tag.name, isProjectTag: true })),
   ]);
+  const tagsRef = useRef(tags);
+  const tagInputRef = useRef<TagInputHandle>(null);
+  const submitTagCommitFailedRef = useRef(false);
+  const handleTagsChange = (nextTags: TagValue[]) => {
+    tagsRef.current = nextTags;
+    setTags(nextTags);
+  };
+  const commitPendingTag = () => {
+    return tagInputRef.current?.commitPending() ?? true;
+  };
+  const handleSubmitPointerDown = () => {
+    submitTagCommitFailedRef.current = !commitPendingTag();
+  };
   const [series, setSeries] = useState<SeriesSelection | null>(() =>
     initialSeries
       ? {
@@ -386,6 +399,12 @@ export default function PostEditor({
       return;
     }
 
+    const pointerCommitFailed = submitTagCommitFailedRef.current;
+    submitTagCommitFailedRef.current = false;
+    if (pointerCommitFailed) {
+      return;
+    }
+
     if (editor.isEmpty) {
       toast.error(t('messages.empty-content'));
       return;
@@ -401,6 +420,10 @@ export default function PostEditor({
     }
 
     setValidationMessage(null);
+    if (!commitPendingTag()) {
+      return;
+    }
+    const submitTags = tagsRef.current;
 
     setIsPreparingCover(true);
     let coverResult: Awaited<ReturnType<typeof resolveCoverSubmit>>;
@@ -432,8 +455,10 @@ export default function PostEditor({
       title,
       type,
       status,
-      tags: tags.filter((tag) => !tag.isProjectTag).map((tag) => tag.name),
-      projectTags: tags
+      tags: submitTags
+        .filter((tag) => !tag.isProjectTag)
+        .map((tag) => tag.name),
+      projectTags: submitTags
         .filter((tag) => tag.isProjectTag)
         .map((tag) => tag.name),
       series,
@@ -603,8 +628,9 @@ export default function PostEditor({
           {t('sidebar.tags')}
         </h3>
         <TagInput
+          ref={tagInputRef}
           tags={tags}
-          onChange={setTags}
+          onChange={handleTagsChange}
           projectHandle={project?.handle}
           accentRing={ACCENT_RING[type]}
         />
@@ -614,12 +640,14 @@ export default function PostEditor({
         <h3 className="px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t('sidebar.series')}
         </h3>
-        <SeriesSelect
-          value={series}
-          onChange={setSeries}
-          projectHandle={project?.handle}
-          accentRing={ACCENT_RING[type]}
-        />
+        <div data-tag-commit-target="" onPointerDownCapture={commitPendingTag}>
+          <SeriesSelect
+            value={series}
+            onChange={setSeries}
+            projectHandle={project?.handle}
+            accentRing={ACCENT_RING[type]}
+          />
+        </div>
       </section>
 
       <div
@@ -630,15 +658,19 @@ export default function PostEditor({
       >
         {canSaveDraft && (
           <Button
+            data-tag-commit-target=""
             variant="outline"
             disabled={isSubmitting || isPreparingCover || isEditorEmpty}
+            onPointerDownCapture={handleSubmitPointerDown}
             onClick={() => handleSubmit(PostStatus.DRAFT)}
           >
             {draftActionLabel}
           </Button>
         )}
         <Button
+          data-tag-commit-target=""
           disabled={isSubmitting || isPreparingCover || isEditorEmpty}
+          onPointerDownCapture={handleSubmitPointerDown}
           onClick={() => handleSubmit(PostStatus.PUBLISHED)}
         >
           {publishActionLabel}

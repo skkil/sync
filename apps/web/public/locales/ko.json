@@ -2515,13 +2515,15 @@
         "suggestions": "혹은 아래 템플릿을 사용해보세요"
       },
       "tags": {
-        "placeholder": "태그를 입력하세요 (Enter 또는 쉼표로 추가)",
+        "placeholder": "태그를 검색하거나 입력하세요",
+        "input-label": "태그 검색 또는 추가",
+        "create": "‘{name}’ 태그 추가",
         "post-count": "{count}개의 게시물",
         "max-tags": "태그는 최대 {count}개까지 추가할 수 있습니다",
         "loading": "태그를 검색하는 중...",
         "not-found": "태그를 찾을 수 없습니다",
         "project-tag": "프로젝트 태그입니다",
-        "helper": "목록에 없는 태그는 Enter로 새로 만들 수 있어요. 새 태그는 관리자 확인 후 노출돼요."
+        "helper": "목록에 없는 태그도 새로 추가할 수 있어요. 새 태그는 관리자 확인 후 노출돼요."
       },
       "cover": {
         "add": "커버 추가",
