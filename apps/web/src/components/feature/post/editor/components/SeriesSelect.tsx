@@ -4,6 +4,11 @@ import { ListNumbersIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
 import { usePostSeriesList } from '../../hooks/usePostSeriesList';
@@ -82,27 +87,31 @@ export function SeriesSelect({
   };
 
   return (
-    <div className="relative">
-      <input
-        value={query}
-        placeholder={t('placeholder')}
-        onChange={(event) => {
-          setQuery(event.target.value);
-          setOpen(true);
-        }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
-        className={cn(
-          'w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2',
-          accentRing ?? 'focus:ring-primary/30',
-        )}
-      />
+    <Popover open={open && (trimmed.length > 0 || filtered.length > 0)}>
+      <PopoverAnchor asChild>
+        <input
+          value={query}
+          placeholder={t('placeholder')}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
+          className={cn(
+            'w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2',
+            accentRing ?? 'focus:ring-primary/30',
+          )}
+        />
+      </PopoverAnchor>
 
-      {open && (trimmed.length > 0 || filtered.length > 0) && (
-        <ul
-          className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-border bg-popover py-1 shadow-md"
-          onMouseDown={(event) => event.preventDefault()}
-        >
+      <PopoverContent
+        align="start"
+        className="max-h-60 w-(--radix-popover-trigger-width) gap-0 overflow-y-auto rounded-lg p-0 py-1"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onMouseDown={(event) => event.preventDefault()}
+      >
+        <ul>
           {filtered.map((item) => (
             <li key={item.externalId}>
               <button
@@ -145,7 +154,7 @@ export function SeriesSelect({
             </li>
           )}
         </ul>
-      )}
-    </div>
+      </PopoverContent>
+    </Popover>
   );
 }

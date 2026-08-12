@@ -44,6 +44,7 @@ import { PostType } from '../types/post';
 import { COMMENT_COMPOSER_ID } from './utils/commentComposer';
 
 interface PostCommentsProps {
+  className?: string;
   slug: string;
   postId: number;
   postType: PostType;
@@ -239,6 +240,7 @@ function PostCommentItem({
 }
 
 export default function PostComments({
+  className,
   slug,
   postId,
   postType,
@@ -313,7 +315,7 @@ export default function PostComments({
   }
 
   return (
-    <Card className="gap-0 p-0 lg:max-h-[calc(100vh-7rem)]">
+    <Card className={cn('gap-0 p-0 lg:max-h-[calc(100svh-7.5rem)]', className)}>
       <div className="flex items-center justify-between px-5 py-4">
         <h2 className="text-sm font-semibold">
           {t('title')} {comments.length > 0 && `· ${comments.length}`}

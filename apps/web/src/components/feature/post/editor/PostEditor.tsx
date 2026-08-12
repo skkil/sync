@@ -201,7 +201,7 @@ export default function PostEditor({
     if (!el) return;
     el.style.height = 'auto';
     el.style.height = `${el.scrollHeight}px`;
-  }, [title]);
+  }, [title, type]);
 
   const commandSearchTerms = useMemo<CommandSearchTerms>(
     () =>
@@ -649,7 +649,11 @@ export default function PostEditor({
           />
         </div>
       </section>
+    </div>
+  );
 
+  const sideFooter = (
+    <div className="mt-6 flex flex-col gap-4 lg:mt-0 lg:border-t lg:border-border lg:bg-background lg:pt-4">
       <div
         className={cn(
           'grid gap-2',
@@ -695,5 +699,12 @@ export default function PostEditor({
     </div>
   );
 
-  return <TwoColumnLayout main={main} side={side} />;
+  return (
+    <TwoColumnLayout
+      main={main}
+      side={side}
+      sideFooter={sideFooter}
+      sideViewportScrollable
+    />
+  );
 }

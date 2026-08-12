@@ -21,7 +21,7 @@ export function PostTableOfContentsList({
   }
 
   return (
-    <Card>
+    <Card className="shrink-0">
       <CardHeader>
         <CardTitle className="text-base">{t('title')}</CardTitle>
       </CardHeader>

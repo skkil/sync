@@ -11,10 +11,8 @@ import {
   type PostType,
 } from '@/components/feature/post/types/post';
 import { PostCard } from '@/components/feature/post/viewer/PostCard';
-import PostComments from '@/components/feature/post/viewer/PostComments';
 import { PostProvider } from '@/components/feature/post/viewer/PostContext';
-import { PostSeriesCard } from '@/components/feature/post/viewer/PostSeriesCard';
-import { PostTableOfContents } from '@/components/feature/post/viewer/PostTableOfContents';
+import { PostViewerSidebar } from '@/components/feature/post/viewer/PostViewerSidebar';
 import { RelatedPosts } from '@/components/feature/post/viewer/RelatedPosts';
 import { TwoColumnLayout } from '@/components/layout/TwoColumnLayout';
 import SyncError, { ErrorCode } from '@/lib/error';
@@ -133,20 +131,15 @@ export default async function Post({ params }: PostProps) {
         <TwoColumnLayout
           main={<PostCard slug={slug} />}
           side={
-            <div className="flex flex-col gap-6">
-              <PostTableOfContents />
-              <PostSeriesCard slug={slug} />
-              {commentsEnabled && postType && postId !== undefined ? (
-                <PostComments
-                  slug={slug}
-                  postId={postId}
-                  postType={postType}
-                  isPostAuthor={isPostAuthor}
-                  canComment={canComment}
-                  requiresMembership={requiresMembership}
-                />
-              ) : null}
-            </div>
+            <PostViewerSidebar
+              slug={slug}
+              commentsEnabled={commentsEnabled}
+              postId={postId}
+              postType={postType}
+              isPostAuthor={isPostAuthor}
+              canComment={canComment}
+              requiresMembership={requiresMembership}
+            />
           }
         />
       </PostProvider>

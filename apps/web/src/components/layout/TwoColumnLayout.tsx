@@ -10,6 +10,8 @@ import ROUTES from '@/util/routes';
 interface TwoColumnLayoutProps {
   main: ReactNode;
   side?: ReactNode;
+  sideFooter?: ReactNode;
+  sideViewportScrollable?: boolean;
   hideSideOnMobile?: boolean;
   reverseSideOnMobile?: boolean;
 }
@@ -17,6 +19,8 @@ interface TwoColumnLayoutProps {
 export function TwoColumnLayout({
   main,
   side,
+  sideFooter,
+  sideViewportScrollable,
   hideSideOnMobile,
   reverseSideOnMobile,
 }: TwoColumnLayoutProps) {
@@ -42,9 +46,23 @@ export function TwoColumnLayout({
             'lg:sticky lg:top-7',
             hideSideOnMobile && 'hidden lg:block',
             reverseSideOnMobile && 'order-1 lg:order-2',
+            sideViewportScrollable &&
+              'lg:flex lg:h-[calc(100svh-7.5rem)] lg:min-h-0 lg:flex-col lg:overflow-clip',
           )}
         >
-          {side}
+          <div
+            className={cn(
+              sideViewportScrollable &&
+                'lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:pl-1 lg:[scrollbar-gutter:stable]',
+            )}
+          >
+            {side}
+          </div>
+          {sideFooter && (
+            <div className={cn(sideViewportScrollable && 'lg:shrink-0')}>
+              {sideFooter}
+            </div>
+          )}
         </div>
       )}
     </div>

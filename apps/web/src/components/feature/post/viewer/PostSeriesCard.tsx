@@ -50,7 +50,7 @@ export function PostSeriesCard({ slug }: PostSeriesCardProps) {
       : ROUTES.POST(postSlug);
 
   return (
-    <Card>
+    <Card className="shrink-0">
       <CardHeader>
         <CardDescription>{t('label')}</CardDescription>
         <CardTitle className="text-base">{series.name}</CardTitle>
