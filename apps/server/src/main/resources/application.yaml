@@ -136,6 +136,7 @@ app:
     issuer-uri: ${APP_AGENT_ISSUER_URI:http://localhost:8080}
     rsa-private-key: ${APP_AGENT_RSA_PRIVATE_KEY:}
     rsa-public-key: ${APP_AGENT_RSA_PUBLIC_KEY:}
+    chatgpt-redirect-uri: ${APP_AGENT_CHATGPT_REDIRECT_URI:}
 
   slack:
     webhook-url: ${SLACK_WEBHOOK_URL:}

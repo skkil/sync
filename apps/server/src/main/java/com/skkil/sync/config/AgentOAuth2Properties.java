@@ -8,4 +8,5 @@ public record AgentOAuth2Properties(
     boolean enabled,
     String issuerUri,
     @Nullable String rsaPrivateKey,
-    @Nullable String rsaPublicKey) {}
+    @Nullable String rsaPublicKey,
+    @Nullable String chatgptRedirectUri) {}

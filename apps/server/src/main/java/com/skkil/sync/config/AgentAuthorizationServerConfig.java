@@ -122,7 +122,10 @@ public class AgentAuthorizationServerConfig {
                   metadata ->
                       metadata.authorizationServerMetadataCustomizer(
                           builder ->
-                              builder.scopes(scopes -> scopes.add(AgentScopes.POSTS_DRAFT))));
+                              builder
+                                  .scopes(scopes -> scopes.add(AgentScopes.POSTS_DRAFT))
+                                  .tokenEndpointAuthenticationMethod(
+                                      ClientAuthenticationMethod.NONE.getValue())));
               server.authorizationEndpoint(
                   endpoint -> endpoint.authenticationProviders(AgentRedirectUris::apply));
               server.clientAuthentication(
@@ -195,7 +198,9 @@ public class AgentAuthorizationServerConfig {
    */
   @Bean
   ApplicationRunner agentClientSeeder(RegisteredClientRepository registeredClientRepository) {
-    return args -> AgentClients.seed(registeredClientRepository, properties.issuerUri());
+    return args ->
+        AgentClients.seed(
+            registeredClientRepository, properties.issuerUri(), properties.chatgptRedirectUri());
   }
 
   /**
@@ -459,50 +464,68 @@ public class AgentAuthorizationServerConfig {
     private static final List<String> VENDORS =
         List.of("claude-code", "cursor", "codex", "windsurf", "generic-mcp");
 
-    static void seed(RegisteredClientRepository repository, String issuerUri) {
+    static void seed(
+        RegisteredClientRepository repository,
+        String issuerUri,
+        @Nullable String chatgptRedirectUri) {
       for (String vendor : VENDORS) {
-        RegisteredClient existing = repository.findByClientId(vendor);
+        // 로컬 MCP 클라이언트는 실행할 때마다 루프백 포트가 바뀔 수 있다. Spring Authorization
+        // Server 는 IP 리터럴의 포트를 무시하고, localhost 형태는 AgentRedirectUris 가 허용한다.
+        seedClient(
+            repository,
+            vendor,
+            List.of(
+                "http://127.0.0.1/callback",
+                "http://localhost/callback",
+                issuerUri + "/oauth2/callback"));
+      }
 
-        repository.save(
-            build(
-                vendor,
-                issuerUri,
-                existing == null ? UUID.randomUUID().toString() : existing.getId()));
-
-        if (existing == null) {
-          log.info("에이전트 OAuth2 클라이언트를 등록했습니다: {}", vendor);
-        }
+      if (chatgptRedirectUri != null && !chatgptRedirectUri.isBlank()) {
+        seedClient(repository, "chatgpt", List.of(chatgptRedirectUri));
       }
     }
 
-    private static RegisteredClient build(String vendor, String issuerUri, String id) {
-      return RegisteredClient.withId(id)
-          .clientId(vendor)
-          .clientName(displayName(vendor))
-          // 최종 사용자 기기에서 도는 공개 클라이언트라 비밀값을 지킬 수 없다. 시크릿 없이
-          // PKCE 로만 보호한다.
-          .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
-          .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-          .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-          // MCP 클라이언트는 루프백 리다이렉트를 쓰고 포트는 매번 달라진다. Spring
-          // Authorization Server 는 IP 리터럴에 한해 포트를 무시하므로, localhost 형태는
-          // AgentRedirectUris 가 따로 받아 준다.
-          .redirectUri("http://127.0.0.1/callback")
-          .redirectUri("http://localhost/callback")
-          .redirectUri(issuerUri + "/oauth2/callback")
-          .scope(AgentScopes.POSTS_DRAFT)
-          .clientSettings(
-              ClientSettings.builder()
-                  .requireProofKey(true)
-                  .requireAuthorizationConsent(true)
-                  .build())
-          .tokenSettings(
-              TokenSettings.builder()
-                  .accessTokenTimeToLive(Duration.ofHours(24))
-                  .refreshTokenTimeToLive(Duration.ofDays(30))
-                  .reuseRefreshTokens(false)
-                  .build())
-          .build();
+    private static void seedClient(
+        RegisteredClientRepository repository, String vendor, List<String> redirectUris) {
+      RegisteredClient existing = repository.findByClientId(vendor);
+
+      repository.save(
+          build(
+              vendor,
+              redirectUris,
+              existing == null ? UUID.randomUUID().toString() : existing.getId()));
+
+      if (existing == null) {
+        log.info("에이전트 OAuth2 클라이언트를 등록했습니다: {}", vendor);
+      }
+    }
+
+    private static RegisteredClient build(String vendor, List<String> redirectUris, String id) {
+      RegisteredClient.Builder builder =
+          RegisteredClient.withId(id)
+              .clientId(vendor)
+              .clientName(displayName(vendor))
+              // 에이전트 클라이언트는 비밀값을 안전하게 보관할 수 없는 공개 클라이언트다. 시크릿 없이
+              // PKCE 로만 보호한다.
+              .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+              .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+              .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+              .scope(AgentScopes.POSTS_DRAFT)
+              .clientSettings(
+                  ClientSettings.builder()
+                      .requireProofKey(true)
+                      .requireAuthorizationConsent(true)
+                      .build())
+              .tokenSettings(
+                  TokenSettings.builder()
+                      .accessTokenTimeToLive(Duration.ofHours(24))
+                      .refreshTokenTimeToLive(Duration.ofDays(30))
+                      .reuseRefreshTokens(false)
+                      .build());
+
+      redirectUris.forEach(builder::redirectUri);
+
+      return builder.build();
     }
 
     private static String displayName(String vendor) {
@@ -511,6 +534,7 @@ public class AgentAuthorizationServerConfig {
         case "cursor" -> "Cursor";
         case "codex" -> "Codex";
         case "windsurf" -> "Windsurf";
+        case "chatgpt" -> "ChatGPT";
         default -> "MCP Client";
       };
     }

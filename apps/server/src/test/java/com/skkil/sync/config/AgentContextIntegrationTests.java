@@ -34,6 +34,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
@@ -60,12 +62,16 @@ import org.springframework.web.util.UriComponentsBuilder;
     properties = {
       "app.seed.enabled=false",
       "app.agent.enabled=true",
+      "app.agent.chatgpt-redirect-uri=https://chatgpt.com/connector/oauth/test-callback",
       "spring.ai.mcp.server.enabled=true"
     })
 class AgentContextIntegrationTests {
 
   private static final String CODE_VERIFIER = "sync-agent-test-code-verifier-0123456789";
   private static final String CLIENT_ID = "claude-code";
+  private static final String CHATGPT_CLIENT_ID = "chatgpt";
+  private static final String CHATGPT_REDIRECT_URI =
+      "https://chatgpt.com/connector/oauth/test-callback";
   private static final String PRINCIPAL_NAME = "email@email.com";
   private static final String REDIRECT_URI = "http://localhost:49152/callback";
 
@@ -78,10 +84,18 @@ class AgentContextIntegrationTests {
 
   @AfterEach
   void revokeConsent() {
-    RegisteredClient client = registeredClientRepository.findByClientId(CLIENT_ID);
+    revokeConsent(CLIENT_ID);
+    revokeConsent(CHATGPT_CLIENT_ID);
+  }
+
+  private void revokeConsent(String clientId) {
+    RegisteredClient client = registeredClientRepository.findByClientId(clientId);
+    if (client == null) {
+      return;
+    }
+
     OAuth2AuthorizationConsent consent =
-        authorizationConsentService.findById(
-            Objects.requireNonNull(client).getId(), PRINCIPAL_NAME);
+        authorizationConsentService.findById(client.getId(), PRINCIPAL_NAME);
 
     if (consent != null) {
       authorizationConsentService.remove(consent);
@@ -97,6 +111,7 @@ class AgentContextIntegrationTests {
         .andExpect(jsonPath("$.authorization_endpoint").exists())
         .andExpect(jsonPath("$.token_endpoint").exists())
         .andExpect(jsonPath("$.jwks_uri").exists())
+        .andExpect(jsonPath("$.token_endpoint_auth_methods_supported[?(@ == 'none')]").exists())
         .andExpect(jsonPath("$.scopes_supported[?(@ == 'posts:draft')]").exists());
   }
 
@@ -125,6 +140,54 @@ class AgentContextIntegrationTests {
     mockMvc
         .perform(authorize("http://localhost:49152/callback"))
         .andExpect(status().is2xxSuccessful());
+  }
+
+  @Test
+  @DisplayName("ChatGPT 공개 클라이언트는 설정된 콜백과 PKCE 정책으로 등록된다")
+  void chatGptPublicClientIsRegistered() {
+    RegisteredClient client = registeredClientRepository.findByClientId(CHATGPT_CLIENT_ID);
+
+    assertThat(client).isNotNull();
+    assertThat(client.getClientAuthenticationMethods())
+        .containsExactly(ClientAuthenticationMethod.NONE);
+    assertThat(client.getAuthorizationGrantTypes())
+        .containsExactlyInAnyOrder(
+            AuthorizationGrantType.AUTHORIZATION_CODE, AuthorizationGrantType.REFRESH_TOKEN);
+    assertThat(client.getRedirectUris()).contains(CHATGPT_REDIRECT_URI);
+    assertThat(client.getScopes()).containsExactly(AgentScopes.POSTS_DRAFT);
+    assertThat(client.getClientSettings().isRequireProofKey()).isTrue();
+    assertThat(client.getClientSettings().isRequireAuthorizationConsent()).isTrue();
+  }
+
+  @Test
+  @DisplayName("설정된 ChatGPT 콜백은 인가 요청에 사용할 수 있다")
+  @WithAuthenticatedUser
+  void chatGptRedirectUriIsAccepted() throws Exception {
+    mockMvc
+        .perform(authorize(CHATGPT_CLIENT_ID, CHATGPT_REDIRECT_URI))
+        .andExpect(status().is2xxSuccessful());
+  }
+
+  @Test
+  @DisplayName("ChatGPT 공개 클라이언트도 PKCE 인가 코드를 토큰으로 교환한다")
+  @WithAuthenticatedUser
+  void chatGptPublicClientExchangesAuthorizationCode() throws Exception {
+    grantConsent(CHATGPT_CLIENT_ID);
+
+    mockMvc
+        .perform(exchangeAuthorizationCode(CHATGPT_CLIENT_ID, CHATGPT_REDIRECT_URI, CODE_VERIFIER))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.access_token").exists())
+        .andExpect(jsonPath("$.refresh_token").exists());
+  }
+
+  @Test
+  @DisplayName("설정되지 않은 ChatGPT 콜백은 거부한다")
+  @WithAuthenticatedUser
+  void unregisteredChatGptRedirectUriIsRejected() throws Exception {
+    mockMvc
+        .perform(authorize(CHATGPT_CLIENT_ID, "https://chatgpt.com/connector/oauth/wrong"))
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -209,7 +272,11 @@ class AgentContextIntegrationTests {
    * 무시되고 {@code invalid_request} 가 돌아온다.
    */
   private void grantConsent() {
-    RegisteredClient client = registeredClientRepository.findByClientId(CLIENT_ID);
+    grantConsent(CLIENT_ID);
+  }
+
+  private void grantConsent(String clientId) {
+    RegisteredClient client = registeredClientRepository.findByClientId(clientId);
 
     authorizationConsentService.save(
         OAuth2AuthorizationConsent.withId(client.getId(), PRINCIPAL_NAME)
@@ -223,8 +290,16 @@ class AgentContextIntegrationTests {
 
   private MockHttpServletRequestBuilder exchangeAuthorizationCode(String codeVerifier)
       throws Exception {
+    return exchangeAuthorizationCode(CLIENT_ID, REDIRECT_URI, codeVerifier);
+  }
+
+  private MockHttpServletRequestBuilder exchangeAuthorizationCode(
+      String clientId, String redirectUri, String codeVerifier) throws Exception {
     MvcResult authorized =
-        mockMvc.perform(authorize(REDIRECT_URI)).andExpect(status().is3xxRedirection()).andReturn();
+        mockMvc
+            .perform(authorize(clientId, redirectUri))
+            .andExpect(status().is3xxRedirection())
+            .andReturn();
     String location = Objects.requireNonNull(authorized.getResponse().getRedirectedUrl());
     String code =
         UriComponentsBuilder.fromUriString(location).build().getQueryParams().getFirst("code");
@@ -232,8 +307,8 @@ class AgentContextIntegrationTests {
     return post("/oauth2/token")
         .param("grant_type", "authorization_code")
         .param("code", Objects.requireNonNull(code))
-        .param("redirect_uri", REDIRECT_URI)
-        .param("client_id", CLIENT_ID)
+        .param("redirect_uri", redirectUri)
+        .param("client_id", clientId)
         .param("code_verifier", codeVerifier);
   }
 
@@ -251,11 +326,17 @@ class AgentContextIntegrationTests {
 
   private static MockHttpServletRequestBuilder authorize(String redirectUri)
       throws NoSuchAlgorithmException {
+    return authorize(CLIENT_ID, redirectUri);
+  }
+
+  private static MockHttpServletRequestBuilder authorize(String clientId, String redirectUri)
+      throws NoSuchAlgorithmException {
     // 값을 퍼센트 인코딩하지 않는다. MockMvc 는 URL 의 쿼리를 디코딩하지 않고 그대로 파라미터로 넘기므로,
     // 인코딩해서 보내면 서버가 redirect_uri 를 인코딩된 문자열 그대로 받아 호스트조차 읽지 못한다.
     String query =
         "response_type=code"
-            + "&client_id=claude-code"
+            + "&client_id="
+            + clientId
             + "&redirect_uri="
             + redirectUri
             + "&scope="
