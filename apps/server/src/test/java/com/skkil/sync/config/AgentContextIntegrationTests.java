@@ -28,6 +28,8 @@ import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -188,6 +190,27 @@ class AgentContextIntegrationTests {
     mockMvc
         .perform(authorize(CHATGPT_CLIENT_ID, "https://chatgpt.com/connector/oauth/wrong"))
         .andExpect(status().isBadRequest());
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "http://chatgpt.com/connector/oauth/test-callback",
+        "https://example.com/connector/oauth/test-callback",
+        "https://chatgpt.com/connector/oauth/",
+        "https://chatgpt.com/connector/oauth/test-callback/extra",
+        "https://chatgpt.com:443/connector/oauth/test-callback",
+        "https://user@chatgpt.com/connector/oauth/test-callback",
+        "https://chatgpt.com/connector/oauth/test-callback?next=other",
+        "https://chatgpt.com/connector/oauth/test-callback#fragment"
+      })
+  @DisplayName("공식 형식이 아닌 ChatGPT 콜백 설정은 거부한다")
+  void invalidChatGptRedirectUriConfigurationIsRejected(String redirectUri) {
+    assertThatThrownBy(
+            () ->
+                AgentAuthorizationServerConfig.AgentClients.validateChatGptRedirectUri(redirectUri))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("https://chatgpt.com/connector/oauth/{callback_id}");
   }
 
   @Test

@@ -459,6 +459,8 @@ public class AgentAuthorizationServerConfig {
   /** 사전 등록된 에이전트 클라이언트. Phase 1 에서는 동적 클라이언트 등록(RFC 7591)을 쓰지 않는다. */
   static final class AgentClients {
 
+    private static final String CHATGPT_REDIRECT_PATH_PREFIX = "/connector/oauth/";
+
     private AgentClients() {}
 
     private static final List<String> VENDORS =
@@ -481,8 +483,43 @@ public class AgentAuthorizationServerConfig {
       }
 
       if (chatgptRedirectUri != null && !chatgptRedirectUri.isBlank()) {
+        validateChatGptRedirectUri(chatgptRedirectUri);
         seedClient(repository, "chatgpt", List.of(chatgptRedirectUri));
       }
+    }
+
+    static void validateChatGptRedirectUri(String redirectUri) {
+      UriComponents uri;
+      try {
+        uri = UriComponentsBuilder.fromUriString(redirectUri).build();
+      } catch (RuntimeException e) {
+        throw invalidChatGptRedirectUri(e);
+      }
+
+      String path = uri.getPath();
+      boolean hasCallbackId =
+          path != null
+              && path.startsWith(CHATGPT_REDIRECT_PATH_PREFIX)
+              && path.length() > CHATGPT_REDIRECT_PATH_PREFIX.length()
+              && path.indexOf('/', CHATGPT_REDIRECT_PATH_PREFIX.length()) < 0;
+
+      if (!"https".equalsIgnoreCase(uri.getScheme())
+          || !"chatgpt.com".equalsIgnoreCase(uri.getHost())
+          || uri.getPort() != -1
+          || uri.getUserInfo() != null
+          || uri.getQuery() != null
+          || uri.getFragment() != null
+          || !hasCallbackId) {
+        throw invalidChatGptRedirectUri(null);
+      }
+    }
+
+    private static IllegalStateException invalidChatGptRedirectUri(
+        @Nullable RuntimeException cause) {
+      return new IllegalStateException(
+          "app.agent.chatgpt-redirect-uri 는 "
+              + "https://chatgpt.com/connector/oauth/{callback_id} 형식이어야 합니다.",
+          cause);
     }
 
     private static void seedClient(
