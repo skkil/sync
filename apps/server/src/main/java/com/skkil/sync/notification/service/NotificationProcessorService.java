@@ -72,7 +72,7 @@ public class NotificationProcessorService {
     }
 
     log.debug("Sending notification {} via channel {}", notification.getId(), ChannelType.IN_APP);
-    channel.send(event.getRecipientId(), toDto(notification));
+    channel.send(notification.getUser(), toDto(notification));
   }
 
   private Notification createNotification(NotificationEvent event) {

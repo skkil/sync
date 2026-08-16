@@ -45,7 +45,11 @@ public class SecurityConfig {
       throws Exception {
     http.securityMatcher("/**")
         .addFilterBefore(absoluteSessionTimeoutFilter, SecurityContextHolderFilter.class)
-        .csrf(csrf -> csrf.spa())
+        // SockJS 폴백 전송(xhr_send 등)은 POST지만 클라이언트가 커스텀 헤더를 실을
+        // 수 없어 HTTP 레벨 CSRF를 통과할 수 없다(fail-closed). /ws는 핸드셰이크의
+        // Origin 허용 목록과 STOMP CONNECT 프레임의 CSRF 검증(WebSocketSecurityConfig의
+        // csrfChannelInterceptor)이 대신 보호한다.
+        .csrf(csrf -> csrf.spa().ignoringRequestMatchers("/ws/**"))
         .formLogin(formLogin -> formLogin.disable())
         .logout(
             logout ->
