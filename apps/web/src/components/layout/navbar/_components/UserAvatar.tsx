@@ -29,6 +29,7 @@ import { useModal } from '@/hooks/store';
 import { useMounted } from '@/hooks/use-mounted';
 import { useSession } from '@/lib/auth/client';
 import { isAuthenticated } from '@/lib/auth/utils';
+import { resetStompConnection } from '@/lib/ws';
 import ROUTES from '@/util/routes';
 
 interface UserAvatarProps {
@@ -114,6 +115,9 @@ export default function UserAvatar({ align = 'end' }: UserAvatarProps) {
           return;
         }
 
+        // STOMP Principal은 핸드셰이크 시점에 고정되므로, 소켓을 즉시 버려야
+        // 곧바로 다른 계정으로 로그인해도 이전 세션의 연결이 재사용되지 않는다.
+        resetStompConnection();
         queryClient.clear();
         router.replace(ROUTES.HOME());
       },

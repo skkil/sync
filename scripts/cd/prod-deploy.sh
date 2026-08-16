@@ -76,6 +76,7 @@ if [[ "$DO_BUILD" == true ]]; then
       --build-arg NEXT_PUBLIC_SITE_URL="https://${APP_DOMAIN}" \
       --build-arg NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY="${CHANNEL_TALK_PLUGIN_KEY}" \
       --build-arg NEXT_PUBLIC_CAPTCHA_SITE_KEY="${CAPTCHA_SITE_KEY}" \
+      --build-arg NEXT_PUBLIC_WEBSOCKET_ENABLED=false \
       -t "$WEB_IMAGE" .
 
   info "Building the nginx image..."

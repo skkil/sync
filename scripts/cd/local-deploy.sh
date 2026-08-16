@@ -58,6 +58,7 @@ docker build \
     --build-arg NEXT_PUBLIC_SITE_URL=http://localhost:3000 \
     --build-arg NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY="${CHANNEL_TALK_PLUGIN_KEY:-}" \
     --build-arg NEXT_PUBLIC_CAPTCHA_SITE_KEY="${CAPTCHA_SITE_KEY:-}" \
+    --build-arg NEXT_PUBLIC_WEBSOCKET_ENABLED=false \
     -t sync-web:local .
 
 info "Uploading web image to minikube..."
