@@ -194,4 +194,40 @@ public class MediaDomainService {
 
     return result;
   }
+
+  /**
+   * {@link #generatePresignedGetUrls(List, Function)}의 관대한 변형 — 서명에 실패한 미디어는 결과에서 빼고 계속 간다.
+   *
+   * <p>미디어 URL이 본질이 아닌 소비자(예: 알림의 행위자 아바타)를 위한 것이다. strict 버전은 한 건의 실패가 예외로 전파되는데, 호출자가 쓰기 트랜잭션이면
+   * 참여-실패 규칙에 따라 공유 트랜잭션이 rollback-only로 표시된다 — 호출부 try/catch로는 지울 수 없어 본체 저장까지 함께 사라진다. 여기서는 예외가 이
+   * 메서드 경계를 벗어나지 않으므로 그 표시 자체가 생기지 않는다.
+   *
+   * <p>의도적으로 {@code @Transactional}이 없다: 이 메서드는 DB를 읽지 않고(엔티티는 호출자가 이미 로드했고 서명은 로컬 연산이다), 커밋 완료 후의
+   * {@code afterCommit} 콜백에서도 호출되는데 그 시점의 트랜잭션 프록시 진입은 "커밋이 뒤따르지 않는 참여"가 되어 Spring이 금지하는 패턴이다
+   * ({@code TransactionSynchronization#afterCommit} 계약 참고). 프록시가 없으면 그 문제 자체가 생기지 않는다.
+   *
+   * <p>S3 서명은 자격증명 체인 해소(EC2 IMDS) 때문에 네트워크 장애로도 실패할 수 있다 — 미디어 상태가 정상이어도 안전하지 않다.
+   */
+  public <T> Map<Long, URL> generatePresignedGetUrlsLenient(
+      List<T> items, Function<T, Media> mediaExtractor) {
+    Map<Long, URL> result = new HashMap<>();
+    for (T item : items) {
+      if (item == null) {
+        continue;
+      }
+
+      Media media = mediaExtractor.apply(item);
+      if (media == null) {
+        continue;
+      }
+
+      try {
+        result.put(media.getId(), generatePresignedGetUrl(media));
+      } catch (RuntimeException exception) {
+        log.warn("미디어 {} 서명 실패 — URL 없이 진행한다.", media.getId(), exception);
+      }
+    }
+
+    return result;
+  }
 }

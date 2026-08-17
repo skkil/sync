@@ -1,10 +1,13 @@
 package com.skkil.sync.notification.service;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -72,6 +75,47 @@ class NotificationProcessorServiceTests {
     // 채널이 받는 수신자는 저장된 알림의 사용자여야 한다 — 사용자 목적지의
     // 키(이메일)가 여기서 나오므로, 다른 User가 넘어가면 알림이 엉뚱한 사람에게 간다.
     verify(inAppChannel).send(same(recipient), eq(summary));
+  }
+
+  /** 소실 회귀: DTO 조립(presign) 실패가 저장을 되돌리거나 호출자에게 전파되면 안 된다. 푸시는 best-effort이고, 알림 저장이 항상 우선한다. */
+  @Test
+  void handleNotificationEvent_presignFailure_keepsSaveAndDoesNotPropagate() {
+    NotificationChannel inAppChannel = mock(NotificationChannel.class);
+    when(inAppChannel.type()).thenReturn(ChannelType.IN_APP);
+    NotificationProcessorService service = serviceWithChannels(List.of(inAppChannel));
+    stubRecipient();
+    User actor =
+        User.builder().email("actor@example.com").fullName("행위자").hashedPassword("hash").build();
+    when(userDomainService.getUserReference(2L)).thenReturn(actor);
+    when(mediaDomainService.generatePresignedGetUrlsLenient(anyList(), any()))
+        .thenThrow(new IllegalStateException("S3 자격증명 해소 실패"));
+
+    NotificationEvent event =
+        new NotificationEvent(
+            1L,
+            NotificationType.NEW_FOLLOWER,
+            2L,
+            null,
+            null,
+            new NewFollowerPayload("follower", "팔로워"));
+
+    assertThatCode(() -> service.handleNotificationEvent(event)).doesNotThrowAnyException();
+
+    verify(notificationRepository).save(any(Notification.class));
+    verify(inAppChannel, never()).send(any(), any());
+  }
+
+  @Test
+  void handleNotificationEvent_notificationsDisabled_skipsSaveAndPush() {
+    NotificationChannel inAppChannel = mock(NotificationChannel.class);
+    when(inAppChannel.type()).thenReturn(ChannelType.IN_APP);
+    NotificationProcessorService service = serviceWithChannels(List.of(inAppChannel));
+    when(notificationPreferencesService.isInAppEnabled(1L)).thenReturn(false);
+
+    service.handleNotificationEvent(newFollowerEventTo(1L));
+
+    verify(notificationRepository, never()).save(any(Notification.class));
+    verify(inAppChannel, never()).send(any(), any());
   }
 
   private NotificationProcessorService serviceWithChannels(List<NotificationChannel> channels) {

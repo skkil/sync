@@ -3,6 +3,7 @@ package com.skkil.sync.media.service.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.skkil.sync.media.enums.MediaStatus;
@@ -15,7 +16,13 @@ import com.skkil.sync.media.model.Media;
 import com.skkil.sync.media.repository.MediaRepository;
 import com.skkil.sync.user.model.User;
 import io.awspring.cloud.s3.S3Template;
+import java.net.URI;
+import java.net.URL;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -126,6 +133,49 @@ class MediaDomainServiceTests {
 
     assertThatThrownBy(() -> service().linkMedia(UPLOADER_ID, MEDIA_ID))
         .isInstanceOf(MediaNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("[generatePresignedGetUrlsLenient] 서명에 실패한 미디어만 빼고 계속 간다")
+  void generatePresignedGetUrlsLenient_skipsFailedItems() throws Exception {
+    Media healthy = uploadedMedia(10L, "healthy-key");
+    Media broken = uploadedMedia(11L, "broken-key");
+    URL url = URI.create("https://cdn.example.com/healthy").toURL();
+    when(s3Template.createSignedGetURL(eq("test-bucket"), eq("healthy-key"), any(Duration.class)))
+        .thenReturn(url);
+    when(s3Template.createSignedGetURL(eq("test-bucket"), eq("broken-key"), any(Duration.class)))
+        .thenThrow(new IllegalStateException("자격증명 해소 실패"));
+
+    Map<Long, URL> result =
+        service().generatePresignedGetUrlsLenient(List.of(healthy, broken), Function.identity());
+
+    assertThat(result).containsOnlyKeys(10L).containsEntry(10L, url);
+  }
+
+  @Test
+  @DisplayName("[generatePresignedGetUrlsLenient] UPLOADED가 아닌 미디어도 예외 없이 건너뛴다")
+  void generatePresignedGetUrlsLenient_skipsNonUploadedMedia() {
+    Media pending = givenPendingMedia("image/png", 1024L);
+
+    Map<Long, URL> result =
+        service().generatePresignedGetUrlsLenient(List.of(pending), Function.identity());
+
+    assertThat(result).isEmpty();
+  }
+
+  private Media uploadedMedia(Long id, String key) {
+    Media media =
+        Media.builder()
+            .uploader(new User(UPLOADER_ID))
+            .mediaType("image/png")
+            .bucket("test-bucket")
+            .key(key)
+            .fileName("test-file")
+            .fileSize(1024L)
+            .build();
+    media.setId(id);
+    media.markAsUploaded();
+    return media;
   }
 
   private MediaDomainService service() {

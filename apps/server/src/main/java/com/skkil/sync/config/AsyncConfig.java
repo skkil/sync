@@ -1,5 +1,6 @@
 package com.skkil.sync.config;
 
+import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -69,12 +70,15 @@ public class AsyncConfig implements AsyncConfigurer {
 
   @Override
   public @Nullable AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-    return (throwable, method, objects) -> {
-      log.error("Exception message - " + throwable.getMessage());
-      log.info("Method name - " + method.getName());
-      for (Object param : objects) {
-        log.info("Parameter value - " + param);
-      }
-    };
+    // Throwable을 SLF4J 마지막 인자로 넘겨야 스택트레이스와 cause 체인이 남는다.
+    // 메시지만 이어 붙이면 알림·이메일 등 모든 @Async 실패가 한 줄로 축약되어
+    // 원인 추적이 불가능해진다.
+    return (throwable, method, objects) ->
+        log.error(
+            "비동기 메서드 {}.{} 실행 실패 (인자: {})",
+            method.getDeclaringClass().getSimpleName(),
+            method.getName(),
+            Arrays.toString(objects),
+            throwable);
   }
 }

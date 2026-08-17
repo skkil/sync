@@ -40,8 +40,10 @@ public class NotificationService {
         paginationService.paginate(
             pageable -> notificationRepository.findByUser(userId, pageable), pagination);
 
+    // 페이지 전체를 한 번에 서명하므로, strict 버전이면 아바타 한 건의 실패가
+    // 알림 목록 전체를 404로 만든다. 아바타는 장식이니 실패분만 빼고 내려보낸다.
     var actorProfileImageUrls =
-        mediaDomainService.generatePresignedGetUrls(
+        mediaDomainService.generatePresignedGetUrlsLenient(
             page.content(),
             notification -> {
               var actor = notification.getActor();
