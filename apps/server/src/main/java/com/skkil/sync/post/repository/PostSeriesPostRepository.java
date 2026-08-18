@@ -10,6 +10,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface PostSeriesPostRepository extends JpaRepository<PostSeriesPost, Long> {
 
+  /** 시리즈별 실제 편 수 집계 프로젝션. 편 수는 저장된 카운터가 아니라 이 행 수에서 파생된다. */
+  interface SeriesPostCount {
+    Long getSeriesId();
+
+    long getPostCount();
+  }
+
   List<PostSeriesPost> findBySeriesIdOrderByPositionAscIdAsc(Long seriesId);
 
   boolean existsBySeriesIdAndPostId(Long seriesId, Long postId);
@@ -17,6 +24,11 @@ public interface PostSeriesPostRepository extends JpaRepository<PostSeriesPost, 
   boolean existsByPostId(Long postId);
 
   long countBySeriesId(Long seriesId);
+
+  @Query(
+      "SELECT sp.series.id AS seriesId, COUNT(sp) AS postCount FROM PostSeriesPost sp"
+          + " WHERE sp.series.id IN :seriesIds GROUP BY sp.series.id")
+  List<SeriesPostCount> countBySeriesIds(@Param("seriesIds") List<Long> seriesIds);
 
   Optional<PostSeriesPost> findByIdAndSeriesId(Long id, Long seriesId);
 

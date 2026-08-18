@@ -26,6 +26,9 @@ export function isPostRelatedQueryKey(queryKey: readonly unknown[]) {
     path === '/search/posts' ||
     /^\/users\/[^/]+\/posts$/.test(path) ||
     /^\/projects\/[^/]+\/posts(\/pinned)?$/.test(path) ||
+    // 시리즈 목록의 postCount 는 실제 편 수에서 파생되므로 게시글 변경에 함께 무효화한다.
+    path === '/me/series' ||
+    /^\/projects\/[^/]+\/series$/.test(path) ||
     /^\/profiles\/[^/]+\/posts\/activities$/.test(path) ||
     /^\/tags\/[^/]+\/posts$/.test(path) ||
     /^\/collections\/[^/]+\/posts$/.test(path)

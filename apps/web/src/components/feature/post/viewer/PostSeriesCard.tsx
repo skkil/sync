@@ -38,7 +38,7 @@ export function PostSeriesCard({ slug }: PostSeriesCardProps) {
   }
 
   const items = seriesData?.data.posts ?? [];
-  // 순서는 목록에서 직접 찾는다. denormalize 된 postCount 대신 실제 항목 수를 쓴다.
+  // 순서는 목록에서 직접 찾는다. 서버 postCount 도 행 수에서 파생된 값이지만, 이미 받은 목록이 있으므로 항목 수를 그대로 쓴다.
   const position =
     items.find((item) => item.seriesPostId === currentSeriesPostId)?.position ??
     0;

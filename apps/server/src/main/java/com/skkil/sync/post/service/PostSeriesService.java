@@ -151,7 +151,6 @@ public class PostSeriesService {
 
     seriesPostRepository.save(
         PostSeriesPost.builder().series(series).post(post).position(position).build());
-    series.incrementPostCount();
     post.markInSeries();
   }
 
@@ -189,7 +188,6 @@ public class PostSeriesService {
     int position = seriesPost.getPosition();
     seriesPostRepository.delete(seriesPost);
     seriesPostRepository.shiftDownAfter(series.getId(), position);
-    series.decrementPostCount();
     post.unmarkInSeries();
   }
 
@@ -232,7 +230,7 @@ public class PostSeriesService {
               List<PostSeriesPost> items =
                   seriesPostRepository.findBySeriesIdOrderByPositionAscIdAsc(series.getId());
               return new GetPostSeriesResponse(
-                  seriesAssembler.toSummary(series),
+                  seriesAssembler.toSummary(series, items.size()),
                   seriesPost.getId(),
                   seriesAssembler.toSeriesPostItems(items, requesterId));
             })

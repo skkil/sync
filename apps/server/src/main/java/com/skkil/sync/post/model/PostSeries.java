@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 
+/** 편 수(postCount)는 저장하지 않는다 — {@code post_series_posts} 행 수에서 파생한다. */
 @Entity
 @Table(name = "post_series")
 @Getter
@@ -32,9 +33,6 @@ public class PostSeries extends BaseEntity {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "post_count", nullable = false)
-  private long postCount = 0;
-
   protected PostSeries() {}
 
   @Builder
@@ -47,16 +45,6 @@ public class PostSeries extends BaseEntity {
 
   public void update(String name) {
     this.name = name;
-  }
-
-  public void incrementPostCount() {
-    this.postCount++;
-  }
-
-  public void decrementPostCount() {
-    if (this.postCount > 0) {
-      this.postCount--;
-    }
   }
 
   public PostScope getScope() {
