@@ -1,5 +1,7 @@
 package com.skkil.sync.config;
 
+import com.skkil.sync.auth.session.PrincipalTrackingHandshakeDecorator;
+import com.skkil.sync.auth.session.WebSocketSessionRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +9,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 @Configuration
 @ConditionalOnProperty(name = "app.websocket.enabled", havingValue = "true", matchIfMissing = false)
@@ -15,6 +18,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Value("${app.cors.allowed-origins}")
   private String[] allowedOrigins;
+
+  private final WebSocketSessionRegistry sessionRegistry;
+
+  public WebSocketConfig(WebSocketSessionRegistry sessionRegistry) {
+    this.sessionRegistry = sessionRegistry;
+  }
 
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -29,5 +38,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/ws").setAllowedOrigins(allowedOrigins).withSockJS();
+  }
+
+  @Override
+  public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+    // 세션 무효화(비밀번호 변경·계정 삭제)가 살아 있는 소켓까지 끊을 수 있도록,
+    // 모든 연결을 principal 이름으로 레지스트리에 등록한다.
+    registration.addDecoratorFactory(
+        handler -> new PrincipalTrackingHandshakeDecorator(handler, sessionRegistry));
   }
 }

@@ -31,6 +31,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.json.JsonMapper;
 
+/**
+ * 비밀번호 변경·재설정이 HTTP 세션을 전부 무효화하는지(이후 요청 401) 검증한다.
+ *
+ * <p>살아 있는 WebSocket 소켓의 종료는 이 테스트의 범위 밖이다 — {@link WebSocketSessionTerminationIntegrationTests}가
+ * 담당한다. 두 테스트가 함께 있어야 "비밀번호를 바꾸면 모든 자격 증명이 무효가 된다" 규칙이 채널 전체에서 검증된다.
+ */
 @Import(TestcontainersConfig.class)
 @SpringBootTest
 @AutoConfigureMockMvc
