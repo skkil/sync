@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
+  /** 새 좋아요면 1, 이미 눌린 좋아요면 0 — 최종 UPDATE의 영향 행 수가 곧 삽입 여부다. */
   @Modifying
   @Query(
       value =
@@ -21,7 +22,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
           WHERE id = :postId AND EXISTS (SELECT 1 FROM ins)
           """,
       nativeQuery = true)
-  void insertAndIncrementIfAbsent(Long userId, Long postId);
+  int insertAndIncrementIfAbsent(Long userId, Long postId);
 
   @Modifying
   @Query(

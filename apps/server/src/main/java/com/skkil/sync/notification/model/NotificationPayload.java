@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
   @JsonSubTypes.Type(value = WelcomePayload.class, name = "WELCOME"),
   @JsonSubTypes.Type(value = NewCommentPayload.class, name = "NEW_COMMENT"),
+  @JsonSubTypes.Type(value = NewLikePayload.class, name = "NEW_LIKE"),
   @JsonSubTypes.Type(value = NewFollowerPayload.class, name = "NEW_FOLLOWER"),
   @JsonSubTypes.Type(value = ProjectInvitationPayload.class, name = "PROJECT_INVITATION"),
   @JsonSubTypes.Type(
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public sealed interface NotificationPayload
     permits WelcomePayload,
         NewCommentPayload,
+        NewLikePayload,
         NewFollowerPayload,
         ProjectInvitationPayload,
         ProjectInvitationAcceptedPayload,

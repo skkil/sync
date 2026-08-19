@@ -2254,6 +2254,9 @@
         "empty": "새로운 알림이 없습니다",
         "types": {
           "NEW_COMMENT": "{name}님이 {title} 글에 댓글을 남겼습니다.",
+          "NEW_COMMENT_UNTITLED": "{name}님이 회원님의 글에 댓글을 남겼습니다.",
+          "NEW_LIKE": "{name}님이 {title} 글을 좋아합니다.",
+          "NEW_LIKE_UNTITLED": "{name}님이 회원님의 글을 좋아합니다.",
           "NEW_FOLLOWER": "{name}님이 회원님을 팔로우하기 시작했습니다.",
           "PROJECT_INVITATION": "{name}님이 {project} 프로젝트에 회원님을 초대했습니다.",
           "PROJECT_INVITATION_ACCEPTED": "{name}님이 {project} 프로젝트 초대를 수락했습니다.",

@@ -89,10 +89,24 @@ function resolve(
     case 'NEW_COMMENT':
       return {
         href: ROUTES.POST(payload.postSlug),
-        message: t('NEW_COMMENT', {
-          name: payload.actorName,
-          title: payload.postTitle,
-        }),
+        // SHORT 게시글은 제목이 없다 — 스키마상 필수지만 서버가 null을 보낼 수
+        // 있는 기존 계약 결함이 있어, 렌더가 깨지지 않게 방어한다.
+        message: payload.postTitle
+          ? t('NEW_COMMENT', {
+              name: payload.actorName,
+              title: payload.postTitle,
+            })
+          : t('NEW_COMMENT_UNTITLED', { name: payload.actorName }),
+      };
+    case 'NEW_LIKE':
+      return {
+        href: ROUTES.POST(payload.postSlug),
+        message: payload.postTitle
+          ? t('NEW_LIKE', {
+              name: payload.actorName,
+              title: payload.postTitle,
+            })
+          : t('NEW_LIKE_UNTITLED', { name: payload.actorName }),
       };
     case 'NEW_FOLLOWER':
       return {

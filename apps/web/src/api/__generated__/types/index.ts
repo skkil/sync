@@ -240,6 +240,8 @@ export * from './NewCommentPayload';
 export * from './NewCommentPayloadType';
 export * from './NewFollowerPayload';
 export * from './NewFollowerPayloadType';
+export * from './NewLikePayload';
+export * from './NewLikePayloadType';
 export * from './NewMessagePayload';
 export * from './NewMessagePayloadType';
 export * from './PaginatedGetPostsResponse';

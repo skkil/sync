@@ -7,6 +7,7 @@
 import type { GetNotificationsResponseNotificationsContentItemActor } from './GetNotificationsResponseNotificationsContentItemActor';
 import type { NewCommentPayload } from './NewCommentPayload';
 import type { NewFollowerPayload } from './NewFollowerPayload';
+import type { NewLikePayload } from './NewLikePayload';
 import type { NewMessagePayload } from './NewMessagePayload';
 import type { ProjectInvitationAcceptedPayload } from './ProjectInvitationAcceptedPayload';
 import type { ProjectInvitationDeclinedPayload } from './ProjectInvitationDeclinedPayload';
@@ -24,6 +25,7 @@ export type GetNotificationsResponseNotificationsContentItem = {
   payload:
     | WelcomePayload
     | NewCommentPayload
+    | NewLikePayload
     | NewFollowerPayload
     | ProjectInvitationPayload
     | ProjectInvitationAcceptedPayload

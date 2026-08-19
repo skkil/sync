@@ -42,6 +42,28 @@ actions:
             type: string
           postSlug:
             type: string
+      NewLikePayload:
+        type: object
+        required:
+          - type
+          - actorHandle
+          - actorName
+          - postSlug
+        properties:
+          type:
+            type: string
+            enum:
+              - NEW_LIKE
+          actorHandle:
+            type: string
+          actorName:
+            type: string
+          postTitle:
+            # SHORT 게시글은 제목이 없다 — 서버 payload가 null을 보낸다.
+            type: string
+            nullable: true
+          postSlug:
+            type: string
       NewFollowerPayload:
         type: object
         required:
@@ -211,6 +233,7 @@ actions:
       oneOf:
         - $ref: '#/components/schemas/WelcomePayload'
         - $ref: '#/components/schemas/NewCommentPayload'
+        - $ref: '#/components/schemas/NewLikePayload'
         - $ref: '#/components/schemas/NewFollowerPayload'
         - $ref: '#/components/schemas/ProjectInvitationPayload'
         - $ref: '#/components/schemas/ProjectInvitationAcceptedPayload'
@@ -224,6 +247,7 @@ actions:
         mapping:
           WELCOME: '#/components/schemas/WelcomePayload'
           NEW_COMMENT: '#/components/schemas/NewCommentPayload'
+          NEW_LIKE: '#/components/schemas/NewLikePayload'
           NEW_FOLLOWER: '#/components/schemas/NewFollowerPayload'
           PROJECT_INVITATION: '#/components/schemas/ProjectInvitationPayload'
           PROJECT_INVITATION_ACCEPTED: '#/components/schemas/ProjectInvitationAcceptedPayload'
