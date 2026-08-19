@@ -27,8 +27,8 @@ const NOTIFICATION_DESTINATION = '/user/queue/notifications';
  *
  * 구독은 연결 성립 전에 걸어도 되며(예약 후 연결 직후 성립), 재연결마다
  * 자동으로 복원된다. 같은 목적지에 두 소비자가 붙어도 실제 STOMP 구독은
- * 하나다. WebSocket이 꺼져 있으면 구독을 건너뛰고, 이때 실시간 갱신은
- * 없으며 쿼리가 다시 실행되는 시점(마운트·무효화)에만 목록을 가져온다.
+ * 하나다. WebSocket이 꺼져 있으면 구독을 건너뛰고, 대신 주기 폴링과 창
+ * 포커스 재조회로 목록을 갱신한다.
  */
 export function useNotifications(params: GetNotificationsParams) {
   const { page, size } = params;
@@ -37,7 +37,15 @@ export function useNotifications(params: GetNotificationsParams) {
   const queryClient = useQueryClient();
 
   const query = useGetNotifications(params, {
-    query: { enabled: !!session?.user.id },
+    query: {
+      enabled: !!session?.user.id,
+      // 벨은 상주 레이아웃에 있어 언마운트되지 않고, 전역 기본값은
+      // staleTime 60초에 refetchOnWindowFocus까지 꺼져 있다 — 명시적 트리거가
+      // 없으면 전체 새로고침 전까지 배지가 갱신되지 않는다. 숨겨진 탭은
+      // 폴링하지 않는다(refetchIntervalInBackground 기본 false).
+      refetchOnWindowFocus: true,
+      refetchInterval: 60_000,
+    },
   });
 
   // 페이지 이동으로 구독을 끊었다 다시 걸지 않도록, 쿼리 키 파라미터는

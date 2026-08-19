@@ -105,16 +105,18 @@ class NotificationProcessorServiceTests {
     verify(inAppChannel, never()).send(any(), any());
   }
 
+  /** 환경설정 off는 "전달 안 함"이지 "기록 안 함"이 아니다 — 꺼둔 기간의 알림도 목록에는 남아야 한다. */
   @Test
-  void handleNotificationEvent_notificationsDisabled_skipsSaveAndPush() {
+  void handleNotificationEvent_notificationsDisabled_persistsButSkipsPush() {
     NotificationChannel inAppChannel = mock(NotificationChannel.class);
     when(inAppChannel.type()).thenReturn(ChannelType.IN_APP);
     NotificationProcessorService service = serviceWithChannels(List.of(inAppChannel));
+    stubRecipient();
     when(notificationPreferencesService.isInAppEnabled(1L)).thenReturn(false);
 
     service.handleNotificationEvent(newFollowerEventTo(1L));
 
-    verify(notificationRepository, never()).save(any(Notification.class));
+    verify(notificationRepository).save(any(Notification.class));
     verify(inAppChannel, never()).send(any(), any());
   }
 

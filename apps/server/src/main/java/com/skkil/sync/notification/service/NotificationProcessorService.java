@@ -67,12 +67,14 @@ public class NotificationProcessorService {
   public void handleNotificationEvent(NotificationEvent event) {
     log.debug("Processing notification event: {}", event);
 
+    Notification notification = createNotification(event);
+
+    // 환경설정은 "전달"을 끄는 것이지 "기록"을 끄는 것이 아니다. 저장보다 앞에서
+    // 반환하면 꺼둔 기간의 알림이 영구 소실되고, 다시 켜도 복구되지 않는다.
     if (!notificationPreferencesService.isInAppEnabled(event.getRecipientId())) {
       log.debug("Notifications are disabled for user: {}", event.getRecipientId());
       return;
     }
-
-    Notification notification = createNotification(event);
 
     NotificationChannel channel = channels.get(ChannelType.IN_APP);
     if (channel == null) {

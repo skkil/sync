@@ -4,6 +4,7 @@ import { BellIcon } from '@phosphor-icons/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   getGetNotificationsQueryKey,
@@ -21,11 +22,13 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
+import SyncError, { ErrorCode } from '@/lib/error';
 
 const PAGE_SIZE = '20';
 
 export default function NotificationsList() {
   const t = useTranslations('pages.notifications');
+  const tNotifications = useTranslations('components.navigation.notifications');
   const queryClient = useQueryClient();
   const [page, setPage] = useState(0);
 
@@ -46,7 +49,21 @@ export default function NotificationsList() {
   const handleRead = (id: number) => {
     markAsRead(
       { notificationId: String(id) },
-      { onSuccess: () => invalidate() },
+      {
+        onSuccess: () => invalidate(),
+        onError: (error) => {
+          // 이미 사라진 알림이면 오류가 아니라 목록이 낡은 것이다 — 조용히 맞춘다.
+          if (
+            error instanceof SyncError &&
+            error.code === ErrorCode.NOTIFICATION_NOT_FOUND
+          ) {
+            invalidate();
+            return;
+          }
+
+          toast.error(tNotifications('errors.mark-read'));
+        },
+      },
     );
   };
 
