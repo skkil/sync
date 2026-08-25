@@ -32,9 +32,19 @@ export default function SettingsTabs({ children }: SettingsTabsProps) {
       label: t('teammates'),
       href: ROUTES.PROJECT_SETTINGS_TEAMMATES,
     },
+    {
+      id: 'templates',
+      label: t('templates'),
+      href: ROUTES.PROJECT_SETTINGS_TEMPLATES,
+    },
   ];
 
-  const activeTab = TABS.find((tab) => pathname === tab.href(handle))?.id;
+  // 템플릿 작성처럼 탭 경로 아래의 하위 라우트에서도 해당 탭이 활성으로 보이도록,
+  // 정확 일치가 아니라 가장 긴 프리픽스로 고른다.
+  const activeTab = TABS.filter((tab) => {
+    const href = tab.href(handle);
+    return pathname === href || pathname.startsWith(href + '/');
+  }).sort((a, b) => b.href(handle).length - a.href(handle).length)[0]?.id;
 
   return (
     <div className="flex flex-col gap-8">

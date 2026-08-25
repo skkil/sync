@@ -42,11 +42,7 @@ import { CoverPicker } from './cover/CoverPicker';
 import { type CoverState, initialCoverState } from './cover/coverState';
 import { renderCoverToFile } from './cover/generators';
 import { useCoverImageUpload } from './cover/useCoverImageUpload';
-import {
-  COMMAND_NAMES,
-  CommandSearchTerms,
-  CommandsExtension,
-} from './extensions/commands';
+import { CommandsExtension } from './extensions/commands';
 import { MediaDropPasteExtension } from './extensions/media-drop';
 import { NodeType } from './extensions/nodes';
 import { CodeBlockNode } from './extensions/nodes/code';
@@ -57,6 +53,7 @@ import { type MathTarget, createMathNode } from './extensions/nodes/math';
 import { TableNode } from './extensions/nodes/table';
 import { TaskItemNode, TaskListNode } from './extensions/nodes/tasks';
 import { SelectAllExtension } from './extensions/select-all';
+import { useCommandSearchTerms } from './extensions/use-command-search-terms';
 import { markdownToHtml } from './utils/markdown';
 import { deserialize, serialize } from './utils/serializer';
 
@@ -203,19 +200,7 @@ export default function PostEditor({
     el.style.height = `${el.scrollHeight}px`;
   }, [title, type]);
 
-  const commandSearchTerms = useMemo<CommandSearchTerms>(
-    () =>
-      Object.fromEntries(
-        COMMAND_NAMES.map((name) => [
-          name,
-          [
-            t(`commands.${name}.title`),
-            ...t(`commands.${name}.keywords`).split(/\s+/),
-          ],
-        ]),
-      ),
-    [t],
-  );
+  const commandSearchTerms = useCommandSearchTerms();
 
   // 본문 형식은 두 가지다. 지금까지의 모든 글은 Tiptap JSON 이고, 에이전트가 만들어 아직 한 번도
   // 저장되지 않은 초안만 Markdown 이다. 후자는 HTML 로 바꿔서 넘기면 Tiptap 이 자기 스키마로
@@ -580,8 +565,12 @@ export default function PostEditor({
         {isPlaceholderVisible && type === PostType.LONG && (
           <EditorTemplates
             locale={locale}
+            projectHandle={project?.handle}
             onSelect={(template) => {
-              setTitle(template.title);
+              // 제목 접두어가 없는 템플릿이 이미 입력한 제목을 지우지 않게 한다.
+              if (template.title) {
+                setTitle(template.title);
+              }
               editor?.commands.setContent(template.content);
             }}
           />

@@ -60,6 +60,13 @@ const ROUTES = {
   PROJECT_SETTINGS: (handle: string) => ROUTES.PROJECT(handle) + '/settings',
   PROJECT_SETTINGS_TEAMMATES: (handle: string) =>
     ROUTES.PROJECT(handle) + '/settings/teammates',
+  PROJECT_SETTINGS_TEMPLATES: (handle: string) =>
+    ROUTES.PROJECT(handle) + '/settings/templates',
+  PROJECT_SETTINGS_TEMPLATES_NEW: (handle: string) =>
+    ROUTES.PROJECT_SETTINGS_TEMPLATES(handle) + '/new',
+  PROJECT_SETTINGS_TEMPLATE_EDIT: (handle: string, externalId: string) =>
+    ROUTES.PROJECT_SETTINGS_TEMPLATES(handle) +
+    `/${encodeURIComponent(externalId)}`,
   PROJECTS: () => '/projects',
   PROJECT_INVITATIONS: () => '/projects/invitations',
   NOTIFICATIONS: () => '/notifications',

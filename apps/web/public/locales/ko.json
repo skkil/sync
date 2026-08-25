@@ -653,7 +653,8 @@
         "settings": {
           "tabs": {
             "project": "프로젝트",
-            "teammates": "팀원"
+            "teammates": "팀원",
+            "templates": "템플릿"
           },
           "project": {
             "heading": "프로젝트 설정",
@@ -844,6 +845,62 @@
                 "project-not-found": "프로젝트를 찾을 수 없습니다."
               }
             }
+          },
+          "templates": {
+            "heading": "템플릿",
+            "description": "프로젝트에서 글을 쓸 때 고를 수 있는 글 템플릿을 관리합니다.",
+            "create-link": "새 템플릿",
+            "empty": "자주 쓰는 글 양식을 템플릿으로 만들어 두면, 팀원이 글을 쓸 때 골라서 시작할 수 있습니다.",
+            "table": {
+              "columns": {
+                "name": "이름",
+                "title": "제목 접두어"
+              },
+              "no-title": "없음"
+            },
+            "delete": {
+              "trigger": "삭제",
+              "title": "템플릿을 삭제할까요?",
+              "description": "\"{name}\" 템플릿을 삭제합니다. 이미 작성된 글에는 영향이 없습니다.",
+              "cancel": "취소",
+              "submit": "삭제",
+              "messages": {
+                "success": "템플릿을 삭제했습니다.",
+                "error": "템플릿을 삭제하지 못했습니다. 잠시 후 다시 시도하세요."
+              }
+            },
+            "form": {
+              "heading-new": "새 템플릿",
+              "heading-edit": "템플릿 수정",
+              "not-found": "템플릿을 찾을 수 없습니다.",
+              "back": "목록으로",
+              "name-label": "이름",
+              "name-placeholder": "예: 트러블슈팅 리포트",
+              "title-label": "제목 접두어",
+              "title-placeholder": "예: 트러블슈팅: ",
+              "title-help": "템플릿을 고르면 글 제목 칸에 미리 채워지는 문구입니다. 비워 두면 제목을 건드리지 않습니다.",
+              "content-label": "본문 양식",
+              "content-placeholder": "/ 를 입력하여 명령어를 사용하거나 텍스트를 입력하세요",
+              "cancel": "취소",
+              "submit-create": "만들기",
+              "submit-update": "저장",
+              "errors": {
+                "name-required": "이름을 입력하세요.",
+                "name-too-long": "이름은 255자 이하로 입력해주세요.",
+                "title-too-long": "제목 접두어는 255자 이하로 입력해주세요."
+              },
+              "messages": {
+                "create-success": "템플릿을 만들었습니다.",
+                "update-success": "템플릿을 저장했습니다.",
+                "already-exists": "같은 이름의 템플릿이 이미 있습니다.",
+                "limit-exceeded": "템플릿은 프로젝트당 최대 20개까지 만들 수 있습니다.",
+                "not-found": "템플릿을 찾을 수 없습니다. 새로고침 후 다시 시도하세요.",
+                "empty-content": "본문 양식을 입력하세요.",
+                "content-too-long": "본문이 너무 깁니다. 내용을 줄여 주세요.",
+                "error": "템플릿을 저장하지 못했습니다. 잠시 후 다시 시도하세요."
+              }
+            },
+            "edit-link": "수정"
           }
         }
       },

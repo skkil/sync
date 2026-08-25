@@ -271,6 +271,8 @@ interface CommandsExtensionOptions {
   suggestion: Partial<SuggestionOptions<CommandsItemProps>>;
   searchTerms: CommandSearchTerms;
   actions: CommandActions;
+  /** 슬래시 메뉴에서 숨길 명령. 검색이 이름 매칭이라 옵션 없이는 특정 명령을 뺄 수 없다. */
+  excludedCommands: CommandName[];
 }
 
 export const CommandsExtension = Extension.create<CommandsExtensionOptions>({
@@ -279,6 +281,7 @@ export const CommandsExtension = Extension.create<CommandsExtensionOptions>({
     return {
       searchTerms: {},
       actions: {},
+      excludedCommands: [],
       suggestion: {
         char: '/',
         startOfLine: false,
@@ -353,13 +356,16 @@ export const CommandsExtension = Extension.create<CommandsExtensionOptions>({
     };
   },
   addProseMirrorPlugins() {
-    const { searchTerms, actions } = this.options;
+    const { searchTerms, actions, excludedCommands } = this.options;
 
     return [
       Suggestion<CommandsItemProps>({
         editor: this.editor,
         ...this.options.suggestion,
-        items: ({ query }) => filterCommands(query, searchTerms),
+        items: ({ query }) =>
+          filterCommands(query, searchTerms).filter(
+            (item) => !excludedCommands.includes(item.name),
+          ),
         command: ({ editor, range, props }) =>
           props.command({ editor, range, actions }),
       }),
