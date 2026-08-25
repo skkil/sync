@@ -11,4 +11,7 @@ public final class PostConstants {
   public static final int MAX_POSTS_PER_SERIES = 50;
   public static final int MAX_CONTENT_TEXT_LENGTH = 50_000;
   public static final int MAX_CONTENT_JSON_LENGTH = 500_000;
+  public static final int MAX_POST_TEMPLATES_PER_PROJECT = 20;
+  // 템플릿 목록 응답은 본문을 통째로 담으므로 게시글(500K)보다 좁게 잡는다.
+  public static final int MAX_TEMPLATE_CONTENT_LENGTH = 100_000;
 }

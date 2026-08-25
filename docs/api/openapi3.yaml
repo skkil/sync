@@ -2888,6 +2888,77 @@ paths:
                   value: "{\"joinRequests\":[{\"id\":1,\"requester\":{\"handle\":\"\
                     john-doe\",\"name\":\"John Doe\",\"profileImageUrl\":\"https://example.com/john.png\"\
                     ,\"isDeleted\":false},\"createdAt\":\"2026-07-09T00:00:00Z\"}]}"
+  /projects/{handle}/post-templates:
+    get:
+      tags:
+      - post-template
+      summary: Get Project Post Templates
+      description: 프로젝트의 글 템플릿 목록을 조회합니다. 글을 쓸 수 있는 팀원만 조회할 수 있습니다.
+      operationId: GetProjectPostTemplates
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPostTemplatesResponse"
+              examples:
+                GetProjectPostTemplates:
+                  value: |-
+                    {
+                      "templates" : [ {
+                        "externalId" : "template-external-id",
+                        "name" : "트러블슈팅 리포트",
+                        "title" : "트러블슈팅: ",
+                        "content" : "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"증상\"}]},{\"type\":\"paragraph\"}]}",
+                        "updatedAt" : "2026-01-01T00:00:00Z"
+                      } ]
+                    }
+    post:
+      tags:
+      - post-template
+      summary: Create Project Post Template
+      description: 프로젝트에 글 템플릿을 생성합니다. 프로젝트 관리자만 생성할 수 있습니다.
+      operationId: CreateProjectPostTemplate
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePostTemplateRequest"
+            examples:
+              CreateProjectPostTemplate:
+                value: "{\"name\":\"트러블슈팅 리포트\",\"title\":\"트러블슈팅: \",\"content\"\
+                  :\"{\\\"type\\\":\\\"doc\\\",\\\"content\\\":[{\\\"type\\\":\\\"\
+                  heading\\\",\\\"attrs\\\":{\\\"level\\\":2},\\\"content\\\":[{\\\
+                  \"type\\\":\\\"text\\\",\\\"text\\\":\\\"증상\\\"}]},{\\\"type\\\"\
+                  :\\\"paragraph\\\"}]}\"}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePostTemplateResponse"
+              examples:
+                CreateProjectPostTemplate:
+                  value: |-
+                    {
+                      "externalId" : "template-external-id"
+                    }
   /projects/{handle}/posts:
     get:
       tags:
@@ -3237,6 +3308,63 @@ paths:
         required: true
         schema:
           type: string
+      responses:
+        "204":
+          description: "204"
+  /projects/{handle}/post-templates/{externalId}:
+    delete:
+      tags:
+      - post-template
+      summary: Delete Project Post Template
+      description: 프로젝트 글 템플릿을 삭제합니다. 프로젝트 관리자만 삭제할 수 있습니다.
+      operationId: DeleteProjectPostTemplate
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      - name: externalId
+        in: path
+        description: 템플릿 외부 식별자
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+    patch:
+      tags:
+      - post-template
+      summary: Update Project Post Template
+      description: "프로젝트 글 템플릿을 수정합니다. 모든 필드를 전체 교체하며, 프로젝트 관리자만 수정할 수 있습니다."
+      operationId: UpdateProjectPostTemplate
+      parameters:
+      - name: handle
+        in: path
+        description: 프로젝트 핸들
+        required: true
+        schema:
+          type: string
+      - name: externalId
+        in: path
+        description: 템플릿 외부 식별자
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePostTemplateRequest"
+            examples:
+              UpdateProjectPostTemplate:
+                value: "{\"name\":\"주간 회고\",\"title\":\"주간 회고: \",\"content\":\"{\\\
+                  \"type\\\":\\\"doc\\\",\\\"content\\\":[{\\\"type\\\":\\\"heading\\\
+                  \",\\\"attrs\\\":{\\\"level\\\":2},\\\"content\\\":[{\\\"type\\\"\
+                  :\\\"text\\\",\\\"text\\\":\\\"잘한 것\\\"}]},{\\\"type\\\":\\\"paragraph\\\
+                  \"}]}\"}"
       responses:
         "204":
           description: "204"
@@ -5888,6 +6016,15 @@ components:
           type: string
           description: "소속 프로젝트 핸들 (WORKSPACE 범위인 경우, PERSONAL 이면 없음)"
           nullable: true
+    CreatePostTemplateResponse:
+      title: CreatePostTemplateResponse
+      required:
+      - externalId
+      type: object
+      properties:
+        externalId:
+          type: string
+          description: 생성된 템플릿의 외부 식별자
     GetHandleAvailabilityResponse:
       title: GetHandleAvailabilityResponse
       required:
@@ -6520,6 +6657,23 @@ components:
           type: boolean
           description: "Is Onboarded (본인 프로필 조회 시에만 포함, 그 외에는 null)"
           nullable: true
+    UpdatePostTemplateRequest:
+      title: UpdatePostTemplateRequest
+      required:
+      - content
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: "템플릿 이름 (프로젝트 안에서 유일, 최대 255자)"
+        title:
+          type: string
+          description: "템플릿 적용 시 글 제목 칸에 채울 접두어 (선택, 최대 255자 — null 이면 접두어를 비움)"
+          nullable: true
+        content:
+          type: string
+          description: "본문 스캐폴드 (Tiptap JSON 문자열, 최대 100,000자)"
     AddTeammateRequest:
       title: AddTeammateRequest
       required:
@@ -8112,6 +8266,39 @@ components:
                   nullable: true
               description: Page Info
           description: 컬렉션 항목 페이지
+    GetPostTemplatesResponse:
+      title: GetPostTemplatesResponse
+      required:
+      - templates
+      type: object
+      properties:
+        templates:
+          type: array
+          description: 템플릿 목록 (이름순)
+          items:
+            required:
+            - content
+            - externalId
+            - name
+            - updatedAt
+            type: object
+            properties:
+              name:
+                type: string
+                description: 템플릿 이름
+              externalId:
+                type: string
+                description: 템플릿 외부 식별자
+              title:
+                type: string
+                description: 템플릿 적용 시 글 제목 칸에 채울 접두어 (없으면 제목을 건드리지 않음)
+                nullable: true
+              content:
+                type: string
+                description: 본문 스캐폴드 (Tiptap JSON 문자열)
+              updatedAt:
+                type: string
+                description: 마지막 수정 시각
     UpdatePostSeriesRequest:
       title: UpdatePostSeriesRequest
       type: object
@@ -8751,6 +8938,23 @@ components:
               followerCount:
                 type: number
                 description: 프로젝트 팔로워 수
+    CreatePostTemplateRequest:
+      title: CreatePostTemplateRequest
+      required:
+      - content
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: "템플릿 이름 (프로젝트 안에서 유일, 최대 255자)"
+        title:
+          type: string
+          description: "템플릿 적용 시 글 제목 칸에 채울 접두어 (선택, 최대 255자)"
+          nullable: true
+        content:
+          type: string
+          description: "본문 스캐폴드 (Tiptap JSON 문자열, 최대 100,000자)"
     CreatePostSeriesRequest:
       title: CreatePostSeriesRequest
       required:
